@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { glossary } from '../data/glossary';
 
 const categories = [
