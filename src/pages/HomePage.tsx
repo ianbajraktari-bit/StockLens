@@ -1,7 +1,17 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, TrendingUp, BookOpen, Brain } from 'lucide-react';
+import { ArrowRight, TrendingUp, BookOpen, Brain, Zap } from 'lucide-react';
 import { companies } from '../data/companies';
+
+const investmentTypeColors: Record<string, string> = {
+  'High Expectations Growth': 'bg-green/10 text-green border-green/20',
+  'Margin Expansion Story': 'bg-amber/10 text-amber border-amber/20',
+  'Quality Compounder': 'bg-accent/10 text-accent-light border-accent/20',
+  'Mature Tech Compounder': 'bg-[#a855f7]/10 text-[#a855f7] border-[#a855f7]/20',
+  'Cyclical Leader': 'bg-[#003087]/10 text-[#6b9fff] border-[#003087]/30',
+  'Toll Booth Monopoly': 'bg-[#1a1f71]/10 text-[#8b8fff] border-[#1a1f71]/30',
+  'Platform Transformation': 'bg-[#0071dc]/10 text-[#5ba8ff] border-[#0071dc]/30',
+};
 
 export default function HomePage() {
   return (
@@ -32,9 +42,9 @@ export default function HomePage() {
               the numbers, weigh the arguments, and form your own view.
             </p>
             <p className="text-base text-text-muted leading-relaxed max-w-2xl">
-              StockLens walks you through the same framework professional
-              investors use — step by step, in plain English. No jargon walls.
-              No data dumps. Just clear thinking.
+              Each company represents a different type of investment problem.
+              Growth, value, turnaround, compounder — learn to recognize the
+              patterns and think through what matters.
             </p>
           </motion.div>
         </div>
@@ -53,17 +63,17 @@ export default function HomePage() {
             {
               icon: BookOpen,
               title: 'Understand the business',
-              desc: 'Learn what the company does, how it makes money, and why it might have staying power.',
+              desc: 'Learn what the company does, how it makes money, and what gives it staying power.',
             },
             {
               icon: TrendingUp,
               title: 'Evaluate the numbers',
-              desc: 'Key financial metrics explained in plain English — what they mean and why they matter.',
+              desc: 'Key financial and valuation metrics explained in plain English — what they mean and when they mislead.',
             },
             {
               icon: Brain,
               title: 'Form your own view',
-              desc: "Make a decision and get a thoughtful breakdown of what you'd need to believe.",
+              desc: "Make a decision and see what you'd need to believe, what could go wrong, and what to watch next.",
             },
           ].map((item, i) => (
             <div
@@ -96,27 +106,27 @@ export default function HomePage() {
             Pick a company to analyze
           </h2>
           <p className="text-text-secondary mb-8">
-            Start with one of these well-known companies. Each takes about 10
-            minutes.
+            Seven companies, each representing a different investment type. Start
+            with whatever interests you.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {companies.map((company, i) => (
             <motion.div
               key={company.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
+              transition={{ duration: 0.4, delay: i * 0.07 }}
             >
               <Link
                 to={`/company/${company.id}`}
-                className="group block rounded-2xl border border-border bg-dark-800 p-6 no-underline transition-all duration-300 hover:border-dark-400 hover:bg-dark-700"
+                className="group block rounded-2xl border border-border bg-dark-800 p-6 no-underline transition-all duration-300 hover:border-dark-400 hover:bg-dark-700 h-full"
               >
-                <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center gap-4 mb-3">
                   <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+                    className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0"
                     style={{ backgroundColor: `${company.color}15` }}
                   >
                     {company.logo}
@@ -128,10 +138,24 @@ export default function HomePage() {
                     <p className="text-sm text-text-muted">{company.ticker}</p>
                   </div>
                 </div>
-                <p className="text-sm text-text-secondary leading-relaxed mb-2">
+
+                {/* Investment Type Badge */}
+                <div className="mb-3">
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border ${
+                      investmentTypeColors[company.investmentType] ||
+                      'bg-dark-700 text-text-secondary border-border'
+                    }`}
+                  >
+                    <Zap className="w-3 h-3" />
+                    {company.investmentType}
+                  </span>
+                </div>
+
+                <p className="text-sm text-text-secondary leading-relaxed mb-1">
                   {company.sector}
                 </p>
-                <p className="text-sm text-text-muted italic mb-4">
+                <p className="text-sm text-text-muted italic mb-4 line-clamp-2">
                   "{company.tagline}"
                 </p>
                 <div className="flex items-center gap-2 text-accent-light text-sm font-medium group-hover:gap-3 transition-all">

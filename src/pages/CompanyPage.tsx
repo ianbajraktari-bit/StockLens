@@ -8,6 +8,11 @@ import {
   Globe,
   Activity,
   Target,
+  Zap,
+  TrendingUp as TrendUp,
+  ArrowUpRight,
+  ArrowDownRight,
+  ArrowRight,
 } from 'lucide-react';
 import { getCompanyById } from '../data/companies';
 import SectionCard from '../components/SectionCard';
@@ -15,6 +20,20 @@ import MetricCard from '../components/MetricCard';
 import RevenueBar from '../components/RevenueBar';
 import PriceChart from '../components/PriceChart';
 import DecisionPanel from '../components/DecisionPanel';
+
+const categoryLabels: Record<string, string> = {
+  industry: 'Industry',
+  macro: 'Macro',
+  geopolitical: 'Geopolitical',
+  'company-specific': 'Company',
+};
+
+const categoryColors: Record<string, string> = {
+  industry: 'bg-accent/15 text-accent-light border-accent/20',
+  macro: 'bg-amber/15 text-amber border-amber/20',
+  geopolitical: 'bg-red/15 text-red border-red/20',
+  'company-specific': 'bg-green/15 text-green border-green/20',
+};
 
 export default function CompanyPage() {
   const { id } = useParams<{ id: string }>();
@@ -54,13 +73,29 @@ export default function CompanyPage() {
                 </p>
               </div>
             </div>
+
+            {/* Investment Type Badge */}
+            <div className="mb-4">
+              <span
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold border"
+                style={{
+                  backgroundColor: `${company.color}12`,
+                  borderColor: `${company.color}30`,
+                  color: company.color,
+                }}
+              >
+                <Zap className="w-3.5 h-3.5" />
+                {company.investmentType}
+              </span>
+            </div>
+
             <p className="text-lg text-text-secondary italic">
               "{company.tagline}"
             </p>
             <div className="mt-6 flex items-center gap-2 text-sm text-text-muted">
               <Activity className="w-4 h-4" />
               <span>
-                7 sections · ~10 min read · Interactive decision at the end
+                9 sections · ~12 min read · Interactive decision at the end
               </span>
             </div>
           </motion.div>
@@ -109,9 +144,90 @@ export default function CompanyPage() {
           </div>
         </SectionCard>
 
-        {/* 2. Key Financials */}
+        {/* 2. What Matters Right Now */}
         <SectionCard
           step={2}
+          title="What Matters Right Now"
+          subtitle="The key drivers investors are watching most closely"
+          icon={<Zap className="w-5 h-5" />}
+        >
+          <div className="space-y-4">
+            {company.whatMattersNow.drivers.map((driver, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-border bg-dark-700 p-5"
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <span
+                    className={`text-xs font-medium px-2 py-0.5 rounded-full border ${categoryColors[driver.category]}`}
+                  >
+                    {categoryLabels[driver.category]}
+                  </span>
+                  <h4 className="text-sm font-semibold text-text-primary">
+                    {driver.label}
+                  </h4>
+                </div>
+                <p className="text-sm text-text-secondary leading-relaxed">
+                  {driver.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </SectionCard>
+
+        {/* 3. What Changed */}
+        <SectionCard
+          step={3}
+          title="What Changed"
+          subtitle="How the investment narrative is evolving"
+          icon={<TrendUp className="w-5 h-5" />}
+        >
+          <div className="space-y-5">
+            <p className="text-text-secondary leading-relaxed text-base">
+              {company.whatChanged.summary}
+            </p>
+            <div className="space-y-3">
+              {company.whatChanged.changes.map((change, i) => {
+                const directionIcon =
+                  change.direction === 'positive' ? (
+                    <ArrowUpRight className="w-4 h-4 text-green" />
+                  ) : change.direction === 'negative' ? (
+                    <ArrowDownRight className="w-4 h-4 text-red" />
+                  ) : (
+                    <ArrowRight className="w-4 h-4 text-amber" />
+                  );
+                const directionBorder =
+                  change.direction === 'positive'
+                    ? 'border-l-green/50'
+                    : change.direction === 'negative'
+                      ? 'border-l-red/50'
+                      : 'border-l-amber/50';
+
+                return (
+                  <div
+                    key={i}
+                    className={`rounded-xl border border-border bg-dark-700 p-5 border-l-3 ${directionBorder}`}
+                    style={{ borderLeftWidth: '3px' }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      {directionIcon}
+                      <h4 className="text-sm font-semibold text-text-primary">
+                        {change.label}
+                      </h4>
+                    </div>
+                    <p className="text-sm text-text-secondary leading-relaxed">
+                      {change.description}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </SectionCard>
+
+        {/* 4. Key Financials */}
+        <SectionCard
+          step={4}
           title="Read the Financials"
           subtitle="Key numbers and what they actually mean"
           icon={<BarChart3 className="w-5 h-5" />}
@@ -129,9 +245,9 @@ export default function CompanyPage() {
           </div>
         </SectionCard>
 
-        {/* 3. Valuation */}
+        {/* 5. Valuation */}
         <SectionCard
-          step={3}
+          step={5}
           title="Think About Valuation"
           subtitle="Is the price reasonable for what you're getting?"
           icon={<Scale className="w-5 h-5" />}
@@ -159,9 +275,9 @@ export default function CompanyPage() {
           </div>
         </SectionCard>
 
-        {/* 4. Bull vs Bear */}
+        {/* 6. Bull vs Bear */}
         <SectionCard
-          step={4}
+          step={6}
           title="Weigh the Arguments"
           subtitle="Every investment has two sides — here's each case made honestly"
           icon={<Swords className="w-5 h-5" />}
@@ -200,9 +316,9 @@ export default function CompanyPage() {
           </div>
         </SectionCard>
 
-        {/* 5. Market Expectations */}
+        {/* 7. Market Expectations */}
         <SectionCard
-          step={5}
+          step={7}
           title="What's Already Priced In"
           subtitle="Understanding what the market expects helps you find where it might be wrong"
           icon={<Globe className="w-5 h-5" />}
@@ -262,9 +378,9 @@ export default function CompanyPage() {
           </div>
         </SectionCard>
 
-        {/* 6. Technical Context */}
+        {/* 8. Technical Context */}
         <SectionCard
-          step={6}
+          step={8}
           title="How the Stock Has Been Behaving"
           subtitle="Price context — not as a trading signal, but to understand market sentiment"
           icon={<Activity className="w-5 h-5" />}
@@ -318,9 +434,9 @@ export default function CompanyPage() {
           </div>
         </SectionCard>
 
-        {/* 7. Your Decision */}
+        {/* 9. Your Decision */}
         <SectionCard
-          step={7}
+          step={9}
           title="Make Your Decision"
           subtitle="Now that you've done the work, what do you think?"
           icon={<Target className="w-5 h-5" />}

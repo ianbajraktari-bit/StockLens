@@ -6,8 +6,72 @@ export const costco: Company = {
   ticker: 'COST',
   logo: '🏪',
   sector: 'Retail / Consumer Staples',
+  sectorId: 'consumer',
+  investmentType: 'Quality Compounder',
   tagline: 'The membership model that Wall Street loves and competitors fear',
   color: '#e31837',
+  lastUpdated: 'March 2026',
+
+  whatMattersNow: {
+    title: 'What Matters Right Now',
+    drivers: [
+      {
+        label: 'Valuation sustainability at 55x earnings',
+        description:
+          'Costco\'s P/E ratio of 55x is near all-time highs for a retailer. Whether this premium is justified depends on the durability of the membership model and whether interest rates remain supportive of quality-premium stocks.',
+        category: 'macro',
+      },
+      {
+        label: 'Membership fee increase impact',
+        description:
+          'The first fee increase in 7 years is flowing through the financials. How members respond — renewal rates, spending patterns, upgrade rates to Executive membership — will validate or challenge the pricing power thesis.',
+        category: 'company-specific',
+      },
+      {
+        label: 'International expansion execution',
+        description:
+          'Only ~300 of 900+ warehouses are outside the U.S. Japan, China, and Europe represent significant growth runways, but international expansion carries execution risk and cultural adaptation challenges.',
+        category: 'company-specific',
+      },
+      {
+        label: 'Consumer spending and trade-down effect',
+        description:
+          'In a weakening economy, consumers historically trade down to Costco for value. But in a strong economy, they spend more per visit. Either scenario tends to benefit Costco — the question is which dynamic dominates.',
+        category: 'macro',
+      },
+    ],
+  },
+
+  whatChanged: {
+    summary:
+      'Costco\'s business continues to execute with remarkable consistency, but the valuation has expanded to levels that make even bulls uncomfortable. The story is less about business risk and more about whether you\'re paying too much for quality.',
+    changes: [
+      {
+        label: 'Valuation: expanded to near-record premium',
+        direction: 'negative',
+        description:
+          'The P/E has risen from the mid-40s to 55x over the past year. The business hasn\'t changed — but the price tag has. Every dollar of earnings is now significantly more expensive to buy.',
+      },
+      {
+        label: 'Membership fee increase: successfully implemented',
+        direction: 'positive',
+        description:
+          'The first fee increase in 7 years has been absorbed with minimal churn. The 93% renewal rate has held steady, validating Costco\'s pricing power and adding ~$500M+ in annual pre-tax income.',
+      },
+      {
+        label: 'E-commerce: accelerating from a low base',
+        direction: 'positive',
+        description:
+          'Online sales are growing 20%+ as Costco invests in same-day delivery through Instacart and its own digital platforms. This is still early innings for a company that has historically been brick-and-mortar focused.',
+      },
+      {
+        label: 'Comp sales growth: steady but not accelerating',
+        direction: 'mixed',
+        description:
+          'Comparable sales of +6.8% are strong for brick-and-mortar retail but haven\'t meaningfully accelerated. At this valuation, the market may need to see growth inflect higher to justify the premium.',
+      },
+    ],
+  },
 
   business: {
     description:

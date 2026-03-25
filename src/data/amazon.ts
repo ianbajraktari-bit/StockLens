@@ -6,8 +6,78 @@ export const amazon: Company = {
   ticker: 'AMZN',
   logo: '📦',
   sector: 'E-Commerce / Cloud Computing',
+  sectorId: 'technology',
+  investmentType: 'Margin Expansion Story',
   tagline: 'The everything store that became the everything company',
   color: '#ff9900',
+  lastUpdated: 'March 2026',
+
+  whatMattersNow: {
+    title: 'What Matters Right Now',
+    drivers: [
+      {
+        label: 'AWS growth re-acceleration from AI workloads',
+        description:
+          'AWS revenue growth has stabilized around 19%, but the market is watching for re-acceleration as enterprise AI workloads scale. A move back above 22% would be a powerful signal that Amazon is capturing its share of the AI infrastructure wave.',
+        category: 'industry',
+      },
+      {
+        label: 'Operating margin trajectory',
+        description:
+          'Amazon\'s operating margin has expanded from ~2% to ~10.7% over the past few years. Whether this expansion continues toward 12-15% — driven by advertising, AWS leverage, and retail efficiency — is the central investment debate.',
+        category: 'company-specific',
+      },
+      {
+        label: 'Consumer spending resilience',
+        description:
+          'With 60% of revenue tied to e-commerce and retail, Amazon\'s top line is sensitive to consumer health. Interest rates, employment trends, and inflation data all feed into whether the retail engine sustains its momentum.',
+        category: 'macro',
+      },
+      {
+        label: 'Capital expenditure returns',
+        description:
+          'Amazon is spending $83B in capex, mostly on AWS data centers and logistics. Investors are scrutinizing whether this massive investment is generating commensurate returns or whether the company is overbuilding ahead of demand.',
+        category: 'company-specific',
+      },
+      {
+        label: 'Regulatory and antitrust pressure',
+        description:
+          'Ongoing antitrust scrutiny over marketplace practices and potential structural remedies could limit Amazon\'s ability to leverage its platform advantages. The outcome remains uncertain but carries significant downside risk.',
+        category: 'geopolitical',
+      },
+    ],
+  },
+
+  whatChanged: {
+    summary:
+      'Amazon\'s story has evolved from a pandemic recovery narrative to a margin expansion and AI beneficiary thesis. The market is re-rating Amazon as a platform company rather than a retailer.',
+    changes: [
+      {
+        label: 'Margins: expanding meaningfully',
+        direction: 'positive',
+        description:
+          'Operating margin has risen from ~2% to ~10.7%, driven by advertising growth, AWS leverage, and retail cost discipline. This is the transformation that Amazon bulls have been waiting for.',
+      },
+      {
+        label: 'Advertising: becoming a profit engine',
+        direction: 'positive',
+        description:
+          'Advertising revenue reached $56.2B growing 24% YoY. This high-margin business is now larger than YouTube\'s ad revenue and is still underpenetrated with Prime Video ads just getting started.',
+      },
+      {
+        label: 'AWS growth: stabilized but not accelerating yet',
+        direction: 'mixed',
+        description:
+          'AWS growth has held around 19% after decelerating from 30%+. The market expected AI to re-accelerate growth, but enterprise adoption has been more gradual than anticipated.',
+      },
+      {
+        label: 'Competition: intensifying at the low end',
+        direction: 'negative',
+        description:
+          'Temu and Shein are capturing price-sensitive shoppers, while Walmart\'s e-commerce improvements pressure the mid-market. Amazon\'s retail moat is being tested from multiple directions.',
+      },
+    ],
+  },
 
   business: {
     description:

@@ -4,8 +4,31 @@ export interface Company {
   ticker: string;
   logo: string;
   sector: string;
+  sectorId: string;
+  investmentType: string;
   tagline: string;
   color: string;
+  lastUpdated: string;
+
+  // What Matters Right Now
+  whatMattersNow: {
+    title: string;
+    drivers: {
+      label: string;
+      description: string;
+      category: 'industry' | 'macro' | 'geopolitical' | 'company-specific';
+    }[];
+  };
+
+  // What Changed
+  whatChanged: {
+    summary: string;
+    changes: {
+      label: string;
+      direction: 'positive' | 'negative' | 'mixed';
+      description: string;
+    }[];
+  };
 
   // Section 1: Business Overview
   business: {
@@ -75,4 +98,26 @@ export interface Company {
       keyMetricToWatch: string;
     };
   };
+}
+
+export interface Sector {
+  id: string;
+  name: string;
+  description: string;
+  color: string;
+  macroFactors: {
+    factor: string;
+    impact: string;
+    relevance: 'high' | 'medium' | 'low';
+  }[];
+  geopoliticalRisks: string[];
+  keyIndicators: string[];
+}
+
+export interface GlossaryTerm {
+  term: string;
+  definition: string;
+  formula?: string;
+  example?: string;
+  category: 'valuation' | 'financial' | 'technical' | 'market';
 }
