@@ -85,7 +85,6 @@ function InsightCard({
 }
 
 export default function FrameworkDebrief({
-  companyName,
   companyColor,
   userStance,
   debrief,

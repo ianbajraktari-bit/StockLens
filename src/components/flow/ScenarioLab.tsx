@@ -101,7 +101,6 @@ function getReturnNarrative(ret: number): string {
 }
 
 export default function ScenarioLab({
-  companyName,
   companyColor,
   scenarioLab,
   locked,

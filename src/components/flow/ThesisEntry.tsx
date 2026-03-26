@@ -47,7 +47,6 @@ const stanceConfig: Record<Stance, { label: string; icon: typeof TrendingUp; col
 };
 
 export default function ThesisEntry({
-  companyName,
   companyLogo,
   companyColor,
   hook,

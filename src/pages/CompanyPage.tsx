@@ -200,7 +200,6 @@ function InteractiveFlow({ company }: { company: Company }) {
 
           {flowData.modules.map((mod, i) => {
             const prevModuleId = i > 0 ? flowData.modules[i - 1].id : null;
-            const isLocked = i > 0 && !completedModuleIds.includes(prevModuleId!);
             const isFirstUnlocked = i === 0 || completedModuleIds.includes(prevModuleId!);
 
             return (
