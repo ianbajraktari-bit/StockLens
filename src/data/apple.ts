@@ -1,4 +1,262 @@
-import type { Company } from './types';
+import type { Company, FlowData } from './types';
+
+const appleFlowData: FlowData = {
+  hook: {
+    headline: 'Apple is the most valuable company on earth.',
+    subheadline: 'The question is not whether it\'s a great business. It\'s whether $3.6 trillion is the right price.',
+    criticalFacts: [
+      {
+        label: 'Market Cap',
+        value: '$3.6T',
+        context: 'Larger than the entire German stock market',
+      },
+      {
+        label: 'P/E Ratio',
+        value: '31x',
+        context: '42% premium to the S&P 500 average',
+      },
+      {
+        label: 'Services Revenue',
+        value: '$96B/yr',
+        context: 'Growing 14%, now 24% of revenue at 70%+ margins',
+      },
+      {
+        label: 'Revenue Growth',
+        value: '~4%',
+        context: 'Modest top-line growth for a company priced like a compounder',
+      },
+    ],
+    initialPrompt: 'In one sentence, what is the single biggest reason for your view?',
+  },
+
+  modules: [
+    {
+      id: 'business-quality',
+      title: 'Business Quality',
+      question: 'What makes Apple genuinely hard to compete with? Name the single strongest element of their moat.',
+      context: 'Great businesses can still be bad investments at the wrong price. But understanding the moat is step one.',
+      evidence: [
+        { content: '2.5 billion active devices worldwide — the largest consumer ecosystem in tech', source: 'Apple Q1 FY2026' },
+        { content: '93%+ iPhone retention rate — users almost never leave', source: 'Consumer Intelligence Research' },
+        { content: 'Services margin: 70%+ vs 36% for hardware products', source: 'Apple earnings' },
+        { content: 'Average Apple household owns 4+ devices, creating compounding switching costs', source: 'Industry estimates' },
+      ],
+      frameworkAnswer: 'Apple\'s moat is not any single product — it\'s the ecosystem. Once a user owns an iPhone, Mac, AirPods, and Watch, the cost of switching becomes enormous. This creates pricing power, recurring revenue, and a flywheel that no competitor has replicated. But the moat is defensive, not offensive. Apple\'s growth now depends on extracting more value from existing users, not acquiring new ones at scale.',
+      keyInsight: 'The moat is real but mature. Growth now comes from monetization depth, not user acquisition.',
+      insightType: 'neutral',
+    },
+    {
+      id: 'what-changed',
+      title: 'What Changed',
+      question: 'Apple\'s stock is up ~40% in the past year despite modest revenue growth. What changed in the story to justify this move?',
+      context: 'Stock prices move on narrative shifts, not just fundamentals. Understanding what changed tells you what the market now believes.',
+      evidence: [
+        { content: 'Services revenue hit $30B/quarter, growing 14% — redefining Apple as a platform', source: 'Apple Q1 FY2026' },
+        { content: 'Apple Intelligence announcement reignited the upgrade cycle narrative', source: 'WWDC 2025' },
+        { content: 'Share buybacks: ~$90B in 12 months, shrinking float aggressively', source: 'Apple capital returns' },
+        { content: 'P/E expanded from ~23x to 31x in two years — a re-rating, not an earnings move', source: 'Market data' },
+      ],
+      frameworkAnswer: 'The market re-rated Apple from a "hardware company" to a "services + ecosystem platform." This narrative shift — not earnings growth — drove the stock. Services momentum, AI optionality, and massive buybacks created a story of durable compounding. The risk? Multiple expansion without proportional earnings growth means the stock is now priced for a future that must actually materialize.',
+      keyInsight: 'The stock moved on narrative, not earnings. That makes it vulnerable if the narrative shifts back.',
+      insightType: 'negative',
+    },
+    {
+      id: 'what-matters-now',
+      title: 'What Matters Now',
+      question: 'If you could only track one metric for Apple over the next 12 months, what would it be and why?',
+      context: 'Knowing what to watch is more valuable than knowing everything. The best investors are ruthlessly selective about what they track.',
+      evidence: [
+        { content: 'Services growth: 16% → 14% → ? — the trend is decelerating slightly', source: 'Apple quarterly filings' },
+        { content: 'iPhone replacement cycle: averaging 4.2 years, the longest ever', source: 'Industry data' },
+        { content: 'China revenue: ~17% of total, under pressure from Huawei resurgence', source: 'Apple segment data' },
+        { content: 'Apple Intelligence adoption: too early to measure revenue impact', source: 'Management commentary' },
+      ],
+      frameworkAnswer: 'Services growth rate is the single most important variable. The entire re-rating from 23x to 31x P/E is built on Apple becoming a platform company. If Services accelerates (AI-driven upgrades, new subscriptions), the premium holds. If it decelerates below 10%, the 31x multiple becomes very difficult to justify and the stock likely re-rates down toward the mid-20s.',
+      keyInsight: 'Apple\'s valuation depends almost entirely on whether Services can sustain 12%+ growth. Everything else is secondary.',
+      insightType: 'neutral',
+    },
+    {
+      id: 'financial-quality',
+      title: 'Financial Quality',
+      question: 'Apple generates $110B in free cash flow on ~$460B revenue, but top-line growth is only ~4%. What does this tell you about the business?',
+      context: 'Numbers alone don\'t tell you much. What matters is what the numbers reveal about where the business is in its lifecycle.',
+      evidence: [
+        { content: 'Gross margin: 48.2% — at multi-year highs, up from 38-42% historically', source: 'Apple earnings' },
+        { content: 'Free cash flow: $110B/year — one of the highest FCF generators in history', source: 'Apple filings' },
+        { content: 'R&D spend: 8% of revenue vs 15-25% for Big Tech peers', source: 'Comparative analysis' },
+        { content: 'Net cash position: ~$0 — deliberately leveraged to neutral for buybacks', source: 'Apple balance sheet' },
+      ],
+      frameworkAnswer: 'Apple\'s financial quality is exceptional — but the pattern reveals a mature business optimizing for profitability rather than growth. Margin expansion, aggressive buybacks, and low R&D intensity (relative to peers) are classic signs of a company extracting maximum value from its current position. This is not a criticism — it\'s an observation about where Apple is in its lifecycle. The question is whether the market is paying a growth multiple for a business exhibiting mature-company behavior.',
+      keyInsight: 'Extraordinary cash generation, but growth is being manufactured through margins and buybacks, not top-line expansion.',
+      insightType: 'negative',
+    },
+    {
+      id: 'valuation',
+      title: 'Valuation',
+      question: 'At 31x earnings, what does the market need to believe about Apple\'s future for the current price to be justified?',
+      context: 'Valuation is not about whether a number is "high" or "low." It\'s about what assumptions the price embeds — and whether you agree with them.',
+      evidence: [
+        { content: 'Historical P/E: 22x (5yr avg), 18x (10yr avg) — current multiple is well above both', source: 'Market data' },
+        { content: 'Forward P/E: 29x — implies ~8-9% EPS growth priced in for next year', source: 'Consensus estimates' },
+        { content: 'If growth slows to 5% and multiple compresses to 25x, that implies ~20% downside', source: 'Scenario analysis' },
+        { content: 'S&P 500 average P/E: ~22x — Apple commands a 42% premium', source: 'Market data' },
+      ],
+      frameworkAnswer: 'At 31x, the market is pricing in: (1) Services growing 12%+ indefinitely, (2) margin expansion continuing, (3) AI creating a meaningful new revenue stream, and (4) no regulatory disruption to the App Store. All four must hold simultaneously. If any single assumption falters, the multiple compresses — and at these levels, even a 4-5x P/E compression on $7.90 EPS means $30-40 per share of downside.',
+      keyInsight: 'The price is paying for perfection. There is very little margin for disappointment.',
+      insightType: 'negative',
+    },
+    {
+      id: 'priced-in',
+      title: 'What\'s Priced In',
+      question: 'What does the current price already assume about Apple\'s future — and what could still surprise the market in either direction?',
+      context: 'Markets are forward-looking. The stock price already reflects a consensus view. Your edge comes from seeing what the consensus is missing.',
+      evidence: [
+        { content: 'Analyst consensus: $210 average price target — only ~3% upside from here', source: 'Wall Street consensus' },
+        { content: 'Implied EPS growth: 8-10% annually for the next 3-5 years', source: 'Reverse DCF analysis' },
+        { content: 'No major regulatory penalty appears to be priced in', source: 'Options market implied vol' },
+        { content: 'AI monetization is priced as optionality, not as a concrete revenue driver', source: 'Analyst notes' },
+      ],
+      frameworkAnswer: 'The price already assumes: steady Services growth, successful AI integration, stable margins, and no China disruption. What\'s NOT priced in: a breakout AI monetization story (upside surprise) or a significant App Store antitrust ruling (downside surprise). The market has priced in "good." The stock moves from here on "great" or "bad" — the base case is already in the share price.',
+      keyInsight: 'The consensus is already in the price. You need a differentiated view to justify buying or selling from here.',
+      insightType: 'neutral',
+    },
+    {
+      id: 'thesis-breaker',
+      title: 'What Breaks the Thesis',
+      question: 'What single development would most damage the bull case for Apple?',
+      context: 'The best investors spend more time thinking about what could go wrong than what could go right. This is where conviction gets tested.',
+      evidence: [
+        { content: 'EU Digital Markets Act is actively being enforced against Apple\'s App Store', source: 'EU Commission' },
+        { content: 'US DOJ antitrust case targeting Apple\'s ecosystem practices', source: 'Department of Justice' },
+        { content: 'Services margin compression of 5% would reduce overall EPS by ~4%', source: 'Sensitivity analysis' },
+        { content: 'China revenue already down 8% YoY with Huawei gaining share rapidly', source: 'Apple segment data' },
+      ],
+      frameworkAnswer: 'Regulation targeting the App Store is the most underappreciated risk. The App Store is the crown jewel of Services — high margin, recurring, and structurally protected by Apple\'s control of iOS. If Apple is forced to meaningfully reduce commissions or allow sideloading globally (not just EU), it directly hits the segment that the entire valuation re-rating depends on. A 5-point margin compression in Services would remove ~$3-4B of annual profit.',
+      keyInsight: 'Regulation is the thesis killer because it targets the exact segment the market is paying a premium for.',
+      insightType: 'negative',
+    },
+  ],
+
+  scenarioLab: {
+    intro: 'Every investment is a bet on specific variables. Make your assumptions explicit and see what they imply about the stock.',
+    currentRevenue: 460,
+    currentMarketCap: 3640,
+    defaults: { revenueGrowth: 8, operatingMargin: 30, multiple: 31 },
+    presets: [
+      {
+        name: 'bull',
+        growth: 12,
+        margin: 33,
+        multiple: 35,
+        narrative: 'Services accelerates via AI-driven upgrades. Apple Intelligence creates a premium subscription tier. App Store maintains pricing power globally. Multiple expands as market reclassifies Apple as a platform.',
+      },
+      {
+        name: 'base',
+        growth: 6,
+        margin: 30,
+        multiple: 28,
+        narrative: 'Services grows steadily but decelerates to high-single-digits. iPhone cycles remain tepid. AI is a nice feature, not a growth driver. Buybacks keep EPS growing faster than revenue.',
+      },
+      {
+        name: 'bear',
+        growth: 2,
+        margin: 27,
+        multiple: 22,
+        narrative: 'Services growth stalls below 10%. Regulation forces meaningful App Store concessions in the EU and US. Market reclassifies Apple as a mature hardware business with a shrinking premium.',
+      },
+    ],
+    marketImplied: {
+      narrative: 'The current price implies ~8% annual EPS growth for the next 5 years, with margins stable or expanding. Essentially, something between the base and bull case is already priced in — the stock needs the bull case to materialize for meaningful upside.',
+      growth: '~8% revenue growth',
+      margin: '~30-31% operating margin',
+      multiple: '28-31x P/E sustained',
+    },
+  },
+
+  stressTest: {
+    questions: [
+      {
+        id: 'prove-wrong',
+        question: 'What specific evidence would prove your thesis wrong?',
+        hint: 'Think about a concrete datapoint, not a vague risk.',
+      },
+      {
+        id: 'next-quarter',
+        question: 'What do you need to see in Apple\'s next earnings report to feel more confident?',
+        hint: 'Be specific — which metric, which segment, which trend.',
+      },
+      {
+        id: 'underweighted-risk',
+        question: 'What risk are you most likely underweighting right now?',
+        hint: 'The risk you dismiss most quickly is often the one worth examining.',
+      },
+      {
+        id: 'key-variable',
+        question: 'Which matters most for the next 2 years: Services growth, iPhone cycles, regulation, China, or AI monetization?',
+        hint: 'Pick one and explain why it dominates the others.',
+      },
+    ],
+    keyVariables: [
+      {
+        variable: 'Services growth rate',
+        importance: 'critical',
+        description: 'The entire re-rating depends on this. Below 10% and the premium unwinds.',
+      },
+      {
+        variable: 'App Store regulatory outcomes',
+        importance: 'critical',
+        description: 'Directly threatens the highest-margin revenue stream driving the bull case.',
+      },
+      {
+        variable: 'China market stability',
+        importance: 'high',
+        description: '17% of revenue with competitive and geopolitical pressure mounting.',
+      },
+      {
+        variable: 'iPhone replacement cycles',
+        importance: 'high',
+        description: 'If cycles extend beyond 4.5 years, hardware growth stalls further.',
+      },
+      {
+        variable: 'AI monetization timeline',
+        importance: 'moderate',
+        description: 'Currently priced as optionality. A clear revenue model would be upside surprise.',
+      },
+    ],
+    sophisticatedView: {
+      whatToWatch: [
+        'Services growth rate excluding the Google search deal — strips out the most vulnerable component',
+        'App Store revenue per user in EU post-DMA — early signal of regulatory margin impact',
+        'China iPhone install base (not just revenue) — reveals whether users are leaving the ecosystem',
+        'Services as a percentage of total gross profit — the real measure of the platform transition',
+      ],
+      disconfirmingEvidence: [
+        'Two consecutive quarters of Services growth below 10%',
+        'Meaningful App Store commission reduction in a major market (US, China, or EU)',
+        'iPhone installed base decline in any major geography',
+        'Gross margin compression driven by Services mix shift slowing',
+      ],
+      strongestCounter: 'Apple is a mature hardware business being priced like a growth platform. At 31x earnings with ~4% revenue growth, the stock needs everything to go right. The market is paying for the Services narrative, but that business depends on a regulatory moat — App Store pricing power — that is under direct, escalating attack globally. If you strip out the Google search licensing deal (~$20B/yr), Services growth looks less impressive and more fragile than the headline number suggests.',
+    },
+  },
+
+  debrief: {
+    frameworkLabel: 'World-Class Business, Fully Priced',
+    synthesis: 'Apple is an exceptional business with a durable moat, extraordinary cash generation, and one of the most loyal customer bases in history. The Services transition is real and meaningful. But at $3.6 trillion, the stock is priced for a future that requires continued Services acceleration, successful AI integration, no regulatory disruption, and stable China operations — simultaneously. The risk-reward from here favors patience over aggression.',
+    strongestBull: 'The ecosystem is a flywheel that competitors cannot replicate. Services is still in the early innings of monetizing 2.5 billion devices. Apple Intelligence creates a new upgrade cycle, and the company\'s capital return program provides a persistent EPS tailwind. If Services reaches 30%+ of revenue, the margin profile justifies 35x or higher.',
+    strongestBear: 'Apple is a mature hardware company being priced like a growth platform. At 31x with ~4% revenue growth, the stock has significant downside if Services decelerates or regulation compresses App Store margins. The market is paying for perfection, and the asymmetry favors the downside on any negative surprise.',
+    marketBelief: 'The market believes Apple will complete its transition from hardware-led to services-led, sustaining premium margins and 8-10% EPS growth. This is the base case — already priced in.',
+    whereMarketWrong: 'The market may be underpricing regulatory risk to the App Store (the crown jewel of Services) and overpricing AI\'s near-term impact on Apple\'s revenue. The Google search deal (~$20B/yr) is also an underappreciated concentration risk within Services.',
+    bestForInvestor: 'This setup suits investors who want quality and stability with moderate single-digit annual returns. It does NOT suit investors seeking asymmetric upside — the risk/reward at 31x is compressed. If you demand a margin of safety, Apple doesn\'t offer one at current levels.',
+    whatChangesConclusion: [
+      'Services growth accelerates above 15% for 2+ quarters — more bullish',
+      'Major App Store regulatory action in US or China — significantly more bearish',
+      'AI drives a measurable iPhone upgrade acceleration visible in data — more bullish',
+      'Multiple quarters of Services deceleration below 10% — more bearish',
+      'P/E compresses to 25x or below on a market correction — better entry point, more constructive',
+    ],
+  },
+};
 
 export const apple: Company = {
   id: 'apple',
@@ -297,6 +555,8 @@ export const apple: Company = {
     { month: 'Jan 26', event: 'Pullback as EU DMA enforcement intensified against App Store' },
     { month: 'Mar 26', event: 'Recovery as Services momentum and AI features sustained upgrade demand' },
   ],
+
+  flowData: appleFlowData,
 
   decisionResponses: {
     bullish: {
