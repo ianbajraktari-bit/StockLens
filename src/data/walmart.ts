@@ -259,6 +259,39 @@ export const walmart: Company = {
     ],
   },
 
+  thinkFirstQuestions: {
+    businessRisk: 'Walmart is the world\'s largest retailer, now trading at 35x earnings. For a company that makes 56% of revenue from groceries, what is the biggest risk that could compress the multiple?',
+    valuationView: 'Two years ago, Walmart traded at 22x earnings. Now it\'s at 35x. The business is better, but is it 60% better? What would you need to believe to pay 35x for a retailer?',
+    narrativeShift: 'Walmart has been re-rated from "traditional retailer" to "tech-enabled platform company." What specifically about the business changed to justify this re-rating?',
+  },
+
+  scenarioDefaults: {
+    currentRevenue: 713,
+    currentMargin: 4.1,
+    currentMultiple: 35,
+    currentMarketCap: 770,
+  },
+
+  valuationImplied: {
+    currentPE: '35x',
+    implications: [
+      'Walmart Connect (advertising) continues growing 25-30% annually and reaches $5B+ in revenue, fundamentally changing the margin structure',
+      'E-commerce reaches profitability on a standalone basis within 2 years as fulfillment efficiency improves',
+      'Operating margins expand from 4.1% toward 5%+ driven by advertising, automation, and mix shift',
+      'The grocery business maintains market share leadership as consumers continue trading down to Walmart for value',
+    ],
+    summary: 'At 35x earnings, you are betting that Walmart is transforming into a platform company with a margin structure that looks more like Amazon than traditional retail. If Walmart Connect scales as bulls expect, the margin expansion thesis holds. If advertising growth slows or tariffs squeeze margins, the multiple compresses back toward 22-25x — a 30%+ downside.',
+  },
+
+  chartNarrative: [
+    { month: 'Apr 25', event: 'Starting to climb as defensive positioning attracted capital and e-commerce growth impressed' },
+    { month: 'Jun 25', event: 'Steady gains as Walmart Connect advertising metrics exceeded expectations' },
+    { month: 'Sep 25', event: 'Acceleration higher on strong back-to-school results and market share gains' },
+    { month: 'Nov 25', event: 'Continued rally as digital price tag rollout and automation narrative gained traction' },
+    { month: 'Feb 26', event: 'All-time high at $135 as valuation re-rating reached peak optimism' },
+    { month: 'Mar 26', event: 'Sharp pullback to $121 on tariff concerns and questions about valuation sustainability' },
+  ],
+
   decisionResponses: {
     bullish: {
       whatNeedsToHappen: [

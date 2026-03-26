@@ -251,6 +251,41 @@ export const nvidia: Company = {
     ],
   },
 
+  thinkFirstQuestions: {
+    businessRisk: 'NVIDIA dominates AI infrastructure today. What do you think is the biggest threat to that dominance over the next 3 years?',
+    valuationView: 'NVIDIA trades at ~35x earnings with 65% revenue growth. Would you pay this multiple? What growth rate would you need to see to justify it?',
+    narrativeShift: 'A year ago, the question was "can NVIDIA sustain this growth?" Now it\'s "how long does the cycle last?" What changed, and does it matter for the investment?',
+  },
+
+  scenarioDefaults: {
+    currentRevenue: 216,
+    currentMargin: 60,
+    currentMultiple: 35,
+    currentMarketCap: 4200,
+  },
+
+  valuationImplied: {
+    currentPE: '~35x',
+    implications: [
+      'AI infrastructure spending continues growing 30%+ annually for at least 2-3 more years',
+      'NVIDIA maintains 80%+ market share in AI training chips despite custom silicon efforts by Google, Amazon, and Microsoft',
+      'Gross margins stay above 70% as the Blackwell architecture ramps without meaningful pricing pressure from AMD or others',
+      'Export controls do not materially expand beyond current restrictions, preserving the addressable market',
+    ],
+    summary: 'At 35x earnings, you are paying for a company that must sustain extraordinary growth in an industry where the spending cycle length is genuinely uncertain. The valuation is reasonable if AI is a generational platform shift, but expensive if spending normalizes within 2 years.',
+  },
+
+  chartNarrative: [
+    { month: 'Apr 25', event: 'Post-earnings pullback as market digested China export restriction impact' },
+    { month: 'May 25', event: 'Strong rally on Q1 earnings beat and raised full-year guidance' },
+    { month: 'Jun 25', event: 'Peak optimism as hyperscaler capex commitments exceeded expectations' },
+    { month: 'Jul 25', event: 'Rotation out of AI stocks on profit-taking and sector rotation' },
+    { month: 'Aug 25', event: 'Correction deepens on broader market selloff and China concerns' },
+    { month: 'Oct 25', event: 'Recovery begins as Blackwell production ramp confirmed on schedule' },
+    { month: 'Feb 26', event: 'New highs on blowout Q4 earnings: $68.1B revenue, $78B Q1 guidance' },
+    { month: 'Mar 26', event: 'Continued momentum as market prices in sustained AI spending cycle' },
+  ],
+
   decisionResponses: {
     bullish: {
       whatNeedsToHappen: [

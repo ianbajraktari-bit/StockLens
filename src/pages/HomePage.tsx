@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, TrendingUp, BookOpen, Brain, Zap } from 'lucide-react';
+import { ArrowRight, TrendingUp, BookOpen, Brain, Zap, CheckCircle2 } from 'lucide-react';
 import { companies } from '../data/companies';
+import ProgressTracker from '../components/ProgressTracker';
+import { useProgress } from '../hooks/useProgress';
 
 const investmentTypeColors: Record<string, string> = {
   'High Expectations Growth': 'bg-green/10 text-green border-green/20',
@@ -14,6 +16,9 @@ const investmentTypeColors: Record<string, string> = {
 };
 
 export default function HomePage() {
+  const { getScorecard, getCompanyProgress } = useProgress();
+  const scorecard = getScorecard();
+
   return (
     <div className="min-h-screen pt-16">
       {/* Hero Section */}
@@ -94,6 +99,11 @@ export default function HomePage() {
         </motion.div>
       </section>
 
+      {/* Progress Tracker */}
+      <section className="mx-auto max-w-6xl px-6 pb-8">
+        <ProgressTracker scorecard={scorecard} />
+      </section>
+
       {/* Company Cards */}
       <section className="mx-auto max-w-6xl px-6 pb-24">
         <motion.div
@@ -112,7 +122,12 @@ export default function HomePage() {
         </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {companies.map((company, i) => (
+          {companies.map((company, i) => {
+            const compProgress = getCompanyProgress(company.id);
+            const isCompleted = !!compProgress.completedAt;
+            const isStarted = compProgress.sectionsCompleted.length > 0 || !!compProgress.decision;
+
+            return (
             <motion.div
               key={company.id}
               initial={{ opacity: 0, y: 20 }}
@@ -126,16 +141,23 @@ export default function HomePage() {
               >
                 <div className="flex items-center gap-4 mb-3">
                   <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0"
+                    className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0 relative"
                     style={{ backgroundColor: `${company.color}15` }}
                   >
                     {company.logo}
+                    {isCompleted && (
+                      <CheckCircle2 className="w-4 h-4 text-green absolute -top-1 -right-1" />
+                    )}
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-text-primary">
                       {company.name}
                     </h3>
-                    <p className="text-sm text-text-muted">{company.ticker}</p>
+                    <p className="text-sm text-text-muted">
+                      {company.ticker}
+                      {isStarted && !isCompleted && ' · In progress'}
+                      {isCompleted && ' · Completed'}
+                    </p>
                   </div>
                 </div>
 
@@ -164,7 +186,8 @@ export default function HomePage() {
                 </div>
               </Link>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
       </section>
 

@@ -263,6 +263,39 @@ export const amazon: Company = {
     ],
   },
 
+  thinkFirstQuestions: {
+    businessRisk: 'Amazon operates three very different businesses: retail, cloud (AWS), and advertising. Which one do you think faces the biggest competitive threat, and why?',
+    valuationView: 'Amazon trades at 33x earnings, but operating margins have expanded from 2% to 10.7%. Would you pay this multiple based on where margins are, or where they could go?',
+    narrativeShift: 'Amazon\'s story has shifted from "growth at all costs" to "margin expansion." What specifically drove that change, and is the new narrative more or less investable?',
+  },
+
+  scenarioDefaults: {
+    currentRevenue: 638,
+    currentMargin: 10.7,
+    currentMultiple: 33,
+    currentMarketCap: 2000,
+  },
+
+  valuationImplied: {
+    currentPE: '33x',
+    implications: [
+      'AWS re-accelerates growth to 20%+ as enterprise AI workloads scale, maintaining its cloud market leadership',
+      'Operating margins continue expanding toward 12-15% as advertising and AWS scale while retail efficiency improves',
+      'The advertising business sustains 20%+ growth and approaches $70B+ in annual revenue within 2 years',
+      'Massive capital expenditure ($83B) generates returns visible in AWS margin stability and revenue acceleration',
+    ],
+    summary: 'At 33x earnings, you are betting that Amazon is in the early innings of a margin expansion story. If margins reach 15%, today\'s price could look cheap. If margin expansion stalls at 11%, you are overpaying for a company growing revenue at 12%.',
+  },
+
+  chartNarrative: [
+    { month: 'Apr 25', event: 'Trading near lows as market questioned AWS growth deceleration' },
+    { month: 'Jun 25', event: 'Rally on improving margin trajectory and strong Prime Day results' },
+    { month: 'Aug 25', event: 'Pullback on broader market weakness and competition concerns from Temu/Shein' },
+    { month: 'Nov 25', event: 'New highs on Q3 earnings showing advertising acceleration and margin expansion' },
+    { month: 'Jan 26', event: 'Continued strength as AWS AI workloads showed growth re-acceleration signals' },
+    { month: 'Feb 26', event: 'Mild pullback as market rotated out of mega-cap tech' },
+  ],
+
   decisionResponses: {
     bullish: {
       whatNeedsToHappen: [

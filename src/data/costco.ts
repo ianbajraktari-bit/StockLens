@@ -239,6 +239,39 @@ export const costco: Company = {
     ],
   },
 
+  thinkFirstQuestions: {
+    businessRisk: 'Costco has a 93% membership renewal rate and a business model competitors have failed to replicate. What could actually go wrong here?',
+    valuationView: 'Costco trades at 55x earnings for a retailer growing at 7%. Is this a reasonable price for quality and predictability, or has the market gone too far?',
+    narrativeShift: 'Costco\'s business hasn\'t changed much, but its valuation multiple has expanded from the mid-40s to 55x. What changed in how the market views this company?',
+  },
+
+  scenarioDefaults: {
+    currentRevenue: 265,
+    currentMargin: 3.7,
+    currentMultiple: 55,
+    currentMarketCap: 460,
+  },
+
+  valuationImplied: {
+    currentPE: '55x',
+    implications: [
+      'Membership renewal rates stay above 90% indefinitely, proving the model is essentially recession-proof',
+      'International expansion adds 25-30 warehouses per year with unit economics comparable to the U.S.',
+      'The company can raise membership fees every 5-7 years without meaningful churn',
+      'Interest rates remain low enough that investors continue paying a premium for predictable, defensive businesses',
+    ],
+    summary: 'At 55x earnings, Costco is priced as a bond-like quality compounder in a world starved for predictability. You are paying for near-zero business risk — but "valuation risk" is the trade-off. If the market decides 45x is the right multiple, the stock drops 18% even if the business executes perfectly.',
+  },
+
+  chartNarrative: [
+    { month: 'Apr 25', event: 'Steady climb as defensive positioning attracted capital during market uncertainty' },
+    { month: 'Jul 25', event: 'Brief dip on broader market rotation out of consumer staples' },
+    { month: 'Aug 25', event: 'Quick recovery as fee increase announcement was received positively' },
+    { month: 'Nov 25', event: 'New highs on strong holiday season comps and membership growth' },
+    { month: 'Jan 26', event: 'Peak valuation as institutional investors piled into quality names' },
+    { month: 'Feb 26', event: 'Minor pullback as rising rate concerns pressured high-multiple stocks' },
+  ],
+
   decisionResponses: {
     bullish: {
       whatNeedsToHappen: [

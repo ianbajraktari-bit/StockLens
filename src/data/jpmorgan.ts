@@ -259,6 +259,39 @@ export const jpmorgan: Company = {
     ],
   },
 
+  thinkFirstQuestions: {
+    businessRisk: 'JPMorgan has a $4.4 trillion balance sheet and the most respected CEO in banking. What scenario would cause the biggest earnings hit, even for a bank this strong?',
+    valuationView: 'JPMorgan trades at ~14x earnings — cheap by market standards but at the high end for banks. Is this a fair price for the best-managed bank, or is the "Dimon premium" overdone?',
+    narrativeShift: 'JPMorgan has been called a "boring" bank stock for years, yet it\'s near all-time highs. What changed in how investors think about bank quality versus bank growth?',
+  },
+
+  scenarioDefaults: {
+    currentRevenue: 186,
+    currentMargin: 31,
+    currentMultiple: 14,
+    currentMarketCap: 800,
+  },
+
+  valuationImplied: {
+    currentPE: '~14x',
+    implications: [
+      'The economy achieves a soft landing without a recession that triggers significant credit losses',
+      'Net interest income holds near $103B as rate cuts proceed gradually without compressing margins sharply',
+      'Investment banking fees continue recovering as M&A and IPO activity normalizes',
+      'Jamie Dimon\'s successor maintains the operational discipline that has driven 18-21% ROTCE consistently',
+    ],
+    summary: 'At 14x earnings, JPMorgan is priced as the best bank in a benign economic environment. The multiple is cheap by broad market standards but rich for a bank. If a recession hits, earnings could drop 25-30% and the stock would follow. If the soft landing holds, steady compounding continues.',
+  },
+
+  chartNarrative: [
+    { month: 'Apr 25', event: 'Recovery from banking sector fears as Q1 results showed resilient credit quality' },
+    { month: 'Jun 25', event: 'Rally on strong investment banking fee recovery and Payments growth' },
+    { month: 'Aug 25', event: 'Pullback on recession concerns and rising credit card delinquencies' },
+    { month: 'Oct 25', event: 'Rebound as Q3 earnings beat and Dimon expressed cautious optimism' },
+    { month: 'Jan 26', event: 'New all-time high on record Q4 results: $5.23 EPS beating $4.92 estimates' },
+    { month: 'Mar 26', event: 'Mild correction as rate cut expectations shifted and NII guidance was digested' },
+  ],
+
   decisionResponses: {
     bullish: {
       whatNeedsToHappen: [
