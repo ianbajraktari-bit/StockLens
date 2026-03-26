@@ -80,6 +80,34 @@ export interface Company {
     priceHistory: { month: string; price: number }[];
   };
 
+  // Interactive: Think First questions
+  thinkFirstQuestions: {
+    businessRisk: string;
+    valuationView: string;
+    narrativeShift: string;
+  };
+
+  // Interactive: Scenario config
+  scenarioDefaults: {
+    currentRevenue: number; // in billions
+    currentMargin: number; // operating margin %
+    currentMultiple: number; // P/E
+    currentMarketCap: number; // in billions
+  };
+
+  // Interactive: Valuation implications
+  valuationImplied: {
+    currentPE: string;
+    implications: string[];
+    summary: string;
+  };
+
+  // Interactive: Chart narrative events
+  chartNarrative: {
+    month: string;
+    event: string;
+  }[];
+
   // Section 7: Decision Responses
   decisionResponses: {
     bullish: {

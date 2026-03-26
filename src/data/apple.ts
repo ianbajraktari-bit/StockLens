@@ -264,6 +264,40 @@ export const apple: Company = {
     ],
   },
 
+  thinkFirstQuestions: {
+    businessRisk: 'Apple has 2.5 billion active devices and a 93%+ retention rate. With that kind of lock-in, what do you think is the biggest risk to the business over the next 5 years?',
+    valuationView: 'Apple trades at 31x earnings. Services is growing at 14% with 70%+ margins, but iPhone still represents 52% of revenue. Is this a hardware company or a platform company? Does it matter for the valuation?',
+    narrativeShift: 'Apple\'s story has shifted from "iPhone dependency" to "platform transition" as Services grows. What specifically changed in the business that enabled this re-rating?',
+  },
+
+  scenarioDefaults: {
+    currentRevenue: 460,
+    currentMargin: 30,
+    currentMultiple: 31,
+    currentMarketCap: 3640,
+  },
+
+  valuationImplied: {
+    currentPE: '31x',
+    implications: [
+      'Services revenue continues growing at 12-15% annually, reaching 30%+ of total revenue within 2-3 years',
+      'Apple Intelligence drives a meaningful iPhone upgrade cycle, sustaining hardware revenue growth in the high single digits',
+      'App Store regulatory risks (EU DMA, potential U.S. legislation) do not materially compress Services margins below 65%',
+      'The installed base continues expanding, particularly in emerging markets like India, providing a growing foundation for Services monetization',
+    ],
+    summary: 'At 31x earnings, you are paying for a successful platform transition — from cyclical hardware company to recurring-revenue ecosystem. If Services reaches 30% of revenue, the blended margin profile justifies 35x+. If regulatory action compresses App Store margins, the premium unwinds quickly.',
+  },
+
+  chartNarrative: [
+    { month: 'Apr 25', event: 'Recovery from tariff-driven selloff as supply chain fears eased' },
+    { month: 'May 25', event: 'Strong rally on iPhone 16 demand data exceeding expectations' },
+    { month: 'Jul 25', event: 'Apple Intelligence announcement at WWDC drove upgrade cycle optimism' },
+    { month: 'Aug 25', event: 'Brief pullback on China competitive concerns as Huawei gained share' },
+    { month: 'Dec 25', event: 'New highs on record Q1 FY2026 revenue of $143.8B' },
+    { month: 'Jan 26', event: 'Pullback as EU DMA enforcement intensified against App Store' },
+    { month: 'Mar 26', event: 'Recovery as Services momentum and AI features sustained upgrade demand' },
+  ],
+
   decisionResponses: {
     bullish: {
       whatNeedsToHappen: [

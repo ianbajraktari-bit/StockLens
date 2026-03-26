@@ -253,6 +253,39 @@ export const visa: Company = {
     ],
   },
 
+  thinkFirstQuestions: {
+    businessRisk: 'Visa processes $15 trillion in annual payment volume with 50% net margins. With a business this dominant, what could actually disrupt it? Think about technology, regulation, and competition.',
+    valuationView: 'Visa trades at 28x earnings with 11% revenue growth and 50% net margins. The stock has never been "cheap." Is a premium-forever valuation justified for a toll booth monopoly?',
+    narrativeShift: 'Visa\'s fundamental story hasn\'t changed much — cash keeps going digital. But new competitors (UPI, Pix, FedNow) are proving that card networks aren\'t the only way. How should investors weigh this?',
+  },
+
+  scenarioDefaults: {
+    currentRevenue: 41,
+    currentMargin: 65,
+    currentMultiple: 28,
+    currentMarketCap: 579,
+  },
+
+  valuationImplied: {
+    currentPE: '28x',
+    implications: [
+      'The global cash-to-digital transition continues at mid-single-digit payment volume growth for the next decade',
+      'Regulatory actions (Credit Card Competition Act, EU interchange reviews) do not materially disrupt network economics',
+      'Real-time payment networks (FedNow, UPI) remain complementary rather than substitutional to card networks in developed markets',
+      'Cross-border volumes continue growing at high teens rates as international travel and e-commerce expand',
+    ],
+    summary: 'At 28x earnings, Visa is priced as a perpetual compounder with a wide moat. The question isn\'t whether Visa is a great business — it clearly is. The question is whether 28x adequately compensates you for regulatory tail risk and the possibility that real-time payments eventually bypass card rails.',
+  },
+
+  chartNarrative: [
+    { month: 'Apr 25', event: 'Steady trading as cross-border volume recovery supported results' },
+    { month: 'Jun 25', event: 'Rally on strong fiscal Q3 showing international transaction strength' },
+    { month: 'Aug 25', event: 'Pullback as Credit Card Competition Act gained congressional momentum' },
+    { month: 'Nov 25', event: 'New highs as regulatory fears eased and holiday spending data came in strong' },
+    { month: 'Jan 26', event: 'Brief peak before rotation out of quality/defensive names' },
+    { month: 'Mar 26', event: 'Pullback to support as investors weighed valuation against growth durability' },
+  ],
+
   decisionResponses: {
     bullish: {
       whatNeedsToHappen: [
