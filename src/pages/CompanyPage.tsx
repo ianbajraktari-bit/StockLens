@@ -1,4 +1,5 @@
 import { useParams, Navigate } from 'react-router-dom';
+import { useCallback } from 'react';
 import { motion } from 'framer-motion';
 import {
   Building2,
@@ -52,6 +53,13 @@ export default function CompanyPage() {
     saveReflections,
     saveScenarioConfig,
   } = useProgress();
+
+  const handleScenarioChange = useCallback(
+    (config: { revenueGrowth: number; operatingMargin: number; multiple: number }) => {
+      if (company) saveScenarioConfig(company.id, config);
+    },
+    [company?.id, saveScenarioConfig],
+  );
 
   if (!company) return <Navigate to="/" replace />;
 
@@ -361,9 +369,7 @@ export default function CompanyPage() {
             currentMultiple={company.scenarioDefaults.currentMultiple}
             currentMarketCap={company.scenarioDefaults.currentMarketCap}
             defaults={progress.scenarioConfig ?? undefined}
-            onConfigChange={(config) =>
-              saveScenarioConfig(company.id, config)
-            }
+            onConfigChange={handleScenarioChange}
           />
         </SectionCard>
 
