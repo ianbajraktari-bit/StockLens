@@ -1,5 +1,5 @@
 import { useParams, Navigate } from 'react-router-dom';
-import { useCallback } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Building2,
@@ -26,7 +26,15 @@ import SourceBadge from '../components/SourceBadge';
 import ScenarioSliders from '../components/ScenarioSliders';
 import ValuationImplied from '../components/ValuationImplied';
 import ReflectionPrompt from '../components/ReflectionPrompt';
+import ThesisEntry from '../components/flow/ThesisEntry';
+import InvestingModule from '../components/flow/InvestingModule';
+import ScenarioLab from '../components/flow/ScenarioLab';
+import StressTest from '../components/flow/StressTest';
+import FrameworkDebrief from '../components/flow/FrameworkDebrief';
 import { useProgress } from '../hooks/useProgress';
+import type { Company } from '../data/types';
+
+// ── Legacy flow helpers ─────────────────────────────────────────────
 
 const categoryLabels: Record<string, string> = {
   industry: 'Industry',
@@ -42,9 +50,266 @@ const categoryColors: Record<string, string> = {
   'company-specific': 'bg-green/15 text-green border-green/20',
 };
 
+// ── Main Component ──────────────────────────────────────────────────
+
 export default function CompanyPage() {
   const { id } = useParams<{ id: string }>();
   const company = id ? getCompanyById(id) : undefined;
+
+  if (!company) return <Navigate to="/" replace />;
+
+  // Route to the appropriate flow
+  if (company.flowData) {
+    return <InteractiveFlow company={company} />;
+  }
+  return <LegacyFlow company={company} />;
+}
+
+// ── Interactive Flow (new redesigned experience) ────────────────────
+
+function InteractiveFlow({ company }: { company: Company }) {
+  const { getFlowState, updateFlowState } = useProgress();
+  const flowData = company.flowData!;
+  const flow = getFlowState(company.id);
+
+  const modulesRef = useRef<HTMLDivElement>(null);
+  const scenarioRef = useRef<HTMLDivElement>(null);
+  const stressRef = useRef<HTMLDivElement>(null);
+  const debriefRef = useRef<HTMLDivElement>(null);
+
+  const scrollTo = (ref: React.RefObject<HTMLDivElement | null>) => {
+    setTimeout(() => {
+      ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 400);
+  };
+
+  // Part 1: hook completed?
+  const hookCompleted = flow.initialStance !== null && flow.initialReason.length > 0;
+
+  // Part 2: which modules are unlocked?
+  const completedModuleIds = Object.keys(flow.moduleAnswers);
+  const allModulesCompleted = flowData.modules.every((m) => completedModuleIds.includes(m.id));
+
+  // Part 3: scenario explored?
+  const scenarioUnlocked = allModulesCompleted;
+  const scenarioExplored = flow.scenarioExplored;
+
+  // Part 4: stress test
+  const stressUnlocked = scenarioExplored;
+  const stressCompleted = flow.stressTestCompleted;
+
+  // Part 5: debrief
+  const debriefUnlocked = stressCompleted;
+
+  // ── Handlers ──
+
+  const handleHookComplete = useCallback(
+    (stance: 'bullish' | 'bearish' | 'unsure', reason: string) => {
+      updateFlowState(company.id, (prev) => ({
+        ...prev,
+        initialStance: stance,
+        initialReason: reason,
+      }));
+      scrollTo(modulesRef);
+    },
+    [company.id, updateFlowState],
+  );
+
+  const handleModuleComplete = useCallback(
+    (moduleId: string, answer: string) => {
+      updateFlowState(company.id, (prev) => ({
+        ...prev,
+        moduleAnswers: { ...prev.moduleAnswers, [moduleId]: answer },
+        modulesRevealed: [...prev.modulesRevealed, moduleId],
+      }));
+    },
+    [company.id, updateFlowState],
+  );
+
+  const handleScenarioExplore = useCallback(() => {
+    updateFlowState(company.id, (prev) => ({
+      ...prev,
+      scenarioExplored: true,
+    }));
+  }, [company.id, updateFlowState]);
+
+  const handleStressComplete = useCallback(
+    (answers: Record<string, string>) => {
+      updateFlowState(company.id, (prev) => ({
+        ...prev,
+        stressTestAnswers: answers,
+        stressTestCompleted: true,
+      }));
+      scrollTo(debriefRef);
+    },
+    [company.id, updateFlowState],
+  );
+
+  // Auto-scroll to scenario lab when all modules are done
+  const prevAllModulesCompleted = useRef(allModulesCompleted);
+  useEffect(() => {
+    if (allModulesCompleted && !prevAllModulesCompleted.current) {
+      scrollTo(scenarioRef);
+    }
+    prevAllModulesCompleted.current = allModulesCompleted;
+  }, [allModulesCompleted]);
+
+  // Auto-scroll to stress test when scenario explored
+  const prevScenarioExplored = useRef(scenarioExplored);
+  useEffect(() => {
+    if (scenarioExplored && !prevScenarioExplored.current) {
+      scrollTo(stressRef);
+    }
+    prevScenarioExplored.current = scenarioExplored;
+  }, [scenarioExplored]);
+
+  return (
+    <div className="min-h-screen pt-16">
+      {/* Part 1: Thesis Entry / Hook */}
+      <div className="mx-auto max-w-3xl px-6 py-10">
+        <ThesisEntry
+          companyName={company.name}
+          companyLogo={company.logo}
+          companyColor={company.color}
+          hook={flowData.hook}
+          savedStance={flow.initialStance}
+          savedReason={flow.initialReason || undefined}
+          onComplete={handleHookComplete}
+        />
+      </div>
+
+      {/* Part 2: Thinking Modules */}
+      {hookCompleted && (
+        <div ref={modulesRef} className="mx-auto max-w-3xl px-6 py-10 space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-2"
+          >
+            <p className="text-xs font-semibold text-accent-light uppercase tracking-widest mb-1">
+              Part 2
+            </p>
+            <h2 className="text-2xl font-bold text-text-primary">
+              Test Your Thinking
+            </h2>
+            <p className="text-sm text-text-muted mt-1">
+              Seven questions. Each one forces you to commit before seeing the framework answer.
+            </p>
+          </motion.div>
+
+          {flowData.modules.map((mod, i) => {
+            const prevModuleId = i > 0 ? flowData.modules[i - 1].id : null;
+            const isLocked = i > 0 && !completedModuleIds.includes(prevModuleId!);
+            const isFirstUnlocked = i === 0 || completedModuleIds.includes(prevModuleId!);
+
+            return (
+              <InvestingModule
+                key={mod.id}
+                module={mod}
+                moduleNumber={i + 1}
+                totalModules={flowData.modules.length}
+                locked={!hookCompleted || (i > 0 && !isFirstUnlocked)}
+                savedAnswer={flow.moduleAnswers[mod.id]}
+                onComplete={handleModuleComplete}
+              />
+            );
+          })}
+        </div>
+      )}
+
+      {/* Part 3: Scenario Lab */}
+      {hookCompleted && (
+        <div ref={scenarioRef} className="mx-auto max-w-3xl px-6 pb-10">
+          {scenarioUnlocked && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="mb-2"
+            >
+              <p className="text-xs font-semibold text-accent-light uppercase tracking-widest mb-1">
+                Part 3
+              </p>
+            </motion.div>
+          )}
+          <ScenarioLab
+            companyName={company.name}
+            companyColor={company.color}
+            scenarioLab={flowData.scenarioLab}
+            locked={!scenarioUnlocked}
+            onExplore={handleScenarioExplore}
+          />
+        </div>
+      )}
+
+      {/* Part 4: Stress Test */}
+      {hookCompleted && (
+        <div ref={stressRef} className="mx-auto max-w-3xl px-6 pb-10">
+          {stressUnlocked && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="mb-2"
+            >
+              <p className="text-xs font-semibold text-accent-light uppercase tracking-widest mb-1">
+                Part 4
+              </p>
+            </motion.div>
+          )}
+          <StressTest
+            companyName={company.name}
+            companyColor={company.color}
+            userStance={flow.initialStance || 'unsure'}
+            stressTest={flowData.stressTest}
+            locked={!stressUnlocked}
+            savedAnswers={stressCompleted ? flow.stressTestAnswers : undefined}
+            onComplete={handleStressComplete}
+          />
+        </div>
+      )}
+
+      {/* Part 5: Framework Debrief */}
+      {hookCompleted && (
+        <div ref={debriefRef} className="mx-auto max-w-3xl px-6 pb-20">
+          {debriefUnlocked && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="mb-2"
+            >
+              <p className="text-xs font-semibold text-accent-light uppercase tracking-widest mb-1">
+                Part 5
+              </p>
+            </motion.div>
+          )}
+          <FrameworkDebrief
+            companyName={company.name}
+            companyColor={company.color}
+            userStance={flow.initialStance || 'unsure'}
+            debrief={flowData.debrief}
+            locked={!debriefUnlocked}
+          />
+        </div>
+      )}
+
+      {/* Footer */}
+      <footer className="border-t border-border py-8">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <p className="text-sm text-text-muted">
+            This analysis is for learning purposes only. Data is illustrative.
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+// ── Legacy Flow (existing companies without flowData) ───────────────
+
+function LegacyFlow({ company }: { company: Company }) {
   const {
     getCompanyProgress,
     markSectionCompleted,
@@ -56,12 +321,10 @@ export default function CompanyPage() {
 
   const handleScenarioChange = useCallback(
     (config: { revenueGrowth: number; operatingMargin: number; multiple: number }) => {
-      if (company) saveScenarioConfig(company.id, config);
+      saveScenarioConfig(company.id, config);
     },
-    [company?.id, saveScenarioConfig],
+    [company.id, saveScenarioConfig],
   );
-
-  if (!company) return <Navigate to="/" replace />;
 
   const progress = getCompanyProgress(company.id);
 
@@ -116,7 +379,6 @@ export default function CompanyPage() {
               "{company.tagline}"
             </p>
 
-            {/* Live Quote */}
             <div className="mt-6">
               <LiveQuote ticker={company.ticker} companyColor={company.color} />
             </div>
@@ -133,7 +395,7 @@ export default function CompanyPage() {
 
       {/* Analysis Sections */}
       <div className="mx-auto max-w-4xl px-6 py-10 space-y-8">
-        {/* 1. Business Overview — Think First */}
+        {/* 1. Business Overview */}
         <SectionCard
           step={1}
           title="Understand the Business"
@@ -154,7 +416,6 @@ export default function CompanyPage() {
               <p className="text-text-secondary leading-relaxed text-base">
                 {company.business.description}
               </p>
-
               <div>
                 <h3 className="text-lg font-semibold text-text-primary mb-4">
                   {company.business.howItMakesMoneyTitle}
@@ -171,7 +432,6 @@ export default function CompanyPage() {
                   ))}
                 </div>
               </div>
-
               <div className="rounded-xl bg-accent/5 border border-accent/10 p-5">
                 <h4 className="text-sm font-semibold text-accent-light uppercase tracking-wider mb-2">
                   Competitive Advantage
@@ -215,7 +475,7 @@ export default function CompanyPage() {
           </div>
         </SectionCard>
 
-        {/* 3. What Changed — Think First */}
+        {/* 3. What Changed */}
         <SectionCard
           step={3}
           title="What Changed"
@@ -305,7 +565,7 @@ export default function CompanyPage() {
           </div>
         </SectionCard>
 
-        {/* 5. Valuation — Think First + Scenario Tool */}
+        {/* 5. Valuation */}
         <SectionCard
           step={5}
           title="Think About Valuation"
@@ -334,15 +594,12 @@ export default function CompanyPage() {
                   />
                 ))}
               </div>
-
-              {/* Valuation Implications */}
               <ValuationImplied
                 companyName={company.name}
                 currentPE={company.valuationImplied.currentPE}
                 implications={company.valuationImplied.implications}
                 summary={company.valuationImplied.summary}
               />
-
               <div className="rounded-xl bg-dark-700 border border-border p-5">
                 <h4 className="text-sm font-semibold text-text-primary mb-2">
                   The Bottom Line on Valuation
@@ -431,16 +688,13 @@ export default function CompanyPage() {
                 <SourceBadge source="Consensus estimates" label="consensus" />
               </div>
               <div className="rounded-xl border border-border bg-dark-700 p-5">
-                <p className="text-sm text-text-muted mb-1">
-                  Analyst Consensus
-                </p>
+                <p className="text-sm text-text-muted mb-1">Analyst Consensus</p>
                 <p className="text-lg font-semibold text-text-primary">
                   {company.marketExpectations.analystConsensus}
                 </p>
                 <SourceBadge source="Wall Street consensus" label="consensus" />
               </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="rounded-xl border border-border bg-dark-700 p-5">
                 <h4 className="text-sm font-semibold text-text-primary mb-3">
@@ -478,7 +732,7 @@ export default function CompanyPage() {
           </div>
         </SectionCard>
 
-        {/* 9. Stock Behavior — Narrative Chart */}
+        {/* 9. Stock Behavior */}
         <SectionCard
           step={9}
           title="How the Stock Has Been Behaving"
@@ -490,17 +744,12 @@ export default function CompanyPage() {
               data={company.technicalContext.priceHistory}
               color={company.color}
             />
-
-            {/* Chart narrative */}
             <div className="space-y-2">
               <h4 className="text-sm font-semibold text-text-primary mb-2">
                 What drove the moves
               </h4>
               {company.chartNarrative.map((event, i) => (
-                <div
-                  key={i}
-                  className="flex items-start gap-3 text-sm"
-                >
+                <div key={i} className="flex items-start gap-3 text-sm">
                   <span className="text-text-muted font-mono text-xs shrink-0 mt-0.5 w-16">
                     {event.month}
                   </span>
@@ -510,7 +759,6 @@ export default function CompanyPage() {
                 </div>
               ))}
             </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="rounded-xl border border-border bg-dark-700 p-4">
                 <p className="text-sm text-text-muted mb-1">RSI</p>
@@ -532,26 +780,20 @@ export default function CompanyPage() {
                 </p>
               </div>
             </div>
-
             <div className="space-y-3">
               <div className="rounded-xl border border-border bg-dark-700 p-4">
-                <p className="text-sm font-medium text-text-primary mb-1">
-                  Trend
-                </p>
+                <p className="text-sm font-medium text-text-primary mb-1">Trend</p>
                 <p className="text-sm text-text-secondary leading-relaxed">
                   {company.technicalContext.trendDescription}
                 </p>
               </div>
               <div className="rounded-xl border border-border bg-dark-700 p-4">
-                <p className="text-sm font-medium text-text-primary mb-1">
-                  Volatility
-                </p>
+                <p className="text-sm font-medium text-text-primary mb-1">Volatility</p>
                 <p className="text-sm text-text-secondary leading-relaxed">
                   {company.technicalContext.volatilityNote}
                 </p>
               </div>
             </div>
-
             <SourceBadge
               source="Hardcoded sample data"
               date={company.lastUpdated}
@@ -560,7 +802,7 @@ export default function CompanyPage() {
           </div>
         </SectionCard>
 
-        {/* 10. Your Decision — Enhanced with Reflections */}
+        {/* 10. Your Decision */}
         <SectionCard
           step={10}
           title="Make Your Decision"

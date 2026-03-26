@@ -126,6 +126,93 @@ export interface Company {
       keyMetricToWatch: string;
     };
   };
+
+  // Interactive flow data (redesigned experience)
+  flowData?: FlowData;
+}
+
+// ── Interactive Flow Types ──────────────────────────────────────────
+
+export interface FlowData {
+  hook: FlowHook;
+  modules: FlowModule[];
+  scenarioLab: FlowScenarioLab;
+  stressTest: FlowStressTest;
+  debrief: FlowDebrief;
+}
+
+export interface FlowHook {
+  headline: string;
+  subheadline: string;
+  criticalFacts: {
+    label: string;
+    value: string;
+    context: string;
+  }[];
+  initialPrompt: string;
+}
+
+export interface FlowModule {
+  id: string;
+  title: string;
+  question: string;
+  context: string;
+  evidence: {
+    content: string;
+    source?: string;
+  }[];
+  frameworkAnswer: string;
+  keyInsight: string;
+  insightType: 'positive' | 'negative' | 'neutral';
+}
+
+export interface FlowScenarioLab {
+  intro: string;
+  currentRevenue: number;
+  currentMarketCap: number;
+  defaults: { revenueGrowth: number; operatingMargin: number; multiple: number };
+  presets: {
+    name: 'bull' | 'base' | 'bear';
+    growth: number;
+    margin: number;
+    multiple: number;
+    narrative: string;
+  }[];
+  marketImplied: {
+    narrative: string;
+    growth: string;
+    margin: string;
+    multiple: string;
+  };
+}
+
+export interface FlowStressTest {
+  questions: {
+    id: string;
+    question: string;
+    hint?: string;
+  }[];
+  keyVariables: {
+    variable: string;
+    importance: 'critical' | 'high' | 'moderate';
+    description: string;
+  }[];
+  sophisticatedView: {
+    whatToWatch: string[];
+    disconfirmingEvidence: string[];
+    strongestCounter: string;
+  };
+}
+
+export interface FlowDebrief {
+  frameworkLabel: string;
+  synthesis: string;
+  strongestBull: string;
+  strongestBear: string;
+  marketBelief: string;
+  whereMarketWrong: string;
+  bestForInvestor: string;
+  whatChangesConclusion: string[];
 }
 
 export interface Sector {

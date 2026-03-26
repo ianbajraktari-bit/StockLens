@@ -1,5 +1,16 @@
 import { useState, useCallback, useEffect } from 'react';
 
+export interface FlowState {
+  initialStance: 'bullish' | 'bearish' | 'unsure' | null;
+  initialReason: string;
+  moduleAnswers: Record<string, string>;
+  modulesRevealed: string[];
+  scenarioExplored: boolean;
+  stressTestAnswers: Record<string, string>;
+  stressTestCompleted: boolean;
+  debriefViewed: boolean;
+}
+
 export interface CompanyProgress {
   companyId: string;
   sectionsCompleted: string[];
@@ -17,6 +28,7 @@ export interface CompanyProgress {
   } | null;
   lastVisited: string;
   completedAt: string | null;
+  flowState?: FlowState;
 }
 
 export interface UserProgress {
@@ -249,6 +261,56 @@ export function useProgress() {
     [],
   );
 
+  // ── Flow-specific methods ────────────────────────────────────────
+
+  const defaultFlowState = (): FlowState => ({
+    initialStance: null,
+    initialReason: '',
+    moduleAnswers: {},
+    modulesRevealed: [],
+    scenarioExplored: false,
+    stressTestAnswers: {},
+    stressTestCompleted: false,
+    debriefViewed: false,
+  });
+
+  const getFlowState = useCallback(
+    (companyId: string): FlowState => {
+      return progress.companies[companyId]?.flowState ?? defaultFlowState();
+    },
+    [progress],
+  );
+
+  const updateFlowState = useCallback(
+    (companyId: string, updater: (prev: FlowState) => FlowState) => {
+      setProgress((prev) => {
+        const company = prev.companies[companyId] || {
+          companyId,
+          sectionsCompleted: [],
+          thinkFirstAnswers: {},
+          decision: null,
+          reflections: null,
+          scenarioConfig: null,
+          lastVisited: new Date().toISOString(),
+          completedAt: null,
+        };
+        const currentFlow = company.flowState ?? defaultFlowState();
+        return {
+          ...prev,
+          companies: {
+            ...prev.companies,
+            [companyId]: {
+              ...company,
+              flowState: updater(currentFlow),
+              lastVisited: new Date().toISOString(),
+            },
+          },
+        };
+      });
+    },
+    [],
+  );
+
   const getScorecard = useCallback(() => {
     const completedCompanies = Object.values(progress.companies).filter(
       (c) => c.completedAt,
@@ -280,5 +342,7 @@ export function useProgress() {
     saveReflections,
     saveScenarioConfig,
     getScorecard,
+    getFlowState,
+    updateFlowState,
   };
 }
