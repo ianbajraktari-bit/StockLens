@@ -200,6 +200,179 @@ app.get('/api/financials/:symbol', async (req, res) => {
   }
 });
 
+// POST /api/evaluate - Evaluate quiz answers
+app.post('/api/evaluate', (req, res) => {
+  try {
+    const body = req.body;
+
+    if (!body || !body.questionType || body.answer === undefined) {
+      res.status(400).json({ error: 'Missing required fields: questionType, answer' });
+      return;
+    }
+
+    const { questionType } = body;
+
+    if (questionType === 'free-response') {
+      const { answer, rubric } = body;
+
+      if (!rubric || !rubric.keyConceptsExpected || !Array.isArray(rubric.keyConceptsExpected)) {
+        res.status(400).json({ error: 'free-response requires rubric with keyConceptsExpected array' });
+        return;
+      }
+
+      const answerStr: string = String(answer);
+      const answerLower = answerStr.toLowerCase();
+      const keyConcepts: string[] = rubric.keyConceptsExpected;
+
+      // Keyword-matching heuristic
+      const matchedConcepts: string[] = [];
+      const missedConcepts: string[] = [];
+
+      for (const concept of keyConcepts) {
+        if (answerLower.includes(concept.toLowerCase())) {
+          matchedConcepts.push(concept);
+        } else {
+          missedConcepts.push(concept);
+        }
+      }
+
+      // Scoring
+      let score = 0;
+
+      // Base score: 3/10 for any substantive answer (>10 chars)
+      if (answerStr.trim().length > 10) {
+        score += 3;
+      }
+
+      // +1 point for each key concept found (up to keyConceptsExpected.length points)
+      score += matchedConcepts.length;
+
+      // +1 point for specificity (answer > 50 chars)
+      if (answerStr.trim().length > 50) {
+        score += 1;
+      }
+
+      // +1 point for mentioning evidence or numbers
+      if (/\d/.test(answerStr) || /evidence|data|study|research|report|statistic|percent|%/i.test(answerStr)) {
+        score += 1;
+      }
+
+      // Cap at 10
+      score = Math.min(score, 10);
+
+      // Build gotRight
+      const gotRight = matchedConcepts.length > 0
+        ? `You correctly identified: ${matchedConcepts.join(', ')}.`
+        : answerStr.trim().length > 10
+          ? 'You provided a substantive answer but missed the key concepts.'
+          : '';
+
+      // Build missing
+      const missing = missedConcepts.length > 0
+        ? `You did not mention: ${missedConcepts.join(', ')}.`
+        : 'You covered all the key concepts.';
+
+      // Build strongerFraming from rubric objective + scoringNotes
+      const objective = rubric.objective || '';
+      const scoringNotes = rubric.scoringNotes || '';
+      const strongerFraming = [objective, scoringNotes].filter(Boolean).join('. ');
+
+      // Build followUp from objective
+      const followUp = objective
+        ? `Consider further: how does "${objective.toLowerCase()}" apply in different market conditions?`
+        : null;
+
+      res.json({
+        score,
+        maxScore: 10,
+        gotRight,
+        missing,
+        strongerFraming,
+        followUp,
+      });
+      return;
+    }
+
+    // Non-free-response question types
+    const validTypes = ['multiple-choice', 'ranking', 'select-best', 'bull-bear-classify', 'scenario-choice'];
+    if (!validTypes.includes(questionType)) {
+      res.status(400).json({ error: `Unsupported questionType: ${questionType}. Supported: free-response, ${validTypes.join(', ')}` });
+      return;
+    }
+
+    const { answer, correctAnswer, explanation } = body;
+
+    if (correctAnswer === undefined) {
+      res.status(400).json({ error: 'Non-free-response questions require correctAnswer' });
+      return;
+    }
+
+    // Ranking questions: score proportional to items in correct position
+    if (questionType === 'ranking') {
+      if (!Array.isArray(answer) || !Array.isArray(correctAnswer)) {
+        res.status(400).json({ error: 'ranking questionType requires answer and correctAnswer to be arrays' });
+        return;
+      }
+
+      const totalItems = correctAnswer.length;
+      if (totalItems === 0) {
+        res.json({
+          score: 10,
+          maxScore: 10,
+          gotRight: 'No items to rank.',
+          missing: '',
+          strongerFraming: explanation || '',
+          followUp: null,
+        });
+        return;
+      }
+
+      let correctPositions = 0;
+      for (let i = 0; i < totalItems; i++) {
+        if (i < answer.length && String(answer[i]) === String(correctAnswer[i])) {
+          correctPositions++;
+        }
+      }
+
+      const score = Math.round((correctPositions / totalItems) * 10 * 10) / 10; // one decimal place
+
+      const gotRight = correctPositions > 0
+        ? `You placed ${correctPositions} out of ${totalItems} items in the correct position.`
+        : '';
+
+      const missing = correctPositions < totalItems
+        ? `The correct ranking was: ${correctAnswer.join(', ')}.`
+        : '';
+
+      res.json({
+        score,
+        maxScore: 10,
+        gotRight,
+        missing,
+        strongerFraming: explanation || '',
+        followUp: null,
+      });
+      return;
+    }
+
+    // Simple correct/incorrect for other non-free-response types
+    const isCorrect = String(answer) === String(correctAnswer);
+    const score = isCorrect ? 10 : 0;
+
+    res.json({
+      score,
+      maxScore: 10,
+      gotRight: isCorrect ? 'Correct!' : '',
+      missing: isCorrect ? '' : `The correct answer was: ${correctAnswer}. ${explanation || ''}`.trim(),
+      strongerFraming: explanation || '',
+      followUp: null,
+    });
+  } catch (err) {
+    console.error('Error in /api/evaluate:', err);
+    res.status(500).json({ error: 'Internal server error during evaluation' });
+  }
+});
+
 // Health check
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
