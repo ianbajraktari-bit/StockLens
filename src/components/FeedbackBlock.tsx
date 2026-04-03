@@ -1,14 +1,15 @@
 import { motion } from 'framer-motion';
-import { CheckCircle2, XCircle, Info } from 'lucide-react';
+import { CheckCircle2, XCircle, Info, Lightbulb } from 'lucide-react';
 import type { QuizQuestion } from '../data/questions';
 
 interface FeedbackBlockProps {
   question: QuizQuestion;
   selectedIndex: number;
   onContinue: () => void;
+  isLast: boolean;
 }
 
-export default function FeedbackBlock({ question, selectedIndex, onContinue }: FeedbackBlockProps) {
+export default function FeedbackBlock({ question, selectedIndex, onContinue, isLast }: FeedbackBlockProps) {
   const isCorrect = selectedIndex === question.correctIndex;
 
   return (
@@ -38,41 +39,33 @@ export default function FeedbackBlock({ question, selectedIndex, onContinue }: F
         </p>
       </div>
 
-      {/* Why other answers are wrong */}
-      {!isCorrect && (
-        <div className="space-y-2">
-          {question.wrongExplanations.map((exp, i) => {
-            if (!exp || i === question.correctIndex) return null;
-            if (i !== selectedIndex) return null;
-            return (
-              <div key={i} className="flex items-start gap-2 rounded-lg border border-border bg-dark-800 p-3">
-                <Info className="w-4 h-4 text-text-muted mt-0.5 shrink-0" />
-                <p className="text-sm text-text-secondary">
-                  <span className="text-text-muted font-medium">"{question.options[i]}"</span> — {exp}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      )}
+      {/* Why wrong options are weaker — always shown */}
+      <div className="space-y-2">
+        <p className="text-xs text-text-muted font-medium uppercase tracking-wide">Why the other options are weaker</p>
+        {question.wrongExplanations.map((exp, i) => {
+          if (!exp) return null;
+          const wasSelected = i === selectedIndex;
+          return (
+            <div key={i} className={`flex items-start gap-2 rounded-lg border p-3 ${
+              wasSelected ? 'border-red/20 bg-red/5' : 'border-border bg-dark-800'
+            }`}>
+              <Info className="w-4 h-4 text-text-muted mt-0.5 shrink-0" />
+              <p className="text-sm text-text-secondary">
+                <span className={`font-medium ${wasSelected ? 'text-red/80' : 'text-text-muted'}`}>"{question.options[i]}"</span> — {exp}
+              </p>
+            </div>
+          );
+        })}
+      </div>
 
-      {/* Why wrong options are weaker (shown on correct answers too) */}
-      {isCorrect && (
-        <div className="space-y-2">
-          <p className="text-xs text-text-muted font-medium uppercase tracking-wide">Why the other options are weaker</p>
-          {question.wrongExplanations.map((exp, i) => {
-            if (!exp) return null;
-            return (
-              <div key={i} className="flex items-start gap-2 rounded-lg border border-border bg-dark-800 p-3">
-                <Info className="w-4 h-4 text-text-muted mt-0.5 shrink-0" />
-                <p className="text-sm text-text-secondary">
-                  <span className="text-text-muted font-medium">"{question.options[i]}"</span> — {exp}
-                </p>
-              </div>
-            );
-          })}
+      {/* Investor takeaway */}
+      <div className="flex items-start gap-2.5 rounded-xl border border-accent/20 bg-accent/5 p-4">
+        <Lightbulb className="w-4 h-4 text-accent-light mt-0.5 shrink-0" />
+        <div>
+          <p className="text-xs text-accent-light font-semibold uppercase tracking-wide mb-1">Investor Takeaway</p>
+          <p className="text-sm text-text-primary leading-relaxed">{question.takeaway}</p>
         </div>
-      )}
+      </div>
 
       {/* Continue button */}
       <motion.button
@@ -81,7 +74,7 @@ export default function FeedbackBlock({ question, selectedIndex, onContinue }: F
         whileTap={{ scale: 0.98 }}
         className="w-full py-3 rounded-xl bg-accent hover:bg-accent-light text-white font-semibold transition-colors cursor-pointer"
       >
-        Continue
+        {isLast ? 'See Results' : 'Continue'}
       </motion.button>
     </motion.div>
   );

@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, Trophy, RotateCcw } from 'lucide-react';
+import { BookOpen, Trophy, RotateCcw, ArrowRight, Target, TrendingUp, ShieldAlert, Lightbulb } from 'lucide-react';
 import QuestionBlock from '../components/QuestionBlock';
 import FeedbackBlock from '../components/FeedbackBlock';
-import { appleQuestions } from '../data/questions';
+import { appleQuestions, lessonIntro, lessonTakeaways } from '../data/questions';
 
-type Phase = 'answering' | 'feedback' | 'complete';
+type Phase = 'intro' | 'answering' | 'feedback' | 'complete';
+
+const topicIcons = [Target, TrendingUp, ShieldAlert];
 
 export default function LessonPage() {
   const [currentQ, setCurrentQ] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [phase, setPhase] = useState<Phase>('answering');
+  const [phase, setPhase] = useState<Phase>('intro');
   const [score, setScore] = useState(0);
 
   const total = appleQuestions.length;
@@ -42,16 +44,83 @@ export default function LessonPage() {
   function handleRestart() {
     setCurrentQ(0);
     setSelectedIndex(null);
-    setPhase('answering');
+    setPhase('intro');
     setScore(0);
   }
 
+  // --- Intro screen ---
+  if (phase === 'intro') {
+    return (
+      <div className="min-h-screen bg-dark-900">
+        <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="space-y-6"
+          >
+            {/* Header */}
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-lg">
+                🍎
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-text-primary">{lessonIntro.title}</h1>
+                <p className="text-sm text-text-secondary">{lessonIntro.subtitle}</p>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="rounded-2xl border border-border bg-dark-800 p-6 space-y-5">
+              <p className="text-sm text-text-secondary leading-relaxed">
+                {lessonIntro.description}
+              </p>
+
+              {/* What you'll learn */}
+              <div className="space-y-3">
+                <p className="text-xs text-text-muted font-semibold uppercase tracking-wide">What you'll learn</p>
+                {lessonIntro.topics.map((topic, i) => {
+                  const Icon = topicIcons[i];
+                  return (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="w-7 h-7 rounded-full bg-dark-700 border border-border flex items-center justify-center">
+                        <Icon className="w-3.5 h-3.5 text-accent-light" />
+                      </div>
+                      <span className="text-sm text-text-primary">{topic}</span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="flex items-center gap-2 text-xs text-text-muted">
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>{total} questions · ~2 minutes</span>
+              </div>
+            </div>
+
+            {/* Start button */}
+            <motion.button
+              onClick={() => setPhase('answering')}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full py-3 rounded-xl bg-accent hover:bg-accent-light text-white font-semibold transition-colors cursor-pointer flex items-center justify-center gap-2"
+            >
+              Start Lesson
+              <ArrowRight className="w-4 h-4" />
+            </motion.button>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- Completion screen ---
   if (phase === 'complete') {
     const perfect = score === total;
     const message = perfect
-      ? "Flawless. You've got a strong grasp of the fundamentals."
+      ? "Flawless. You've got strong investing instincts."
       : score >= 2
-        ? "Solid work. You're building real investing intuition."
+        ? "Solid work. You're learning to think like an investor."
         : "Good start — revisiting the lesson will strengthen your foundation.";
 
     return (
@@ -60,37 +129,63 @@ export default function LessonPage() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
-          className="w-full max-w-lg text-center space-y-6"
+          className="w-full max-w-lg space-y-6"
         >
-          <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto">
-            <Trophy className="w-8 h-8 text-accent-light" />
+          {/* Trophy + score */}
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto">
+              <Trophy className="w-8 h-8 text-accent-light" />
+            </div>
+            <h1 className="text-3xl font-bold text-text-primary">Lesson Complete</h1>
+            <div className="rounded-2xl border border-border bg-dark-800 p-6 space-y-3">
+              <p className="text-4xl font-bold text-accent-light">{score} / {total}</p>
+              <p className="text-sm text-text-secondary">{message}</p>
+            </div>
           </div>
-          <h1 className="text-3xl font-bold text-text-primary">Lesson Complete</h1>
-          <div className="rounded-2xl border border-border bg-dark-800 p-6 space-y-3">
-            <p className="text-4xl font-bold text-accent-light">{score} / {total}</p>
-            <p className="text-sm text-text-secondary">{message}</p>
+
+          {/* What you learned */}
+          <div className="rounded-2xl border border-border bg-dark-800 p-6 space-y-4">
+            <div className="flex items-center gap-2">
+              <Lightbulb className="w-4 h-4 text-accent-light" />
+              <p className="text-sm font-semibold text-text-primary">What you learned</p>
+            </div>
+            <div className="space-y-3">
+              {lessonTakeaways.map((takeaway, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <span className="w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center text-xs font-bold text-accent-light shrink-0 mt-0.5">
+                    {i + 1}
+                  </span>
+                  <p className="text-sm text-text-secondary leading-relaxed">{takeaway}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <motion.button
-            onClick={handleRestart}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent hover:bg-accent-light text-white font-semibold transition-colors cursor-pointer"
-          >
-            <RotateCcw className="w-4 h-4" />
-            Restart Lesson
-          </motion.button>
+
+          {/* Restart */}
+          <div className="text-center">
+            <motion.button
+              onClick={handleRestart}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent hover:bg-accent-light text-white font-semibold transition-colors cursor-pointer"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Restart Lesson
+            </motion.button>
+          </div>
         </motion.div>
       </div>
     );
   }
 
+  // --- Quiz flow ---
   return (
     <div className="min-h-screen bg-dark-900">
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center">
-            <BookOpen className="w-4 h-4 text-accent-light" />
+          <div className="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-base">
+            🍎
           </div>
           <div>
             <h1 className="text-lg font-bold text-text-primary">Apple Lesson</h1>
@@ -124,6 +219,17 @@ export default function LessonPage() {
             transition={{ duration: 0.25 }}
             className="rounded-2xl border border-border bg-dark-800 p-6 space-y-6"
           >
+            {/* Topic label */}
+            <div className="flex items-center gap-2">
+              {(() => {
+                const Icon = topicIcons[currentQ];
+                return <Icon className="w-3.5 h-3.5 text-accent-light" />;
+              })()}
+              <span className="text-xs font-semibold text-accent-light uppercase tracking-wide">
+                {question.topic}
+              </span>
+            </div>
+
             <QuestionBlock
               question={question}
               selectedIndex={selectedIndex}
@@ -131,7 +237,7 @@ export default function LessonPage() {
               onSelect={handleSelect}
             />
 
-            {/* Submit button (before answering) */}
+            {/* Submit button */}
             {phase === 'answering' && (
               <motion.button
                 onClick={handleSubmit}
@@ -154,6 +260,7 @@ export default function LessonPage() {
                 question={question}
                 selectedIndex={selectedIndex}
                 onContinue={handleContinue}
+                isLast={currentQ === total - 1}
               />
             )}
           </motion.div>
