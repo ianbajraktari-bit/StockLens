@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { CheckCircle2, XCircle, Info, Lightbulb } from 'lucide-react';
-import type { QuizQuestion } from '../data/questions';
+import type { QuizQuestion } from '../data/lessons';
 
 interface FeedbackBlockProps {
   question: QuizQuestion;

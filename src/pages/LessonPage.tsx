@@ -1,22 +1,24 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, Trophy, RotateCcw, ArrowRight, Target, TrendingUp, ShieldAlert, Lightbulb, BrainCircuit } from 'lucide-react';
+import { BookOpen, Trophy, RotateCcw, ArrowRight, Lightbulb } from 'lucide-react';
 import QuestionBlock from '../components/QuestionBlock';
 import FeedbackBlock from '../components/FeedbackBlock';
-import { appleQuestions, lessonIntro, lessonTakeaways } from '../data/questions';
+import type { Lesson } from '../data/lessons';
 
 type Phase = 'intro' | 'answering' | 'feedback' | 'complete';
 
-const topicIcons = [Target, TrendingUp, ShieldAlert, BrainCircuit];
+interface LessonPageProps {
+  lesson: Lesson;
+}
 
-export default function LessonPage() {
+export default function LessonPage({ lesson }: LessonPageProps) {
   const [currentQ, setCurrentQ] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [phase, setPhase] = useState<Phase>('intro');
   const [score, setScore] = useState(0);
 
-  const total = appleQuestions.length;
-  const question = appleQuestions[currentQ];
+  const total = lesson.questions.length;
+  const question = lesson.questions[currentQ];
 
   function handleSelect(index: number) {
     if (phase !== 'answering') return;
@@ -48,6 +50,14 @@ export default function LessonPage() {
     setScore(0);
   }
 
+  function getCompletionMessage(): string {
+    const { completionMessages: m } = lesson;
+    if (score === total) return m.perfect;
+    if (score >= total * 0.75) return m.great;
+    if (score >= total * 0.5) return m.good;
+    return m.low;
+  }
+
   // --- Intro screen ---
   if (phase === 'intro') {
     return (
@@ -62,31 +72,31 @@ export default function LessonPage() {
             {/* Header */}
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-lg">
-                🍎
+                {lesson.emoji}
               </div>
               <div>
-                <h1 className="text-xl font-bold text-text-primary">{lessonIntro.title}</h1>
-                <p className="text-sm text-text-secondary">{lessonIntro.subtitle}</p>
+                <h1 className="text-xl font-bold text-text-primary">{lesson.title}</h1>
+                <p className="text-sm text-text-secondary">{lesson.subtitle}</p>
               </div>
             </div>
 
             {/* Description */}
             <div className="rounded-2xl border border-border bg-dark-800 p-6 space-y-5">
               <p className="text-sm text-text-secondary leading-relaxed">
-                {lessonIntro.description}
+                {lesson.description}
               </p>
 
               {/* What you'll learn */}
               <div className="space-y-3">
                 <p className="text-xs text-text-muted font-semibold uppercase tracking-wide">What you'll learn</p>
-                {lessonIntro.topics.map((topic, i) => {
-                  const Icon = topicIcons[i];
+                {lesson.topics.map((topic, i) => {
+                  const Icon = topic.icon;
                   return (
                     <div key={i} className="flex items-center gap-3">
                       <div className="w-7 h-7 rounded-full bg-dark-700 border border-border flex items-center justify-center">
                         <Icon className="w-3.5 h-3.5 text-accent-light" />
                       </div>
-                      <span className="text-sm text-text-primary">{topic}</span>
+                      <span className="text-sm text-text-primary">{topic.label}</span>
                     </div>
                   );
                 })}
@@ -94,7 +104,7 @@ export default function LessonPage() {
 
               <div className="flex items-center gap-2 text-xs text-text-muted">
                 <BookOpen className="w-3.5 h-3.5" />
-                <span>{total} questions · ~3 minutes</span>
+                <span>{total} questions · ~{lesson.estimatedMinutes} minutes</span>
               </div>
             </div>
 
@@ -116,15 +126,6 @@ export default function LessonPage() {
 
   // --- Completion screen ---
   if (phase === 'complete') {
-    const perfect = score === total;
-    const message = perfect
-      ? "Flawless. You analyzed the business, understood what makes it attractive, identified the risks, and made a real judgment call."
-      : score >= 3
-        ? "Strong work. You're learning to think like an investor, not just a test-taker."
-        : score >= 2
-          ? "Solid start. You're picking up the fundamentals — the judgment calls will get sharper with practice."
-          : "Good effort. The most important thing is learning to ask the right questions — revisit the lesson to sharpen your instincts.";
-
     return (
       <div className="min-h-screen bg-dark-900 flex items-center justify-center p-4">
         <motion.div
@@ -141,7 +142,7 @@ export default function LessonPage() {
             <h1 className="text-3xl font-bold text-text-primary">Lesson Complete</h1>
             <div className="rounded-2xl border border-border bg-dark-800 p-6 space-y-3">
               <p className="text-4xl font-bold text-accent-light">{score} / {total}</p>
-              <p className="text-sm text-text-secondary">{message}</p>
+              <p className="text-sm text-text-secondary">{getCompletionMessage()}</p>
             </div>
           </div>
 
@@ -152,7 +153,7 @@ export default function LessonPage() {
               <p className="text-sm font-semibold text-text-primary">What you learned</p>
             </div>
             <div className="space-y-3">
-              {lessonTakeaways.map((takeaway, i) => (
+              {lesson.takeaways.map((takeaway, i) => (
                 <div key={i} className="flex items-start gap-3">
                   <span className="w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center text-xs font-bold text-accent-light shrink-0 mt-0.5">
                     {i + 1}
@@ -181,17 +182,19 @@ export default function LessonPage() {
   }
 
   // --- Quiz flow ---
+  const TopicIcon = question.topicIcon;
+
   return (
     <div className="min-h-screen bg-dark-900">
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-base">
-            🍎
+            {lesson.emoji}
           </div>
           <div>
-            <h1 className="text-lg font-bold text-text-primary">Apple Lesson</h1>
-            <p className="text-xs text-text-muted">Learn the fundamentals of stock analysis</p>
+            <h1 className="text-lg font-bold text-text-primary">{lesson.title}</h1>
+            <p className="text-xs text-text-muted">{lesson.subtitle}</p>
           </div>
         </div>
 
@@ -223,10 +226,7 @@ export default function LessonPage() {
           >
             {/* Topic label */}
             <div className="flex items-center gap-2">
-              {(() => {
-                const Icon = topicIcons[currentQ];
-                return <Icon className="w-3.5 h-3.5 text-accent-light" />;
-              })()}
+              <TopicIcon className="w-3.5 h-3.5 text-accent-light" />
               <span className="text-xs font-semibold text-accent-light uppercase tracking-wide">
                 {question.topic}
               </span>
