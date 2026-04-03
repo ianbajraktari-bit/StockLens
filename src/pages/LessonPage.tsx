@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, Trophy, RotateCcw, ArrowRight, Target, TrendingUp, ShieldAlert, Lightbulb } from 'lucide-react';
+import { BookOpen, Trophy, RotateCcw, ArrowRight, Target, TrendingUp, ShieldAlert, Lightbulb, BrainCircuit } from 'lucide-react';
 import QuestionBlock from '../components/QuestionBlock';
 import FeedbackBlock from '../components/FeedbackBlock';
 import { appleQuestions, lessonIntro, lessonTakeaways } from '../data/questions';
 
 type Phase = 'intro' | 'answering' | 'feedback' | 'complete';
 
-const topicIcons = [Target, TrendingUp, ShieldAlert];
+const topicIcons = [Target, TrendingUp, ShieldAlert, BrainCircuit];
 
 export default function LessonPage() {
   const [currentQ, setCurrentQ] = useState(0);
@@ -94,7 +94,7 @@ export default function LessonPage() {
 
               <div className="flex items-center gap-2 text-xs text-text-muted">
                 <BookOpen className="w-3.5 h-3.5" />
-                <span>{total} questions · ~2 minutes</span>
+                <span>{total} questions · ~3 minutes</span>
               </div>
             </div>
 
@@ -118,10 +118,12 @@ export default function LessonPage() {
   if (phase === 'complete') {
     const perfect = score === total;
     const message = perfect
-      ? "Flawless. You've got strong investing instincts."
-      : score >= 2
-        ? "Solid work. You're learning to think like an investor."
-        : "Good start — revisiting the lesson will strengthen your foundation.";
+      ? "Flawless. You analyzed the business, understood what makes it attractive, identified the risks, and made a real judgment call."
+      : score >= 3
+        ? "Strong work. You're learning to think like an investor, not just a test-taker."
+        : score >= 2
+          ? "Solid start. You're picking up the fundamentals — the judgment calls will get sharper with practice."
+          : "Good effort. The most important thing is learning to ask the right questions — revisit the lesson to sharpen your instincts.";
 
     return (
       <div className="min-h-screen bg-dark-900 flex items-center justify-center p-4">

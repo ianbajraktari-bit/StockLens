@@ -1,5 +1,6 @@
 export interface QuizQuestion {
   topic: string;
+  context?: string;
   question: string;
   options: string[];
   correctIndex: number;
@@ -17,6 +18,7 @@ export const lessonIntro = {
     'How Apple makes its money',
     'What makes Apple attractive to investors',
     'The key risks every Apple investor should know',
+    'Making an investor judgment call',
   ],
 };
 
@@ -24,6 +26,7 @@ export const lessonTakeaways = [
   'Know the business first — understand where revenue comes from before you look at the stock price.',
   'Look beyond revenue — recurring revenue, high margins, and ecosystem lock-in are what separate good businesses from great ones.',
   'Every investment has risks — identifying bear cases isn\'t pessimism, it\'s preparation.',
+  'A great business is not automatically a great investment — price and expectations matter as much as quality.',
 ];
 
 export const appleQuestions: QuizQuestion[] = [
@@ -86,5 +89,27 @@ export const appleQuestions: QuizQuestion[] = [
       'Large cash reserves are a financial cushion, not a threat. They give Apple flexibility for buybacks, dividends, and acquisitions. Confusing financial strength with risk means you\'re not thinking about what could actually damage the business.',
     ],
     takeaway: 'Thinking like an investor means stress-testing your thesis. Identifying what could go wrong isn\'t pessimism — it\'s how you avoid surprises.',
+  },
+  {
+    topic: 'Think Like an Investor',
+    context:
+      'You\'ve now learned that Apple has a dominant product (iPhone), a high-quality growing segment (Services), and a real risk (iPhone dependence in a slowing smartphone market). Imagine Apple is currently trading at a P/E of 30x — meaning investors are paying $30 for every $1 of earnings. The average S&P 500 stock trades at about 20x.',
+    question: 'Based on everything you\'ve learned, what is the most thoughtful investor reaction?',
+    options: [
+      'Buy immediately — Apple is a great business, so the stock must be a great investment',
+      'Avoid completely — the P/E is above average, so the stock is overpriced',
+      'The premium might be justified by Services growth and ecosystem strength, but iPhone risk means you need to watch whether that growth actually materializes',
+      'Wait for the P/E to drop to 20x before considering it',
+    ],
+    correctIndex: 2,
+    explanation:
+      'This is the core lesson: a great business and a great investment are not the same thing. Apple\'s quality (brand, ecosystem, Services margins) may justify paying a premium — but only if the growth investors are betting on actually happens. The right answer isn\'t blind conviction or blind avoidance. It\'s understanding what you\'re paying for, what needs to go right, and what could go wrong. That\'s investor thinking.',
+    wrongExplanations: [
+      'This is the most common beginner mistake. Business quality and stock quality are different questions. A great company at the wrong price is a bad investment. You need to consider what\'s already priced in before buying.',
+      'A P/E above average doesn\'t automatically mean "overpriced." Some companies deserve a premium because they grow faster, have better margins, or more predictable revenue. Rejecting a stock purely on one metric ignores everything else you\'ve learned about the business.',
+      '',
+      'There\'s no magic number where a stock becomes "safe to buy." A P/E of 20x on a declining business could be worse than 30x on a growing one. Waiting for an arbitrary number isn\'t analysis — it\'s guessing with extra steps.',
+    ],
+    takeaway: 'The hardest investing skill isn\'t finding great businesses — it\'s deciding whether the current price already reflects that greatness. Price is what you pay, value is what you get.',
   },
 ];

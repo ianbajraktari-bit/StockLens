@@ -12,6 +12,11 @@ interface QuestionBlockProps {
 export default function QuestionBlock({ question, selectedIndex, locked, onSelect }: QuestionBlockProps) {
   return (
     <div className="space-y-4">
+      {question.context && (
+        <div className="rounded-lg border border-border bg-dark-900/50 p-4">
+          <p className="text-sm text-text-secondary leading-relaxed">{question.context}</p>
+        </div>
+      )}
       <h2 className="text-xl font-bold text-text-primary">{question.question}</h2>
       <div className="space-y-3">
         {question.options.map((option, i) => {
