@@ -263,7 +263,8 @@ export const nvidiaLesson: Lesson = {
   ],
 };
 
+export const allLessons: Lesson[] = [appleLesson, nvidiaLesson];
+
 export function getLessonById(id: string): Lesson | undefined {
-  const lessons = [appleLesson, nvidiaLesson];
-  return lessons.find((l) => l.id === id);
+  return allLessons.find((l) => l.id === id);
 }

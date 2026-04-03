@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, Trophy, RotateCcw, ArrowRight, Lightbulb } from 'lucide-react';
+import { BookOpen, Trophy, RotateCcw, ArrowRight, ArrowLeft, Lightbulb } from 'lucide-react';
 import QuestionBlock from '../components/QuestionBlock';
 import FeedbackBlock from '../components/FeedbackBlock';
 import type { Lesson } from '../data/lessons';
@@ -9,9 +9,10 @@ type Phase = 'intro' | 'answering' | 'feedback' | 'complete';
 
 interface LessonPageProps {
   lesson: Lesson;
+  onBack: () => void;
 }
 
-export default function LessonPage({ lesson }: LessonPageProps) {
+export default function LessonPage({ lesson, onBack }: LessonPageProps) {
   const [currentQ, setCurrentQ] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [phase, setPhase] = useState<Phase>('intro');
@@ -69,6 +70,15 @@ export default function LessonPage({ lesson }: LessonPageProps) {
             transition={{ duration: 0.4 }}
             className="space-y-6"
           >
+            {/* Back link */}
+            <button
+              onClick={onBack}
+              className="flex items-center gap-1.5 text-sm text-text-muted hover:text-text-secondary transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              All Lessons
+            </button>
+
             {/* Header */}
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-lg">
@@ -164,8 +174,8 @@ export default function LessonPage({ lesson }: LessonPageProps) {
             </div>
           </div>
 
-          {/* Restart */}
-          <div className="text-center">
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <motion.button
               onClick={handleRestart}
               whileHover={{ scale: 1.02 }}
@@ -175,6 +185,13 @@ export default function LessonPage({ lesson }: LessonPageProps) {
               <RotateCcw className="w-4 h-4" />
               Restart Lesson
             </motion.button>
+            <button
+              onClick={onBack}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border bg-dark-800 hover:bg-dark-700 text-text-secondary font-semibold transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              All Lessons
+            </button>
           </div>
         </motion.div>
       </div>
