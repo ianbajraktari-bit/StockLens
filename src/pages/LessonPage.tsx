@@ -96,6 +96,25 @@ export default function LessonPage({ lesson, onBack }: LessonPageProps) {
                 {lesson.description}
               </p>
 
+              {/* Key facts */}
+              {lesson.keyFacts.length > 0 && (
+                <div className="space-y-3">
+                  <p className="text-xs text-text-muted font-semibold uppercase tracking-wide">
+                    Key facts
+                    <span className="ml-1.5 font-normal normal-case tracking-normal">({lesson.dataAsOf})</span>
+                  </p>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {lesson.keyFacts.map((fact, i) => (
+                      <div key={i} className="rounded-lg border border-border bg-dark-900/50 p-3">
+                        <p className="text-xs text-text-muted mb-0.5">{fact.label}</p>
+                        <p className="text-base font-bold text-text-primary">{fact.value}</p>
+                        <p className="text-xs text-text-secondary mt-1 leading-relaxed">{fact.detail}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* What you'll learn */}
               <div className="space-y-3">
                 <p className="text-xs text-text-muted font-semibold uppercase tracking-wide">What you'll learn</p>

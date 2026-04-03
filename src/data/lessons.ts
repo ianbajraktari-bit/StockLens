@@ -20,6 +20,8 @@ export interface Lesson {
   subtitle: string;
   description: string;
   estimatedMinutes: number;
+  dataAsOf: string;
+  keyFacts: { label: string; value: string; detail: string }[];
   topics: { label: string; icon: LucideIcon }[];
   questions: QuizQuestion[];
   takeaways: string[];
@@ -39,6 +41,13 @@ export const appleLesson: Lesson = {
   description:
     "In this lesson, you'll analyze Apple like a real investor. You'll start by understanding how the company makes money, then look at what makes it attractive to investors, and finish by identifying the risks that could hurt the stock. These three steps — business, quality, and risk — are the foundation of every good investment decision.",
   estimatedMinutes: 3,
+  dataAsOf: 'Q1 2025',
+  keyFacts: [
+    { label: 'Market Cap', value: '~$3.4T', detail: 'One of the most valuable companies in the world' },
+    { label: 'Annual Revenue', value: '~$391B', detail: 'iPhone accounts for roughly half of this' },
+    { label: 'Services Revenue', value: '~$96B', detail: 'Recurring, high-margin, and growing ~14% year-over-year' },
+    { label: 'Active Devices', value: '2.2 billion', detail: 'The installed base that powers the entire ecosystem' },
+  ],
   topics: [
     { label: 'How Apple makes its money', icon: Target },
     { label: 'What makes Apple attractive to investors', icon: TrendingUp },
@@ -70,7 +79,7 @@ export const appleLesson: Lesson = {
       ],
       correctIndex: 0,
       explanation:
-        'The iPhone consistently generates about 50% of Apple\'s total revenue, making it by far the largest segment. It\'s the anchor product — people buy an iPhone, then add AirPods, an Apple Watch, iCloud storage, and App Store subscriptions. Everything else in Apple\'s ecosystem flows from the iPhone.',
+        'The iPhone consistently generates about 50% of Apple\'s ~$391B in annual revenue, making it by far the largest segment. It\'s the anchor product — people buy an iPhone, then add AirPods, an Apple Watch, iCloud storage, and App Store subscriptions. With 2.2 billion active Apple devices worldwide, everything else in the ecosystem flows from the iPhone.',
       wrongExplanations: [
         '',
         'Mac is a strong business (~10% of revenue), but it\'s a fraction of iPhone. Investors who assume Mac is the core product misunderstand where Apple\'s real scale lives.',
@@ -91,7 +100,7 @@ export const appleLesson: Lesson = {
       ],
       correctIndex: 1,
       explanation:
-        'Services revenue is subscription-based — customers pay monthly for iCloud, Apple Music, Apple TV+, and App Store purchases. This makes revenue predictable and recurring, unlike one-time hardware sales. Services also has ~70% profit margins vs. ~35% for hardware. Wall Street prizes recurring, high-margin revenue because it\'s more stable and more profitable per dollar.',
+        'Services revenue — now ~$96B annually and growing ~14% per year — is subscription-based. Customers pay monthly for iCloud, Apple Music, Apple TV+, and App Store purchases. This makes revenue predictable and recurring, unlike one-time hardware sales. Services also has ~70% profit margins vs. ~35% for hardware. Wall Street prizes recurring, high-margin revenue because it\'s more stable and more profitable per dollar.',
       wrongExplanations: [
         'Services doesn\'t have "more customers" — it monetizes the same iPhone user base. The value comes from how that revenue behaves (recurring, sticky), not from reaching new people.',
         '',
@@ -155,6 +164,13 @@ export const nvidiaLesson: Lesson = {
   description:
     "NVIDIA is one of the most talked-about stocks in the market — but hype and good investing are different things. In this lesson, you'll learn how NVIDIA actually makes money, why its competitive moat is different from most hardware companies, what could go wrong even if AI is real, and how to think about valuation when a stock has already gone up 10x.",
   estimatedMinutes: 3,
+  dataAsOf: 'Q1 2025',
+  keyFacts: [
+    { label: 'Market Cap', value: '~$3.2T', detail: 'Grew from ~$300B to $3.2T in under 3 years' },
+    { label: 'Annual Revenue', value: '~$130B', detail: 'Up from ~$27B two years ago — a 4.8x increase' },
+    { label: 'Gross Margin', value: '73%', detail: 'Unheard of for a hardware company (Intel runs ~40%)' },
+    { label: 'Data Center Share', value: '~80%+', detail: 'Dominant share of AI training chip market' },
+  ],
   topics: [
     { label: 'How NVIDIA makes money and why it dominates', icon: Target },
     { label: 'What gives NVIDIA its real competitive moat', icon: TrendingUp },
@@ -186,7 +202,7 @@ export const nvidiaLesson: Lesson = {
       ],
       correctIndex: 1,
       explanation:
-        'NVIDIA\'s Data Center segment generates about 83% of total revenue. This is where all the AI demand lives — hyperscalers like AWS, Azure, and Google Cloud buying massive GPU clusters to train and run AI models. Gaming, the original business, is now just ~10%. This extreme concentration is the single most important fact about NVIDIA\'s business: everything rides on continued AI infrastructure spending.',
+        'NVIDIA\'s Data Center segment generates about 83% of total revenue — that\'s roughly $108B out of $130B. This is where all the AI demand lives — hyperscalers like AWS, Azure, and Google Cloud buying massive GPU clusters to train and run AI models. Gaming, the original business, is now just ~10%. This extreme concentration is the single most important fact about NVIDIA\'s business: everything rides on continued AI infrastructure spending.',
       wrongExplanations: [
         'Gaming was once NVIDIA\'s core business, but it\'s now only ~10% of revenue. Investors who still think of NVIDIA as a "gaming company" are working with outdated information — and that leads to wrong conclusions about what drives the stock.',
         '',
@@ -207,7 +223,7 @@ export const nvidiaLesson: Lesson = {
       ],
       correctIndex: 2,
       explanation:
-        'NVIDIA\'s real moat is CUDA — a proprietary software ecosystem that developers have been building on for over 15 years. AI researchers, frameworks (PyTorch, TensorFlow), and enterprise tools are deeply integrated with CUDA. Even if a competitor builds a faster chip, customers would need to rewrite and retest their entire software stack to switch. This creates switching costs similar to how developers stay on iOS or Windows — the hardware matters, but the ecosystem matters more.',
+        'NVIDIA\'s real moat is CUDA — a proprietary software ecosystem that developers have been building on for over 15 years. AI researchers, frameworks (PyTorch, TensorFlow), and enterprise tools are deeply integrated with CUDA. This is why NVIDIA holds 80%+ market share and can charge 73% gross margins — even if a competitor builds a faster chip, customers would need to rewrite and retest their entire software stack to switch. The hardware matters, but the ecosystem lock-in matters more.',
       wrongExplanations: [
         'NVIDIA doesn\'t have exclusive contracts — cloud providers actively develop alternatives (Google TPU, Amazon Trainium). Customers choose NVIDIA because of ecosystem advantages, not contractual lock-in. Confusing preference with exclusivity overestimates the durability of the moat.',
         'NVIDIA\'s GPUs are actually among the most expensive. Their moat is the opposite of being cheap — they charge premium prices because the ecosystem makes switching costly. Assuming cheapness is a moat shows a misunderstanding of how pricing power works in tech.',
