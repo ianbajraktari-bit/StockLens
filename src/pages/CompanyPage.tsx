@@ -7,6 +7,7 @@ import {
   Swords,
   Globe,
   Activity,
+  Brain,
   Target,
 } from 'lucide-react';
 import { getCompanyById } from '../data/companies';
@@ -15,6 +16,7 @@ import MetricCard from '../components/MetricCard';
 import RevenueBar from '../components/RevenueBar';
 import PriceChart from '../components/PriceChart';
 import DecisionPanel from '../components/DecisionPanel';
+import ThinkingStep from '../components/ThinkingStep';
 
 export default function CompanyPage() {
   const { id } = useParams<{ id: string }>();
@@ -60,7 +62,7 @@ export default function CompanyPage() {
             <div className="mt-6 flex items-center gap-2 text-sm text-text-muted">
               <Activity className="w-4 h-4" />
               <span>
-                7 sections · ~10 min read · Interactive decision at the end
+                {company.id === 'apple' ? '8' : '7'} sections · ~10 min read · Interactive decision at the end
               </span>
             </div>
           </motion.div>
@@ -318,9 +320,30 @@ export default function CompanyPage() {
           </div>
         </SectionCard>
 
-        {/* 7. Your Decision */}
+        {/* Apple-only: Thinking Step */}
+        {company.id === 'apple' && (
+          <SectionCard
+            step={7}
+            title="Write Your Investor View"
+            subtitle="Before you pick a stance, articulate your thinking in your own words"
+            icon={<Brain className="w-5 h-5" />}
+          >
+            <ThinkingStep
+              companyName="Apple"
+              prompt="Based on everything you've seen — the business model, financials, valuation, bull/bear cases, and market expectations — does Apple look attractive as an investment right now? Why or why not? Write 1–2 sentences."
+              modelAnswer="Apple is a high-quality business with an unmatched ecosystem, but at 32x earnings with only 4% revenue growth, the stock is priced for a Services-led acceleration that hasn't fully materialized yet. I'd want to see either a clear iPhone upgrade cycle driven by Apple Intelligence or Services growth re-accelerating above 15% before paying this premium."
+              strongReasoningPoints={[
+                'References a specific valuation metric (like P/E) and connects it to the growth rate — not just saying "it\'s expensive" but explaining why the price might or might not be justified.',
+                'Identifies the key variable that matters most (e.g., Services growth, iPhone upgrade cycle, regulatory risk) rather than listing everything.',
+                'Takes a clear position with a condition — "I\'d be bullish if X" or "it\'s too expensive unless Y" — showing you can weigh trade-offs rather than just summarize.',
+              ]}
+            />
+          </SectionCard>
+        )}
+
+        {/* Your Decision */}
         <SectionCard
-          step={7}
+          step={company.id === 'apple' ? 8 : 7}
           title="Make Your Decision"
           subtitle="Now that you've done the work, what do you think?"
           icon={<Target className="w-5 h-5" />}
