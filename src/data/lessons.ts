@@ -13,6 +13,13 @@ export interface QuizQuestion {
   takeaway: string;
 }
 
+export interface ThinkingStep {
+  prompt: string;
+  placeholder: string;
+  modelAnswer: string;
+  strongReasoningIncludes: string[];
+}
+
 export interface Lesson {
   id: string;
   emoji: string;
@@ -24,6 +31,7 @@ export interface Lesson {
   keyFacts: { label: string; value: string; detail: string }[];
   topics: { label: string; icon: LucideIcon }[];
   questions: QuizQuestion[];
+  thinkingStep?: ThinkingStep;
   takeaways: string[];
   completionMessages: {
     perfect: string;
@@ -54,6 +62,19 @@ export const appleLesson: Lesson = {
     { label: 'The key risks every Apple investor should know', icon: ShieldAlert },
     { label: 'Making an investor judgment call', icon: BrainCircuit },
   ],
+  thinkingStep: {
+    prompt:
+      'Based on everything you\'ve learned — Apple\'s revenue mix, Services growth, ecosystem strength, iPhone dependence, and its current valuation premium — does Apple look attractive as an investment right now? Write 1–2 sentences explaining your view.',
+    placeholder:
+      'e.g. "I think Apple is / isn\'t attractive because..."',
+    modelAnswer:
+      'Apple is a high-quality business with a sticky ecosystem and a fast-growing, high-margin Services segment — but at 30x earnings, a lot of that quality is already priced in. I\'d want to see Services growth accelerate or iPhone risk diminish before paying this premium, because even a small disappointment could hurt the stock at this valuation.',
+    strongReasoningIncludes: [
+      'Weighs both strengths (ecosystem, Services margins) and risks (iPhone dependence, saturating market) rather than picking one side',
+      'Considers whether the current stock price already reflects the positives — not just whether the business is good',
+      'Connects the valuation (30x P/E) to what needs to go right for the investment to work',
+    ],
+  },
   takeaways: [
     'Know the business first — understand where revenue comes from before you look at the stock price.',
     'Look beyond revenue — recurring revenue, high margins, and ecosystem lock-in are what separate good businesses from great ones.',

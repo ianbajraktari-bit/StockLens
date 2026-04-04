@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, Trophy, RotateCcw, ArrowRight, ArrowLeft, Lightbulb } from 'lucide-react';
+import { BookOpen, Trophy, RotateCcw, ArrowRight, ArrowLeft, Lightbulb, PenLine, CheckCircle2 } from 'lucide-react';
 import QuestionBlock from '../components/QuestionBlock';
 import FeedbackBlock from '../components/FeedbackBlock';
 import type { Lesson } from '../data/lessons';
 
-type Phase = 'intro' | 'answering' | 'feedback' | 'complete';
+type Phase = 'intro' | 'answering' | 'feedback' | 'thinking' | 'thinking-revealed' | 'complete';
 
 interface LessonPageProps {
   lesson: Lesson;
@@ -17,6 +17,7 @@ export default function LessonPage({ lesson, onBack }: LessonPageProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [phase, setPhase] = useState<Phase>('intro');
   const [score, setScore] = useState(0);
+  const [thinkingText, setThinkingText] = useState('');
 
   const total = lesson.questions.length;
   const question = lesson.questions[currentQ];
@@ -39,6 +40,8 @@ export default function LessonPage({ lesson, onBack }: LessonPageProps) {
       setCurrentQ((q) => q + 1);
       setSelectedIndex(null);
       setPhase('answering');
+    } else if (lesson.thinkingStep) {
+      setPhase('thinking');
     } else {
       setPhase('complete');
     }
@@ -49,6 +52,7 @@ export default function LessonPage({ lesson, onBack }: LessonPageProps) {
     setSelectedIndex(null);
     setPhase('intro');
     setScore(0);
+    setThinkingText('');
   }
 
   function getCompletionMessage(): string {
@@ -147,6 +151,130 @@ export default function LessonPage({ lesson, onBack }: LessonPageProps) {
               Start Lesson
               <ArrowRight className="w-4 h-4" />
             </motion.button>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- Thinking step ---
+  if ((phase === 'thinking' || phase === 'thinking-revealed') && lesson.thinkingStep) {
+    const step = lesson.thinkingStep;
+    const isRevealed = phase === 'thinking-revealed';
+    const canSubmit = thinkingText.trim().length >= 10;
+
+    return (
+      <div className="min-h-screen bg-dark-900">
+        <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="space-y-6"
+          >
+            {/* Header */}
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-base">
+                {lesson.emoji}
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-text-primary">{lesson.title}</h1>
+                <p className="text-xs text-text-muted">{lesson.subtitle}</p>
+              </div>
+            </div>
+
+            {/* Thinking prompt card */}
+            <div className="rounded-2xl border border-border bg-dark-800 p-6 space-y-5">
+              <div className="flex items-center gap-2">
+                <PenLine className="w-4 h-4 text-accent-light" />
+                <span className="text-xs font-semibold text-accent-light uppercase tracking-wide">
+                  Your Investor View
+                </span>
+              </div>
+
+              <p className="text-base font-semibold text-text-primary leading-relaxed">
+                {step.prompt}
+              </p>
+
+              <textarea
+                value={thinkingText}
+                onChange={(e) => setThinkingText(e.target.value)}
+                placeholder={step.placeholder}
+                disabled={isRevealed}
+                rows={4}
+                className={`w-full rounded-xl border border-border bg-dark-900 p-4 text-sm text-text-primary placeholder-text-muted leading-relaxed resize-none focus:outline-none focus:border-accent/50 transition-colors ${
+                  isRevealed ? 'opacity-80' : ''
+                }`}
+              />
+
+              {!isRevealed && (
+                <motion.button
+                  onClick={() => setPhase('thinking-revealed')}
+                  disabled={!canSubmit}
+                  whileHover={canSubmit ? { scale: 1.01 } : {}}
+                  whileTap={canSubmit ? { scale: 0.98 } : {}}
+                  className={`w-full py-3 rounded-xl font-semibold transition-all ${
+                    canSubmit
+                      ? 'bg-accent hover:bg-accent-light text-white cursor-pointer'
+                      : 'bg-dark-600 text-text-muted cursor-not-allowed'
+                  }`}
+                >
+                  Submit My View
+                </motion.button>
+              )}
+
+              {isRevealed && (
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-4"
+                >
+                  {/* Model answer */}
+                  <div className="rounded-xl border border-green/30 bg-green/5 p-4 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-green" />
+                      <span className="text-xs font-semibold text-green uppercase tracking-wide">
+                        Strong Model Answer
+                      </span>
+                    </div>
+                    <p className="text-sm text-text-secondary leading-relaxed">
+                      {step.modelAnswer}
+                    </p>
+                  </div>
+
+                  {/* What strong reasoning includes */}
+                  <div className="rounded-xl border border-accent/20 bg-accent/5 p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Lightbulb className="w-4 h-4 text-accent-light" />
+                      <span className="text-xs font-semibold text-accent-light uppercase tracking-wide">
+                        What Strong Reasoning Includes
+                      </span>
+                    </div>
+                    <ul className="space-y-2">
+                      {step.strongReasoningIncludes.map((point, i) => (
+                        <li key={i} className="flex items-start gap-2.5">
+                          <span className="w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center text-xs font-bold text-accent-light shrink-0 mt-0.5">
+                            {i + 1}
+                          </span>
+                          <span className="text-sm text-text-secondary leading-relaxed">{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Continue to results */}
+                  <motion.button
+                    onClick={() => setPhase('complete')}
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full py-3 rounded-xl bg-accent hover:bg-accent-light text-white font-semibold transition-colors cursor-pointer"
+                  >
+                    See Results
+                  </motion.button>
+                </motion.div>
+              )}
+            </div>
           </motion.div>
         </div>
       </div>
