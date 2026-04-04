@@ -187,6 +187,18 @@ export const nvidia: Company = {
     ],
   },
 
+  thinkingStep: {
+    prompt:
+      'Based on what you\'ve learned about NVIDIA — its dominance in AI chips, its sky-high valuation, and the bull/bear arguments — would you consider this company attractive at this price? Why or why not? (1–2 sentences)',
+    modelAnswer:
+      'NVIDIA is an exceptional business with near-monopoly power in AI infrastructure, but at 60x+ forward earnings, the stock already prices in years of flawless execution. An investor might find it attractive only if they believe AI spending will exceed even the most optimistic forecasts — otherwise, the risk/reward skews unfavorably at current levels, and waiting for a pullback or a clearer picture on competition could be prudent.',
+    strongReasoningIncludes: [
+      'Weighs business quality against valuation — doesn\'t assume "great company = great stock"',
+      'Considers what\'s already priced in rather than just listing positives',
+      'Identifies a specific condition that would change the conclusion (e.g., a pullback, competitive data, spending trends)',
+    ],
+  },
+
   decisionResponses: {
     bullish: {
       whatNeedsToHappen: [

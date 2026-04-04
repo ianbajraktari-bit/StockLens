@@ -57,7 +57,14 @@ export interface Company {
     priceHistory: { month: string; price: number }[];
   };
 
-  // Section 7: Decision Responses
+  // Section 7: Thinking Step (free-response)
+  thinkingStep: {
+    prompt: string;
+    modelAnswer: string;
+    strongReasoningIncludes: string[];
+  };
+
+  // Section 8: Decision Responses
   decisionResponses: {
     bullish: {
       whatNeedsToHappen: string[];

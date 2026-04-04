@@ -193,6 +193,18 @@ export const amazon: Company = {
     ],
   },
 
+  thinkingStep: {
+    prompt:
+      'Given Amazon\'s massive scale, its margin expansion story, and its aggressive AI capex — would you consider this stock attractive at its current valuation? Why or why not? (1–2 sentences)',
+    modelAnswer:
+      'Amazon is one of the few companies that can credibly invest $80B+ in capex and still generate rising margins, which makes the margin expansion thesis compelling. However, at ~40x forward earnings, you\'re paying a premium for execution that hasn\'t fully materialized — the stock is attractive if you believe AWS re-acceleration and advertising growth will drive an earnings inflection, but less so if capex doesn\'t translate into proportional returns over the next 2–3 years.',
+    strongReasoningIncludes: [
+      'Connects the capex investment thesis to a specific expected outcome (margin expansion, AWS growth)',
+      'Acknowledges the time horizon — distinguishes between "eventually right" and "right now"',
+      'Identifies what could go wrong even if the business keeps growing',
+    ],
+  },
+
   decisionResponses: {
     bullish: {
       whatNeedsToHappen: [
