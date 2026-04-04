@@ -1,5 +1,16 @@
-import LessonPage from "./pages/LessonPage";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import HomePage from './pages/HomePage';
+import CompanyPage from './pages/CompanyPage';
 
 export default function App() {
-  return <LessonPage />;
+  return (
+    <BrowserRouter>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/company/:id" element={<CompanyPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
