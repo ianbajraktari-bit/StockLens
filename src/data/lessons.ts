@@ -198,6 +198,19 @@ export const nvidiaLesson: Lesson = {
     { label: 'The risks hiding behind the AI hype', icon: ShieldAlert },
     { label: 'Judging a stock that\'s already priced for perfection', icon: BrainCircuit },
   ],
+  thinkingStep: {
+    prompt:
+      'NVIDIA trades at 39x earnings after growing revenue 114% in a single year. Its biggest customers are also building competing chips. AI spending is real — but so is the possibility that this is a cyclical capex boom, not permanent demand. Given everything you\'ve learned, would you buy NVIDIA at today\'s price? Write 1–2 sentences explaining what would have to be true for the investment to work.',
+    placeholder:
+      'e.g. "I would / wouldn\'t buy NVIDIA here because..."',
+    modelAnswer:
+      'NVIDIA is a genuinely dominant business with a real moat in CUDA — but at 39x earnings, the stock isn\'t priced for "good." It\'s priced for years of sustained hyper-growth with no margin compression and no meaningful share loss to custom silicon. I\'d need confidence that AI infrastructure spending is structurally permanent — not a cyclical capex wave — and that Google, Amazon, and Meta won\'t meaningfully dent NVIDIA\'s share before I\'d pay this price.',
+    strongReasoningIncludes: [
+      'Distinguishes between the AI trend being real and the stock being a good investment at the current price — these are separate questions',
+      'Addresses what specifically must go right (sustained growth, no margin compression, limited custom silicon adoption) rather than vague optimism or pessimism',
+      'Considers whether current AI spending is permanent structural demand or a cyclical capex boom that could slow even if AI itself succeeds',
+    ],
+  },
   takeaways: [
     'Understand concentration risk — when 83% of revenue comes from one segment, your investment thesis lives or dies with that segment.',
     'A real moat isn\'t just good hardware — it\'s an ecosystem (like CUDA) that creates switching costs. Look for what keeps customers locked in.',
