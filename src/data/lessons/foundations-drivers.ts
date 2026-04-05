@@ -69,6 +69,18 @@ export const foundationsDriversLesson: Lesson = {
       topicIcon: Anchor,
       context:
         'Two subscription snack box companies each have 5,000 subscribers paying $30/month.\n\nCompany A loses 400 subscribers every month (8% of its base). To stay at 5,000, it spends heavily on ads and promotions to replace them — about $50 to acquire each new subscriber.\n\nCompany B loses 50 subscribers per month (1% of its base). It spends almost nothing on marketing because customers stay and tell their friends.',
+      gutCheck: {
+        prompt: 'Quick gut check — just go with your first instinct:',
+        nudge: 'No wrong answer. Just commit to your initial reaction.',
+        options: [
+          'Company A — the one that\'s great at finding new subscribers',
+          'Company B — the one where subscribers rarely leave',
+        ],
+        reflections: [
+          'Your gut said Company A — the one that\'s great at acquiring customers. That\'s a reasonable instinct: a company that can reliably attract 400 new subscribers every month sounds like it has strong marketing muscle. But here\'s the catch — it\'s spending $20,000/month just to replace the customers it keeps losing. All that acquisition skill is going toward standing still, not growing. Company B barely needs to market because its customers stay. Same revenue today, but wildly different economics underneath.',
+          'Your gut said Company B — sharp instinct. You sensed that keeping customers matters more than finding them. That\'s exactly right. Company A burns $20,000/month replacing the 400 subscribers who leave. Company B loses only 50 and spends almost nothing on marketing. The deeper lesson: a business that retains customers builds a foundation. A business that constantly replaces them is running on a treadmill — impressive effort, zero forward progress.',
+        ],
+      },
       question: 'Both have the same revenue today. What\'s the critical difference?',
       options: [
         'No real difference — they both have 5,000 subscribers and the same revenue',

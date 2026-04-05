@@ -70,6 +70,18 @@ export const foundationsRecurringLesson: Lesson = {
       context:
         'Two businesses both grew their revenue over the past year.\n\nBusiness A is a furniture store. Revenue grew 20% — from $1 million to $1.2 million. But almost every sale was to a new customer buying a one-time item. To keep growing, it needs to find even more new buyers next year.\n\nBusiness B is a meal-prep delivery service. Revenue grew 12% — from $500,000 to $560,000. But 90% of last year\'s customers are still subscribed and paying weekly. The growth came from adding just a few dozen new subscribers on top of a loyal base.',
       question: 'Which business had more valuable growth?',
+      gutCheck: {
+        prompt: 'Quick gut check — just go with your first instinct:',
+        nudge: 'No wrong answer. Just commit to your initial reaction.',
+        options: [
+          'Business A — the one that grew 20%',
+          'Business B — the one that grew 12%',
+        ],
+        reflections: [
+          'Your gut said Business A — the one with 20% growth. That\'s the natural instinct: a bigger growth number feels like a better result. But this is where "how much" and "how" start to diverge. Business A\'s 20% came entirely from new one-time buyers — none of last year\'s customers came back. Business B\'s 12% came from adding a few subscribers on top of a base where 90% of customers are still paying. Business A has to rebuild its entire revenue next year. Business B starts next year with most of its revenue already locked in.',
+          'Your gut said Business B — sharp instinct. You sensed that 12% growth built on loyal customers might be more valuable than 20% built on one-time buyers. That\'s exactly right. Business B starts next year with ~90% of its revenue already committed. Business A starts at zero and has to re-find every customer. The deeper lesson: growth that compounds on a stable base is worth more than growth that has to be rebuilt from scratch, even when the percentage is lower.',
+        ],
+      },
       options: [
         'Business A — 20% growth is better than 12% growth, period',
         'Business B — its growth is built on a loyal base that keeps paying, so next year\'s revenue is already mostly locked in',
