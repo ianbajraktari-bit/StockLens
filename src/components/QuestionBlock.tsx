@@ -13,11 +13,9 @@ export default function QuestionBlock({ question, selectedIndex, locked, onSelec
   return (
     <div className="space-y-4">
       {question.context && (
-        <div className="rounded-lg border border-border bg-dark-900/50 p-4">
-          <p className="text-sm text-text-secondary leading-relaxed">{question.context}</p>
-        </div>
+        <p className="text-sm text-text-secondary leading-relaxed">{question.context}</p>
       )}
-      <h2 className="text-xl font-bold text-text-primary">{question.question}</h2>
+      <h2 className="text-base font-bold text-text-primary leading-snug">{question.question}</h2>
       <div className="space-y-3">
         {question.options.map((option, i) => {
           const isSelected = selectedIndex === i;

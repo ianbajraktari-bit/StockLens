@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, Trophy, RotateCcw, ArrowRight, ArrowLeft, Lightbulb, PenLine, CheckCircle2 } from 'lucide-react';
 import QuestionBlock from '../components/QuestionBlock';
@@ -21,6 +21,7 @@ export default function LessonPage({ lesson, onBack, onComplete }: LessonPagePro
   const [thinkingText, setThinkingText] = useState('');
   const [gutDone, setGutDone] = useState(false);
   const [gutPick, setGutPick] = useState<number | null>(null);
+  const gutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const total = lesson.questions.length;
   const question = lesson.questions[currentQ];
@@ -30,6 +31,13 @@ export default function LessonPage({ lesson, onBack, onComplete }: LessonPagePro
       onComplete?.(lesson.id);
     }
   }, [phase, lesson.id, onComplete]);
+
+  // Clean up gut check timer on unmount or question change
+  useEffect(() => {
+    return () => {
+      if (gutTimerRef.current) clearTimeout(gutTimerRef.current);
+    };
+  }, [currentQ]);
 
   function handleSelect(index: number) {
     if (phase !== 'answering') return;
@@ -42,6 +50,11 @@ export default function LessonPage({ lesson, onBack, onComplete }: LessonPagePro
       setScore((s) => s + 1);
     }
     setPhase('feedback');
+  }
+
+  function handleGutPick(index: number) {
+    setGutPick(index);
+    gutTimerRef.current = setTimeout(() => setGutDone(true), 500);
   }
 
   function handleContinue() {
@@ -399,12 +412,12 @@ export default function LessonPage({ lesson, onBack, onComplete }: LessonPagePro
         {/* Question area */}
         <AnimatePresence mode="wait">
           <motion.div
-            key={currentQ}
+            key={`${currentQ}-${phase === 'feedback' ? 'fb' : 'q'}`}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.25 }}
-            className="rounded-2xl border border-border bg-dark-800 p-6 space-y-6"
+            className="rounded-2xl border border-border bg-dark-800 p-6 space-y-5"
           >
             {/* Topic label */}
             <div className="flex items-center gap-2">
@@ -418,21 +431,21 @@ export default function LessonPage({ lesson, onBack, onComplete }: LessonPagePro
             {phase === 'answering' && question.gutCheck && !gutDone ? (
               <div className="space-y-4">
                 {question.context && (
-                  <div className="rounded-lg border border-border bg-dark-900/50 p-4">
-                    <p className="text-sm text-text-secondary leading-relaxed">{question.context}</p>
-                  </div>
+                  <p className="text-sm text-text-secondary leading-relaxed">{question.context}</p>
                 )}
                 <p className="text-base font-semibold text-text-primary">{question.gutCheck.prompt}</p>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {question.gutCheck.options.map((opt, i) => (
                     <motion.button
                       key={i}
-                      onClick={() => setGutPick(i)}
-                      whileTap={{ scale: 0.98 }}
-                      className={`w-full text-left rounded-xl border p-4 transition-all duration-200 cursor-pointer ${
+                      onClick={() => gutPick === null && handleGutPick(i)}
+                      whileTap={gutPick === null ? { scale: 0.98 } : {}}
+                      className={`w-full text-left rounded-xl border p-3.5 transition-all duration-200 ${
                         gutPick === i
                           ? 'border-accent/50 bg-accent/10'
-                          : 'border-border bg-dark-700 hover:border-dark-400'
+                          : gutPick !== null
+                            ? 'border-border bg-dark-700 opacity-40'
+                            : 'border-border bg-dark-700 hover:border-dark-400 cursor-pointer'
                       }`}
                     >
                       <span className="text-sm text-text-primary">{opt}</span>
@@ -440,26 +453,26 @@ export default function LessonPage({ lesson, onBack, onComplete }: LessonPagePro
                   ))}
                 </div>
                 <p className="text-xs text-text-muted italic">{question.gutCheck.nudge}</p>
-                <motion.button
-                  onClick={() => setGutDone(true)}
-                  disabled={gutPick === null}
-                  whileHover={gutPick !== null ? { scale: 1.01 } : {}}
-                  whileTap={gutPick !== null ? { scale: 0.98 } : {}}
-                  className={`w-full py-3 rounded-xl font-semibold transition-all ${
-                    gutPick !== null
-                      ? 'bg-accent hover:bg-accent-light text-white cursor-pointer'
-                      : 'bg-dark-600 text-text-muted cursor-not-allowed'
-                  }`}
-                >
-                  Lock In My Gut Feeling
-                </motion.button>
               </div>
+            ) : phase === 'feedback' && selectedIndex !== null ? (
+              /* Feedback phase — collapsed question, just show feedback */
+              <>
+                <p className="text-sm text-text-muted">{question.question}</p>
+                <FeedbackBlock
+                  question={question}
+                  selectedIndex={selectedIndex}
+                  onContinue={handleContinue}
+                  isLast={currentQ === total - 1}
+                  gutCheckPick={gutDone ? gutPick : null}
+                />
+              </>
             ) : (
+              /* Answering phase — show full question */
               <>
                 <QuestionBlock
                   question={question}
                   selectedIndex={selectedIndex}
-                  locked={phase === 'feedback'}
+                  locked={false}
                   onSelect={handleSelect}
                 />
 
@@ -478,17 +491,6 @@ export default function LessonPage({ lesson, onBack, onComplete }: LessonPagePro
                   >
                     Submit Answer
                   </motion.button>
-                )}
-
-                {/* Feedback */}
-                {phase === 'feedback' && selectedIndex !== null && (
-                  <FeedbackBlock
-                    question={question}
-                    selectedIndex={selectedIndex}
-                    onContinue={handleContinue}
-                    isLast={currentQ === total - 1}
-                    gutCheckPick={gutDone ? gutPick : null}
-                  />
                 )}
               </>
             )}
