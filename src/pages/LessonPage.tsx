@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, Trophy, RotateCcw, ArrowRight, ArrowLeft, Lightbulb, PenLine, CheckCircle2 } from 'lucide-react';
 import QuestionBlock from '../components/QuestionBlock';
@@ -10,9 +10,10 @@ type Phase = 'intro' | 'answering' | 'feedback' | 'thinking' | 'thinking-reveale
 interface LessonPageProps {
   lesson: Lesson;
   onBack: () => void;
+  onComplete?: (lessonId: string) => void;
 }
 
-export default function LessonPage({ lesson, onBack }: LessonPageProps) {
+export default function LessonPage({ lesson, onBack, onComplete }: LessonPageProps) {
   const [currentQ, setCurrentQ] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [phase, setPhase] = useState<Phase>('intro');
@@ -21,6 +22,12 @@ export default function LessonPage({ lesson, onBack }: LessonPageProps) {
 
   const total = lesson.questions.length;
   const question = lesson.questions[currentQ];
+
+  useEffect(() => {
+    if (phase === 'complete') {
+      onComplete?.(lesson.id);
+    }
+  }, [phase, lesson.id, onComplete]);
 
   function handleSelect(index: number) {
     if (phase !== 'answering') return;
