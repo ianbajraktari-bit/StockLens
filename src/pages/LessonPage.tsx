@@ -482,6 +482,7 @@ export default function LessonPage({ lesson, onBack, onComplete }: LessonPagePro
                     selectedIndex={selectedIndex}
                     onContinue={handleContinue}
                     isLast={currentQ === total - 1}
+                    gutCheckPick={gutDone ? gutPick : null}
                   />
                 )}
               </>

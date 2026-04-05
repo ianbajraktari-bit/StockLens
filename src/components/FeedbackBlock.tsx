@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { CheckCircle2, XCircle, Info, Lightbulb } from 'lucide-react';
+import { CheckCircle2, XCircle, Info, Lightbulb, MessageCircle } from 'lucide-react';
 import type { QuizQuestion } from '../data/lessons';
 
 interface FeedbackBlockProps {
@@ -7,10 +7,14 @@ interface FeedbackBlockProps {
   selectedIndex: number;
   onContinue: () => void;
   isLast: boolean;
+  gutCheckPick?: number | null;
 }
 
-export default function FeedbackBlock({ question, selectedIndex, onContinue, isLast }: FeedbackBlockProps) {
+export default function FeedbackBlock({ question, selectedIndex, onContinue, isLast, gutCheckPick }: FeedbackBlockProps) {
   const isCorrect = selectedIndex === question.correctIndex;
+  const gutReflection = gutCheckPick != null && question.gutCheck?.reflections
+    ? question.gutCheck.reflections[gutCheckPick]
+    : null;
 
   return (
     <motion.div
@@ -19,6 +23,17 @@ export default function FeedbackBlock({ question, selectedIndex, onContinue, isL
       transition={{ duration: 0.3 }}
       className="space-y-4"
     >
+      {/* Gut check reflection */}
+      {gutReflection && (
+        <div className="rounded-xl border border-accent/20 bg-accent/5 p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <MessageCircle className="w-4 h-4 text-accent-light" />
+            <span className="text-xs font-semibold text-accent-light uppercase tracking-wide">Your Gut Instinct</span>
+          </div>
+          <p className="text-sm text-text-secondary leading-relaxed">{gutReflection}</p>
+        </div>
+      )}
+
       {/* Result banner */}
       <div className={`rounded-xl border p-4 ${
         isCorrect

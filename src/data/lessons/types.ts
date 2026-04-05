@@ -8,6 +8,7 @@ export interface QuizQuestion {
     prompt: string;
     nudge: string;
     options: string[];
+    reflections: string[];
   };
   question: string;
   options: string[];

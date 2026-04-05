@@ -53,6 +53,10 @@ export const foundationsMarginsLesson: Lesson = {
           'Business A — the one with $2 million in sales',
           'Business B — the one with $400,000 in sales',
         ],
+        reflections: [
+          'Your gut said Business A — the one with $2 million in sales. That\'s the most common instinct, and it makes sense: bigger revenue feels like a bigger business. But this is exactly the trap. Business A keeps only $40,000 from $2 million in sales (2 cents per dollar). Business B keeps $160,000 from $400,000 (40 cents per dollar). Your instinct was drawn to the bigger number — but what a business keeps matters more than what it sells.',
+          'Your gut said Business B — good instinct. Even before the full analysis, you sensed that $400,000 in sales with strong economics might beat $2 million with weak ones. That instinct is exactly right: Business B keeps $160,000 (40 cents per dollar) vs. Business A\'s $40,000 (2 cents per dollar). The deeper lesson is why — revenue is vanity, profit is sanity. What a business keeps is what actually compounds over time.',
+        ],
       },
       question: 'Which business would you rather own a piece of?',
       options: [
