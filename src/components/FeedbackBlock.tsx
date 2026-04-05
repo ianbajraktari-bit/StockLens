@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, XCircle, Info, Lightbulb, MessageCircle, ChevronDown } from 'lucide-react';
+import { CheckCircle2, XCircle, Info, Lightbulb, MessageCircle, ChevronDown, Sparkles } from 'lucide-react';
 import type { QuizQuestion } from '../data/lessons';
 
 interface FeedbackBlockProps {
@@ -15,9 +15,13 @@ export default function FeedbackBlock({ question, selectedIndex, onContinue, isL
   const isCorrect = selectedIndex === question.correctIndex;
   const hasPunchline = !!question.punchline;
   const [showDetails, setShowDetails] = useState(false);
+  const [reflectionPick, setReflectionPick] = useState<number | null>(null);
   const gutReflection = gutCheckPick != null && question.gutCheck?.reflections
     ? question.gutCheck.reflections[gutCheckPick]
     : null;
+
+  const hasReflection = !!question.reflection;
+  const reflectionDone = !hasReflection || reflectionPick !== null;
 
   return (
     <motion.div
@@ -57,8 +61,50 @@ export default function FeedbackBlock({ question, selectedIndex, onContinue, isL
         </p>
       </div>
 
+      {/* Post-punchline reflection */}
+      {hasReflection && (
+        <div className="rounded-xl border border-border bg-dark-800 p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-3.5 h-3.5 text-accent-light" />
+            <span className="text-xs font-semibold text-accent-light uppercase tracking-wide">Quick Reflection</span>
+          </div>
+          <p className="text-sm font-medium text-text-primary">{question.reflection!.prompt}</p>
+          <div className="space-y-2">
+            {question.reflection!.options.map((opt, i) => (
+              <motion.button
+                key={i}
+                onClick={() => setReflectionPick(i)}
+                disabled={reflectionPick !== null}
+                whileTap={reflectionPick === null ? { scale: 0.98 } : {}}
+                className={`w-full text-left rounded-lg border p-3 transition-all duration-200 ${
+                  reflectionPick === i
+                    ? 'border-accent/50 bg-accent/10'
+                    : reflectionPick !== null
+                      ? 'border-border bg-dark-900/30 opacity-50'
+                      : 'border-border bg-dark-900/50 hover:border-dark-400 cursor-pointer'
+                }`}
+              >
+                <span className="text-sm text-text-primary">{opt}</span>
+              </motion.button>
+            ))}
+          </div>
+          <AnimatePresence>
+            {reflectionPick !== null && (
+              <motion.p
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25 }}
+                className="text-sm text-text-secondary leading-relaxed pt-1"
+              >
+                {question.reflection!.responses[reflectionPick]}
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
+
       {/* Collapsible details — only when punchline exists */}
-      {hasPunchline && (
+      {hasPunchline && reflectionDone && (
         <div>
           <button
             onClick={() => setShowDetails(!showDetails)}
@@ -126,24 +172,31 @@ export default function FeedbackBlock({ question, selectedIndex, onContinue, isL
         </div>
       )}
 
-      {/* Investor takeaway */}
-      <div className="flex items-start gap-2.5 rounded-xl border border-accent/20 bg-accent/5 p-4">
-        <Lightbulb className="w-4 h-4 text-accent-light mt-0.5 shrink-0" />
-        <div>
-          <p className="text-xs text-accent-light font-semibold uppercase tracking-wide mb-1">Investor Takeaway</p>
-          <p className="text-sm text-text-primary leading-relaxed">{question.takeaway}</p>
+      {/* Investor takeaway — shown after reflection is done */}
+      {reflectionDone && (
+        <div className="flex items-start gap-2.5 rounded-xl border border-accent/20 bg-accent/5 p-4">
+          <Lightbulb className="w-4 h-4 text-accent-light mt-0.5 shrink-0" />
+          <div>
+            <p className="text-xs text-accent-light font-semibold uppercase tracking-wide mb-1">Investor Takeaway</p>
+            <p className="text-sm text-text-primary leading-relaxed">{question.takeaway}</p>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Continue button */}
-      <motion.button
-        onClick={onContinue}
-        whileHover={{ scale: 1.01 }}
-        whileTap={{ scale: 0.98 }}
-        className="w-full py-3 rounded-xl bg-accent hover:bg-accent-light text-white font-semibold transition-colors cursor-pointer"
-      >
-        {isLast ? 'See Results' : 'Continue'}
-      </motion.button>
+      {/* Continue button — gated behind reflection */}
+      {reflectionDone && (
+        <motion.button
+          initial={hasReflection ? { opacity: 0, y: 8 } : false}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25 }}
+          onClick={onContinue}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full py-3 rounded-xl bg-accent hover:bg-accent-light text-white font-semibold transition-colors cursor-pointer"
+        >
+          {isLast ? 'See Results' : 'Continue'}
+        </motion.button>
+      )}
     </motion.div>
   );
 }

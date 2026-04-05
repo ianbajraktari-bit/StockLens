@@ -64,6 +64,19 @@ export const appleLesson: Lesson = {
       correctIndex: 0,
       punchline:
         'Apple\'s real iPhone exposure is ~70-75%, not the 50% it looks like. Nearly every segment — including Services — depends on iPhone as the entry point to the ecosystem.',
+      reflection: {
+        prompt: 'Knowing the real iPhone exposure is ~70-75%, what would you watch most closely?',
+        options: [
+          'iPhone sales trends — if the core shrinks, everything shrinks',
+          'Services growth — if it decouples from iPhone, the risk drops',
+          'New product categories — Apple needs a second engine',
+        ],
+        responses: [
+          'Sharp focus. iPhone is the foundation — if upgrade cycles slow or market share dips, the chain reaction hits Services, Wearables, and everything downstream.',
+          'Good instinct. If Services can grow independently of iPhone sales, the 70-75% dependency weakens over time. That\'s exactly what bulls are betting on.',
+          'Forward-looking. Vision Pro, health tech, or automotive could reduce iPhone dependence — but none generate meaningful revenue yet. This is a long-term bet.',
+        ],
+      },
       explanation:
         'The iPhone generates ~50% of revenue directly — but the dependency is even deeper than that. Services revenue ($96B) exists because 2.2 billion people own Apple devices, mostly iPhones. If iPhone sales slow, the installed base eventually shrinks, and Services growth stalls too. This means Apple\'s real iPhone exposure isn\'t 50% — it\'s closer to 70-75% when you trace the dependencies. Investors who see "five segments" and assume diversification are missing the chain reaction underneath.',
       wrongExplanations: [

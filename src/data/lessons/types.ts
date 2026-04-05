@@ -14,6 +14,11 @@ export interface QuizQuestion {
   options: string[];
   correctIndex: number;
   punchline?: string;
+  reflection?: {
+    prompt: string;
+    options: string[];
+    responses: string[];
+  };
   explanation: string;
   wrongExplanations: string[];
   takeaway: string;
