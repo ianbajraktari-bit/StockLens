@@ -127,6 +127,19 @@ export const appleLesson: Lesson = {
       correctIndex: 2,
       punchline:
         'Antitrust directly attacks the App Store and search deal that power Services profit — the exact segment justifying Apple\'s premium. Unlike other risks, regulatory action is already in motion.',
+      reflection: {
+        prompt: 'How much should this risk change your view of Apple?',
+        options: [
+          'Not much — Apple will adapt, they always do',
+          'It matters — I\'d want a lower price to compensate for this uncertainty',
+          'It\'s a dealbreaker — the bull case depends on the thing being attacked',
+        ],
+        responses: [
+          'That\'s a common view, and Apple does have a track record of adaptation. But be careful — "they\'ll figure it out" can become a way to avoid pricing in real risk. The question isn\'t whether Apple survives regulation, it\'s whether Services margins stay high enough to justify 30x earnings.',
+          'That\'s disciplined thinking. You\'re not dismissing the risk or panicking — you\'re asking for a margin of safety. This is how professional investors handle uncertainty: they don\'t predict outcomes, they adjust the price they\'re willing to pay.',
+          'That\'s a strong conviction. If you believe antitrust will meaningfully erode App Store commissions and the Google deal, then the entire premium valuation thesis does break down. Just make sure you\'re weighing probability, not just severity — regulation is slow and outcomes are uncertain.',
+        ],
+      },
       explanation:
         'All four risks are real, but antitrust is the most structurally dangerous because it targets the profit engine directly. The App Store\'s 30% commission and the Google search deal together represent a huge portion of Services profit — and Services is the segment that justifies Apple\'s premium valuation. Courts have already ruled against Google\'s search monopoly, the EU\'s Digital Markets Act forces App Store changes, and the DOJ is pursuing further action. Unlike slower upgrades (gradual) or China risk (scenario-dependent), regulatory action is already in motion and attacks the business model itself.',
       wrongExplanations: [
