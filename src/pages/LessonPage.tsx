@@ -19,6 +19,8 @@ export default function LessonPage({ lesson, onBack, onComplete }: LessonPagePro
   const [phase, setPhase] = useState<Phase>('intro');
   const [score, setScore] = useState(0);
   const [thinkingText, setThinkingText] = useState('');
+  const [gutDone, setGutDone] = useState(false);
+  const [gutPick, setGutPick] = useState<number | null>(null);
 
   const total = lesson.questions.length;
   const question = lesson.questions[currentQ];
@@ -46,6 +48,8 @@ export default function LessonPage({ lesson, onBack, onComplete }: LessonPagePro
     if (currentQ < total - 1) {
       setCurrentQ((q) => q + 1);
       setSelectedIndex(null);
+      setGutDone(false);
+      setGutPick(null);
       setPhase('answering');
     } else if (lesson.thinkingStep) {
       setPhase('thinking');
@@ -60,6 +64,8 @@ export default function LessonPage({ lesson, onBack, onComplete }: LessonPagePro
     setPhase('intro');
     setScore(0);
     setThinkingText('');
+    setGutDone(false);
+    setGutPick(null);
   }
 
   function getCompletionMessage(): string {
@@ -403,38 +409,82 @@ export default function LessonPage({ lesson, onBack, onComplete }: LessonPagePro
               </span>
             </div>
 
-            <QuestionBlock
-              question={question}
-              selectedIndex={selectedIndex}
-              locked={phase === 'feedback'}
-              onSelect={handleSelect}
-            />
+            {/* Gut check — shown before the full question */}
+            {phase === 'answering' && question.gutCheck && !gutDone ? (
+              <div className="space-y-4">
+                {question.context && (
+                  <div className="rounded-lg border border-border bg-dark-900/50 p-4">
+                    <p className="text-sm text-text-secondary leading-relaxed">{question.context}</p>
+                  </div>
+                )}
+                <p className="text-base font-semibold text-text-primary">{question.gutCheck.prompt}</p>
+                <div className="space-y-3">
+                  {question.gutCheck.options.map((opt, i) => (
+                    <motion.button
+                      key={i}
+                      onClick={() => setGutPick(i)}
+                      whileTap={{ scale: 0.98 }}
+                      className={`w-full text-left rounded-xl border p-4 transition-all duration-200 cursor-pointer ${
+                        gutPick === i
+                          ? 'border-accent/50 bg-accent/10'
+                          : 'border-border bg-dark-700 hover:border-dark-400'
+                      }`}
+                    >
+                      <span className="text-sm text-text-primary">{opt}</span>
+                    </motion.button>
+                  ))}
+                </div>
+                <p className="text-xs text-text-muted italic">{question.gutCheck.nudge}</p>
+                <motion.button
+                  onClick={() => setGutDone(true)}
+                  disabled={gutPick === null}
+                  whileHover={gutPick !== null ? { scale: 1.01 } : {}}
+                  whileTap={gutPick !== null ? { scale: 0.98 } : {}}
+                  className={`w-full py-3 rounded-xl font-semibold transition-all ${
+                    gutPick !== null
+                      ? 'bg-accent hover:bg-accent-light text-white cursor-pointer'
+                      : 'bg-dark-600 text-text-muted cursor-not-allowed'
+                  }`}
+                >
+                  Lock In My Gut Feeling
+                </motion.button>
+              </div>
+            ) : (
+              <>
+                <QuestionBlock
+                  question={question}
+                  selectedIndex={selectedIndex}
+                  locked={phase === 'feedback'}
+                  onSelect={handleSelect}
+                />
 
-            {/* Submit button */}
-            {phase === 'answering' && (
-              <motion.button
-                onClick={handleSubmit}
-                disabled={selectedIndex === null}
-                whileHover={selectedIndex !== null ? { scale: 1.01 } : {}}
-                whileTap={selectedIndex !== null ? { scale: 0.98 } : {}}
-                className={`w-full py-3 rounded-xl font-semibold transition-all ${
-                  selectedIndex !== null
-                    ? 'bg-accent hover:bg-accent-light text-white cursor-pointer'
-                    : 'bg-dark-600 text-text-muted cursor-not-allowed'
-                }`}
-              >
-                Submit Answer
-              </motion.button>
-            )}
+                {/* Submit button */}
+                {phase === 'answering' && (
+                  <motion.button
+                    onClick={handleSubmit}
+                    disabled={selectedIndex === null}
+                    whileHover={selectedIndex !== null ? { scale: 1.01 } : {}}
+                    whileTap={selectedIndex !== null ? { scale: 0.98 } : {}}
+                    className={`w-full py-3 rounded-xl font-semibold transition-all ${
+                      selectedIndex !== null
+                        ? 'bg-accent hover:bg-accent-light text-white cursor-pointer'
+                        : 'bg-dark-600 text-text-muted cursor-not-allowed'
+                    }`}
+                  >
+                    Submit Answer
+                  </motion.button>
+                )}
 
-            {/* Feedback */}
-            {phase === 'feedback' && selectedIndex !== null && (
-              <FeedbackBlock
-                question={question}
-                selectedIndex={selectedIndex}
-                onContinue={handleContinue}
-                isLast={currentQ === total - 1}
-              />
+                {/* Feedback */}
+                {phase === 'feedback' && selectedIndex !== null && (
+                  <FeedbackBlock
+                    question={question}
+                    selectedIndex={selectedIndex}
+                    onContinue={handleContinue}
+                    isLast={currentQ === total - 1}
+                  />
+                )}
+              </>
             )}
           </motion.div>
         </AnimatePresence>

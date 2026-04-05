@@ -46,6 +46,14 @@ export const foundationsMarginsLesson: Lesson = {
       topicIcon: Scale,
       context:
         'You\'re choosing between two businesses to invest your savings in.\n\nBusiness A: A busy restaurant chain. $2 million in annual sales. After paying for food, rent, wages, and everything else, it keeps $40,000 per year. That\'s 2 cents kept per dollar earned.\n\nBusiness B: A small software tool for dentists. $400,000 in annual sales. After costs, it keeps $160,000 per year. That\'s 40 cents kept per dollar earned.',
+      gutCheck: {
+        prompt: 'Quick gut check — before you analyze, just go with your instinct:',
+        nudge: 'There\'s no wrong answer here. Just commit to your first reaction.',
+        options: [
+          'Business A — the one with $2 million in sales',
+          'Business B — the one with $400,000 in sales',
+        ],
+      },
       question: 'Which business would you rather own a piece of?',
       options: [
         'Business A — $2 million in sales is far more impressive than $400,000',

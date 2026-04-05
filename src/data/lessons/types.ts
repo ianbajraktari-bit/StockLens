@@ -4,6 +4,11 @@ export interface QuizQuestion {
   topic: string;
   topicIcon: LucideIcon;
   context?: string;
+  gutCheck?: {
+    prompt: string;
+    nudge: string;
+    options: string[];
+  };
   question: string;
   options: string[];
   correctIndex: number;
