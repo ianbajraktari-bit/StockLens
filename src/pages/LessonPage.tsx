@@ -378,7 +378,12 @@ export default function LessonPage({ lesson, onBack, onComplete }: LessonPagePro
         {/* Progress */}
         <div className="space-y-2">
           <div className="flex justify-between text-xs text-text-muted">
-            <span>Question {currentQ + 1} of {total}</span>
+            <span>
+              Step {currentQ + 1} of {total}
+              {lesson.storyArc?.[currentQ] && (
+                <span className="text-accent-light font-medium"> · {lesson.storyArc[currentQ]}</span>
+              )}
+            </span>
             <span>{score} correct so far</span>
           </div>
           <div className="h-1.5 rounded-full bg-dark-700 overflow-hidden">

@@ -22,6 +22,7 @@ export const appleLesson: Lesson = {
     { label: 'The key risks every Apple investor should know', icon: ShieldAlert },
     { label: 'Making an investor judgment call', icon: BrainCircuit },
   ],
+  storyArc: ['The Engine', 'The Bull Case', 'The Risk', 'The Decision'],
   thinkingStep: {
     prompt:
       'Based on everything you\'ve learned — Apple\'s revenue mix, Services growth, ecosystem strength, iPhone dependence, and its current valuation premium — does Apple look attractive as an investment right now? Write 1–2 sentences explaining your view.',
@@ -61,6 +62,8 @@ export const appleLesson: Lesson = {
         'iPhone is the largest segment, so Apple should focus all resources there',
       ],
       correctIndex: 0,
+      punchline:
+        'Apple\'s real iPhone exposure is ~70-75%, not the 50% it looks like. Nearly every segment — including Services — depends on iPhone as the entry point to the ecosystem.',
       explanation:
         'The iPhone generates ~50% of revenue directly — but the dependency is even deeper than that. Services revenue ($96B) exists because 2.2 billion people own Apple devices, mostly iPhones. If iPhone sales slow, the installed base eventually shrinks, and Services growth stalls too. This means Apple\'s real iPhone exposure isn\'t 50% — it\'s closer to 70-75% when you trace the dependencies. Investors who see "five segments" and assume diversification are missing the chain reaction underneath.',
       wrongExplanations: [
@@ -84,6 +87,8 @@ export const appleLesson: Lesson = {
         '70% margins are normal for tech companies, so Services isn\'t special',
       ],
       correctIndex: 0,
+      punchline:
+        'The Google search deal (~$20B/year of near-pure profit) is the hidden load-bearing assumption inside the "Services premium" thesis — and courts are already targeting it.',
       explanation:
         'The Google search deal (~$20B/year) is nearly pure profit and accounts for a significant chunk of Services revenue. A court has already ruled Google\'s search monopoly is illegal, and regulators could force changes to default-search payments. If that deal shrinks or disappears, Services margins and growth both take a real hit — and the "premium valuation" thesis weakens. The best investor thinking doesn\'t just accept a bull case — it identifies the hidden assumption inside it and asks what happens if that assumption breaks.',
       wrongExplanations: [
@@ -107,6 +112,8 @@ export const appleLesson: Lesson = {
         'Losing the AI race — if Siri falls behind, customers might switch ecosystems',
       ],
       correctIndex: 2,
+      punchline:
+        'Antitrust directly attacks the App Store and search deal that power Services profit — the exact segment justifying Apple\'s premium. Unlike other risks, regulatory action is already in motion.',
       explanation:
         'All four risks are real, but antitrust is the most structurally dangerous because it targets the profit engine directly. The App Store\'s 30% commission and the Google search deal together represent a huge portion of Services profit — and Services is the segment that justifies Apple\'s premium valuation. Courts have already ruled against Google\'s search monopoly, the EU\'s Digital Markets Act forces App Store changes, and the DOJ is pursuing further action. Unlike slower upgrades (gradual) or China risk (scenario-dependent), regulatory action is already in motion and attacks the business model itself.',
       wrongExplanations: [
@@ -130,6 +137,8 @@ export const appleLesson: Lesson = {
         'Wait for the P/E to drop to 20x before considering it',
       ],
       correctIndex: 2,
+      punchline:
+        'A great business isn\'t automatically a great investment. At 30x earnings, the stock needs Services to keep compounding and regulatory risk to stay contained — otherwise you\'re overpaying for quality already priced in.',
       explanation:
         'This is the core lesson: a great business and a great investment are not the same thing. Apple\'s quality — brand, ecosystem, Services margins — may justify paying a premium. But at 30x earnings with 8% growth, the stock needs Services to keep expanding at 14%+ and the regulatory environment to remain manageable. The right answer isn\'t blind conviction or blind avoidance. It\'s understanding what you\'re paying for, what needs to go right, and what could undermine the thesis. That\'s investor thinking.',
       wrongExplanations: [

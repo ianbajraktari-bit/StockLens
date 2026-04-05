@@ -13,6 +13,7 @@ export interface QuizQuestion {
   question: string;
   options: string[];
   correctIndex: number;
+  punchline?: string;
   explanation: string;
   wrongExplanations: string[];
   takeaway: string;
@@ -35,6 +36,7 @@ export interface Lesson {
   dataAsOf: string;
   keyFacts: { label: string; value: string; detail: string }[];
   topics: { label: string; icon: LucideIcon }[];
+  storyArc?: string[];
   questions: QuizQuestion[];
   thinkingStep?: ThinkingStep;
   takeaways: string[];
