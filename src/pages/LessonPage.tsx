@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, Trophy, RotateCcw, ArrowRight, ArrowLeft, Lightbulb, PenLine, CheckCircle2 } from 'lucide-react';
+import { BookOpen, Trophy, RotateCcw, ArrowRight, ArrowLeft, Lightbulb, PenLine, CheckCircle2, Home } from 'lucide-react';
 import QuestionBlock from '../components/QuestionBlock';
 import FeedbackBlock from '../components/FeedbackBlock';
-import type { Lesson } from '../data/lessons';
+import { type Lesson, getLessonById } from '../data/lessons';
+import { getNextLessonId, isLessonUnlocked } from '../lib/progression';
 
 type Phase = 'intro' | 'answering' | 'feedback' | 'thinking' | 'thinking-revealed' | 'complete';
 
@@ -14,6 +16,7 @@ interface LessonPageProps {
 }
 
 export default function LessonPage({ lesson, onBack, onComplete }: LessonPageProps) {
+  const navigate = useNavigate();
   const [currentQ, setCurrentQ] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [phase, setPhase] = useState<Phase>('intro');
@@ -349,21 +352,38 @@ export default function LessonPage({ lesson, onBack, onComplete }: LessonPagePro
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <motion.button
-              onClick={handleRestart}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent hover:bg-accent-light text-white font-semibold transition-colors cursor-pointer"
-            >
-              <RotateCcw className="w-4 h-4" />
-              Restart Lesson
-            </motion.button>
+            {(() => {
+              const nextId = getNextLessonId(lesson.id);
+              const nextLesson = nextId ? getLessonById(nextId) : undefined;
+              const nextUnlocked = nextId ? isLessonUnlocked(nextId) : false;
+              if (nextLesson && nextUnlocked) {
+                return (
+                  <motion.button
+                    onClick={() => navigate(`/lesson/${nextLesson.id}`)}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent hover:bg-accent-light text-white font-semibold transition-colors cursor-pointer"
+                  >
+                    Next Lesson
+                    <ArrowRight className="w-4 h-4" />
+                  </motion.button>
+                );
+              }
+              return null;
+            })()}
             <button
-              onClick={onBack}
+              onClick={() => navigate('/')}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border bg-dark-800 hover:bg-dark-700 text-text-secondary font-semibold transition-colors cursor-pointer"
             >
-              <ArrowLeft className="w-4 h-4" />
-              All Lessons
+              <Home className="w-4 h-4" />
+              Back to Home
+            </button>
+            <button
+              onClick={handleRestart}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border bg-dark-800 hover:bg-dark-700 text-text-muted font-semibold transition-colors cursor-pointer"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Redo
             </button>
           </div>
         </motion.div>

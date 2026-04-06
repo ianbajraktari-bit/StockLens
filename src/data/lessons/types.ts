@@ -31,6 +31,16 @@ export interface ThinkingStep {
   strongReasoningIncludes: string[];
 }
 
+export type Skill =
+  | 'margins'
+  | 'recurring_revenue'
+  | 'business_drivers'
+  | 'moats'
+  | 'valuation'
+  | 'risk';
+
+export type LessonTier = 'foundations-1' | 'foundations-2' | 'company';
+
 export interface Lesson {
   id: string;
   emoji: string;
@@ -51,4 +61,6 @@ export interface Lesson {
     good: string;
     low: string;
   };
+  tier?: LessonTier;
+  skills?: Skill[];
 }

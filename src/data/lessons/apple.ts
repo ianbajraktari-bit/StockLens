@@ -10,6 +10,8 @@ export const appleLesson: Lesson = {
     "In this lesson, you'll analyze Apple like a real investor. You'll start by understanding how the company makes money, then look at what makes it attractive to investors, and finish by identifying the risks that could hurt the stock. These three steps — business, quality, and risk — are the foundation of every good investment decision.",
   estimatedMinutes: 3,
   dataAsOf: 'Q1 2025',
+  tier: 'company',
+  skills: ['margins', 'recurring_revenue', 'valuation', 'risk'],
   keyFacts: [
     { label: 'Market Cap', value: '~$3.4T', detail: 'One of the most valuable companies in the world' },
     { label: 'Annual Revenue', value: '~$391B', detail: 'iPhone accounts for roughly half of this' },

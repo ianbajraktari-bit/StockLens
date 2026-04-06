@@ -10,6 +10,8 @@ export const nvidiaLesson: Lesson = {
     "NVIDIA is one of the most talked-about stocks in the market — but hype and good investing are different things. In this lesson, you'll learn how NVIDIA actually makes money, why its competitive moat is different from most hardware companies, what could go wrong even if AI is real, and how to think about valuation when a stock has already gone up 10x.",
   estimatedMinutes: 3,
   dataAsOf: 'Q1 2025',
+  tier: 'company',
+  skills: ['business_drivers', 'moats', 'valuation', 'risk'],
   keyFacts: [
     { label: 'Market Cap', value: '~$3.2T', detail: 'Grew from ~$300B to $3.2T in under 3 years' },
     { label: 'Annual Revenue', value: '~$130B', detail: 'Up from ~$27B two years ago — a 4.8x increase' },

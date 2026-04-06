@@ -10,6 +10,8 @@ export const costcoLesson: Lesson = {
     "Costco is one of the most expensive stocks in retail — and it has been for years. In this lesson, you'll learn why the membership model is so unusual, why Wall Street pays a premium for boring consistency, what could actually go wrong, and how to decide whether a stock that always looks expensive can still be worth buying.",
   estimatedMinutes: 3,
   dataAsOf: 'Q1 2025',
+  tier: 'company',
+  skills: ['margins', 'recurring_revenue', 'moats', 'valuation'],
   keyFacts: [
     { label: 'Market Cap', value: '~$460B', detail: 'The most valuable retailer in the world by far' },
     { label: 'Annual Revenue', value: '~$265B', detail: 'Growing ~7% annually — steady, not flashy' },

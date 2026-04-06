@@ -10,6 +10,8 @@ export const foundationsDriversLesson: Lesson = {
     "Two businesses can both grow 20% — but for completely different reasons. One might be adding new customers. Another might be getting existing customers to spend more. Another might just be raising prices. In this lesson, you'll learn to identify the one thing that really matters in a business, so you stop looking at the surface and start looking at what's underneath.",
   estimatedMinutes: 2,
   dataAsOf: '',
+  tier: 'foundations-1',
+  skills: ['business_drivers'],
   keyFacts: [],
   topics: [
     { label: 'Why the same growth can mean very different things', icon: Search },

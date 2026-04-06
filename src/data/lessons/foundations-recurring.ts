@@ -10,6 +10,8 @@ export const foundationsRecurringLesson: Lesson = {
     "Some businesses have to find new customers every single day just to keep the lights on. Others have customers who pay them again and again, month after month, without being asked. In this lesson, you'll build the intuition for why that difference matters — and why investors care about it so much.",
   estimatedMinutes: 2,
   dataAsOf: '',
+  tier: 'foundations-1',
+  skills: ['recurring_revenue'],
   keyFacts: [],
   topics: [
     { label: 'Why predictable income beats one-time income', icon: Repeat },

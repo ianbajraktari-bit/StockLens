@@ -1,4 +1,4 @@
-export type { QuizQuestion, ThinkingStep, Lesson } from './types';
+export type { QuizQuestion, ThinkingStep, Lesson, Skill, LessonTier } from './types';
 export { foundationsMarginsLesson } from './foundations-margins';
 export { foundationsRecurringLesson } from './foundations-recurring';
 export { foundationsDriversLesson } from './foundations-drivers';

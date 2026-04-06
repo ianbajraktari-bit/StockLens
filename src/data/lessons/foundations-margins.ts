@@ -10,6 +10,8 @@ export const foundationsMarginsLesson: Lesson = {
     "Before you analyze any stock, you need one fundamental intuition: how much a business earns and how much it actually keeps are two very different things. In this lesson, you'll compare simple businesses side by side to build that instinct from scratch. No jargon — just common sense.",
   estimatedMinutes: 2,
   dataAsOf: '',
+  tier: 'foundations-1',
+  skills: ['margins'],
   keyFacts: [],
   topics: [
     { label: 'Why keeping more matters', icon: Coins },
