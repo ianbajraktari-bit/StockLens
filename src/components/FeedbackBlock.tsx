@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, XCircle, Info, Lightbulb, MessageCircle, ChevronDown, Sparkles } from 'lucide-react';
+import { CheckCircle2, XCircle, Info, Lightbulb, MessageCircle, ChevronDown } from 'lucide-react';
 import type { QuizQuestion } from '../data/lessons';
 
 interface FeedbackBlockProps {
