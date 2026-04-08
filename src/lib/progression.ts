@@ -30,6 +30,9 @@ export function markCompleted(id: string): void {
 
 // --- Unlock logic ---
 
+const unit1Lessons = allLessons
+  .filter((l) => l.unit === 1)
+  .sort((a, b) => (a.unitOrder ?? 0) - (b.unitOrder ?? 0));
 const foundationLessons = allLessons.filter((l) => l.tier === 'foundations-1' || l.tier === 'foundations-2');
 const companyLessons = allLessons.filter((l) => l.tier === 'company');
 
@@ -42,8 +45,17 @@ export function isLessonUnlocked(lessonId: string): boolean {
   const lesson = allLessons.find((l) => l.id === lessonId);
   if (!lesson) return false;
 
-  // Company lessons require all foundations to be completed
+  // Unit 1 lessons unlock sequentially within the unit
+  if (lesson.unit === 1) {
+    const idx = unit1Lessons.findIndex((l) => l.id === lessonId);
+    if (idx <= 0) return true;
+    return completed.has(unit1Lessons[idx - 1].id);
+  }
+
+  // Company lessons require Unit 1 + all foundations to be completed
   if (lesson.tier === 'company') {
+    const unit1Complete = unit1Lessons.every((l) => completed.has(l.id));
+    if (!unit1Complete) return false;
     const allFoundationsComplete = foundationLessons.every((l) => completed.has(l.id));
     if (!allFoundationsComplete) return false;
 
@@ -53,7 +65,9 @@ export function isLessonUnlocked(lessonId: string): boolean {
     return completed.has(companyLessons[companyIndex - 1].id);
   }
 
-  // Foundation lessons unlock sequentially
+  // Foundation lessons require Unit 1 to be complete first, then unlock sequentially
+  const unit1Complete = unit1Lessons.every((l) => completed.has(l.id));
+  if (!unit1Complete) return false;
   const foundationIndex = foundationLessons.findIndex((l) => l.id === lessonId);
   if (foundationIndex <= 0) return true;
   return completed.has(foundationLessons[foundationIndex - 1].id);
@@ -76,9 +90,10 @@ export function getFirstUncompletedId(): string | null {
 
 export type SkillsMap = Record<Skill, number>;
 
-const ALL_SKILLS: Skill[] = ['margins', 'recurring_revenue', 'business_drivers', 'moats', 'valuation', 'risk'];
+const ALL_SKILLS: Skill[] = ['mindset', 'margins', 'recurring_revenue', 'business_drivers', 'moats', 'valuation', 'risk'];
 
 const SKILL_LABELS: Record<Skill, string> = {
+  mindset: 'Investor Mindset',
   margins: 'Margins',
   recurring_revenue: 'Recurring Revenue',
   business_drivers: 'Business Drivers',
