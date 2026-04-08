@@ -32,6 +32,7 @@ export interface ThinkingStep {
 }
 
 export type Skill =
+  | 'mindset'
   | 'margins'
   | 'recurring_revenue'
   | 'business_drivers'
@@ -63,4 +64,6 @@ export interface Lesson {
   };
   tier?: LessonTier;
   skills?: Skill[];
+  unit?: number;
+  unitOrder?: number;
 }

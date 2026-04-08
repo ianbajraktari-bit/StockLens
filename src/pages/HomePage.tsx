@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   Lock,
   BarChart3,
+  Compass,
 } from 'lucide-react';
 import { allLessons, type Lesson } from '../data/lessons';
 import {
@@ -17,6 +18,9 @@ import {
   getSkillsProgress,
 } from '../lib/progression';
 
+const unit1Lessons = allLessons
+  .filter((l) => l.unit === 1)
+  .sort((a, b) => (a.unitOrder ?? 0) - (b.unitOrder ?? 0));
 const foundationLessons = allLessons.filter(
   (l) => l.tier === 'foundations-1' || l.tier === 'foundations-2'
 );
@@ -201,12 +205,40 @@ export default function HomePage() {
           </motion.div>
         )}
 
+        {/* Unit 1: Investor Mindset */}
+        {unit1Lessons.length > 0 && (
+          <div className="space-y-3">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: 0.08 }}
+              className="space-y-1"
+            >
+              <div className="flex items-center gap-2">
+                <Compass className="w-4 h-4 text-accent-light" />
+                <h2 className="text-sm font-semibold text-text-primary uppercase tracking-wide">
+                  Unit 1 · Investor Mindset
+                </h2>
+              </div>
+              <p className="text-xs text-text-muted">
+                Start here. Learn what you're actually buying when you buy a stock.
+              </p>
+            </motion.div>
+
+            <div className="space-y-2">
+              {unit1Lessons.map((lesson, i) =>
+                renderLessonCard(lesson, 0.12 + i * 0.06)
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Foundations */}
         <div className="space-y-3">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: 0.1 }}
+            transition={{ duration: 0.35, delay: 0.18 }}
             className="space-y-1"
           >
             <div className="flex items-center gap-2">
@@ -222,7 +254,7 @@ export default function HomePage() {
 
           <div className="space-y-2">
             {foundationLessons.map((lesson, i) =>
-              renderLessonCard(lesson, 0.15 + i * 0.06)
+              renderLessonCard(lesson, 0.22 + i * 0.06)
             )}
           </div>
         </div>
