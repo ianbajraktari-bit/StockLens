@@ -1,6 +1,7 @@
 import { Routes, Route, useParams, useNavigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import LessonPage from './pages/LessonPage';
+import LessonRunner from './pages/LessonRunner';
 import { getLessonById } from './data/lessons';
 import { markCompleted } from './lib/progression';
 
@@ -22,6 +23,19 @@ function LessonRoute() {
           </button>
         </div>
       </div>
+    );
+  }
+
+  // New step-based lessons go through LessonRunner;
+  // legacy questions-based lessons stay on LessonPage until migrated.
+  if (lesson.steps && lesson.steps.length > 0) {
+    return (
+      <LessonRunner
+        key={lesson.id}
+        lesson={lesson}
+        onBack={() => navigate('/')}
+        onComplete={(lessonId) => markCompleted(lessonId)}
+      />
     );
   }
 

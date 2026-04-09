@@ -26,8 +26,9 @@ export default function LessonPage({ lesson, onBack, onComplete }: LessonPagePro
   const [gutPick, setGutPick] = useState<number | null>(null);
   const gutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const total = lesson.questions.length;
-  const question = lesson.questions[currentQ];
+  const questions = lesson.questions ?? [];
+  const total = questions.length;
+  const question = questions[currentQ];
 
   useEffect(() => {
     if (phase === 'complete') {
