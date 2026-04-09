@@ -76,12 +76,13 @@ export function getFirstUncompletedId(): string | null {
 
 export type SkillsMap = Record<Skill, number>;
 
-const ALL_SKILLS: Skill[] = ['margins', 'recurring_revenue', 'business_drivers', 'moats', 'valuation', 'risk'];
+const ALL_SKILLS: Skill[] = ['margins', 'recurring_revenue', 'business_drivers', 'behavioral_biases', 'moats', 'valuation', 'risk'];
 
 const SKILL_LABELS: Record<Skill, string> = {
   margins: 'Margins',
   recurring_revenue: 'Recurring Revenue',
   business_drivers: 'Business Drivers',
+  behavioral_biases: 'Behavioral Biases',
   moats: 'Competitive Moats',
   valuation: 'Valuation',
   risk: 'Risk Assessment',

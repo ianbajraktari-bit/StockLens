@@ -35,6 +35,7 @@ export type Skill =
   | 'margins'
   | 'recurring_revenue'
   | 'business_drivers'
+  | 'behavioral_biases'
   | 'moats'
   | 'valuation'
   | 'risk';
