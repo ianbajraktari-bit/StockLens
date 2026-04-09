@@ -1,4 +1,4 @@
-import { Coins, Scale, ShieldCheck, TrendingUp, Flag, Target, Calculator, Zap } from 'lucide-react';
+import { Scale, ShieldCheck, TrendingUp, Flag, Target, Calculator, Zap } from 'lucide-react';
 import type { Lesson } from './types';
 
 export const foundationsMarginsLesson: Lesson = {
