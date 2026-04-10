@@ -1,4 +1,4 @@
-import { Search, Activity, Anchor, TrendingUp } from 'lucide-react';
+import { Search, Activity, Anchor, TrendingUp, Calculator, Zap, Flag } from 'lucide-react';
 import type { Lesson } from './types';
 
 export const foundationsDriversLesson: Lesson = {
@@ -7,134 +7,299 @@ export const foundationsDriversLesson: Lesson = {
   title: 'What Actually Drives a Business',
   subtitle: 'Learning to look underneath the headline numbers',
   description:
-    "Two businesses can both grow 20% — but for completely different reasons. One might be adding new customers. Another might be getting existing customers to spend more. Another might just be raising prices. In this lesson, you'll learn to identify the one thing that really matters in a business, so you stop looking at the surface and start looking at what's underneath.",
-  estimatedMinutes: 2,
+    "Two businesses can both grow 20% — for completely different reasons. You'll learn to trace revenue back to the one input that actually moved, spot the difference between durable and fragile growth, and tear apart a founder's pitch to find out if they understand their own business.",
+  estimatedMinutes: 3,
   dataAsOf: '',
   tier: 'foundations-1',
   skills: ['business_drivers'],
   keyFacts: [],
   topics: [
     { label: 'Why the same growth can mean very different things', icon: Search },
-    { label: 'How to find the number that actually matters', icon: Activity },
-    { label: 'What keeps a business alive vs. what grows it', icon: Anchor },
-    { label: 'How investors use this to evaluate businesses', icon: TrendingUp },
+    { label: 'Tracing revenue to the input that moved', icon: Calculator },
+    { label: 'Retention: the driver that keeps businesses alive', icon: Anchor },
+    { label: 'How investors evaluate growth quality', icon: TrendingUp },
   ],
-  questions: [
+  steps: [
+    // ─────────────────────────────────────────────────────────────────
+    // 1. Drill: which growth source is stickier?
+    // ─────────────────────────────────────────────────────────────────
     {
-      topic: 'Same Growth, Different Engine',
-      topicIcon: Search,
-      context:
-        'Two neighborhood restaurants both grew revenue 20% this year — from $500,000 to $600,000.\n\nRestaurant A grew by attracting more customers. It went from serving 200 people per week to 260. But each customer spends the same amount — about $45 per visit.\n\nRestaurant B serves the same 200 people per week it always has. But it revamped its menu, added a wine list, and now each customer spends $58 per visit instead of $45.',
-      question: 'Both grew 20%. Which growth is more sustainable?',
-      options: [
-        'They\'re the same — 20% is 20% regardless of how you got there',
-        'Restaurant A — more customers means more potential and a bigger audience',
-        'Restaurant B — it\'s getting more value from customers who already chose it, without needing to find new people',
-        'Restaurant A — attracting new customers proves the food is getting better',
+      kind: 'drill',
+      topic: 'Growth Source Intuition',
+      topicIcon: Zap,
+      intro: 'Both businesses grew 20%. Tap the one whose growth is stickier — harder to reverse.',
+      prompts: [
+        {
+          setup: 'Two restaurants, both grew 20%.',
+          left: { label: 'Restaurant A', sublabel: 'more customers walking in' },
+          right: { label: 'Restaurant B', sublabel: 'same customers spending more' },
+          correct: 'right',
+          flash: 'New foot traffic can vanish. Customers choosing to spend more signals real value.',
+        },
+        {
+          setup: 'Two SaaS companies, both grew 25%.',
+          left: { label: 'Company A', sublabel: 'existing users upgrading plans' },
+          right: { label: 'Company B', sublabel: 'heavy ad spend on new sign-ups' },
+          correct: 'left',
+          flash: 'Upgrades come from product love. Ad-driven sign-ups disappear when the budget dries up.',
+        },
+        {
+          setup: 'Two gyms, both grew 15%.',
+          left: { label: 'Gym A', sublabel: 'raised prices 15%' },
+          right: { label: 'Gym B', sublabel: 'members visiting more often, buying add-ons' },
+          correct: 'right',
+          flash: 'Price hikes can push people away. Customers spending more voluntarily is the strongest signal.',
+        },
+        {
+          setup: 'Two e-commerce stores, both grew 30%.',
+          left: { label: 'Store A', sublabel: 'repeat orders up 40%' },
+          right: { label: 'Store B', sublabel: 'one viral product spike' },
+          correct: 'left',
+          flash: 'Viral spikes fade. Repeat-order growth compounds.',
+        },
+        {
+          setup: 'Two tutoring services, both grew 20%.',
+          left: { label: 'Service A', sublabel: 'students booking more sessions' },
+          right: { label: 'Service B', sublabel: 'a new location in a different city' },
+          correct: 'left',
+          flash: 'More sessions per student = deeper engagement. New locations are expensive gambles.',
+        },
+        {
+          setup: 'Two streaming platforms, both added 1M users.',
+          left: { label: 'Platform A', sublabel: 'free trial conversions via ads' },
+          right: { label: 'Platform B', sublabel: 'word-of-mouth referrals' },
+          correct: 'right',
+          flash: 'Referrals cost nothing and signal product quality. Paid trials often churn fast.',
+        },
       ],
-      correctIndex: 2,
-      explanation:
-        'Restaurant A needs to keep finding 60 new customers every week just to maintain its growth. If a competitor opens nearby or foot traffic shifts, that growth evaporates. Restaurant B grew by deepening relationships with customers it already has — people who are choosing to spend more because they see more value. That growth is stickier because it doesn\'t depend on a constant flow of strangers. This distinction matters enormously. Growth from new customers requires constant effort and spending. Growth from existing customers spending more usually signals that the business is getting better at delivering value. Investors often call this revenue per customer — and when it\'s rising, it\'s one of the strongest signs of a healthy business.',
-      wrongExplanations: [
-        'The growth rate is the same, but the quality is very different. Restaurant A must keep finding new people or revenue falls back. Restaurant B has the same loyal base spending more. If you only look at the headline number — 20% — you miss the most important part of the story. Always ask how a business grew, not just how much.',
-        '',
-        'More customers sounds exciting, but it\'s the harder way to grow. Every new customer costs money to attract (marketing, promotions, discounts) and might not come back. A bigger audience is only valuable if you can keep them. Restaurant A hasn\'t proven it can keep its new customers — it\'s just proven it can attract them once.',
-        'New customers don\'t prove the food improved — they might have come because of a promotion, a new housing development nearby, or a competitor closing. You can\'t tell from customer count alone. Restaurant B\'s existing customers choosing to spend more is actually stronger evidence that the experience improved.',
-      ],
-      takeaway: 'The same growth rate can come from very different sources. Growth from existing customers spending more is usually more durable than growth from finding new ones. Always ask: "How did this business grow?" — not just "How much?"',
+      takeaway:
+        "Growth that comes from existing customers going deeper is almost always stickier than growth from acquiring new ones. Always ask how a business grew, not just how much.",
     },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 2. Estimate: trace this month's revenue
+    // ─────────────────────────────────────────────────────────────────
     {
-      topic: 'Finding the Number That Matters',
+      kind: 'estimate',
+      topic: 'Revenue Math · This Month',
+      topicIcon: Calculator,
+      context:
+        'You own a tutoring business. This month:\n• 40 students enrolled\n• Each averages 3 sessions\n• You charge $200 per session',
+      question: "What's this month's revenue?",
+      answer: 24000,
+      tolerance: 1000,
+      unit: '$',
+      hint: 'students × sessions × price',
+      reveal:
+        '40 × 3 × $200 = $24,000. Revenue is just three inputs multiplied together. When revenue changes, one of these inputs moved.',
+      takeaway: 'Revenue is an output. Always decompose it into the inputs that drive it.',
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 3. Estimate: trace last month's revenue
+    // ─────────────────────────────────────────────────────────────────
+    {
+      kind: 'estimate',
+      topic: 'Revenue Math · Last Month',
+      topicIcon: Calculator,
+      context:
+        'Same tutoring business, last month:\n• 40 students (same)\n• 3.5 sessions per student (higher)\n• $200 per session (same)',
+      question: "What was last month's revenue?",
+      answer: 28000,
+      tolerance: 1000,
+      unit: '$',
+      reveal:
+        '40 × 3.5 × $200 = $28,000. Revenue dropped $4,000 this month — but students and price didn\'t change. Only one input moved: sessions per student.',
+      takeaway: "When revenue changes, don't panic at the headline. Find which input moved.",
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 4. Decide: which input is the key driver?
+    // ─────────────────────────────────────────────────────────────────
+    {
+      kind: 'decide',
+      topic: 'Find the Driver',
       topicIcon: Activity,
       context:
-        'You own a small tutoring business. You track these numbers monthly:\n\n• Total revenue: $24,000 (down from $28,000 last month)\n• Number of students enrolled: 40 (same as last month)\n• Average sessions per student per month: 3 (down from 3.5)\n• Price per session: $200 (same as last month)\n• New student inquiries: 15 (up from 12)\n\nSomething caused revenue to drop. You need to figure out what.',
-      question: 'Which number explains the revenue decline?',
+        'This month: 40 students × 3 sessions × $200 = $24,000\nLast month: 40 students × 3.5 sessions × $200 = $28,000\n\nRevenue dropped $4,000. New inquiries actually went up (15 vs. 12 last month).',
+      question: 'What caused the revenue drop?',
       options: [
-        'New inquiries dropped — fewer people are interested',
-        'Price per session is too high — students are going elsewhere',
-        'Students are booking fewer sessions per month — the same 40 students are coming less often',
-        'You need more students — 40 isn\'t enough',
+        "Fewer interested students — demand is falling",
+        "Price is too high — students are going elsewhere",
+        "Sessions per student dropped — the same 40 students are coming less often",
+        "Need more students — 40 isn't enough",
       ],
       correctIndex: 2,
-      explanation:
-        'The math is straightforward: 40 students × 3 sessions × $200 = $24,000. Last month: 40 × 3.5 × $200 = $28,000. Price didn\'t change. Student count didn\'t change. Inquiries actually went up. The only thing that moved was sessions per student — from 3.5 to 3. That\'s your answer. This exercise teaches a critical investor skill: when a number changes, trace it back to what actually moved. Revenue is an output — it\'s the result of other things multiplied together. When revenue drops, beginners panic about the headline. Experienced investors ask which input changed. The input that drives the output is called the key driver. For this tutoring business, sessions per student is the key driver. If you can fix that one number, revenue recovers — no matter what happens to inquiries or pricing.',
-      wrongExplanations: [
-        'Inquiries went up, not down — from 12 to 15. This is a common mistake: assuming the problem must be about demand when the data shows demand is actually growing. Always check the numbers before guessing the narrative.',
+      punchline:
+        'Students and price didn\'t change. Inquiries went up. The only input that moved was sessions per student: 3.5 → 3. That\'s the key driver — the one number you should actually be watching.',
+      wrongNudges: [
+        "Inquiries went up, not down. Demand is growing — the problem is per-student engagement.",
+        "Price stayed at $200. It didn't move at all.",
         '',
-        'Price stayed at $200 — it didn\'t change at all. Jumping to "the price is too high" without checking whether the price actually moved is a classic error. It feels intuitive because price is the most visible number, but the data says price wasn\'t the issue here.',
-        'Student count is exactly 40, the same as last month. Saying "you need more students" might be true as general advice, but it doesn\'t explain this month\'s decline. The decline happened with the same number of students — so the problem is per-student behavior, not headcount.',
+        "Student count is exactly 40. The decline happened with the same number of students — the problem is per-student behavior.",
       ],
-      takeaway: 'Revenue is an output — it\'s the result of other numbers multiplied together. When it changes, don\'t react to the headline. Trace it back to the specific input that moved. That input is called the key driver, and it\'s the number you should actually be watching.',
+      takeaway:
+        'The key driver is the specific input that actually moved. Find it, and you know exactly where to focus.',
     },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 5. Tap: diagnose a founder's pitch
+    // ─────────────────────────────────────────────────────────────────
     {
-      topic: 'Staying Alive vs. Growing',
+      kind: 'tap',
+      topic: 'Pitch Diagnosis',
+      topicIcon: Flag,
+      intro:
+        "A business owner pitches you for a $100K investment. Tap the parts of his pitch that show he doesn't understand what drives his own business.",
+      passage: [
+        { type: 'text', value: '"We ' },
+        {
+          type: 'chip',
+          value: 'grew revenue 30%',
+          signal: true,
+          feedback:
+            'A headline number with no explanation of what drove it. Was it new customers? Higher prices? One big contract? Without knowing the driver, you can\'t tell if this growth will continue.',
+        },
+        { type: 'text', value: ' last year! Our ' },
+        {
+          type: 'chip',
+          value: 'product is great',
+          signal: true,
+          feedback:
+            '"Great product" is a feeling, not a metric. What does the data say? Usage frequency? Retention rate? NPS score? Vague claims without evidence should worry you.',
+        },
+        { type: 'text', value: ' and ' },
+        {
+          type: 'chip',
+          value: 'customers love us',
+          signal: true,
+          feedback:
+            'How do you know? What\'s the retention rate? How often do they use the product? "Customers love us" without data is a red flag, not a selling point.',
+        },
+        { type: 'text', value: '. We\'re ' },
+        {
+          type: 'chip',
+          value: 'hiring fast',
+          signal: false,
+          feedback: 'Hiring isn\'t inherently a red flag — growth often requires staff. Not the problem here.',
+        },
+        { type: 'text', value: ' and expanding to three new markets. ' },
+        {
+          type: 'chip',
+          value: "This is going to be huge",
+          signal: true,
+          feedback:
+            'Enthusiasm without mechanism. He can\'t tell you what specific input drives the business, but he\'s confident it\'ll be huge. That disconnect is the core red flag.',
+        },
+        { type: 'text', value: '!"' },
+      ],
+      requiredSignals: 3,
+      reveal:
+        "This owner gave you headlines, feelings, and enthusiasm — but never identified the driver. He can't tell you what input to watch, which means he won't see trouble coming until it's too late.",
+      takeaway:
+        "If a business owner can't tell you the specific thing that drives their business, they don't really understand it. And if they don't understand it, you shouldn't invest.",
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 6. Drill: retention math — grow or shrink?
+    // ─────────────────────────────────────────────────────────────────
+    {
+      kind: 'drill',
+      topic: 'The Retention Engine',
       topicIcon: Anchor,
-      context:
-        'Two subscription snack box companies each have 5,000 subscribers paying $30/month.\n\nCompany A loses 400 subscribers every month (8% of its base). To stay at 5,000, it spends heavily on ads and promotions to replace them — about $50 to acquire each new subscriber.\n\nCompany B loses 50 subscribers per month (1% of its base). It spends almost nothing on marketing because customers stay and tell their friends.',
-      gutCheck: {
-        prompt: 'Quick gut check — just go with your first instinct:',
-        nudge: 'No wrong answer. Just commit to your initial reaction.',
-        options: [
-          'Company A — the one that\'s great at finding new subscribers',
-          'Company B — the one where subscribers rarely leave',
-        ],
-        reflections: [
-          'Your gut said Company A — the one that\'s great at acquiring customers. That\'s a reasonable instinct: a company that can reliably attract 400 new subscribers every month sounds like it has strong marketing muscle. But here\'s the catch — it\'s spending $20,000/month just to replace the customers it keeps losing. All that acquisition skill is going toward standing still, not growing. Company B barely needs to market because its customers stay. Same revenue today, but wildly different economics underneath.',
-          'Your gut said Company B — sharp instinct. You sensed that keeping customers matters more than finding them. That\'s exactly right. Company A burns $20,000/month replacing the 400 subscribers who leave. Company B loses only 50 and spends almost nothing on marketing. The deeper lesson: a business that retains customers builds a foundation. A business that constantly replaces them is running on a treadmill — impressive effort, zero forward progress.',
-        ],
-      },
-      question: 'Both have the same revenue today. What\'s the critical difference?',
-      options: [
-        'No real difference — they both have 5,000 subscribers and the same revenue',
-        'Company A is better because it\'s more experienced at marketing and acquiring customers',
-        'Company B is far stronger because its customers actually stay — Company A is running on a treadmill, spending $20,000/month just to stand still',
-        'Company A will grow faster because it\'s already good at finding new customers',
+      intro:
+        'Each subscription business acquires new customers at the rate shown. Does it grow this month, or shrink?',
+      prompts: [
+        {
+          setup: '5,000 subscribers. Loses 400/month (8%). Adds 300 new.',
+          left: { label: 'Grows' },
+          right: { label: 'Shrinks' },
+          correct: 'right',
+          flash: 'Loses 400, adds 300 = net -100. The leaky bucket drains faster than it fills.',
+        },
+        {
+          setup: '5,000 subscribers. Loses 50/month (1%). Adds 100 new.',
+          left: { label: 'Grows' },
+          right: { label: 'Shrinks' },
+          correct: 'left',
+          flash: 'Loses 50, adds 100 = net +50. Low churn + modest acquisition = steady growth.',
+        },
+        {
+          setup: '10,000 subscribers. Loses 1,500/month (15%). Adds 1,500 new.',
+          left: { label: 'Grows' },
+          right: { label: 'Shrinks' },
+          correct: 'right',
+          flash: 'Flat! But spending a fortune to replace 1,500 subscribers just to stand still is a treadmill, not a business.',
+        },
+        {
+          setup: '2,000 subscribers. Loses 20/month (1%). Adds 60 new.',
+          left: { label: 'Grows' },
+          right: { label: 'Shrinks' },
+          correct: 'left',
+          flash: 'Loses 20, adds 60 = net +40. Low churn turns even modest acquisition into real growth.',
+        },
+        {
+          setup: '8,000 subscribers. Loses 800/month (10%). Adds 700 new.',
+          left: { label: 'Grows' },
+          right: { label: 'Shrinks' },
+          correct: 'right',
+          flash: 'Net -100. High churn devours acquisition. This business needs to fix retention before spending more on marketing.',
+        },
+        {
+          setup: '3,000 subscribers. Loses 30/month (1%). Adds 0 new.',
+          left: { label: 'Grows' },
+          right: { label: 'Shrinks' },
+          correct: 'right',
+          flash: 'Even at 1% churn, zero acquisition means slow decline. But 2,970 still paying is a solid floor.',
+        },
       ],
-      correctIndex: 2,
-      explanation:
-        'Company A replaces 400 subscribers per month at $50 each — that\'s $20,000 in monthly acquisition costs just to stay flat. If it ever stops spending, subscriber count drops fast. Company B loses only 50 per month and barely needs to market. Its customers stay because they love the product. This reveals the most important question for any subscription or repeat-purchase business: what percentage of customers stick around? Investors call this the retention rate (or its flip side, the churn rate). Company B retains 99% monthly; Company A retains only 92%. That 7-point gap is the difference between a business that compounds and one that\'s running on a treadmill. The thing keeping Company A alive isn\'t the product — it\'s the marketing budget. The thing keeping Company B alive is that customers genuinely want to stay.',
-      wrongExplanations: [
-        'Same revenue today hides a massive difference in how that revenue is maintained. Company A spends $20,000/month replacing lost subscribers. Company B spends almost nothing. Same snapshot, completely different health. This is why looking at a single month\'s numbers can be dangerously misleading.',
-        '',
-        'Being good at acquiring customers is valuable, but it\'s a crutch when you\'re acquiring them to replace the ones who keep leaving. Good marketing can\'t fix a product people don\'t want to keep. A business that needs constant acquisition spending just to stay flat has a retention problem, not a marketing advantage.',
-        'Growing through acquisition only works when you can also keep the customers you find. Company A is adding 400/month and losing 400/month — it\'s not growing at all, it\'s treading water. If it spent even more to add 500/month, it would still lose 400. Growth without retention is a leak, not an engine.',
-      ],
-      takeaway: 'The thing that keeps a business alive and the thing that grows it can be very different. For subscription businesses, the key driver is usually retention — what percentage of customers stay. A high retention rate is an engine. A low one is a treadmill.',
+      takeaway:
+        'Retention is the engine. Low churn makes every new customer compound. High churn makes every new customer a replacement. Fix the leak before pouring in more water.',
     },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 7. Decide: which pitch earns your confidence?
+    // ─────────────────────────────────────────────────────────────────
     {
+      kind: 'decide',
       topic: 'Thinking Like an Investor',
       topicIcon: TrendingUp,
       context:
-        'Two business owners pitch you for a $100,000 investment.\n\nOwner A says: "We grew revenue 30% last year! Our product is great, customers love us, and we\'re hiring fast. This is going to be huge."\n\nOwner B says: "We grew revenue 14% last year. Here\'s what drives our business: each customer uses our software an average of 4 times per week, up from 3 last year. When usage goes up, renewals go up — and renewals are 85% of our revenue. As long as weekly usage stays above 3, our revenue is predictable and growing."',
-      question: 'Which pitch gives you more confidence as an investor?',
+        'Two founders pitch you.\n\nOwner A: "We grew 30%. Product is great, customers love us, hiring fast. This is going to be huge."\n\nOwner B: "We grew 14%. Our key driver is weekly usage — up from 3 to 4 times per week. When usage rises, renewals follow. Renewals are 85% of revenue. As long as usage stays above 3, growth is predictable."',
+      question: 'Which pitch gives you more confidence?',
       options: [
-        'Owner A — 30% growth speaks for itself, and enthusiasm matters',
-        'Owner B — she identified the specific thing that drives her business and showed you why the growth is reliable',
-        'Owner A — "customers love us" is the most important thing for any business',
-        'Neither — you need to see the financial statements before deciding',
+        'Owner A — 30% growth speaks for itself',
+        "Owner B — she identified the driver, showed it's improving, and explained the causal chain",
+        'Owner A — "customers love us" is all that matters',
+        "Neither — need financial statements first",
       ],
       correctIndex: 1,
-      explanation:
-        'Owner A gave you a headline number and enthusiasm. Owner B gave you a thesis: the business is driven by weekly usage, which drives renewals, which drives revenue. She told you the key driver (usage frequency), showed you it\'s improving, and explained the chain of cause and effect. If usage drops below 3 times per week, she knows — and you know — the business is in trouble. Owner A can\'t tell you what would signal trouble because he hasn\'t identified what drives the business. This is exactly what professional investors look for. They don\'t want to hear "we\'re growing fast." They want to understand the mechanism — what specific input drives the output, and whether that input is getting better or worse. A business whose owner understands its key driver is dramatically more likely to succeed than one whose owner just points at the revenue line.',
-      wrongExplanations: [
-        'A 30% growth rate with no explanation of what\'s driving it could be a one-time spike from a big contract, a marketing blitz, or a seasonal surge. Without understanding the driver, you can\'t tell if that growth will continue. Numbers without a mechanism are just trivia — they look impressive but don\'t tell you anything about the future.',
+      punchline:
+        "Owner B gave you a thesis: usage drives renewals, renewals drive revenue, and usage is going up. Owner A gave you a headline and enthusiasm. If Owner A's growth stalls, he won't know why. Owner B will.",
+      wrongNudges: [
+        '30% growth with no explanation of the driver could be a one-time spike. Without understanding the mechanism, you can\'t predict if it continues.',
         '',
-        '"Customers love us" is not a metric — it\'s a feeling. Lots of businesses with "loving" customers still fail because they can\'t retain them, can\'t monetize them, or can\'t tell when something is going wrong. Owner B didn\'t say "customers love us" — she showed you the data that proves they do (increasing usage and high renewals). Evidence beats enthusiasm.',
-        'Financial statements are important, but they\'re backward-looking — they tell you what happened, not why. Owner B is telling you the forward-looking story: here\'s what drives the business, here\'s how it\'s trending, here\'s what to watch. That\'s more valuable for predicting the future than any spreadsheet of past results.',
+        '"Customers love us" without data is a feeling, not a fact. Owner B showed the data that proves engagement is rising.',
+        'Financial statements are backward-looking. Owner B is telling you the forward-looking story: what drives the business and whether it\'s getting stronger.',
       ],
-      takeaway: 'The best investors don\'t just ask "how much did the business grow?" — they ask "what drives this business, and is that driver getting stronger or weaker?" A business whose owner can identify and track the key driver is far more trustworthy than one that just points at the headline growth number.',
+      takeaway:
+        "The best investors don't just ask 'how much?' — they ask 'what drives this, and is the driver getting stronger?' A business with a known, improving key driver is dramatically more predictable.",
     },
   ],
   takeaways: [
-    'The same growth number can come from very different sources — always ask how a business grew, not just how much.',
-    'Revenue is an output. When it changes, trace it back to the specific input that moved. That input is the key driver.',
-    'For repeat-purchase businesses, the key driver is usually retention — are customers staying? A business that has to constantly replace lost customers is on a treadmill.',
-    'Before investing, identify the one thing that drives the business. If the owner can\'t tell you what it is, that\'s a red flag. If they can, you know exactly what to watch.',
+    'The same growth rate can come from very different sources — always ask how a business grew, not just how much.',
+    "Revenue is an output. When it changes, decompose it into inputs and find the one that moved. That's the key driver.",
+    "For subscription businesses, the key driver is usually retention. High churn devours growth; low churn compounds it.",
+    "Before investing, ask the owner to identify the one thing that drives the business. If they can't, that's a red flag.",
   ],
   completionMessages: {
-    perfect: "Excellent. You can already look past headline numbers and find what actually makes a business tick. That's the core skill of fundamental analysis.",
-    great: "Strong work. You're learning to ask 'what drives this?' instead of just 'how much?' — that separates real analysis from surface-level number reading.",
-    good: "Good foundation. The habit of tracing revenue back to its driver will make every company lesson much easier to understand.",
-    low: "Worth revisiting. Every company you'll analyze in later lessons has one or two key drivers — once you can spot them, everything else falls into place.",
+    perfect:
+      "Excellent. You can already look past headline numbers and find what actually makes a business tick. That's the core skill of fundamental analysis.",
+    great:
+      "Strong work. You're learning to ask 'what drives this?' instead of just 'how much?' — that separates real analysis from surface-level number reading.",
+    good:
+      'Good foundation. The habit of tracing revenue back to its driver will make every company lesson much easier to understand.',
+    low:
+      "Worth revisiting. Every company you'll analyze in later lessons has one or two key drivers — once you can spot them, everything else falls into place.",
   },
 };

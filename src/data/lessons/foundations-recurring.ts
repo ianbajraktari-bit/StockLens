@@ -1,4 +1,4 @@
-import { Repeat, CloudRain, TrendingUp, Landmark } from 'lucide-react';
+import { Repeat, CloudRain, TrendingUp, Landmark, Calculator, Zap, Target } from 'lucide-react';
 import type { Lesson } from './types';
 
 export const foundationsRecurringLesson: Lesson = {
@@ -7,134 +7,299 @@ export const foundationsRecurringLesson: Lesson = {
   title: 'Money That Comes Back',
   subtitle: 'Why income you can count on is worth more than income you have to chase',
   description:
-    "Some businesses have to find new customers every single day just to keep the lights on. Others have customers who pay them again and again, month after month, without being asked. In this lesson, you'll build the intuition for why that difference matters — and why investors care about it so much.",
-  estimatedMinutes: 2,
+    "Some businesses start every morning at zero — hunting for the next sale. Others wake up knowing most of today's money is already committed. You'll feel the difference through quick drills, live math, and a pitch you'll learn to see right through.",
+  estimatedMinutes: 3,
   dataAsOf: '',
   tier: 'foundations-1',
   skills: ['recurring_revenue'],
   keyFacts: [],
   topics: [
-    { label: 'Why predictable income beats one-time income', icon: Repeat },
-    { label: 'What happens when new customers stop showing up', icon: CloudRain },
-    { label: 'Why some growth is more valuable than other growth', icon: TrendingUp },
-    { label: 'How investors use this to value businesses', icon: Landmark },
+    { label: 'Spotting predictable vs. fragile income', icon: Zap },
+    { label: 'Calculating what stays when growth stops', icon: Calculator },
+    { label: 'Spotting revenue-quality red flags', icon: CloudRain },
+    { label: 'Why investors pay premium prices for recurring revenue', icon: Landmark },
   ],
-  questions: [
+  steps: [
+    // ─────────────────────────────────────────────────────────────────
+    // 1. Drill: which income is more predictable?
+    // ─────────────────────────────────────────────────────────────────
     {
-      topic: 'Predictable vs. Uncertain',
+      kind: 'drill',
+      topic: 'Income Type Intuition',
+      topicIcon: Zap,
+      intro: 'Tap which business has more predictable income. Go fast — use your gut.',
+      prompts: [
+        {
+          left: { label: 'Gym memberships', sublabel: '$50/month, auto-billed' },
+          right: { label: 'Day passes', sublabel: '$15 per walk-in' },
+          correct: 'left',
+          flash: 'Memberships arrive automatically. Day passes depend on who walks through the door.',
+        },
+        {
+          left: { label: 'Wedding photographer', sublabel: 'one-time bookings' },
+          right: { label: 'Dog-walking service', sublabel: '40 clients, $200/month each' },
+          correct: 'right',
+          flash: 'The photographer starts at $0 every slow month. The dog walker has $8,000 already spoken for.',
+        },
+        {
+          left: { label: 'Streaming service', sublabel: '$12/month × millions' },
+          right: { label: 'Movie theater', sublabel: 'tickets per showing' },
+          correct: 'left',
+          flash: 'Streaming subscribers pay whether they watch or not. Theaters need butts in seats tonight.',
+        },
+        {
+          left: { label: 'Consulting firm', sublabel: 'project-by-project' },
+          right: { label: 'Cloud software', sublabel: 'annual subscriptions' },
+          correct: 'right',
+          flash: 'Consulting revenue resets between projects. SaaS revenue renews on autopilot.',
+        },
+        {
+          left: { label: 'Insurance premiums', sublabel: 'monthly, year-long policies' },
+          right: { label: 'Used car dealer', sublabel: 'one car, one sale' },
+          correct: 'left',
+          flash: 'Insurance collects every month for a year. The car dealer needs a new buyer every time.',
+        },
+        {
+          left: { label: 'Food truck', sublabel: 'cash per customer' },
+          right: { label: 'Meal-prep delivery', sublabel: 'weekly subscription' },
+          correct: 'right',
+          flash: 'Subscriptions compound. Walk-up sales evaporate overnight.',
+        },
+      ],
+      takeaway:
+        'You can already feel it: businesses where money shows up automatically are structurally different from businesses that hunt for every dollar.',
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 2. Estimate: Gym B's floor
+    // ─────────────────────────────────────────────────────────────────
+    {
+      kind: 'estimate',
+      topic: 'The Membership Floor',
+      topicIcon: Calculator,
+      context:
+        'Gym B has 1,000 members paying $50/month. Roughly 5% cancel each month. Imagine next month ZERO new members join.',
+      question: "What's Gym B's revenue next month?",
+      answer: 47500,
+      tolerance: 1000,
+      unit: '$',
+      hint: '950 members × $50',
+      reveal:
+        '950 members × $50 = $47,500. Even with no new sign-ups, Gym B keeps 95% of its revenue. That built-in floor is what makes recurring income so powerful.',
+      takeaway: 'Recurring revenue creates a floor — money that shows up even when growth stops.',
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 3. Estimate: Gym A under stress
+    // ─────────────────────────────────────────────────────────────────
+    {
+      kind: 'estimate',
+      topic: 'The Day-Pass Cliff',
+      topicIcon: Calculator,
+      context:
+        "Gym A made $50,000 from day passes last month. It's January — the slowest month. Walk-ins drop 40%.",
+      question: "What's Gym A's January revenue?",
+      answer: 30000,
+      tolerance: 2000,
+      unit: '$',
+      reveal:
+        '$50,000 × 0.60 = $30,000. One bad month and Gym A loses $20,000. Meanwhile Gym B barely budged. That gap is the entire argument for recurring revenue.',
+      takeaway: 'One-time revenue has no floor. When traffic drops, revenue drops dollar for dollar.',
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 4. Decide: the floor test
+    // ─────────────────────────────────────────────────────────────────
+    {
+      kind: 'decide',
+      topic: 'The Floor Test',
       topicIcon: Repeat,
       context:
-        'Two gyms earn the same amount this month: $50,000 each.\n\nGym A sells day passes. Every dollar it earned came from someone walking in and paying $15 that day. Tomorrow, it starts at zero again and needs new walk-ins to make money.\n\nGym B sells monthly memberships at $50/month. It has 1,000 members who are automatically billed. Most of them have been members for over a year.',
-      question: 'If you had to pick one gym to own for the next 12 months, which would you choose?',
+        'Gym A (day passes): $50K → $30K in one slow month.\nGym B (memberships): $50K → $47.5K in the same month.',
+      question: "A recession hits and new customers dry up for six months. Which gym survives?",
       options: [
-        'Either one — they both made $50,000 this month, so they\'re equally good',
-        'Gym A — day passes mean more flexibility and it\'s not locked into any commitments',
-        'Gym B — its 1,000 members will almost certainly keep paying next month, so the income is far more predictable',
-        'Gym A — more individual customers means a bigger potential audience',
-      ],
-      correctIndex: 2,
-      explanation:
-        'Gym B wakes up on the first of every month knowing that most of its $50,000 is already spoken for. Gym A wakes up at zero and has to earn every dollar from scratch. Over 12 months, Gym B\'s income is predictable and plannable. Gym A\'s income depends entirely on weather, foot traffic, competition, and luck — any bad week hits immediately. Investors call this recurring revenue — income that repeats automatically because customers have an ongoing relationship with the business. It\'s worth more than one-time revenue because you can count on it being there next month.',
-      wrongExplanations: [
-        'Same revenue today doesn\'t mean same revenue tomorrow. Gym B has 1,000 members who will likely pay again next month. Gym A has zero guaranteed income for tomorrow. Treating them as equal because they had one good month ignores the most important question: which income is reliable?',
-        '',
-        'Flexibility sounds nice, but in business it usually means uncertainty. Day passes give the gym no ability to plan, hire, or invest with confidence. Memberships create a stable base that makes every business decision easier. What feels like "freedom" to a day-pass gym is actually fragility.',
-        'More individual customers doesn\'t mean more reliable income. A thousand members who pay every month are far more valuable than thousands of one-time visitors who may never return. Customer count only matters if those customers come back.',
-      ],
-      takeaway: 'Income that shows up automatically — month after month, without chasing new customers — is worth more than income you have to re-earn every day. Investors call this recurring revenue.',
-    },
-    {
-      topic: 'The Slow Month Test',
-      topicIcon: CloudRain,
-      context:
-        'It\'s January — the slowest month for new customers in most businesses. Two business owners compare notes:\n\nOwner A runs a wedding photography business. She earns $8,000-$15,000 per wedding, but each booking is a one-time event. In January, she has zero weddings booked. Her income this month: $0.\n\nOwner B runs a dog-walking service with 40 regular clients who each pay $200/month on an ongoing basis. Some months she adds a few clients, some months she loses one. In January, even with no new clients, her income is about $8,000.',
-      question: 'What does January reveal about the difference between these two businesses?',
-      options: [
-        'It doesn\'t reveal much — Owner A will bounce back in wedding season',
-        'Owner B\'s business is more resilient because her existing clients keep paying even when no new ones show up',
-        'Owner A\'s business is better because she earns more per customer',
-        'Owner B should raise her prices since her clients are loyal',
+        'Either — same starting revenue',
+        'Gym B — its floor holds while A craters',
+        'Gym A — it can cut prices to attract walk-ins',
+        'Need to know their costs first',
       ],
       correctIndex: 1,
-      explanation:
-        'January is the stress test. Owner A\'s income goes to zero the moment new bookings stop — every dollar depends on finding the next customer. Owner B still earns $8,000 because her income comes from existing relationships, not new sales. This is the core advantage of recurring revenue: it creates a floor. Even in the worst month, money keeps coming in. Owner A might earn more in peak season, but she can\'t plan around it, can\'t hire with confidence, and one bad quarter could be devastating. A business with repeat income from existing customers is more resilient than one that depends entirely on the next sale.',
-      wrongExplanations: [
-        'She probably will bounce back — but that\'s exactly the problem. Her income swings from $0 to $15,000 depending on the season. She can\'t plan, she can\'t hire full-time help, and she has to survive the down months on savings. A business that goes to zero in slow months has a structural vulnerability, even if peak months are great.',
+      punchline:
+        "Gym B's revenue barely moves in a drought. Gym A's collapses. The floor isn't a luxury — it's a survival mechanism.",
+      wrongNudges: [
+        'Same starting revenue means nothing when the structure of that revenue is completely different.',
         '',
-        'Earning more per customer isn\'t the advantage it seems if each customer only pays once. Owner A earns $10,000 per wedding but needs to find a new client every time. Owner B earns $200/month per client but the same 40 clients pay her year after year. Over time, the steady income compounds while the one-time income resets to zero.',
-        'Pricing strategy is a separate question. The key insight here isn\'t about pricing — it\'s about the structure of the income. Repeat payments from existing clients create stability that one-time payments simply can\'t match, regardless of the price point.',
+        'Cutting prices on one-time sales just shrinks revenue per customer without fixing the fundamental problem: no recurring base.',
+        "Costs matter, but Gym A's revenue drops 40% while B's drops 5%. No cost structure survives a 40% revenue cliff gracefully.",
       ],
-      takeaway: 'The real test of a business is what happens when new customers stop showing up. Businesses with repeat income from existing customers have a floor. Businesses that depend on the next sale start at zero every month.',
+      takeaway: "In bad times, the business with a recurring base survives. The one that hunts for every dollar doesn't.",
     },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 5. Tap: red flags in a "growth" pitch
+    // ─────────────────────────────────────────────────────────────────
     {
-      topic: 'Which Growth Is Real?',
+      kind: 'tap',
+      topic: 'Revenue Quality Check',
+      topicIcon: CloudRain,
+      intro:
+        "A furniture store owner is pitching you on investing. Tap the phrases that reveal fragile, non-recurring revenue.",
+      passage: [
+        { type: 'text', value: '"We did ' },
+        {
+          type: 'chip',
+          value: '$1.2 million in sales',
+          signal: false,
+          feedback: 'Revenue size alone isn\'t a red flag — what matters is how repeatable it is.',
+        },
+        { type: 'text', value: ' last year! ' },
+        {
+          type: 'chip',
+          value: 'Every sale is a new customer',
+          signal: true,
+          feedback:
+            'Zero repeat business. Every dollar of next year\'s revenue has to be re-earned from scratch. This is the definition of non-recurring.',
+        },
+        { type: 'text', value: ' walking in the door. We grew ' },
+        {
+          type: 'chip',
+          value: 'revenue 25%',
+          signal: true,
+          feedback:
+            '25% growth sounds great — but if every sale is one-time, this growth must be entirely rebuilt next year. Fragile.',
+        },
+        { type: 'text', value: ' by running ' },
+        {
+          type: 'chip',
+          value: 'aggressive promotions',
+          signal: true,
+          feedback:
+            'Promotions attract deal-seekers, not loyal customers. This revenue disappears the moment the ad budget gets cut.',
+        },
+        { type: 'text', value: '. We have ' },
+        {
+          type: 'chip',
+          value: 'great online reviews',
+          signal: false,
+          feedback: 'Good reviews are positive — not a red flag on their own.',
+        },
+        { type: 'text', value: '. ' },
+        {
+          type: 'chip',
+          value: 'No customer has ever bought twice',
+          signal: true,
+          feedback:
+            'Zero repeat purchases means zero revenue floor. The business has no compounding base — every year starts from zero.',
+        },
+        { type: 'text', value: ', but our average order is $800 so we don\'t need them to."' },
+      ],
+      requiredSignals: 3,
+      reveal:
+        'High revenue, strong growth, big average orders — and every single dollar is one-time. This business has no floor, no compounding, and no protection against a slow quarter.',
+      takeaway:
+        'Revenue that sounds impressive can still be structurally fragile. Always ask: "How much of this would still be here next year if growth stopped?"',
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 6. Drill: compounding vs. rebuilding
+    // ─────────────────────────────────────────────────────────────────
+    {
+      kind: 'drill',
+      topic: 'Compounding vs. Rebuilding',
+      topicIcon: Target,
+      intro:
+        "Each pair shows two businesses with the same revenue. Tap the one whose growth compounds instead of resetting.",
+      prompts: [
+        {
+          setup: 'Both earn $500K/year.',
+          left: { label: 'Meal-prep subscriptions', sublabel: '90% of customers stay' },
+          right: { label: 'Catering company', sublabel: 'each event is one-time' },
+          correct: 'left',
+          flash: 'Subscriptions stack. Catering starts each month from zero.',
+        },
+        {
+          setup: 'Both grew 15% last year.',
+          left: { label: 'Furniture store', sublabel: 'growth from new one-time buyers' },
+          right: { label: 'SaaS platform', sublabel: 'growth from new subscribers on top of 95% renewal' },
+          correct: 'right',
+          flash: 'SaaS adds new revenue on top of retained revenue. Furniture rebuilds from scratch.',
+        },
+        {
+          setup: 'Both serve 1,000 customers.',
+          left: { label: 'Property management', sublabel: 'monthly fees, multi-year contracts' },
+          right: { label: 'Real estate agent', sublabel: 'commission per sale' },
+          correct: 'left',
+          flash: 'Management collects every month. Agents need a new deal to get paid.',
+        },
+        {
+          setup: 'Both earn $10M/year.',
+          left: { label: 'Concert promoter', sublabel: 'ticket sales per event' },
+          right: { label: 'Music streaming', sublabel: '8M subscribers at $10/month' },
+          correct: 'right',
+          flash: 'Streaming revenue renews automatically. Concert revenue evaporates after curtain call.',
+        },
+        {
+          setup: 'Both grew 20% last year.',
+          left: { label: 'Accounting software', sublabel: 'annual licenses, 92% renew' },
+          right: { label: 'Tax prep service', sublabel: 'seasonal, one filing per client' },
+          correct: 'left',
+          flash: 'Software keeps 92% and adds more. Tax prep restarts the sales cycle every spring.',
+        },
+        {
+          setup: 'Both earn $3M/year.',
+          left: { label: 'Car wash chain', sublabel: '$25 per visit' },
+          right: { label: 'Cloud storage', sublabel: '$8/month per user, 96% retention' },
+          correct: 'right',
+          flash: 'Cloud storage compounds. Car washes depend on traffic and weather.',
+        },
+      ],
+      takeaway:
+        "Recurring businesses build on top of what they've already earned. One-time businesses rebuild from zero every period. That's the difference between compounding and treading water.",
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 7. Decide: thinking like an investor
+    // ─────────────────────────────────────────────────────────────────
+    {
+      kind: 'decide',
+      topic: 'Thinking Like an Investor',
       topicIcon: TrendingUp,
       context:
-        'Two businesses both grew their revenue over the past year.\n\nBusiness A is a furniture store. Revenue grew 20% — from $1 million to $1.2 million. But almost every sale was to a new customer buying a one-time item. To keep growing, it needs to find even more new buyers next year.\n\nBusiness B is a meal-prep delivery service. Revenue grew 12% — from $500,000 to $560,000. But 90% of last year\'s customers are still subscribed and paying weekly. The growth came from adding just a few dozen new subscribers on top of a loyal base.',
-      question: 'Which business had more valuable growth?',
-      gutCheck: {
-        prompt: 'Quick gut check — just go with your first instinct:',
-        nudge: 'No wrong answer. Just commit to your initial reaction.',
-        options: [
-          'Business A — the one that grew 20%',
-          'Business B — the one that grew 12%',
-        ],
-        reflections: [
-          'Your gut said Business A — the one with 20% growth. That\'s the natural instinct: a bigger growth number feels like a better result. But this is where "how much" and "how" start to diverge. Business A\'s 20% came entirely from new one-time buyers — none of last year\'s customers came back. Business B\'s 12% came from adding a few subscribers on top of a base where 90% of customers are still paying. Business A has to rebuild its entire revenue next year. Business B starts next year with most of its revenue already locked in.',
-          'Your gut said Business B — sharp instinct. You sensed that 12% growth built on loyal customers might be more valuable than 20% built on one-time buyers. That\'s exactly right. Business B starts next year with ~90% of its revenue already committed. Business A starts at zero and has to re-find every customer. The deeper lesson: growth that compounds on a stable base is worth more than growth that has to be rebuilt from scratch, even when the percentage is lower.',
-        ],
-      },
+        "Two businesses, same price to invest in.\n\nBusiness A: Car wash chain. $3M/year. Each wash is a single transaction — pay $25, drive away. Revenue depends on weather, location, and marketing.\n\nBusiness B: Accounting software. $3M/year. Customers pay $100/month and stay 3+ years. Switching means migrating all financial data. 95% renew annually.",
+      question: 'Which is worth more to an investor?',
       options: [
-        'Business A — 20% growth is better than 12% growth, period',
-        'Business B — its growth is built on a loyal base that keeps paying, so next year\'s revenue is already mostly locked in',
-        'Business A — furniture is a bigger market with more potential',
-        'They\'re equal — growth is growth regardless of how you got there',
+        'Equal — $3M is $3M',
+        "Business B — its revenue is nearly guaranteed to repeat, and switching costs lock customers in",
+        'Business A — simpler business, easier to understand',
+        'Business A — more locations means more growth potential',
       ],
       correctIndex: 1,
-      explanation:
-        'Business A grew faster, but its growth is fragile. It depends entirely on finding new customers — if marketing stops working or competition increases, revenue could stall or shrink overnight. Business B grew slower, but 90% of its revenue is already committed for next year. It only needs a few new subscribers to keep growing. This is the difference between one-time growth and compounding growth. When existing customers keep paying, each new customer you add sits on top of a stable base. When every sale is one-time, you\'re rebuilding from scratch each year. Investors have a term for this: they measure what percentage of revenue is recurring — meaning it\'s expected to repeat without needing to re-sell the customer.',
-      wrongExplanations: [
-        'A higher growth rate from one-time sales is less reliable than a lower growth rate from repeat customers. If Business A\'s marketing budget gets cut or competition increases, that 20% growth can vanish in a quarter. Business B\'s 12% growth is built on a base of customers who are still paying — it\'s durable. Not all growth percentages are created equal.',
+      punchline:
+        "Business B's revenue is almost certain to be there next year — and the year after. That certainty is exactly why subscription companies trade at 3-5x the valuation of similar-sized one-time businesses.",
+      wrongNudges: [
+        'Same revenue today hides completely different revenue quality. One is nearly guaranteed; the other resets to zero every day.',
         '',
-        'Market size doesn\'t help if you can\'t hold onto customers. A bigger market with one-time buyers means more competition for each sale. A smaller market with loyal subscribers can be far more profitable and predictable. "Big market" is a potential — recurring customers are a reality.',
-        'How you grow determines whether growth continues. Growth from new one-time buyers must be entirely re-created next year. Growth from subscribers compounds — last year\'s customers are still there, so you only need to add a little more. This distinction is one of the most important things investors evaluate.',
+        'Simplicity doesn\'t equal value. Easy to understand, hard to hold onto — that\'s the car wash problem.',
+        'More locations multiplied by fragile revenue is still fragile. Scale doesn\'t fix the structural weakness.',
       ],
-      takeaway: 'Not all growth is equal. Growth built on customers who keep paying compounds naturally. Growth built on one-time sales has to be re-earned from scratch every year. Investors always ask: "How much of this revenue is recurring?"',
-    },
-    {
-      topic: 'Thinking Like an Investor',
-      topicIcon: Landmark,
-      context:
-        'You\'re choosing between investing in two businesses at the same price:\n\nBusiness A: A chain of car washes. Earns $3 million per year. Each car wash is a single transaction — the customer pays $25, drives away, and might or might not come back. Revenue depends heavily on weather, location traffic, and marketing.\n\nBusiness B: An accounting software company. Earns $3 million per year. Customers pay $100/month and most stay for 3+ years. Switching to a different software means migrating all their financial data, which is painful. 95% of customers renew each year.',
-      question: 'If both cost the same to invest in, which is worth more to an investor?',
-      options: [
-        'They\'re worth the same — $3 million is $3 million',
-        'Business A — car washes are simpler, easier to understand, and deal in cash',
-        'Business B — its customers pay every month, almost never leave, and switching is difficult, which makes next year\'s revenue nearly guaranteed',
-        'Business A — it has more locations and more individual customers',
-      ],
-      correctIndex: 2,
-      explanation:
-        'Both earn $3 million today, but Business B\'s revenue is almost certain to be there next year — and the year after. A 95% renewal rate means only 5% of customers leave annually, and switching costs make it hard for competitors to poach them. Business A starts each day hoping for foot traffic. This is exactly why investors pay premium prices for businesses with recurring revenue and high renewal rates. In the stock market, software companies with subscription models routinely trade at 3-5x the valuation of similar-sized businesses with one-time sales. You now understand the reason: predictable, repeating income is worth more because it reduces uncertainty. And reducing uncertainty is what investors pay for.',
-      wrongExplanations: [
-        '',
-        'Simplicity doesn\'t equal value. A car wash is easy to understand, but its revenue is unpredictable and must be re-earned daily. Accounting software is harder to build, but once customers adopt it, they stay for years. Investors don\'t pay for simplicity — they pay for predictability.',
-        '',
-        'More locations and customers don\'t matter if each interaction is one-time. One thousand car wash visits from people who may never return is worth less than 100 software subscribers who pay every month for years. What matters isn\'t how many customers pass through — it\'s how many stay.',
-      ],
-      takeaway: 'Investors pay more for businesses where income repeats automatically and customers are unlikely to leave. This is why subscription businesses are valued so much higher than transaction-based ones — and why "recurring revenue" is one of the most important terms in investing.',
+      takeaway:
+        "Investors don't just buy revenue — they buy revenue quality. Predictable, repeating income with high switching costs commands a premium price.",
     },
   ],
   takeaways: [
-    'Income that shows up automatically every month — without needing to chase new customers — is called recurring revenue, and investors value it more highly.',
-    'The real test of a business is what happens when new customers stop showing up. Recurring revenue creates a floor; one-time revenue starts at zero every month.',
-    'Not all growth is equal. Growth from repeat customers compounds; growth from one-time sales has to be rebuilt from scratch each year.',
-    'You now understand why subscription businesses trade at premium valuations: predictable, repeating income reduces uncertainty, and reducing uncertainty is what investors pay for.',
+    'Income that shows up automatically — without chasing new customers — is called recurring revenue, and investors value it more highly.',
+    "The real test is what happens when new customers stop showing up. Recurring revenue creates a floor; one-time revenue craters.",
+    'Growth from repeat customers compounds naturally. Growth from one-time sales has to be rebuilt from scratch every year.',
+    'Subscription businesses trade at premium valuations because predictable, repeating income reduces uncertainty — and reducing uncertainty is what investors pay for.',
   ],
   completionMessages: {
-    perfect: "You've nailed it. You understand that reliable, repeating income is worth more than income you have to re-earn — that's one of the most important ideas in investing.",
-    great: "Strong instincts. You can already tell the difference between fragile revenue and durable revenue — that skill will serve you in every company you analyze.",
-    good: "Good start. The core idea — recurring income is worth more — will click more deeply as you see it in real companies like Apple and Costco.",
-    low: "Worth another look. This concept shows up everywhere in investing — once it clicks, you'll see it in every business you evaluate.",
+    perfect:
+      "You've nailed it. You understand that reliable, repeating income is worth more than income you have to re-earn — that's one of the most important ideas in investing.",
+    great:
+      'Strong instincts. You can already tell the difference between fragile revenue and durable revenue — that skill will serve you in every company you analyze.',
+    good:
+      "Good start. The core idea — recurring income is worth more — will click more deeply as you see it in real companies like Apple and Costco.",
+    low:
+      "Worth another look. This concept shows up everywhere in investing — once it clicks, you'll see it in every business you evaluate.",
   },
 };
