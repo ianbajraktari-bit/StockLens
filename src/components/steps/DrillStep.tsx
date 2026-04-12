@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, X, ArrowRight, Zap } from 'lucide-react';
+import { Check, X, ArrowRight, Zap, Lightbulb } from 'lucide-react';
 import type { DrillStep as DrillStepType } from '../../data/lessons/types';
 
 interface Props {
@@ -57,7 +57,7 @@ export default function DrillStep({ step, onDone }: Props) {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="rounded-2xl border border-border bg-dark-800 p-6 space-y-5"
+        className="rounded-2xl border border-border bg-dark-800/60 p-6 space-y-5"
       >
         <div className="flex items-center gap-2">
           <step.topicIcon className="w-3.5 h-3.5 text-accent-light" />
@@ -81,7 +81,8 @@ export default function DrillStep({ step, onDone }: Props) {
           </p>
         </div>
 
-        <div className="rounded-xl border border-accent/20 bg-accent/5 p-4">
+        <div className="rounded-xl border border-warm/20 bg-warm/5 p-4 flex items-start gap-2.5">
+          <Lightbulb className="w-4 h-4 text-warm shrink-0 mt-0.5" />
           <p className="text-sm text-text-secondary leading-relaxed">{step.takeaway}</p>
         </div>
 
@@ -99,7 +100,7 @@ export default function DrillStep({ step, onDone }: Props) {
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-dark-800 p-6 space-y-5">
+    <div className="rounded-2xl border border-border bg-dark-800/60 p-6 space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
@@ -169,7 +170,7 @@ export default function DrillStep({ step, onDone }: Props) {
                   onClick={() => handlePick(side)}
                   disabled={phase !== 'running'}
                   whileTap={phase === 'running' ? { scale: 0.97 } : {}}
-                  className={`rounded-xl border p-4 text-left transition-all min-h-[110px] flex flex-col justify-between ${
+                  className={`rounded-xl border p-4 text-left transition-all min-h-[120px] flex flex-col justify-between ${
                     showResult && isThisCorrect
                       ? 'border-green/60 bg-green/10'
                       : showResult && isPicked && !isThisCorrect

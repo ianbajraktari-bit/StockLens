@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Target, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Target, CheckCircle2, Lightbulb } from 'lucide-react';
 import type { EstimateStep as EstimateStepType } from '../../data/lessons/types';
 
 interface Props {
@@ -57,7 +57,7 @@ export default function EstimateStep({ step, onDone }: Props) {
   };
 
   return (
-    <div className="rounded-2xl border border-border bg-dark-800 p-6 space-y-5">
+    <div className="rounded-2xl border border-border bg-dark-800/60 p-6 space-y-5">
       {/* Header */}
       <div className="flex items-center gap-2">
         <step.topicIcon className="w-3.5 h-3.5 text-accent-light" />
@@ -89,7 +89,7 @@ export default function EstimateStep({ step, onDone }: Props) {
                 : verdict === 'close'
                   ? 'border-amber/60 bg-amber/5'
                   : 'border-red/60 bg-red/5'
-              : 'border-border bg-dark-900 focus-within:border-accent/60'
+              : 'border-border bg-dark-900/50 focus-within:border-accent/60'
           }`}
         >
           <input
@@ -119,7 +119,7 @@ export default function EstimateStep({ step, onDone }: Props) {
           transition={{ duration: 0.25 }}
           className="space-y-4"
         >
-          <div className="flex items-center justify-between gap-4 rounded-xl border border-border bg-dark-900 p-4">
+          <div className="flex items-center justify-between gap-4 rounded-xl border border-border bg-dark-900/50 p-4">
             <div className="space-y-0.5">
               <p className="text-xs text-text-muted uppercase tracking-wide">You said</p>
               <p className="text-xl font-bold text-text-primary tabular-nums">
@@ -145,7 +145,8 @@ export default function EstimateStep({ step, onDone }: Props) {
 
           <p className="text-sm text-text-secondary leading-relaxed">{step.reveal}</p>
 
-          <div className="rounded-xl border border-accent/20 bg-accent/5 p-4">
+          <div className="rounded-xl border border-warm/20 bg-warm/5 p-4 flex items-start gap-2.5">
+            <Lightbulb className="w-4 h-4 text-warm shrink-0 mt-0.5" />
             <p className="text-sm text-text-secondary leading-relaxed">{step.takeaway}</p>
           </div>
 

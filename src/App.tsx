@@ -11,7 +11,7 @@ function LessonRoute() {
 
   if (!lesson) {
     return (
-      <div className="min-h-screen bg-dark-900 flex items-center justify-center">
+      <div className="min-h-screen bg-dark-950 flex items-center justify-center">
         <div className="text-center space-y-4">
           <p className="text-text-secondary">Lesson not found.</p>
           <button

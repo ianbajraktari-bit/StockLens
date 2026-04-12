@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Flag, Check, X } from 'lucide-react';
+import { ArrowRight, Flag, Check, X, Lightbulb } from 'lucide-react';
 import type { TapStep as TapStepType } from '../../data/lessons/types';
 
 interface Props {
@@ -46,7 +46,7 @@ export default function TapStep({ step, onDone }: Props) {
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-dark-800 p-6 space-y-5">
+    <div className="rounded-2xl border border-border bg-dark-800/60 p-6 space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
@@ -67,7 +67,7 @@ export default function TapStep({ step, onDone }: Props) {
       <p className="text-sm text-text-secondary leading-relaxed">{step.intro}</p>
 
       {/* Passage */}
-      <div className="rounded-xl border border-border bg-dark-900 p-5 leading-loose text-base text-text-primary">
+      <div className="rounded-xl border border-border bg-dark-900/50 p-5 leading-loose text-base text-text-primary">
         {step.passage.map((seg, i) => {
           if (seg.type === 'text') {
             return <span key={i}>{seg.value}</span>;
@@ -81,7 +81,7 @@ export default function TapStep({ step, onDone }: Props) {
               key={i}
               onClick={() => handleChipTap(i)}
               disabled={submitted || !!state}
-              className={`inline px-1.5 py-0.5 mx-0.5 rounded-md font-medium transition-all duration-150 ${
+              className={`inline px-2 py-1 mx-0.5 rounded-lg font-medium transition-all duration-150 ${
                 isUntapped
                   ? 'bg-dark-700 text-text-primary border-b-2 border-dotted border-accent/50 hover:bg-dark-600 hover:border-accent cursor-pointer'
                   : wasRight
@@ -140,7 +140,8 @@ export default function TapStep({ step, onDone }: Props) {
           className="space-y-4"
         >
           <p className="text-sm text-text-secondary leading-relaxed">{step.reveal}</p>
-          <div className="rounded-xl border border-accent/20 bg-accent/5 p-4">
+          <div className="rounded-xl border border-warm/20 bg-warm/5 p-4 flex items-start gap-2.5">
+            <Lightbulb className="w-4 h-4 text-warm shrink-0 mt-0.5" />
             <p className="text-sm text-text-secondary leading-relaxed">{step.takeaway}</p>
           </div>
           <motion.button
