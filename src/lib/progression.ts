@@ -28,37 +28,6 @@ export function markCompleted(id: string): void {
   }
 }
 
-// --- Unlock logic ---
-
-const foundationLessons = allLessons.filter((l) => l.tier === 'foundations-1' || l.tier === 'foundations-2');
-const companyLessons = allLessons.filter((l) => l.tier === 'company');
-
-export function isLessonUnlocked(lessonId: string): boolean {
-  const completed = getCompletedIds();
-
-  // First lesson is always unlocked
-  if (allLessons[0]?.id === lessonId) return true;
-
-  const lesson = allLessons.find((l) => l.id === lessonId);
-  if (!lesson) return false;
-
-  // Company lessons require all foundations to be completed
-  if (lesson.tier === 'company') {
-    const allFoundationsComplete = foundationLessons.every((l) => completed.has(l.id));
-    if (!allFoundationsComplete) return false;
-
-    // Within company lessons, unlock sequentially
-    const companyIndex = companyLessons.findIndex((l) => l.id === lessonId);
-    if (companyIndex === 0) return true;
-    return completed.has(companyLessons[companyIndex - 1].id);
-  }
-
-  // Foundation lessons unlock sequentially
-  const foundationIndex = foundationLessons.findIndex((l) => l.id === lessonId);
-  if (foundationIndex <= 0) return true;
-  return completed.has(foundationLessons[foundationIndex - 1].id);
-}
-
 export function getNextLessonId(currentId: string): string | null {
   const currentIndex = allLessons.findIndex((l) => l.id === currentId);
   if (currentIndex === -1 || currentIndex >= allLessons.length - 1) return null;

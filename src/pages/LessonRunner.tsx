@@ -17,7 +17,7 @@ import TapStep from '../components/steps/TapStep';
 import DecideStep from '../components/steps/DecideStep';
 import ThinkingStepComponent from '../components/steps/ThinkingStepComponent';
 import { type Lesson, getLessonById } from '../data/lessons';
-import { getNextLessonId, isLessonUnlocked } from '../lib/progression';
+import { getNextLessonId } from '../lib/progression';
 
 type Phase = 'intro' | 'running' | 'complete';
 
@@ -222,8 +222,7 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
             {(() => {
               const nextId = getNextLessonId(lesson.id);
               const nextLesson = nextId ? getLessonById(nextId) : undefined;
-              const nextUnlocked = nextId ? isLessonUnlocked(nextId) : false;
-              if (nextLesson && nextUnlocked) {
+              if (nextLesson) {
                 return (
                   <motion.button
                     onClick={() => navigate(`/lesson/${nextLesson.id}`)}
@@ -268,9 +267,12 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-base">
-            {lesson.emoji}
-          </div>
+          <button
+            onClick={onBack}
+            className="w-9 h-9 rounded-full bg-dark-800 border border-border flex items-center justify-center hover:bg-dark-700 transition-colors cursor-pointer shrink-0"
+          >
+            <ArrowLeft className="w-4 h-4 text-text-secondary" />
+          </button>
           <div className="flex-1 min-w-0">
             <h1 className="text-lg font-bold text-text-primary truncate">{lesson.title}</h1>
             <p className="text-xs text-text-muted truncate">{lesson.subtitle}</p>

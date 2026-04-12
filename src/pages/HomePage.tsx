@@ -6,13 +6,11 @@ import {
   Lightbulb,
   Building2,
   CheckCircle2,
-  Lock,
   BarChart3,
 } from 'lucide-react';
 import { allLessons, type Lesson } from '../data/lessons';
 import {
   getCompletedIds,
-  isLessonUnlocked,
   getFirstUncompletedId,
   getSkillsProgress,
 } from '../lib/progression';
@@ -36,7 +34,6 @@ export default function HomePage() {
 
   function renderLessonCard(lesson: Lesson, delay: number) {
     const completed = completedIds.has(lesson.id);
-    const unlocked = isLessonUnlocked(lesson.id);
     const isNext = lesson.id === nextId;
 
     return (
@@ -45,31 +42,22 @@ export default function HomePage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay }}
-        onClick={() => unlocked && navigate(`/lesson/${lesson.id}`)}
-        disabled={!unlocked}
-        className={`w-full text-left rounded-2xl border p-5 space-y-3 transition-colors ${
-          !unlocked
-            ? 'border-border bg-dark-800/40 opacity-50 cursor-not-allowed'
-            : isNext
-              ? 'border-accent/40 bg-dark-800 cursor-pointer hover:border-accent/60'
-              : completed
-                ? 'border-border bg-dark-800/60 cursor-pointer hover:border-dark-400'
-                : 'border-border bg-dark-800 cursor-pointer hover:border-dark-400'
+        onClick={() => navigate(`/lesson/${lesson.id}`)}
+        className={`w-full text-left rounded-2xl border p-5 space-y-3 transition-colors cursor-pointer ${
+          isNext && !completed
+            ? 'border-accent/40 bg-dark-800 hover:border-accent/60'
+            : completed
+              ? 'border-border bg-dark-800/60 hover:border-dark-400'
+              : 'border-border bg-dark-800 hover:border-dark-400'
         }`}
       >
         <div className="flex items-center gap-3">
           <div
             className={`w-10 h-10 rounded-full flex items-center justify-center text-lg shrink-0 ${
-              !unlocked
-                ? 'bg-dark-700'
-                : completed
-                  ? 'bg-green/15'
-                  : 'bg-accent/20'
+              completed ? 'bg-green/15' : 'bg-accent/20'
             }`}
           >
-            {!unlocked ? (
-              <Lock className="w-4 h-4 text-text-muted" />
-            ) : completed ? (
+            {completed ? (
               <CheckCircle2 className="w-5 h-5 text-green" />
             ) : (
               lesson.emoji
@@ -79,11 +67,7 @@ export default function HomePage() {
             <div className="flex items-center gap-2">
               <h3
                 className={`text-base font-semibold truncate ${
-                  !unlocked
-                    ? 'text-text-muted'
-                    : completed
-                      ? 'text-text-secondary'
-                      : 'text-text-primary'
+                  completed ? 'text-text-secondary' : 'text-text-primary'
                 }`}
               >
                 {lesson.title}
@@ -97,21 +81,15 @@ export default function HomePage() {
                 </span>
               )}
             </div>
-            <p
-              className={`text-sm mt-0.5 ${
-                !unlocked ? 'text-text-muted' : 'text-text-secondary'
-              }`}
-            >
+            <p className="text-sm mt-0.5 text-text-secondary">
               {lesson.subtitle}
             </p>
           </div>
-          {unlocked && (
-            <ArrowRight
-              className={`w-4 h-4 shrink-0 ${
-                completed ? 'text-text-muted' : 'text-text-secondary'
-              }`}
-            />
-          )}
+          <ArrowRight
+            className={`w-4 h-4 shrink-0 ${
+              completed ? 'text-text-muted' : 'text-text-secondary'
+            }`}
+          />
         </div>
         <div className="flex items-center gap-3 text-xs text-text-muted">
           <span>
@@ -245,9 +223,6 @@ export default function HomePage() {
             </div>
             <p className="text-xs text-text-muted">
               Apply what you learned to analyze real companies.
-              {!companyLessons.some((l) => isLessonUnlocked(l.id)) && (
-                <span> Complete all foundations to unlock.</span>
-              )}
             </p>
           </motion.div>
 
