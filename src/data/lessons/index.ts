@@ -15,6 +15,7 @@ export { foundationsDebtLesson } from './foundations-debt';
 export { foundationsGrowthValueLesson } from './foundations-growth-value';
 export { foundationsReturnsLesson } from './foundations-returns';
 export { foundationsPortfolioLesson } from './foundations-portfolio';
+export { foundationsEarningsLesson } from './foundations-earnings';
 export { appleLesson } from './apple';
 export { nvidiaLesson } from './nvidia';
 export { costcoLesson } from './costco';
@@ -40,6 +41,7 @@ import { foundationsDebtLesson } from './foundations-debt';
 import { foundationsGrowthValueLesson } from './foundations-growth-value';
 import { foundationsReturnsLesson } from './foundations-returns';
 import { foundationsPortfolioLesson } from './foundations-portfolio';
+import { foundationsEarningsLesson } from './foundations-earnings';
 import { appleLesson } from './apple';
 import { nvidiaLesson } from './nvidia';
 import { costcoLesson } from './costco';
@@ -70,6 +72,7 @@ export const allLessons: Lesson[] = [
   foundationsGrowthValueLesson,    // growth traps, value traps, both lenses
   foundationsReturnsLesson,        // dividends, buybacks, capital allocation
   foundationsPortfolioLesson,      // position sizing, real diversification, starting point
+  foundationsEarningsLesson,       // reading earnings reports, 5 key numbers, management tone
 
   // Company Deep Dives
   appleLesson,
