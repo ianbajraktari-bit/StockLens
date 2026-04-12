@@ -17,9 +17,9 @@ import {
   getSkillsProgress,
 } from '../lib/progression';
 
-const foundationLessons = allLessons.filter(
-  (l) => l.tier === 'foundations-1' || l.tier === 'foundations-2'
-);
+const foundationsPhase1 = allLessons.filter((l) => l.tier === 'foundations-1');
+const foundationsPhase2 = allLessons.filter((l) => l.tier === 'foundations-2');
+const foundationLessons = [...foundationsPhase1, ...foundationsPhase2];
 const companyLessons = allLessons.filter((l) => l.tier === 'company');
 
 export default function HomePage() {
@@ -261,7 +261,7 @@ export default function HomePage() {
           </motion.div>
         )}
 
-        {/* Foundations */}
+        {/* Foundations Phase 1 */}
         <section className="space-y-3">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
@@ -281,8 +281,20 @@ export default function HomePage() {
           </motion.div>
 
           <div className="space-y-1.5">
-            {foundationLessons.map((lesson, i) =>
+            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider px-1">
+              Core Financial Vocabulary
+            </p>
+            {foundationsPhase1.map((lesson, i) =>
               renderLessonCard(lesson, i, 0.15)
+            )}
+          </div>
+
+          <div className="space-y-1.5 pt-2">
+            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider px-1">
+              Investing Concepts
+            </p>
+            {foundationsPhase2.map((lesson, i) =>
+              renderLessonCard(lesson, i, 0.25)
             )}
           </div>
         </section>

@@ -99,6 +99,15 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
                 {lesson.emoji}
               </div>
               <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                    lesson.tier === 'company'
+                      ? 'bg-warm/10 text-warm-light border border-warm/20'
+                      : 'bg-accent/10 text-accent-light border border-accent/20'
+                  }`}>
+                    {lesson.tier === 'company' ? 'Company Deep Dive' : 'Foundations'}
+                  </span>
+                </div>
                 <h1 className="text-xl font-bold text-text-primary">{lesson.title}</h1>
                 <p className="text-sm text-text-secondary mt-0.5">{lesson.subtitle}</p>
               </div>
