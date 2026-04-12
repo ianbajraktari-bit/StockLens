@@ -16,6 +16,7 @@ export { foundationsGrowthValueLesson } from './foundations-growth-value';
 export { foundationsReturnsLesson } from './foundations-returns';
 export { foundationsPortfolioLesson } from './foundations-portfolio';
 export { foundationsEarningsLesson } from './foundations-earnings';
+export { foundationsSellingLesson } from './foundations-selling';
 export { appleLesson } from './apple';
 export { nvidiaLesson } from './nvidia';
 export { costcoLesson } from './costco';
@@ -42,6 +43,7 @@ import { foundationsGrowthValueLesson } from './foundations-growth-value';
 import { foundationsReturnsLesson } from './foundations-returns';
 import { foundationsPortfolioLesson } from './foundations-portfolio';
 import { foundationsEarningsLesson } from './foundations-earnings';
+import { foundationsSellingLesson } from './foundations-selling';
 import { appleLesson } from './apple';
 import { nvidiaLesson } from './nvidia';
 import { costcoLesson } from './costco';
@@ -73,6 +75,7 @@ export const allLessons: Lesson[] = [
   foundationsReturnsLesson,        // dividends, buybacks, capital allocation
   foundationsPortfolioLesson,      // position sizing, real diversification, starting point
   foundationsEarningsLesson,       // reading earnings reports, 5 key numbers, management tone
+  foundationsSellingLesson,        // when to sell, thesis-broken framework, disposition effect
 
   // Company Deep Dives
   appleLesson,
