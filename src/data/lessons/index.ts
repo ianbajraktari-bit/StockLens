@@ -11,12 +11,14 @@ export { foundationsExpectationsLesson } from './foundations-expectations';
 export { foundationsCashflowLesson } from './foundations-cashflow';
 export { foundationsRiskLesson } from './foundations-risk';
 export { foundationsDebtLesson } from './foundations-debt';
+export { foundationsGrowthValueLesson } from './foundations-growth-value';
 export { appleLesson } from './apple';
 export { nvidiaLesson } from './nvidia';
 export { costcoLesson } from './costco';
 export { amazonLesson } from './amazon';
 export { microsoftLesson } from './microsoft';
 export { teslaLesson } from './tesla';
+export { googleLesson } from './google';
 
 import { foundationsBasicsLesson } from './foundations-basics';
 import { foundationsMarginsLesson } from './foundations-margins';
@@ -30,12 +32,14 @@ import { foundationsExpectationsLesson } from './foundations-expectations';
 import { foundationsCashflowLesson } from './foundations-cashflow';
 import { foundationsRiskLesson } from './foundations-risk';
 import { foundationsDebtLesson } from './foundations-debt';
+import { foundationsGrowthValueLesson } from './foundations-growth-value';
 import { appleLesson } from './apple';
 import { nvidiaLesson } from './nvidia';
 import { costcoLesson } from './costco';
 import { amazonLesson } from './amazon';
 import { microsoftLesson } from './microsoft';
 import { teslaLesson } from './tesla';
+import { googleLesson } from './google';
 import type { Lesson } from './types';
 
 export const allLessons: Lesson[] = [
@@ -54,6 +58,7 @@ export const allLessons: Lesson[] = [
   foundationsCashflowLesson,       // profit vs cash flow
   foundationsRiskLesson,           // volatility vs risk, diversification
   foundationsDebtLesson,           // balance sheets, leverage, interest coverage
+  foundationsGrowthValueLesson,    // growth traps, value traps, both lenses
 
   // Company Deep Dives
   appleLesson,
@@ -62,6 +67,7 @@ export const allLessons: Lesson[] = [
   amazonLesson,
   microsoftLesson,
   teslaLesson,
+  googleLesson,
 ];
 
 export function getLessonById(id: string): Lesson | undefined {
