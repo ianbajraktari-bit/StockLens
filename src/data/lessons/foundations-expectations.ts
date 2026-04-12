@@ -32,7 +32,7 @@ export const foundationsExpectationsLesson: Lesson = {
       topic: 'The Paradox',
       topicIcon: Target,
       context:
-        'Company X reports its best quarter ever: revenue up 25%, profit up 30%, record customers. The stock drops 12% the next day.\n\nAnalysts had expected revenue up 30% and profit up 40%. The company beat every historical record — but missed what Wall Street expected.',
+        'Company X reports its best quarter ever: revenue up 25%, profit up 30%, record customers. The stock drops 12% the next day.\n\nWall Street analysts — professionals whose job is to predict a company\'s future results — had expected revenue up 30% and profit up 40%. The company beat every historical record — but missed what Wall Street expected.',
       question: 'Why did the stock drop on record results?',
       options: [
         'The market is irrational — record results should always push a stock up',
@@ -80,7 +80,7 @@ export const foundationsExpectationsLesson: Lesson = {
           flash: 'Nobody expected this specific contract. New revenue that wasn\'t in anyone\'s model. The stock should react — this changes the math.',
         },
         {
-          setup: 'The Fed raises interest rates — after weeks of every economist predicting they would.',
+          setup: 'The Federal Reserve (America\'s central bank) raises interest rates — after weeks of every economist predicting they would.',
           left: { label: 'Already priced in', sublabel: 'everyone expected it' },
           right: { label: 'New information' },
           correct: 'left',

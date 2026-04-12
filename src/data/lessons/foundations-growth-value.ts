@@ -72,7 +72,7 @@ export const foundationsGrowthValueLesson: Lesson = {
           flash: '8x P/E means the market expects almost no growth. The 4% dividend is real cash return. If the business is stable, you\'re getting paid to wait. Classic value profile.',
         },
         {
-          setup: '60x P/E, unprofitable but revenue doubling every year. IPO\'d two years ago.',
+          setup: '60x P/E, unprofitable but revenue doubling every year. Went public (IPO\'d — listed on the stock exchange) two years ago.',
           left: { label: 'Growth', sublabel: 'priced on potential' },
           right: { label: 'Value' },
           correct: 'left',
@@ -148,7 +148,7 @@ export const foundationsGrowthValueLesson: Lesson = {
         { type: 'text', value: '. However, ' },
         {
           type: 'chip',
-          value: 'same-store sales have declined for 8 consecutive quarters',
+          value: 'same-store sales (revenue from existing locations) have declined for 8 consecutive quarters',
           signal: true,
           feedback: 'Eight straight quarters of declining same-store sales is a structural problem, not a blip. This means existing customers are spending less — the core business is eroding. A cheap P/E on declining earnings means the stock might get even cheaper.',
         },
@@ -157,7 +157,7 @@ export const foundationsGrowthValueLesson: Lesson = {
           type: 'chip',
           value: 'The company\'s biggest competitor is e-commerce, which takes more share every year',
           signal: true,
-          feedback: 'Secular decline from e-commerce is structural and unlikely to reverse. When a company\'s core business is being permanently disrupted, a low P/E isn\'t a bargain — it\'s the market correctly pricing in a shrinking future.',
+          feedback: 'Long-term structural decline (called \'secular decline\') from e-commerce is unlikely to reverse. When a company\'s core business is being permanently disrupted, a low P/E isn\'t a bargain — it\'s the market correctly pricing in a shrinking future.',
         },
         { type: 'text', value: '. Management says they are ' },
         {

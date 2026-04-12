@@ -99,7 +99,7 @@ export const foundationsDebtLesson: Lesson = {
           flash: 'Receivables are assets — money owed TO the company. It\'s not cash yet, but it\'s a legal claim. The risk: if customers don\'t pay, the asset becomes worthless.',
         },
         {
-          setup: '$100M in bonds the company must repay in 10 years',
+          setup: '$100M in bonds (loans from investors to the company) that must be repaid in 10 years',
           left: { label: 'Asset' },
           right: { label: 'Liability', sublabel: 'debt obligation' },
           correct: 'right',
@@ -197,7 +197,7 @@ export const foundationsDebtLesson: Lesson = {
       topic: 'Smart Debt in Action',
       topicIcon: Lightbulb,
       context:
-        'Apple has ~$60B in cash and ~$100B in debt. Why would a company with $60B in cash borrow $100B?\n\nHere\'s the math:\n• Apple\'s return on invested capital: ~50% (every dollar in the business generates $0.50/year)\n• Apple\'s borrowing cost: ~3% interest\n• Tax benefit: interest payments reduce taxable income\n\nApple earns 50% on capital. Borrowing costs 3%. The spread is 47 percentage points.',
+        'Apple has ~$60B in cash and ~$100B in debt. Why would a company with $60B in cash borrow $100B?\n\nHere\'s the math:\n• Apple\'s return on invested capital: ~50% (every dollar invested in the business generates $0.50 per year in profit)\n• Apple\'s borrowing cost: ~3% interest\n• Tax benefit: interest payments reduce taxable income\n\nApple earns 50% on capital. Borrowing costs 3%. The spread is 47 percentage points.',
       question: 'Why does Apple borrow despite having $60B in cash?',
       options: [
         'Apple can\'t afford its operations without borrowing — $60B isn\'t enough',

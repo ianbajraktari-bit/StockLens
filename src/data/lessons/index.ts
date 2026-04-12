@@ -1,4 +1,5 @@
 export type { Lesson, Skill, LessonTier } from './types';
+export { foundationsMarketLesson } from './foundations-market';
 export { foundationsBasicsLesson } from './foundations-basics';
 export { foundationsMarginsLesson } from './foundations-margins';
 export { foundationsIncomeLesson } from './foundations-income';
@@ -13,6 +14,7 @@ export { foundationsRiskLesson } from './foundations-risk';
 export { foundationsDebtLesson } from './foundations-debt';
 export { foundationsGrowthValueLesson } from './foundations-growth-value';
 export { foundationsReturnsLesson } from './foundations-returns';
+export { foundationsPortfolioLesson } from './foundations-portfolio';
 export { appleLesson } from './apple';
 export { nvidiaLesson } from './nvidia';
 export { costcoLesson } from './costco';
@@ -22,6 +24,7 @@ export { teslaLesson } from './tesla';
 export { googleLesson } from './google';
 export { netflixLesson } from './netflix';
 
+import { foundationsMarketLesson } from './foundations-market';
 import { foundationsBasicsLesson } from './foundations-basics';
 import { foundationsMarginsLesson } from './foundations-margins';
 import { foundationsIncomeLesson } from './foundations-income';
@@ -36,6 +39,7 @@ import { foundationsRiskLesson } from './foundations-risk';
 import { foundationsDebtLesson } from './foundations-debt';
 import { foundationsGrowthValueLesson } from './foundations-growth-value';
 import { foundationsReturnsLesson } from './foundations-returns';
+import { foundationsPortfolioLesson } from './foundations-portfolio';
 import { appleLesson } from './apple';
 import { nvidiaLesson } from './nvidia';
 import { costcoLesson } from './costco';
@@ -48,6 +52,7 @@ import type { Lesson } from './types';
 
 export const allLessons: Lesson[] = [
   // Foundations Phase 1: core financial vocabulary
+  foundationsMarketLesson,         // stocks, shares, exchanges, why prices move
   foundationsBasicsLesson,         // revenue, costs, profit, EPS
   foundationsMarginsLesson,        // profit margins, cost shocks
   foundationsIncomeLesson,         // gross/operating/net profit layers
@@ -64,6 +69,7 @@ export const allLessons: Lesson[] = [
   foundationsDebtLesson,           // balance sheets, leverage, interest coverage
   foundationsGrowthValueLesson,    // growth traps, value traps, both lenses
   foundationsReturnsLesson,        // dividends, buybacks, capital allocation
+  foundationsPortfolioLesson,      // position sizing, real diversification, starting point
 
   // Company Deep Dives
   appleLesson,
