@@ -13,6 +13,8 @@ export { appleLesson } from './apple';
 export { nvidiaLesson } from './nvidia';
 export { costcoLesson } from './costco';
 export { amazonLesson } from './amazon';
+export { microsoftLesson } from './microsoft';
+export { teslaLesson } from './tesla';
 
 import { foundationsBasicsLesson } from './foundations-basics';
 import { foundationsMarginsLesson } from './foundations-margins';
@@ -28,6 +30,8 @@ import { appleLesson } from './apple';
 import { nvidiaLesson } from './nvidia';
 import { costcoLesson } from './costco';
 import { amazonLesson } from './amazon';
+import { microsoftLesson } from './microsoft';
+import { teslaLesson } from './tesla';
 import type { Lesson } from './types';
 
 export const allLessons: Lesson[] = [
@@ -50,6 +54,8 @@ export const allLessons: Lesson[] = [
   nvidiaLesson,
   costcoLesson,
   amazonLesson,
+  microsoftLesson,
+  teslaLesson,
 ];
 
 export function getLessonById(id: string): Lesson | undefined {
