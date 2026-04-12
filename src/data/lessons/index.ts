@@ -9,6 +9,8 @@ export { foundationsMoatsLesson } from './foundations-moats';
 export { foundationsValuationLesson } from './foundations-valuation';
 export { foundationsExpectationsLesson } from './foundations-expectations';
 export { foundationsCashflowLesson } from './foundations-cashflow';
+export { foundationsRiskLesson } from './foundations-risk';
+export { foundationsDebtLesson } from './foundations-debt';
 export { appleLesson } from './apple';
 export { nvidiaLesson } from './nvidia';
 export { costcoLesson } from './costco';
@@ -26,6 +28,8 @@ import { foundationsMoatsLesson } from './foundations-moats';
 import { foundationsValuationLesson } from './foundations-valuation';
 import { foundationsExpectationsLesson } from './foundations-expectations';
 import { foundationsCashflowLesson } from './foundations-cashflow';
+import { foundationsRiskLesson } from './foundations-risk';
+import { foundationsDebtLesson } from './foundations-debt';
 import { appleLesson } from './apple';
 import { nvidiaLesson } from './nvidia';
 import { costcoLesson } from './costco';
@@ -48,6 +52,8 @@ export const allLessons: Lesson[] = [
   foundationsValuationLesson,      // P/E ratios, multiples
   foundationsExpectationsLesson,   // priced in, beats/misses, guidance
   foundationsCashflowLesson,       // profit vs cash flow
+  foundationsRiskLesson,           // volatility vs risk, diversification
+  foundationsDebtLesson,           // balance sheets, leverage, interest coverage
 
   // Company Deep Dives
   appleLesson,
