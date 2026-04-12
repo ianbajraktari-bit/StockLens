@@ -1,4 +1,4 @@
-import { PieChart, ShieldAlert, Target, Lightbulb, Zap, Calculator, Flag } from 'lucide-react';
+import { PieChart, ShieldAlert, Lightbulb, Zap, Calculator, Flag } from 'lucide-react';
 import type { Lesson } from './types';
 
 export const foundationsPortfolioLesson: Lesson = {
