@@ -1,4 +1,4 @@
-import { Target, TrendingUp, ShieldAlert, BrainCircuit } from 'lucide-react';
+import { Target, TrendingUp, ShieldAlert, BrainCircuit, Zap, Calculator, Flag } from 'lucide-react';
 import type { Lesson } from './types';
 
 export const costcoLesson: Lesson = {
@@ -7,8 +7,8 @@ export const costcoLesson: Lesson = {
   title: 'Costco Lesson',
   subtitle: 'When paying a premium for consistency might be the smart move',
   description:
-    "Costco is one of the most expensive stocks in retail — and it has been for years. In this lesson, you'll learn why the membership model is so unusual, why Wall Street pays a premium for boring consistency, what could actually go wrong, and how to decide whether a stock that always looks expensive can still be worth buying.",
-  estimatedMinutes: 3,
+    "Costco is the most expensive retailer in the world — and it has been for years. The bears have always been wrong. You'll unpack the membership flywheel, calculate what investors are really paying for, and decide whether 55x earnings for 7% growth is genius or insanity.",
+  estimatedMinutes: 4,
   dataAsOf: 'Q1 2025',
   tier: 'company',
   skills: ['margins', 'recurring_revenue', 'moats', 'valuation'],
@@ -19,128 +19,320 @@ export const costcoLesson: Lesson = {
     { label: 'Renewal Rate', value: '93%', detail: 'Among the highest retention rates in any industry' },
   ],
   topics: [
-    { label: 'How Costco\'s unusual business model actually works', icon: Target },
-    { label: 'Why investors pay a premium for boring consistency', icon: TrendingUp },
-    { label: 'What could actually break the Costco thesis', icon: ShieldAlert },
-    { label: 'Deciding whether "always expensive" can still be worth it', icon: BrainCircuit },
+    { label: 'Unpacking the membership flywheel', icon: Target },
+    { label: 'Why investors pay 55x for 7% growth', icon: TrendingUp },
+    { label: 'The real risk to premium stocks', icon: ShieldAlert },
+    { label: 'Deciding whether "always expensive" is still worth it', icon: BrainCircuit },
   ],
-  questions: [
+  storyArc: ['The Flywheel', 'The Premium', 'The Risk', 'The Decision'],
+  steps: [
+    // ─────────────────────────────────────────────────────────────────
+    // 1. Drill: Costco business model instincts
+    // ─────────────────────────────────────────────────────────────────
     {
-      topic: 'The Business',
-      topicIcon: Target,
-      context:
-        'Costco caps product markups at 14-15%, far below the 25-50% typical of retailers. Its operating margin is just 3.7% on merchandise — the retail operation essentially breaks even on purpose. Almost all profit comes from membership fees ($4.8B annually). Walmart runs 25% markups and earns a ~4% operating margin on merchandise itself.',
-      question: 'Why is deliberately running the retail operation at near-breakeven a competitive advantage rather than a weakness?',
-      options: [
-        'It isn\'t — Costco should raise markups to increase profit like Walmart does',
-        'Low markups make prices unbeatable, which drives membership sign-ups and renewals — and memberships are where the real profit lives',
-        'Breaking even on merchandise means Costco doesn\'t need to worry about inventory management',
-        'Low margins keep competitors from wanting to enter the warehouse retail market',
+      kind: 'drill',
+      topic: 'Business Model DNA',
+      topicIcon: Zap,
+      intro: 'Quick instincts about how Costco actually works. Tap fast.',
+      prompts: [
+        {
+          setup: 'Where does Costco actually make its profit?',
+          left: { label: 'Merchandise sales', sublabel: '3.7% operating margin' },
+          right: { label: 'Membership fees', sublabel: '~100% margin, $4.8B/year' },
+          correct: 'right',
+          flash: 'Membership fees are ~70% of operating profit. The retail operation essentially breaks even on purpose.',
+        },
+        {
+          setup: 'Why does Costco cap markups at 14-15%?',
+          left: { label: 'They can\'t charge more', sublabel: 'competition forces it' },
+          right: { label: 'Low prices drive memberships', sublabel: 'the prices ARE the marketing' },
+          correct: 'right',
+          flash: 'Costco spends almost nothing on advertising. The unbeatable prices are the ad — they drive sign-ups and renewals.',
+        },
+        {
+          setup: 'A 93% renewal rate means:',
+          left: { label: 'Customers are satisfied', sublabel: 'nice but vague' },
+          right: { label: 'Next year\'s profit is nearly locked in', sublabel: 'annuity-like revenue' },
+          correct: 'right',
+          flash: 'Satisfaction is nice. 93% renewal means Costco knows within ~7% how much profit it\'ll earn next year. That\'s what investors pay for.',
+        },
+        {
+          setup: 'Why can\'t competitors copy Costco\'s model?',
+          left: { label: 'The prices are too low to profit', sublabel: 'without membership economics' },
+          right: { label: 'Costco has exclusive suppliers', sublabel: 'no one else can get the products' },
+          correct: 'left',
+          flash: 'Match Costco\'s prices without the membership model and you just lose money. Sam\'s Club has tried for 40 years.',
+        },
+        {
+          setup: 'Costco raises membership fees every 5-7 years. What happens?',
+          left: { label: 'Members leave', sublabel: 'price-sensitive customers churn' },
+          right: { label: 'Renewals barely flinch', sublabel: '93% holds through increases' },
+          correct: 'right',
+          flash: 'When you raise prices and nobody leaves, that\'s pricing power. Each fee increase adds hundreds of millions in pure profit.',
+        },
+        {
+          setup: 'What type of revenue is this?',
+          left: { label: 'Recurring', sublabel: 'membership auto-renews yearly' },
+          right: { label: 'Transactional', sublabel: 'depends on per-visit spending' },
+          correct: 'left',
+          flash: 'Memberships renew automatically. That\'s recurring, predictable, high-margin revenue — the kind investors pay premiums for.',
+        },
       ],
-      correctIndex: 1,
-      explanation:
-        'This is the Costco flywheel: low prices drive traffic → traffic drives membership sign-ups → memberships create pure-profit recurring revenue → that profit funds even lower prices. The breakeven retail operation isn\'t a sacrifice — it\'s the marketing. Costco spends almost nothing on advertising because the prices are the advertisement. A 93% renewal rate proves members feel they save more than the fee costs. Any competitor who tries to match Costco\'s prices without the membership model simply loses money. That\'s why this "weakness" is actually the moat.',
-      wrongExplanations: [
-        'Raising markups would destroy the entire model. Costco\'s value proposition is that members get near-wholesale prices. If markups rose to Walmart levels, members would stop renewing — and membership fees are 70% of operating profit. Optimizing merchandise margins while killing membership economics is like fixing the faucet by burning down the house. This answer reveals a misunderstanding of what the business actually sells.',
-        '',
-        'Breakeven doesn\'t mean inventory doesn\'t matter — Costco is actually exceptional at inventory management. It carries only ~3,700 SKUs (vs. 30,000+ at Walmart), which means higher volume per item, better supplier negotiations, and faster turnover. The low margin is deliberate strategy, not operational carelessness.',
-        'Low margins don\'t deter competitors — Sam\'s Club, BJ\'s, and Amazon have all entered the space. The real barrier isn\'t that the margins are unattractive; it\'s that replicating the membership flywheel at scale requires decades of trust-building that competitors can\'t shortcut. Walmart has tried with Sam\'s Club for 40 years and hasn\'t matched Costco\'s renewal rates or member loyalty.',
-      ],
-      takeaway: 'Some businesses win by choosing not to maximize the obvious revenue line. When you see unusually low margins, don\'t assume weakness — ask whether the company is using that margin as a strategic weapon to build something more valuable.',
+      takeaway:
+        'Costco\'s real product isn\'t groceries — it\'s membership access. The retail operation is a breakeven marketing engine for a high-margin recurring revenue business.',
     },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 2. Estimate: membership as % of profit
+    // ─────────────────────────────────────────────────────────────────
     {
-      topic: 'Investor Quality',
-      topicIcon: TrendingUp,
+      kind: 'estimate',
+      topic: 'The Profit Engine',
+      topicIcon: Calculator,
       context:
-        'Costco trades at 55x earnings — 2.5x the retail average. Bulls offer several justifications: (1) The 93% membership renewal rate makes profit highly predictable. (2) Costco is recession-resistant — it actually gains members during downturns as consumers trade down for value. (3) International expansion is still early (~300 of 900+ warehouses are outside the US). (4) Membership fee increases every 5-7 years add hundreds of millions in pure profit with minimal churn.',
-      question: 'Which of these bull arguments is most important for justifying the current 55x valuation?',
-      options: [
-        'International expansion — opening new warehouses globally is Costco\'s biggest growth driver',
-        'Membership fee increases — the ability to raise prices without losing customers proves pricing power',
-        'Recession resilience — Costco gains customers when the economy weakens, making it a rare defensive growth stock',
-        'The 93% renewal rate — it makes the profit base almost annuity-like, which is what investors are actually paying 55x for',
-      ],
-      correctIndex: 3,
-      explanation:
-        'All four arguments have merit, but the renewal rate is the foundation everything else rests on. International expansion matters, but only if new markets replicate the loyalty that drives renewals. Fee increases work, but only because the renewal rate proves members won\'t leave. Recession resilience is real, but it\'s a consequence of the value proposition that keeps renewals high. At 55x, investors aren\'t paying for growth — Costco only grows at 7%. They\'re paying for near-certainty that this year\'s profit will still be there next year, and the year after. The renewal rate is the metric that underwrites that certainty.',
-      wrongExplanations: [
-        'International expansion adds growth, but it\'s execution-heavy and uncertain — new markets may not replicate US-level loyalty. Japan and Korea have worked well; China and Europe are harder. If you\'re paying 55x primarily for international expansion, you\'re paying a premium for unproven execution. Growth can justify high multiples, but Costco\'s premium is about predictability, not growth speed.',
-        'Fee increases are a powerful profit lever, but they happen infrequently (every 5-7 years) and add ~$500M in a business earning $7B+. They demonstrate pricing power, which matters — but pricing power is a consequence of the loyalty that the renewal rate measures, not the other way around. The fee increase works because the renewal rate is 93%; if renewals dropped to 80%, a fee increase would accelerate churn, not profit.',
-        'Recession resilience is a genuine differentiator, but recessions are episodic — they happen every 7-10 years. A stock doesn\'t trade at 55x for something that matters 15% of the time. Recession resilience is a bonus, not the core thesis. Investors paying 55x need a reason that holds in normal years too, and that reason is the predictable, renewable profit base.',
-        '',
-      ],
-      takeaway: 'When a stock trades at a premium, identify the single metric that most justifies it. Every other bull argument is either downstream of that metric or secondary to it. For Costco, everything flows from the renewal rate.',
+        'Costco\'s total operating profit is ~$7B. Merchandise markup barely covers operating costs. Membership fees bring in ~$4.8B at near-100% margin (no cost to collect). The rest comes from the thin merchandise margin.',
+      question: 'What % of Costco\'s operating profit comes from membership fees?',
+      answer: 69,
+      tolerance: 8,
+      unit: '%',
+      hint: '$4.8B ÷ $7B',
+      reveal:
+        '$4.8B ÷ $7B ≈ 69%. Nearly 70% of profit comes from a revenue line that\'s only 2% of total revenue. This is the Costco inversion: the $265B retail operation exists to protect the $4.8B membership stream. The tail wags the dog — and investors love it.',
+      takeaway: 'The most important revenue line isn\'t always the biggest. Costco\'s $4.8B in memberships matters more than its $260B in merchandise.',
     },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 3. Estimate: what 55x really means
+    // ─────────────────────────────────────────────────────────────────
     {
-      topic: 'Risk & Bear Case',
+      kind: 'estimate',
+      topic: 'The Premium Price Tag',
+      topicIcon: Calculator,
+      context:
+        'Costco trades at 55x earnings. The retail sector average is ~22x. Costco grows at 7% annually — not a high-growth company. Investors don\'t pay 55x for 7% growth — they pay it for near-certainty. A 93% renewal rate means the profit base is almost annuity-like.',
+      question: 'How many times more expensive is Costco vs. the average retailer? (55 ÷ 22)',
+      answer: 2.5,
+      tolerance: 0.3,
+      unit: 'x',
+      hint: '55 ÷ 22',
+      reveal:
+        '2.5x the average retailer. You\'re paying a 150% premium over normal retail for the predictability of the membership model. At 7% growth, the math only works if that premium is deserved — if you believe 93% renewals mean this year\'s profit will compound for decades, not just next year.',
+      takeaway: 'At 2.5x the sector valuation, you\'re not buying a retailer — you\'re buying a prediction that consistency will compound. If that prediction is wrong, you overpaid.',
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 4. Tap: the Costco bull case
+    // ─────────────────────────────────────────────────────────────────
+    {
+      kind: 'tap',
+      topic: 'Stress-Test the Bull Case',
+      topicIcon: Flag,
+      intro:
+        'An analyst pitches Costco as a "must-own compounder." Tap the assumptions that could break.',
+      passage: [
+        { type: 'text', value: '"Costco has a ' },
+        {
+          type: 'chip',
+          value: '93% membership renewal rate',
+          signal: false,
+          feedback: 'Current renewal rate is a verifiable fact. This is data, not an assumption.',
+        },
+        { type: 'text', value: ' and ' },
+        {
+          type: 'chip',
+          value: '$4.8B in membership fees',
+          signal: false,
+          feedback: 'Current membership revenue is a fact.',
+        },
+        { type: 'text', value: '. The renewal rate ' },
+        {
+          type: 'chip',
+          value: 'will stay above 90% indefinitely',
+          signal: true,
+          feedback:
+            'The rate has been stable for 15+ years — but "indefinitely" is an assumption. A recession deeper than 2008, or a generational shift in shopping habits, could test it.',
+        },
+        { type: 'text', value: '. International expansion to ' },
+        {
+          type: 'chip',
+          value: '300+ overseas warehouses will replicate US economics',
+          signal: true,
+          feedback:
+            'Japan and Korea worked well. But China, Europe, and new markets may not replicate US-level loyalty or membership economics. International execution is uncertain.',
+        },
+        { type: 'text', value: '. Costco is ' },
+        {
+          type: 'chip',
+          value: 'recession-resistant',
+          signal: false,
+          feedback:
+            'Historically true. Costco gained members during 2008 and COVID. This is a demonstrated pattern, not just a claim.',
+        },
+        { type: 'text', value: ', and fee increases every 5-7 years mean ' },
+        {
+          type: 'chip',
+          value: 'profit growth is guaranteed without losing members',
+          signal: true,
+          feedback:
+            '"Guaranteed" is too strong. Fee increases have worked historically, but each one is a test of pricing power. At some point, the absolute fee level may cross a threshold.',
+        },
+        { type: 'text', value: '. At 55x, Costco is ' },
+        {
+          type: 'chip',
+          value: 'fairly valued for a quality compounder',
+          signal: true,
+          feedback:
+            '55x for 7% growth means you need near-perfect execution for 10+ years. "Fairly valued" hides how much can go wrong at this multiple.',
+        },
+        { type: 'text', value: '."' },
+      ],
+      requiredSignals: 3,
+      reveal:
+        'The facts are strong (renewal rate, recession resistance, membership economics). The danger is extrapolating them indefinitely: international markets replicate US success, fee increases never hit a ceiling, and 55x is fair for 7% growth. Quality is real — the question is the price.',
+      takeaway:
+        'Great businesses make great pitches sound bulletproof. Your job is to find the assumptions that must stay true for the price to work.',
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 5. Drill: risk sorting
+    // ─────────────────────────────────────────────────────────────────
+    {
+      kind: 'drill',
+      topic: 'Risk Ranking',
+      topicIcon: ShieldAlert,
+      intro: 'Each risk threatens a Costco investor. Tap whether it\'s likely or unlikely over 3-5 years.',
+      prompts: [
+        {
+          setup: 'Interest rates stay elevated, compressing valuation multiples on expensive stocks.',
+          left: { label: 'Likely', sublabel: 'macro conditions are shifting' },
+          right: { label: 'Unlikely', sublabel: 'rates will come back down' },
+          correct: 'left',
+          flash: 'Multiple compression is the most probable bear case. 55x to 40x = 27% price drop, zero business deterioration.',
+        },
+        {
+          setup: 'Renewal rate drops from 93% to 85%.',
+          left: { label: 'Likely' },
+          right: { label: 'Unlikely', sublabel: 'hasn\'t happened in 15+ years' },
+          correct: 'right',
+          flash: 'The rate survived 2008 and COVID. It\'s the most stable metric in the business. Possible but improbable.',
+        },
+        {
+          setup: 'US membership growth plateaus as most addressable households are already members.',
+          left: { label: 'Likely', sublabel: 'domestic saturation is coming' },
+          right: { label: 'Unlikely' },
+          correct: 'left',
+          flash: 'Most of Costco\'s US addressable market is already tapped. Future member growth depends on international execution.',
+        },
+        {
+          setup: 'Amazon or Walmart breaks the membership model with a better alternative.',
+          left: { label: 'Likely' },
+          right: { label: 'Unlikely', sublabel: '40 years of failed attempts' },
+          correct: 'right',
+          flash: 'Sam\'s Club has tried for 40 years. Amazon competes on convenience, not Costco\'s bulk-value-trust niche.',
+        },
+        {
+          setup: 'Wage inflation squeezes the already-thin 3.7% operating margin.',
+          left: { label: 'Likely', sublabel: 'chronic pressure' },
+          right: { label: 'Unlikely' },
+          correct: 'left',
+          flash: 'Real but manageable. Costco has absorbed wage increases for decades. The margin has been stable at 3.5-4% for 20 years.',
+        },
+        {
+          setup: 'Investors simply decide 55x is too much and re-rate the stock to 40x.',
+          left: { label: 'Likely', sublabel: 'macro sentiment shifts' },
+          right: { label: 'Unlikely' },
+          correct: 'left',
+          flash: 'The most probable path to significant losses. The business doesn\'t need to stumble — the math just needs to change.',
+        },
+      ],
+      takeaway:
+        'The most dangerous risks aren\'t the ones that do the most damage — they\'re the ones most likely to actually happen. Multiple compression is more probable than business deterioration.',
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 6. Decide: the macro risk
+    // ─────────────────────────────────────────────────────────────────
+    {
+      kind: 'decide',
+      topic: 'The Real Bear Case',
       topicIcon: ShieldAlert,
       context:
-        'You\'re building a bear case for Costco. Consider these risks: (1) Interest rates staying higher for longer — expensive stocks get punished most when risk-free rates rise, because investors demand more from equities. (2) Membership growth plateauing in the US — most of Costco\'s addressable domestic households may already be members. (3) Wage inflation — Costco\'s employee-friendly culture means labor costs rise faster than peers, squeezing already-thin merchandise margins. (4) A single bad renewal quarter — if the renewal rate dips from 93% to 89%, it signals the value proposition is weakening.',
-      question: 'Which risk is most likely to cause significant losses for a Costco investor over the next 3-5 years?',
-      options: [
-        'Higher interest rates compressing the valuation multiple — at 55x, even a modest re-rating to 40x means a ~27% price drop with no change in the business',
-        'US membership saturation — if domestic member growth stalls, Costco becomes dependent on international expansion that may not replicate US economics',
-        'Wage inflation eroding margins — Costco\'s 3.7% operating margin has very little room to absorb rising labor costs',
-        'A renewal rate decline — even a small drop would undermine the entire premium valuation thesis built on predictability',
-      ],
-      correctIndex: 0,
-      explanation:
-        'All four risks are real, but multiple compression is the most likely to actually happen and cause significant losses. Costco has traded at 55x because investors accepted low yields on "safe" growth stocks when interest rates were near zero. With rates higher, the opportunity cost of paying 55x for 7% growth increases — investors can get 4-5% from risk-free bonds. A re-rating from 55x to 40x (still above the retail average) would cause a ~27% stock decline even while earnings grow. The business doesn\'t need to stumble; the math just needs to change. This is the most probable bear case because it depends on macro conditions, not Costco-specific failure.',
-      wrongExplanations: [
-        '',
-        'US membership growth is slowing, but saturation is a 10-year concern, not a 3-5 year catalyst. Costco can still add warehouses in underserved US markets, grow revenue per member through fee increases, and expand internationally. Saturation would be a problem if domestic growth were the only driver — but at 300+ international warehouses with room to grow, it\'s a headwind, not a crisis.',
-        'Wage inflation is a real cost pressure, but Costco has managed it for decades. The company has always paid above industry average — that\'s part of the model. Higher wages reduce turnover, reduce theft, and improve productivity. Costco\'s operating margin has been remarkably stable at 3.5-4% for 20 years despite consistent wage increases. This risk is chronic, not acute — it\'s already baked into the model.',
-        'A renewal rate decline would be devastating if it happened — but it almost certainly won\'t over 3-5 years. The rate has been above 90% for over 15 years and barely flinched during the 2008 recession or COVID. It\'s the most anchored metric in the business. Building a bear case on the least likely scenario is poor risk assessment — focus on what\'s probable, not what\'s catastrophic.',
-      ],
-      takeaway: 'The most dangerous risks aren\'t always the ones that would do the most damage — they\'re the ones most likely to actually happen. For premium stocks, macro-driven multiple compression is more probable than business deterioration.',
-    },
-    {
-      topic: 'Think Like an Investor',
-      topicIcon: BrainCircuit,
-      context:
-        'It\'s 6 months from now. Costco reports a solid quarter: revenue up 7%, comps up 6.5%, renewals steady at 93%. The stock drops 18% in a month — not because of anything Costco did, but because interest rates rose and investors rotated out of expensive stocks into cheaper ones. Your Costco position is now significantly underwater. The business is executing exactly as expected.',
+        'It\'s 6 months from now. Costco reports a solid quarter: revenue up 7%, renewals at 93%. The stock drops 18% because interest rates rose and investors rotated out of expensive stocks. The business is executing perfectly.',
       question: 'What is the most thoughtful investor response?',
       options: [
-        'Sell immediately — the stock is going down, so something must be wrong with the business',
-        'Buy more aggressively — the business is fine, so the drop is irrational and you should back up the truck',
-        'Hold and reassess — the business is executing, but the drop reflects a real change in what investors are willing to pay for consistency. You need to decide if the new price adequately compensates you for the risk that the multiple could compress further',
-        'Ignore the price entirely — if the business is good, the stock will eventually recover',
+        'Sell — the stock is going down, something must be wrong',
+        'Buy more — the business is fine, the drop is irrational',
+        'Hold and reassess — the business is executing, but the drop reflects a real change in what investors will pay for consistency',
+        'Ignore the price — good businesses always recover',
       ],
       correctIndex: 2,
-      explanation:
-        'This scenario is the defining challenge of owning premium stocks. The business did nothing wrong — the market simply decided to pay less for the same earnings. Selling on price action alone ignores that the fundamentals are intact. Buying aggressively assumes the old multiple will return, but higher rates may mean 55x was the anomaly and 40-45x is the new normal. Ignoring price entirely is naive — the multiple compression reflects a real change in the cost of capital. The right response is to re-evaluate whether the new price offers adequate compensation for the remaining risk that multiples could compress further. This is the hardest skill in investing: updating your view without panicking or dismissing.',
-      wrongExplanations: [
-        'Selling because the stock went down is pure price-action thinking. You\'ve just confirmed the business is healthy — revenue growing, comps strong, renewals steady. If the fundamentals haven\'t changed, the drop is a valuation event, not a business event. Selling after a valuation compression on a healthy business is how investors lock in losses that would have been temporary.',
-        'Buying aggressively assumes the old valuation will return — but there\'s no law that says it must. If interest rates stay higher, investors may permanently demand lower multiples for growth stocks. Costco at 40x might be the new normal, not a temporary dip. Backing up the truck requires conviction that the multiple will re-expand, and that\'s a macro bet, not a Costco bet. Aggressive buying on a thesis of "it\'ll go back to where it was" is anchoring bias, not analysis.',
+      punchline:
+        'The business did nothing wrong. The market decided to pay less for the same earnings. Selling panics on intact fundamentals. Buying assumes the old multiple returns. The right move: re-evaluate whether the new price compensates you for the risk of further compression.',
+      wrongNudges: [
+        'Selling because the price dropped ignores that the fundamentals are perfectly intact. This is how investors lock in losses that would have been temporary.',
+        'Buying aggressively assumes 55x was normal and will return. But higher rates may mean 40x is the new normal — that\'s a macro bet, not a Costco bet.',
         '',
-        'Ignoring price entirely sounds disciplined but is actually lazy. The price drop tells you something real: the market is re-pricing what consistency is worth in a higher-rate environment. A long-term holder still needs to ask whether their capital is best deployed in a stock that might stay compressed for years. "The business is good, so ignore the price" is faith, not investing.',
+        'Ignoring price sounds disciplined but is actually lazy. The drop tells you something real about what consistency is worth in a higher-rate environment.',
       ],
-      takeaway: 'Owning premium stocks means accepting that price declines can happen without business deterioration. The skill isn\'t ignoring drops or panicking — it\'s re-evaluating whether the new price offers a reasonable trade-off for the risks that remain.',
+      takeaway: 'Premium stocks can drop without business deterioration. The skill is re-evaluating at the new price, not panicking or dismissing.',
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 7. Decide: the investor call
+    // ─────────────────────────────────────────────────────────────────
+    {
+      kind: 'decide',
+      topic: 'The Investment Decision',
+      topicIcon: BrainCircuit,
+      context:
+        'Costco trades at 55x earnings — 2.5x the retail sector. Growth is 7%. The renewal rate is 93%. The membership model is genuinely rare. The bears have been wrong for 20 years. But at 55x, you\'re vulnerable to multiple compression even if the business is perfect.',
+      question: 'What is the most thoughtful investor stance?',
+      options: [
+        'Buy — 20 years of the bears being wrong proves the premium is justified',
+        'Avoid — 55x for 7% growth is objectively too expensive',
+        'The quality is real and the premium may be deserved — but at 55x, you need perfect execution AND a friendly rate environment. Size the position modestly because even being right about the business doesn\'t protect you from multiple compression',
+        'Wait for a cheaper price — 55x will eventually come down',
+      ],
+      correctIndex: 2,
+      punchline:
+        '"Always expensive" has rewarded holders for 20 years. But at 55x and 7% growth, you\'re paying so much for consistency that you\'ve eliminated most of your upside. The quality is real — the question is whether the price leaves any room for you to win.',
+      wrongNudges: [
+        '"Bears have been wrong" is backward-looking. The macro environment (rates, multiples) has changed. Past returns don\'t guarantee future returns.',
+        '',
+        '',
+        'There\'s no magic price where Costco becomes "cheap." If you wait for 30x, the business you\'re buying may be different. The skill is sizing the position for the risk.',
+      ],
+      takeaway: 'Some stocks deserve a premium. The investor\'s job isn\'t to decide if it\'s "cheap" — it\'s to decide whether the premium leaves any room for you to profit given the risks.',
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+    // 8. Thinking step: synthesis
+    // ─────────────────────────────────────────────────────────────────
+    {
+      kind: 'thinking',
+      prompt:
+        'Costco trades at 55x earnings — the most expensive major retailer in the world — yet it has rewarded holders for 20 years. Given the membership economics, the 93% renewal rate, and the recession-resistant model, would you pay today\'s premium? Write 1-2 sentences explaining what makes you comfortable or uncomfortable with this trade-off.',
+      placeholder:
+        'e.g. "I would / wouldn\'t pay 55x for Costco because..."',
+      modelAnswer:
+        'I\'d be willing to own Costco at a premium — the membership model is genuinely rare, retention is exceptional, and the recession resilience gives it a defensive quality most stocks lack. But I\'d size the position modestly, because at 55x earnings I\'m vulnerable to multiple compression even if the business executes perfectly. The quality is real; the question is whether I\'m paying so much for consistency that I\'ve eliminated most of my upside.',
+      strongReasoningIncludes: [
+        'Engages with why the premium might be deserved (membership economics, predictability, recession resilience)',
+        'Acknowledges the specific risk of multiple compression — being right about the business but still losing money at this valuation',
+        'Takes a position on the trade-off rather than defaulting to "it depends"',
+      ],
     },
   ],
-  thinkingStep: {
-    prompt:
-      'Costco trades at 55x earnings — the most expensive major retailer in the world — yet it has rewarded long-term holders for 20 years. The bears have always been wrong. Given the membership economics, the 93% renewal rate, and the recession-resistant model, would you pay today\'s premium to own Costco? Write 1–2 sentences explaining what makes you comfortable or uncomfortable with this trade-off.',
-    placeholder:
-      'e.g. "I would / wouldn\'t pay 55x for Costco because..."',
-    modelAnswer:
-      'I\'d be willing to own Costco at a premium — the membership model is genuinely rare, the retention is exceptional, and the recession resilience gives it a defensive quality most stocks lack. But I\'d want to size the position modestly, because at 55x earnings I\'m vulnerable to multiple compression even if the business executes perfectly. The quality is real; the question is whether I\'m paying so much for consistency that I\'ve eliminated most of my upside.',
-    strongReasoningIncludes: [
-      'Engages with why the premium might be deserved (membership economics, predictability, recession resilience) rather than dismissing it as "too expensive"',
-      'Acknowledges the specific risk of multiple compression — that you can be right about the business and still lose money on the stock at this valuation',
-      'Takes a position on the trade-off between business quality and valuation risk, rather than defaulting to "it depends"',
-    ],
-  },
   takeaways: [
-    'Not every business makes money the way you\'d expect — Costco\'s real product is membership access, not merchandise.',
-    'Valuation premiums can be justified by quality, predictability, and resilience — not every expensive stock is overvalued.',
-    'The biggest risk for premium stocks isn\'t business failure — it\'s the market deciding to pay a lower multiple for the same earnings.',
-    'Some stocks deserve a premium. The investor\'s job is to decide whether the current premium is reasonable for the risk, not whether the stock is "cheap."',
+    'Costco\'s real product is membership access, not merchandise. The $265B retail operation exists to protect the $4.8B membership stream.',
+    'At 2.5x the sector valuation, you\'re buying a prediction that consistency compounds for decades. If that prediction is wrong, you overpaid.',
+    'The most dangerous risk for premium stocks isn\'t business failure — it\'s the market deciding to pay a lower multiple for the same earnings.',
+    'Some stocks deserve a premium. The investor\'s job is sizing the position for the risk, not waiting for a "cheap" price that may never come.',
   ],
   completionMessages: {
-    perfect: "Flawless. You understood that Costco's valuation puzzle isn't about whether it's a great business — it's about whether the price is right for the quality.",
-    great: "Strong work. You're learning that premium valuations aren't automatically wrong — but they do demand a different kind of risk assessment.",
-    good: "Solid start. The hardest lesson in investing is that some expensive stocks deserve to be expensive — the challenge is knowing how much premium is too much.",
-    low: "Good effort. Costco is uniquely difficult because the obvious answer (too expensive) has been wrong for 20 years. Revisit the lesson to understand why.",
+    perfect: "Flawless. You understood that Costco's puzzle isn't about whether it's great — it's about whether the price leaves room to win.",
+    great: "Strong work. You're learning that premium valuations aren't automatically wrong — but they demand a different kind of risk assessment.",
+    good: "Solid start. The hardest lesson: some expensive stocks deserve to be expensive. The challenge is knowing how much premium is too much.",
+    low: "Good effort. Costco is uniquely difficult because 'too expensive' has been wrong for 20 years. Revisit to understand why.",
   },
 };
