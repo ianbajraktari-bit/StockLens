@@ -1,43 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 
 // =====================================================================
-// LEGACY: old lesson format. Still used by lessons that haven't been
-// migrated to the new step-based format yet.
-// =====================================================================
-
-export interface QuizQuestion {
-  topic: string;
-  topicIcon: LucideIcon;
-  context?: string;
-  gutCheck?: {
-    prompt: string;
-    nudge: string;
-    options: string[];
-    reflections: string[];
-  };
-  question: string;
-  options: string[];
-  correctIndex: number;
-  punchline?: string;
-  reflection?: {
-    prompt: string;
-    options: string[];
-    responses: string[];
-  };
-  explanation: string;
-  wrongExplanations: string[];
-  takeaway: string;
-}
-
-export interface ThinkingStep {
-  prompt: string;
-  placeholder: string;
-  modelAnswer: string;
-  strongReasoningIncludes: string[];
-}
-
-// =====================================================================
-// NEW: step-based lesson format. A lesson is a sequence of LessonSteps,
+// Step-based lesson format. A lesson is a sequence of LessonSteps,
 // each one a small interactive beat.
 // =====================================================================
 
@@ -164,12 +128,5 @@ export interface Lesson {
   };
   tier?: LessonTier;
   skills?: Skill[];
-
-  // Exactly one of these is present:
-  /** Legacy format. Lessons not yet migrated still use this. */
-  questions?: QuizQuestion[];
-  /** Legacy thinking step (paired with `questions`). */
-  thinkingStep?: ThinkingStep;
-  /** New step-based format. */
-  steps?: LessonStep[];
+  steps: LessonStep[];
 }

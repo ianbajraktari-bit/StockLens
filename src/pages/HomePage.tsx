@@ -115,8 +115,7 @@ export default function HomePage() {
         </div>
         <div className="flex items-center gap-3 text-xs text-text-muted">
           <span>
-            {(lesson.steps?.length ?? lesson.questions?.length ?? 0)}{' '}
-            {lesson.steps ? 'beats' : 'questions'}
+            {lesson.steps.length} beats
           </span>
           <span>~{lesson.estimatedMinutes} min</span>
           {lesson.dataAsOf && <span>{lesson.dataAsOf}</span>}

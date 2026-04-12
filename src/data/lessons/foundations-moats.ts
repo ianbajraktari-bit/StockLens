@@ -1,4 +1,4 @@
-import { Swords, Castle, Eye, TrendingUp, Zap, Calculator, Flag } from 'lucide-react';
+import { Swords, Castle, Eye, TrendingUp, Zap, Calculator } from 'lucide-react';
 import type { Lesson } from './types';
 
 export const foundationsMoatsLesson: Lesson = {

@@ -27,7 +27,7 @@ export default function EstimateStep({ step, onDone }: Props) {
     inputRef.current?.focus();
   }, []);
 
-  const parsed = parseFloat(value.replace(/[^0-9.\-]/g, ''));
+  const parsed = parseFloat(value.replace(/[^0-9.-]/g, ''));
   const canSubmit = !submitted && !Number.isNaN(parsed);
 
   function handleSubmit() {
