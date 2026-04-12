@@ -44,6 +44,10 @@
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -59,6 +63,11 @@ body {
 
 #root {
   min-height: 100vh;
+}
+
+::selection {
+  background: rgba(99, 102, 241, 0.3);
+  color: var(--color-text-primary);
 }
 
 /* Scrollbar */

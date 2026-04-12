@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, X, ArrowRight, Zap, Lightbulb } from 'lucide-react';
 import type { DrillStep as DrillStepType } from '../../data/lessons/types';
@@ -10,24 +10,15 @@ interface Props {
 
 type Phase = 'running' | 'reveal' | 'done';
 
-const REVEAL_MS = 750;
-
 export default function DrillStep({ step, onDone }: Props) {
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>('running');
   const [picked, setPicked] = useState<'left' | 'right' | null>(null);
   const [correctCount, setCorrectCount] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const total = step.prompts.length;
   const prompt = step.prompts[index];
   const isCorrect = picked !== null && picked === prompt?.correct;
-
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, []);
 
   function handlePick(side: 'left' | 'right') {
     if (phase !== 'running' || picked !== null) return;
@@ -36,15 +27,16 @@ export default function DrillStep({ step, onDone }: Props) {
     if (side === prompt.correct) {
       setCorrectCount((c) => c + 1);
     }
-    timerRef.current = setTimeout(() => {
-      if (index < total - 1) {
-        setIndex((i) => i + 1);
-        setPicked(null);
-        setPhase('running');
-      } else {
-        setPhase('done');
-      }
-    }, REVEAL_MS);
+  }
+
+  function handleNext() {
+    if (index < total - 1) {
+      setIndex((i) => i + 1);
+      setPicked(null);
+      setPhase('running');
+    } else {
+      setPhase('done');
+    }
   }
 
   function handleContinue() {
@@ -205,18 +197,29 @@ export default function DrillStep({ step, onDone }: Props) {
             })}
           </div>
 
-          {/* Flash message reveal */}
+          {/* Flash message + next button on reveal */}
           <AnimatePresence>
             {phase === 'reveal' && (
-              <motion.p
+              <motion.div
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="text-sm text-text-secondary leading-relaxed text-center px-2"
+                className="space-y-4"
               >
-                {prompt.flash}
-              </motion.p>
+                <p className="text-sm text-text-secondary leading-relaxed text-center px-2">
+                  {prompt.flash}
+                </p>
+                <motion.button
+                  onClick={handleNext}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full py-2.5 rounded-xl border border-border bg-dark-700 hover:bg-dark-600 text-text-primary text-sm font-semibold transition-colors cursor-pointer flex items-center justify-center gap-2"
+                >
+                  {index < total - 1 ? 'Next' : 'See Results'}
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </motion.button>
+              </motion.div>
             )}
           </AnimatePresence>
         </motion.div>
