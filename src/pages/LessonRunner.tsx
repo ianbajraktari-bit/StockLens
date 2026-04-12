@@ -15,6 +15,7 @@ import DrillStep from '../components/steps/DrillStep';
 import EstimateStep from '../components/steps/EstimateStep';
 import TapStep from '../components/steps/TapStep';
 import DecideStep from '../components/steps/DecideStep';
+import ThinkingStepComponent from '../components/steps/ThinkingStepComponent';
 import { type Lesson, getLessonById } from '../data/lessons';
 import { getNextLessonId, isLessonUnlocked } from '../lib/progression';
 
@@ -319,9 +320,7 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
               <DecideStep step={currentStep} onDone={handleStepDone} />
             )}
             {currentStep?.kind === 'thinking' && (
-              <div className="rounded-2xl border border-border bg-dark-800 p-6 text-text-secondary">
-                Thinking step component coming in Phase B.
-              </div>
+              <ThinkingStepComponent step={currentStep} onDone={handleStepDone} />
             )}
           </motion.div>
         </AnimatePresence>
