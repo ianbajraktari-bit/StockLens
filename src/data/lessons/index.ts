@@ -19,6 +19,7 @@ export { amazonLesson } from './amazon';
 export { microsoftLesson } from './microsoft';
 export { teslaLesson } from './tesla';
 export { googleLesson } from './google';
+export { netflixLesson } from './netflix';
 
 import { foundationsBasicsLesson } from './foundations-basics';
 import { foundationsMarginsLesson } from './foundations-margins';
@@ -40,6 +41,7 @@ import { amazonLesson } from './amazon';
 import { microsoftLesson } from './microsoft';
 import { teslaLesson } from './tesla';
 import { googleLesson } from './google';
+import { netflixLesson } from './netflix';
 import type { Lesson } from './types';
 
 export const allLessons: Lesson[] = [
@@ -68,6 +70,7 @@ export const allLessons: Lesson[] = [
   microsoftLesson,
   teslaLesson,
   googleLesson,
+  netflixLesson,
 ];
 
 export function getLessonById(id: string): Lesson | undefined {
