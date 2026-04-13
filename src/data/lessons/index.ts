@@ -29,6 +29,7 @@ export { microsoftLesson } from './microsoft';
 export { teslaLesson } from './tesla';
 export { googleLesson } from './google';
 export { netflixLesson } from './netflix';
+export { metaLesson } from './meta';
 
 import { foundationsMarketLesson } from './foundations-market';
 import { foundationsBasicsLesson } from './foundations-basics';
@@ -60,6 +61,7 @@ import { microsoftLesson } from './microsoft';
 import { teslaLesson } from './tesla';
 import { googleLesson } from './google';
 import { netflixLesson } from './netflix';
+import { metaLesson } from './meta';
 import type { Lesson } from './types';
 
 export const allLessons: Lesson[] = [
@@ -98,6 +100,7 @@ export const allLessons: Lesson[] = [
   teslaLesson,
   googleLesson,
   netflixLesson,
+  metaLesson,
 ];
 
 export function getLessonById(id: string): Lesson | undefined {
