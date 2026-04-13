@@ -107,7 +107,7 @@ export const netflixLesson: Lesson = {
         'Netflix recovered because it added more subscribers — growth is all that matters',
         'The recovery was driven by extracting more revenue from the existing base (price hikes, password crackdown, ad tier) — not by finding new markets. Netflix shifted from a growth story to a monetization story',
         'The ad tier saved Netflix — without ads, the company would have failed',
-        'Netflix just got lucky — the content happened to be good that year',
+        'The recovery was driven by the post-COVID content pipeline finally landing — any streamer with good content would have recovered',
       ],
       correctIndex: 1,
       punchline:
@@ -116,7 +116,7 @@ export const netflixLesson: Lesson = {
         'Subscriber additions helped, but the real revenue driver was monetizing existing users. A $1 price hike on 300M subs generates 20x more revenue than adding 1M new subscribers. The math has shifted.',
         '',
         'The ad tier is important but it\'s one of three levers. Without the password crackdown (~30M+ new paid users) and price increases, the ad tier alone wouldn\'t have driven the recovery. All three together changed the story.',
-        'Netflix spent $17B on content — it wasn\'t luck. And the recovery was driven by business model changes (pricing, ads, password policy), not by any single show. Structural changes matter more than content hits.',
+        'Content quality helped, but Disney+ and HBO also had strong lineups without a similar stock recovery. Netflix\'s rebound was driven by structural business model changes — password crackdown, ad tier launch, and price hikes — not by any particular slate of shows.',
       ],
       takeaway: 'Mature subscription businesses grow by monetizing the base, not just adding to it. Netflix\'s shift from "subscriber growth story" to "revenue per user story" is the playbook every subscription company eventually follows.',
     },
@@ -181,7 +181,7 @@ export const netflixLesson: Lesson = {
       topic: 'The Ad Tier Math',
       topicIcon: Calculator,
       context:
-        'Netflix\'s ad tier charges $7/month in subscription fees. But it also earns ad revenue per user.\n\nEstimated ad revenue per ad-tier user: ~$8-10/month (based on viewing hours × ad load × CPM rates).\n\nTotal revenue per ad-tier user: $7 subscription + ~$9 ads = ~$16/month.\nPremium tier (no ads): $23/month.\n\nThe ad tier generates ~$16/month. The premium tier generates $23/month.',
+        'Netflix\'s ad tier charges $7/month in subscription fees. But it also earns ad revenue per user.\n\nEstimated ad revenue per ad-tier user: ~$8-10/month. (Industry estimate based on ~4-5 minutes of ads per hour at current streaming CPM rates, across average viewing hours.)\n\nTotal revenue per ad-tier user: $7 subscription + ~$9 ads = ~$16/month.\nPremium tier (no ads): $23/month.\n\nThe ad tier generates ~$16/month. The premium tier generates $23/month.',
       question: 'What percentage of premium-tier revenue does the ad tier capture?',
       answer: 70,
       tolerance: 5,
@@ -210,7 +210,7 @@ export const netflixLesson: Lesson = {
       ],
       correctIndex: 1,
       punchline:
-        'Netflix at 45x is a bet on margin expansion, not subscriber growth. If operating margins reach 35%+ (from 28% today) and the ad tier scales, earnings could nearly double on flat subscriber growth. If margins plateau or competition intensifies, 45x is too expensive for a 15%-growth company. The investment case is about profitability trajectory, not content or subscribers.',
+        'Netflix at 45x is a bet on margin expansion, not subscriber growth. If operating margins reach 35%+ (from 28% today), earnings could nearly double on flat subscriber growth. Why would margins expand? As the subscriber base grows, content costs don\'t scale 1:1 — a hit show costs the same whether it reaches 200M or 300M subscribers. The ad tier adds high-margin revenue on top. But if margins plateau or competition intensifies, 45x is too expensive for a 15%-growth company.',
       wrongNudges: [
         '45x is high for 15% revenue growth — but if margins expand from 28% to 35%, earnings grow 25%+ even with modest revenue growth. P/E ratios on companies with expanding margins can be misleading because earnings growth exceeds revenue growth.',
         '',
@@ -229,7 +229,7 @@ export const netflixLesson: Lesson = {
         'Based on everything you\'ve learned — subscriber growth dynamics at 300M users, $17B in annual content spending, operating margins expanding toward 30%, the ad tier capturing 70% of premium revenue, and a 45x P/E — would you invest in Netflix today? What\'s your bull case, your bear case, and where do you come down?',
       placeholder: 'My investment opinion on Netflix is...',
       modelAnswer:
-        'Netflix at 45x earnings is a bet on margin expansion, not subscriber growth. The bull case: at 300M subscribers with industry-low 2% churn, Netflix has a locked-in base it can monetize through price hikes, ad tier growth, and operating leverage on $17B in content spending. If margins reach 35%+ (from 28% today), earnings could nearly double even without adding subscribers. The ad tier is especially compelling — at 70% of premium revenue with room for better targeting, it could eventually surpass ad-free tiers in per-user profitability. The bear case: 45x leaves almost no margin for error. Subscriber saturation in developed markets is real. Content spending must stay at $17B+ just to maintain the library moat, limiting how far margins can expand. And the 2022 crash proved that any narrative crack at a premium multiple can be catastrophic. I\'d want to own Netflix but would wait for a better entry point — the business is excellent, but at 45x, the stock is priced for near-perfect execution on the margin expansion story.',
+        'I think Netflix is a strong business, but 45x feels like a lot. The bull case: 300M subscribers with super-low churn gives Netflix a huge base to squeeze more revenue from — price hikes, the ad tier, and the password crackdown all boost earnings without needing many new subscribers. If margins go from 28% to 35%, profits could nearly double. The bear case: at 45x, everything has to go right. Subscriber growth in big markets is slowing, content spending can\'t really drop below $17B, and we saw in 2022 how fast the stock can fall when the story cracks. I\'d want to own the business, but I\'d be more comfortable buying on a dip — right now the price assumes things go pretty smoothly from here.',
       strongReasoningIncludes: [
         'Identifies margin expansion (not subscriber growth) as the key variable that determines whether 45x is justified',
         'Weighs the ad tier\'s potential to increase per-user revenue against the risk that content spending limits margin expansion',
