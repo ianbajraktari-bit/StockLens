@@ -67,9 +67,13 @@ export default function EstimateStep({ step, onDone }: Props) {
       </div>
 
       {/* Context */}
-      <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-line">
-        {step.context}
-      </p>
+      <div className="space-y-3">
+        {step.context.split('\n\n').map((para, i) => (
+          <p key={i} className="text-sm text-text-secondary leading-relaxed">
+            {para}
+          </p>
+        ))}
+      </div>
 
       {/* Question */}
       <p className="text-base font-semibold text-text-primary">{step.question}</p>

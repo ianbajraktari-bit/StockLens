@@ -36,9 +36,9 @@ export default function ThinkingStepComponent({ step, onDone }: Props) {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-accent/30 bg-dark-800/60 p-5 space-y-3">
+        <div className="rounded-2xl border border-warm/20 bg-dark-800/60 p-5 space-y-3">
           <div className="flex items-center gap-2">
-            <Lightbulb className="w-4 h-4 text-accent-light" />
+            <Lightbulb className="w-4 h-4 text-warm" />
             <p className="text-sm font-semibold text-text-primary">Example strong answer</p>
           </div>
           <p className="text-sm text-text-secondary leading-relaxed">{step.modelAnswer}</p>
@@ -48,10 +48,10 @@ export default function ThinkingStepComponent({ step, onDone }: Props) {
           <p className="text-xs text-text-muted font-semibold uppercase tracking-wide">
             Strong reasoning includes
           </p>
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {step.strongReasoningIncludes.map((criterion, i) => (
-              <div key={i} className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-accent-light mt-0.5 shrink-0" />
+              <div key={i} className="flex items-start gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-green mt-0.5 shrink-0" />
                 <p className="text-sm text-text-secondary leading-relaxed">{criterion}</p>
               </div>
             ))}

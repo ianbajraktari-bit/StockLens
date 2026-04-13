@@ -45,9 +45,13 @@ export default function DecideStep({ step, onDone }: Props) {
 
       {/* Context */}
       {step.context && (
-        <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-line">
-          {step.context}
-        </p>
+        <div className="space-y-3">
+          {step.context.split('\n\n').map((para, i) => (
+            <p key={i} className="text-sm text-text-secondary leading-relaxed">
+              {para}
+            </p>
+          ))}
+        </div>
       )}
 
       {/* Question */}
