@@ -41,7 +41,7 @@ export const foundationsDebtLesson: Lesson = {
       ],
       correctIndex: 2,
       punchline:
-        'Debt is a tool that amplifies outcomes. If the business earns more than the interest rate, debt creates value (Owner A: 30% return vs. 5% cost). If it doesn\'t, debt destroys value (Owner B: 0% return vs. 8% cost). The question is never "should a company borrow?" — it\'s "can it earn more than the cost of borrowing?"',
+        'Debt is a tool that amplifies outcomes. Return on borrowed money means the profit generated per dollar borrowed — Owner A\'s $150K profit on $500K borrowed is a 30% return. If the business earns more than the interest rate, debt creates value (Owner A: 30% return vs. 5% cost). If it doesn\'t, debt destroys value (Owner B: 0% return vs. 8% cost). The question is never "should a company borrow?" — it\'s "can it earn more than the cost of borrowing?"',
       wrongNudges: [
         'A low interest rate on unproductive debt is still bad. Owner B at 3% interest would still be borrowing for zero return. The rate matters, but only relative to what the money earns.',
         'Apple has $100B+ in debt and is one of the safest companies in the world. The amount of debt matters far less than whether the business can service it and earn a return above the cost.',
@@ -155,7 +155,7 @@ export const foundationsDebtLesson: Lesson = {
           type: 'chip',
           value: 'operating income is $80M — and annual interest payments are $75M',
           signal: true,
-          feedback: 'Critical red flag. Interest coverage ratio = $80M ÷ $75M = 1.07x. The company barely earns enough to cover interest payments. Any dip in earnings means it can\'t pay its lenders. Healthy companies have 3x+ interest coverage.',
+          feedback: 'Critical red flag. Interest coverage = operating income ÷ interest expense. Here that\'s $80M ÷ $75M = 1.07x — the company barely earns enough to cover interest payments. Below 2x means a company barely covers its interest; any dip in earnings means it can\'t pay its lenders. Healthy companies have 3x+ interest coverage.',
         },
         { type: 'text', value: '. The company ' },
         {
@@ -222,6 +222,7 @@ export const foundationsDebtLesson: Lesson = {
     'The balance sheet shows what a company owns (assets) vs. owes (liabilities). Equity = assets minus liabilities — it\'s what owners actually have.',
     'Two ratios matter most: debt-to-equity (how leveraged is the company?) and interest coverage (can it afford its debt payments?). Under 1x D/E is conservative; under 2x interest coverage is dangerous.',
     'Debt red flags: interest coverage barely above 1x, cash far below short-term debt, and using new debt to repay old debt. These signal a company on the edge.',
+    'You understand leverage. Next: two investing philosophies that seem opposite but share the same core skill.',
   ],
   completionMessages: {
     perfect: 'Flawless. You now understand debt the way CFOs do — as a tool with a specific cost, a measurable return, and clear warning signs when misused.',

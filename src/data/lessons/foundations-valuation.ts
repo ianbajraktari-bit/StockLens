@@ -241,6 +241,7 @@ export const foundationsValuationLesson: Lesson = {
     'P/E = Price ÷ Earnings Per Share. It tells you how many dollars you pay for $1 of profit. The US average is roughly 15–20x.',
     'A high P/E is a bet on the future — the higher the multiple, the more growth must happen to justify the price.',
     'Premiums are justified by predictability, superior margins, or faster growth — not hype, fame, or past returns.',
+    'You can calculate P/E ratios. Next: why a company can report record profits and still see its stock drop.',
   ],
   completionMessages: {
     perfect: 'Flawless. You now have the tool that separates investors from speculators: comparing price to what you actually get.',

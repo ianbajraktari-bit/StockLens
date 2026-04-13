@@ -70,7 +70,7 @@ export const foundationsCashflowLesson: Lesson = {
           left: { label: 'Profit goes up', sublabel: 'sale is recorded' },
           right: { label: 'Cash goes up', sublabel: 'money received' },
           correct: 'left',
-          flash: 'Revenue is recognized when earned (accrual accounting), not when collected. Profit increases immediately. Cash? Still zero from this deal.',
+          flash: 'Revenue is recognized when earned, not when collected — this is called accrual accounting, recording revenue when it\'s earned, not when cash arrives. Profit increases immediately. Cash? Still zero from this deal.',
         },
         {
           setup: 'A customer pays a $50K invoice that was 60 days overdue.',
@@ -98,7 +98,7 @@ export const foundationsCashflowLesson: Lesson = {
           left: { label: 'Cash decreased', sublabel: 'money left the business' },
           right: { label: 'No cash moved', sublabel: 'paper expense only' },
           correct: 'right',
-          flash: 'Depreciation reduces profit but zero cash moves. The cash left when the asset was originally purchased. This is the biggest reason profit ≠ cash.',
+          flash: 'Depreciation reduces profit but zero cash moves. Companies record depreciation because assets lose value over time — spreading the cost across years rather than hitting it all at once. The cash left when the asset was originally purchased. This is the biggest reason profit ≠ cash.',
         },
       ],
       takeaway:
@@ -124,7 +124,7 @@ export const foundationsCashflowLesson: Lesson = {
       unit: '$M',
       hint: '$20M + $8M − $15M − $5M',
       reveal:
-        '$20M + $8M − $15M − $5M = $8M in free cash flow. The company reported $20M in profit but only generated $8M in real cash. The gap: $8M went back as depreciation (paper cost), $15M went to equipment (real cash out), and $5M is trapped in unpaid invoices. Free cash flow — not profit — is what investors trust most.',
+        '$20M + $8M − $15M − $5M = $8M in free cash flow. The company reported $20M in profit but only generated $8M in real cash. We add back depreciation (a paper cost that reduced profit but didn\'t touch cash), subtract equipment purchases (real cash out that didn\'t hit profit), and subtract growing receivables (profit recorded but cash not yet collected). Free cash flow — not profit — is what investors trust most.',
       takeaway: 'Free cash flow = the actual cash a business generates after everything. It\'s often very different from reported profit. $20M profit → $8M real cash is a common pattern.',
     },
 
@@ -166,14 +166,14 @@ export const foundationsCashflowLesson: Lesson = {
           type: 'chip',
           value: 'spent $25M on new facilities and equipment',
           signal: true,
-          feedback: 'Major cash outflow. $25M in real cash left the business for capital expenditures. Combined with the receivables problem, cash flow is deeply negative despite $15M in profit.',
+          feedback: 'Major cash outflow. $25M in real cash left the business for capital expenditures (capex) — money spent on long-term assets like equipment, buildings, or technology. Combined with the receivables problem, cash flow is deeply negative despite $15M in profit.',
         },
         { type: 'text', value: ' to support growth. Management notes that ' },
         {
           type: 'chip',
           value: 'operating cash flow was negative $5M',
           signal: true,
-          feedback: 'Confirmation: $15M in profit but negative $5M in actual cash generated from operations. The company is burning cash while reporting profits. This is how profitable companies go broke.',
+          feedback: 'Confirmation: $15M in profit but negative $5M in operating cash flow — the cash a business generates from its actual operations, before investments or financing. The company is burning cash while reporting profits. This is how profitable companies go broke.',
         },
         { type: 'text', value: ' this year due to timing. The ' },
         {
@@ -227,6 +227,7 @@ export const foundationsCashflowLesson: Lesson = {
     'Three things create the gap: timing differences (invoices vs. payment), large purchases (cash leaves now, cost spreads over years), and paper expenses like depreciation (reduce profit but no cash moves).',
     'Free cash flow = the real cash a business generates after everything. It\'s often very different from reported profit.',
     'When profit and cash flow disagree, trust cash flow. Cash pays bills, funds growth, and rewards investors. Profit is just a number on a page.',
+    'You know cash beats paper profit. Next: the difference between a stock going down temporarily and losing money permanently.',
   ],
   completionMessages: {
     perfect: 'Flawless. You now understand the difference that trips up most investors: the gap between reported profit and real cash.',

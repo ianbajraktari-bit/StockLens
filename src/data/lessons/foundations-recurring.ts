@@ -85,7 +85,7 @@ export const foundationsRecurringLesson: Lesson = {
       unit: '$',
       hint: '950 members × $50',
       reveal:
-        '950 members × $50 = $47,500. Even with no new sign-ups, Gym B keeps 95% of its revenue. That built-in floor is what makes recurring income so powerful.',
+        '950 members × $50 = $47,500. Even with no new sign-ups, Gym B keeps 95% of its revenue — only 5% churn (the percentage of customers who cancel each period). That built-in floor is what makes recurring income so powerful.',
       takeaway: 'Recurring revenue creates a floor — money that shows up even when growth stops.',
     },
 
@@ -291,6 +291,7 @@ export const foundationsRecurringLesson: Lesson = {
     "The real test is what happens when new customers stop showing up. Recurring revenue creates a floor; one-time revenue craters.",
     'Growth from repeat customers compounds naturally. Growth from one-time sales has to be rebuilt from scratch every year.',
     'Subscription businesses trade at premium valuations because predictable, repeating income reduces uncertainty — and reducing uncertainty is what investors pay for.',
+    'You know recurring revenue beats one-time. Next: how to look underneath headline numbers and find what actually drives a business.',
   ],
   completionMessages: {
     perfect:

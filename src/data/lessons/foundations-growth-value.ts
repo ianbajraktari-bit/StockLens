@@ -207,6 +207,7 @@ export const foundationsGrowthValueLesson: Lesson = {
     'Growth traps: paying 60x for a company that delivers great results — and still losing money because the multiple compresses. Overpaying for growth is as dangerous as buying declining businesses.',
     'Value traps: a stock at 6x P/E that looks cheap but keeps getting cheaper as the business permanently declines. Cheap is only a bargain if the business stabilizes or improves.',
     'The antidote to both traps: understand what the price assumes. Reverse-engineer the implied growth rate or the implied decline, then judge whether reality will beat or miss.',
+    'You can spot growth traps and value traps. Next: what companies do with their profits — and why it matters as much as earning them.',
   ],
   completionMessages: {
     perfect: 'Flawless. You now understand both sides of the investing debate — and more importantly, the traps hiding in each.',

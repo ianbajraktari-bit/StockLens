@@ -291,6 +291,7 @@ export const foundationsMoatsLesson: Lesson = {
     "The four most common moats are switching costs, network effects, brand, and scale. They're all structural, not personal.",
     'Real moats survive when people, trends, and competitors change. Fake moats depend on a person, a fad, or a moment.',
     'Moats translate directly into valuation. Investors pay a premium for profits they can count on for years.',
+    'You can spot moats. Next: the tool that tells you whether a stock is actually cheap or expensive.',
   ],
   completionMessages: {
     perfect:

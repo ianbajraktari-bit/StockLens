@@ -226,7 +226,7 @@ export const teslaLesson: Lesson = {
       topic: 'The Judgment Call',
       topicIcon: BrainCircuit,
       context:
-        'Here\'s the full picture:\n\n• 80% of revenue from cars. Margins falling. Deliveries declining.\n• Energy storage growing fast but still ~10% of revenue.\n• FSD, robotaxi, and Optimus: huge potential, minimal current revenue.\n• 120x P/E requires earnings to 6x.\n• Manufacturing cost advantage is real.\n• Brand loyalty is intense but polarizing.',
+        'Here\'s the full picture:\n\n• 80% of revenue from cars. Margins falling. Deliveries declining.\n• Energy storage growing fast (~$6B to ~$12B) but still ~10% of revenue.\n• FSD, robotaxi, and Optimus: huge potential, minimal current revenue.\n• 120x P/E requires net income to 6x (from ~$7B to ~$40B).\n• Manufacturing cost advantage is real.\n• Brand loyalty is intense but polarizing.',
       question: 'What\'s the most thoughtful investor stance on Tesla?',
       options: [
         'Sell — the auto business is deteriorating, and the future bets are too speculative to justify 120x earnings',
@@ -255,7 +255,7 @@ export const teslaLesson: Lesson = {
         'A friend says: "Tesla is the future — I\'m putting 50% of my portfolio in it." Based on what you\'ve learned, what would you tell them? Consider the current business, the margin trend, the valuation, and the optionality bets.',
       placeholder: 'I would tell them that...',
       modelAnswer:
-        'I\'d acknowledge that Tesla has real competitive advantages — manufacturing efficiency, Supercharger dominance, and genuine energy storage growth. But I\'d push back on the 50% concentration. At 120x earnings, the stock needs earnings to 6x just to reach a normal valuation. That\'s only possible if FSD or robotaxi become massive, profitable businesses — which hasn\'t happened yet. The core auto business has declining deliveries and compressing margins. Putting 50% of your portfolio on what is essentially a technology bet means you need to be right about self-driving AND the timeline AND the monetization. If any one of those doesn\'t pan out, you\'re holding a car company stock at 120x earnings. The right question isn\'t "is Tesla a great company?" — it\'s "is this price right given what needs to happen?"',
+        'I\'d say Tesla is a cool company but 50% is a lot to bet on one stock. Right now, 80% of their money comes from selling cars, and that part of the business isn\'t growing — deliveries actually fell and margins dropped from 28% to 18%. The stock trades at 120x earnings, which means it needs to 6x its profits just to be valued like a normal company. That only works if self-driving or robotaxis become huge profitable businesses, and those haven\'t really launched yet. Energy storage is growing fast, which is great, but it\'s still a small piece. Basically, at this price you\'re not just betting Tesla is a good company — you\'re betting that specific future technologies will work, on a specific timeline, and make a specific amount of money. That\'s a lot of things that all need to go right. I\'d at least spread the risk around more.',
       strongReasoningIncludes: [
         'Acknowledges Tesla\'s real advantages while noting the auto business is deteriorating',
         'Connects the 120x valuation to specific requirements — what needs to be true for the price to make sense',

@@ -292,6 +292,7 @@ export const foundationsMarginsLesson: Lesson = {
     'Profit margin = (sales − costs) ÷ sales. It\'s the share of every dollar the business actually pockets.',
     'Thin margins are fragile. A small cost shock can wipe out a thin-margin business while a high-margin one barely notices.',
     'Investors pay premium prices for businesses with high margins and predictable revenue — that\'s the foundation of stock valuation.',
+    'You can spot margin strength. Next: the three layers of an income statement that tell you exactly where the money goes.',
   ],
   completionMessages: {
     perfect:

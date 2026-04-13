@@ -214,6 +214,7 @@ export const foundationsEarningsLesson: Lesson = {
     'Three financial statements answer three questions: income statement (how much earned?), balance sheet (what\'s owned and owed?), cash flow statement (is the cash real?).',
     'Five numbers first: revenue growth, operating margin trend, EPS vs. expectations, free cash flow, and forward guidance. These take 60 seconds and tell 80% of the story.',
     'Compare year-over-year, never quarter-over-quarter. Seasonal effects make QoQ misleading. Management code words: "efficiency" = cuts, "headwinds" = weakening demand, "raising guidance" = genuine confidence.',
+    'You can read earnings. Next: the hardest decision in investing — when to sell.',
   ],
   completionMessages: {
     perfect: 'Flawless. You now know exactly where to look in an earnings report — and what management is really saying between the lines.',

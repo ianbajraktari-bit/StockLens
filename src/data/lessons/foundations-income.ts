@@ -248,6 +248,7 @@ export const foundationsIncomeLesson: Lesson = {
     'Gross profit = Revenue − COGS. It measures product efficiency. Operating profit = Gross Profit − Operating Expenses. It measures business efficiency.',
     'A high gross margin that collapses at the operating level means the company makes products cheaply but spends the savings on overhead.',
     'The income statement is a funnel: revenue in, costs peel off layer by layer, profit out. Each layer answers a different investor question.',
+    'You can read a scoreboard. Next: why income that shows up automatically is worth more than income you have to chase.',
   ],
   completionMessages: {
     perfect: 'Flawless. You can now read the scoreboard every public company publishes — and know exactly what each line means.',

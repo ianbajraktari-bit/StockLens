@@ -291,6 +291,7 @@ export const foundationsDriversLesson: Lesson = {
     "Revenue is an output. When it changes, decompose it into inputs and find the one that moved. That's the key driver.",
     "For subscription businesses, the key driver is usually retention. High churn devours growth; low churn compounds it.",
     "Before investing, ask the owner to identify the one thing that drives the business. If they can't, that's a red flag.",
+    'You can find key drivers. Next: the biggest threat to your investing — your own brain.',
   ],
   completionMessages: {
     perfect:

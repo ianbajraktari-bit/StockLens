@@ -200,6 +200,7 @@ export const foundationsReturnsLesson: Lesson = {
     'Dividends are sticky commitments — hard to cut without crashing the stock. Buybacks are flexible and create value by boosting EPS, but only if the company buys when the stock is reasonably priced.',
     'Buyback math: reducing shares by 20% increases EPS by 25% on flat profit. But buybacks only create value at reasonable prices — and they carry a tax advantage over dividends (taxes are deferred until you sell).',
     'The capital allocation framework: reinvest when returns exceed cost of capital, buy back when the stock is undervalued, pay dividends when the business is mature. Watch for red flags: buybacks at all-time highs, acquisitions above 5x revenue without clear profit logic, and borrowing to fund spending.',
+    'You know how profits get allocated. Next: how to build a portfolio that survives your worst mistake.',
   ],
   completionMessages: {
     perfect: 'Flawless. You now understand capital allocation — the skill that separates good companies from great investments.',

@@ -203,6 +203,7 @@ export const foundationsMarketLesson: Lesson = {
     'Shares are equal slices of ownership. Exchanges are marketplaces. Brokers execute your trades. Your risk is limited to what you invest.',
     'Stock prices reflect expectations about the future. When investors believe profits will grow, they bid the price up today — before the growth actually happens.',
     'Investing is not gambling. Gambling has negative expected value; owning real businesses that earn real profits has positive expected value over time.',
+    'Now that you know what stocks are, the next question is: how does a business actually make money — and how much does it keep?',
   ],
   completionMessages: {
     perfect: 'Flawless. You now understand what most people never bother to learn — what you\'re actually buying when you buy a stock.',

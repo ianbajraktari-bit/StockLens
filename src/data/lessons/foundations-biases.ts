@@ -293,6 +293,7 @@ export const foundationsBiasesLesson: Lesson = {
     "A falling price isn't new information. Before reacting, ask whether anything about the business actually changed.",
     "Your purchase price is irrelevant to what a stock is worth today. The disposition effect makes investors sell winners early and hold losers too long.",
     "Your best defense isn't better instincts — it's a process built in calm moments. Write down your reasoning, set sell criteria in advance, and check prices less often.",
+    'You\'ve learned to manage your instincts. Next: what makes some businesses nearly impossible to compete with.',
   ],
   completionMessages: {
     perfect:
