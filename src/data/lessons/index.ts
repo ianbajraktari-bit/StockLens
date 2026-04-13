@@ -17,6 +17,9 @@ export { foundationsReturnsLesson } from './foundations-returns';
 export { foundationsPortfolioLesson } from './foundations-portfolio';
 export { foundationsEarningsLesson } from './foundations-earnings';
 export { foundationsSellingLesson } from './foundations-selling';
+export { foundationsMacroLesson } from './foundations-macro';
+export { foundationsHistoryLesson } from './foundations-history';
+export { foundationsSectorsLesson } from './foundations-sectors';
 export { appleLesson } from './apple';
 export { nvidiaLesson } from './nvidia';
 export { costcoLesson } from './costco';
@@ -44,6 +47,9 @@ import { foundationsReturnsLesson } from './foundations-returns';
 import { foundationsPortfolioLesson } from './foundations-portfolio';
 import { foundationsEarningsLesson } from './foundations-earnings';
 import { foundationsSellingLesson } from './foundations-selling';
+import { foundationsMacroLesson } from './foundations-macro';
+import { foundationsHistoryLesson } from './foundations-history';
+import { foundationsSectorsLesson } from './foundations-sectors';
 import { appleLesson } from './apple';
 import { nvidiaLesson } from './nvidia';
 import { costcoLesson } from './costco';
@@ -76,6 +82,9 @@ export const allLessons: Lesson[] = [
   foundationsPortfolioLesson,      // position sizing, real diversification, starting point
   foundationsEarningsLesson,       // reading earnings reports, 5 key numbers, management tone
   foundationsSellingLesson,        // when to sell, thesis-broken framework, disposition effect
+  foundationsMacroLesson,          // interest rates, inflation, Fed policy, macro forces
+  foundationsHistoryLesson,        // bubbles, crashes, recovery patterns, panic selling
+  foundationsSectorsLesson,        // industry analysis, cyclical vs defensive, sector drivers
 
   // Company Deep Dives
   appleLesson,

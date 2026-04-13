@@ -14,6 +14,7 @@ import {
   Zap,
   Star,
   Flame,
+  GraduationCap,
 } from 'lucide-react';
 import { allLessons, type Lesson } from '../data/lessons';
 import {
@@ -29,6 +30,13 @@ const foundationsPhase2 = allLessons.filter((l) => l.tier === 'foundations-2');
 const foundationLessons = [...foundationsPhase1, ...foundationsPhase2];
 const companyLessons = allLessons.filter((l) => l.tier === 'company');
 
+// Subtle tier accent colors for left border on lesson cards
+const TIER_COLORS = {
+  'foundations-1': 'rgba(99, 102, 241, 0.4)',   // indigo
+  'foundations-2': 'rgba(245, 158, 11, 0.4)',    // amber
+  'company': 'rgba(34, 197, 94, 0.4)',           // emerald
+} as const;
+
 export default function HomePage() {
   const navigate = useNavigate();
   const completedIds = getCompletedIds();
@@ -40,15 +48,22 @@ export default function HomePage() {
   const totalCount = allLessons.length;
   const progressPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
+  // Per-section completion counts
+  const phase1Completed = foundationsPhase1.filter(l => completedIds.has(l.id)).length;
+  const phase2Completed = foundationsPhase2.filter(l => completedIds.has(l.id)).length;
+  const companyCompleted = companyLessons.filter(l => completedIds.has(l.id)).length;
+
   function handleStart() {
     const target = nextId ?? allLessons[0].id;
     navigate(`/lesson/${target}`);
   }
 
-  function renderLessonCard(lesson: Lesson, index: number, sectionDelay: number, tierBorderColor: string) {
+  function renderLessonCard(lesson: Lesson, index: number, sectionDelay: number) {
     const completed = completedIds.has(lesson.id);
     const isNext = lesson.id === nextId;
     const stars = completed ? getLessonStars(lesson.id) : null;
+    const tierKey = (lesson.tier ?? 'foundations-1') as keyof typeof TIER_COLORS;
+    const tierColor = TIER_COLORS[tierKey];
 
     return (
       <motion.button
@@ -57,7 +72,8 @@ export default function HomePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: sectionDelay + index * 0.04 }}
         onClick={() => navigate(`/lesson/${lesson.id}`)}
-        className={`group w-full text-left rounded-xl border p-4 transition-all duration-200 cursor-pointer border-l-[3px] ${tierBorderColor} ${
+        style={{ borderLeftColor: tierColor }}
+        className={`group w-full text-left rounded-xl border border-l-[3px] p-4 transition-all duration-200 cursor-pointer ${
           isNext && !completed
             ? 'border-accent/40 bg-dark-800 hover:border-accent/60 shadow-[0_0_20px_rgba(99,102,241,0.06)]'
             : completed
@@ -308,40 +324,60 @@ export default function HomePage() {
           </motion.div>
         )}
 
-        {/* Foundations Phase 1 */}
+        {/* Foundations Phase 1 — Core Financial Vocabulary */}
         <section className="space-y-3">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="flex items-center justify-between"
+            className="border-l-[3px] border-l-accent/30 pl-3 flex items-center justify-between"
           >
             <div className="flex items-center gap-2">
-              <Lightbulb className="w-4 h-4 text-amber" />
+              <Lightbulb className="w-4 h-4 text-accent-light" />
               <h2 className="text-sm font-semibold text-text-primary">
-                Foundations
+                Core Financial Vocabulary
               </h2>
-              <span className="text-[10px] text-text-muted">
-                {foundationLessons.filter(l => completedIds.has(l.id)).length}/{foundationLessons.length}
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/10 text-accent-light font-medium">
+                Phase 1
               </span>
             </div>
+            <span className="text-[10px] text-text-muted font-medium">
+              {phase1Completed}/{foundationsPhase1.length} complete
+            </span>
           </motion.div>
 
           <div className="space-y-1.5">
-            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider px-1">
-              Core Financial Vocabulary
-            </p>
             {foundationsPhase1.map((lesson, i) =>
-              renderLessonCard(lesson, i, 0.15, 'border-l-amber/30')
+              renderLessonCard(lesson, i, 0.15)
             )}
           </div>
+        </section>
 
-          <div className="space-y-1.5 pt-2">
-            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider px-1">
-              Investing Concepts
-            </p>
+        {/* Foundations Phase 2 — Investing Concepts */}
+        <section className="space-y-3">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="border-l-[3px] border-l-amber/30 pl-3 flex items-center justify-between"
+          >
+            <div className="flex items-center gap-2">
+              <GraduationCap className="w-4 h-4 text-amber" />
+              <h2 className="text-sm font-semibold text-text-primary">
+                Investing Concepts
+              </h2>
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber/10 text-amber font-medium">
+                Phase 2
+              </span>
+            </div>
+            <span className="text-[10px] text-text-muted font-medium">
+              {phase2Completed}/{foundationsPhase2.length} complete
+            </span>
+          </motion.div>
+
+          <div className="space-y-1.5">
             {foundationsPhase2.map((lesson, i) =>
-              renderLessonCard(lesson, i, 0.25, 'border-l-accent/30')
+              renderLessonCard(lesson, i, 0.25)
             )}
           </div>
         </section>
@@ -352,22 +388,25 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
-            className="flex items-center justify-between"
+            className="border-l-[3px] border-l-green/30 pl-3 flex items-center justify-between"
           >
             <div className="flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-warm" />
+              <Building2 className="w-4 h-4 text-green" />
               <h2 className="text-sm font-semibold text-text-primary">
                 Company Deep Dives
               </h2>
-              <span className="text-[10px] text-text-muted">
-                {companyLessons.filter(l => completedIds.has(l.id)).length}/{companyLessons.length}
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green/10 text-green font-medium">
+                Applied
               </span>
             </div>
+            <span className="text-[10px] text-text-muted font-medium">
+              {companyCompleted}/{companyLessons.length} complete
+            </span>
           </motion.div>
 
           <div className="space-y-1.5">
             {companyLessons.map((lesson, i) =>
-              renderLessonCard(lesson, i, 0.35, 'border-l-warm/30')
+              renderLessonCard(lesson, i, 0.35)
             )}
           </div>
         </section>
