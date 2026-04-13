@@ -202,17 +202,26 @@ export default function HomePage() {
           {/* Stats bar or hero for new users */}
           {hasAnyProgress ? (
             <div className="flex items-center gap-4 flex-wrap">
-              {streak.current > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3, delay: 0.1 }}
-                  className="flex items-center gap-1.5 text-xs"
-                >
-                  <Flame className="w-3.5 h-3.5 text-warm" />
-                  <span className="text-warm font-semibold">{streak.current} day streak</span>
-                </motion.div>
-              )}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
+                className="flex items-center gap-1.5 text-xs"
+              >
+                {streak.current > 0 ? (
+                  <>
+                    <Flame
+                      className={`w-3.5 h-3.5 text-warm ${streak.current >= 3 ? 'drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]' : ''}`}
+                    />
+                    <span className="text-warm font-semibold">{streak.current} day streak</span>
+                  </>
+                ) : (
+                  <>
+                    <Flame className="w-3.5 h-3.5 text-text-muted" />
+                    <span className="text-text-muted">Start your streak!</span>
+                  </>
+                )}
+              </motion.div>
               <div className="flex items-center gap-1.5 text-xs text-text-secondary">
                 <CheckCircle2 className="w-3.5 h-3.5 text-green" />
                 <span>{completedCount} of {totalCount} lessons</span>

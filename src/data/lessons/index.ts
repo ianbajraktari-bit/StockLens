@@ -20,6 +20,7 @@ export { foundationsSellingLesson } from './foundations-selling';
 export { foundationsMacroLesson } from './foundations-macro';
 export { foundationsHistoryLesson } from './foundations-history';
 export { foundationsSectorsLesson } from './foundations-sectors';
+export { foundationsStatementsLesson } from './foundations-statements';
 export { appleLesson } from './apple';
 export { nvidiaLesson } from './nvidia';
 export { costcoLesson } from './costco';
@@ -50,6 +51,7 @@ import { foundationsSellingLesson } from './foundations-selling';
 import { foundationsMacroLesson } from './foundations-macro';
 import { foundationsHistoryLesson } from './foundations-history';
 import { foundationsSectorsLesson } from './foundations-sectors';
+import { foundationsStatementsLesson } from './foundations-statements';
 import { appleLesson } from './apple';
 import { nvidiaLesson } from './nvidia';
 import { costcoLesson } from './costco';
@@ -85,6 +87,7 @@ export const allLessons: Lesson[] = [
   foundationsMacroLesson,          // interest rates, inflation, Fed policy, macro forces
   foundationsHistoryLesson,        // bubbles, crashes, recovery patterns, panic selling
   foundationsSectorsLesson,        // industry analysis, cyclical vs defensive, sector drivers
+  foundationsStatementsLesson,     // reading real financial statements line by line
 
   // Company Deep Dives
   appleLesson,
