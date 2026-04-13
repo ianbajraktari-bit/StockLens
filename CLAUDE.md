@@ -13,176 +13,280 @@ The core design principle: **every interaction should force the user to think, n
 - Tailwind CSS 4 with custom dark theme (`src/index.css`)
 - Framer Motion for animations
 - Lucide React for icons
-- localStorage for completion tracking (no backend, no accounts)
+- React Router v6 for client-side routing
+- localStorage for completion/score tracking (no backend, no accounts)
 - Deployed on Vercel (`vercel.json` has SPA rewrite)
 
 ## Project Structure
 
 ```
 src/
-├── App.tsx                          # Lesson picker, completion tracking, routing
+├── App.tsx                          # Router, ScrollToTop, ErrorBoundary wrapper
 ├── main.tsx                         # Entry point
-├── index.css                        # Tailwind theme (dark mode, custom colors)
+├── index.css                        # Tailwind @theme (dark mode, custom colors)
 ├── components/
-│   ├── QuestionBlock.tsx            # Renders question + 4 answer options
-│   ├── FeedbackBlock.tsx            # Post-answer feedback (punchline, reflection, details)
-│   ├── Navbar.tsx                   # Top nav bar
-│   ├── MetricCard.tsx               # Financial metric display card
-│   ├── DecisionPanel.tsx            # Bull/bear/neutral stance selector
-│   ├── SectionCard.tsx              # Generic section wrapper
-│   ├── PriceChart.tsx               # Recharts area chart
-│   └── RevenueBar.tsx               # Revenue segment bar
+│   ├── ErrorBoundary.tsx            # React class error boundary with recovery UI
+│   └── steps/
+│       ├── DrillStep.tsx            # Binary choice drill (left/right taps)
+│       ├── EstimateStep.tsx         # Numeric estimation with tolerance
+│       ├── TapStep.tsx              # Signal-finding in text passages
+│       ├── DecideStep.tsx           # Multiple choice with punchline reveal
+│       └── ThinkingStepComponent.tsx # Free-response synthesis
 ├── pages/
-│   └── LessonPage.tsx               # Phase state machine for lesson flow
+│   ├── HomePage.tsx                 # Lesson grid, progress tracking, skills display
+│   └── LessonRunner.tsx             # Intro → steps → completion state machine
+├── lib/
+│   └── progression.ts              # localStorage: completion, scores, skills tracking
 └── data/
-    ├── lessons/
-    │   ├── types.ts                 # QuizQuestion, ThinkingStep, Lesson interfaces
-    │   ├── index.ts                 # Barrel exports, allLessons array, getLessonById
-    │   ├── foundations-margins.ts   # "What a Business Keeps"
-    │   ├── foundations-recurring.ts # "Money That Comes Back"
-    │   ├── foundations-drivers.ts   # "What Actually Drives a Business"
-    │   ├── apple.ts                 # Apple company lesson (most advanced)
-    │   ├── nvidia.ts                # NVIDIA company lesson
-    │   └── costco.ts                # Costco company lesson
-    ├── types.ts                     # Company interface (for CompanyPage)
-    ├── companies.ts                 # Company data array
-    ├── amazon.ts                    # Amazon company data
-    ├── costco.ts                    # Costco company data
-    └── nvidia.ts                    # NVIDIA company data
+    └── lessons/
+        ├── types.ts                 # LessonStep union, Lesson, Skill, LessonTier
+        ├── index.ts                 # Barrel exports, allLessons array, getLessonById
+        ├── foundations-market.ts    # "What Is the Stock Market?"
+        ├── foundations-basics.ts    # "Follow the Money"
+        ├── foundations-margins.ts   # "What a Business Keeps"
+        ├── foundations-income.ts    # "Reading the Scoreboard"
+        ├── foundations-recurring.ts # "Money That Comes Back"
+        ├── foundations-drivers.ts   # "What Actually Drives a Business"
+        ├── foundations-biases.ts    # "Your Brain vs. Your Portfolio"
+        ├── foundations-moats.ts     # "What Keeps Winners Winning"
+        ├── foundations-valuation.ts # "What Is a Stock Worth?"
+        ├── foundations-expectations.ts # "The Expectations Game"
+        ├── foundations-cashflow.ts  # "Cash vs. Profit"
+        ├── foundations-risk.ts      # "Risk Is Not a Feeling"
+        ├── foundations-debt.ts      # "Debt: Fuel or Fire?"
+        ├── foundations-growth-value.ts # "Growth vs. Value"
+        ├── foundations-returns.ts   # "Where the Profits Go"
+        ├── foundations-portfolio.ts # "Building a Portfolio"
+        ├── foundations-earnings.ts  # "Reading an Earnings Report"
+        ├── foundations-selling.ts   # "When to Sell"
+        ├── apple.ts                # Apple company lesson
+        ├── nvidia.ts               # NVIDIA company lesson
+        ├── costco.ts               # Costco company lesson
+        ├── amazon.ts               # Amazon company lesson
+        ├── microsoft.ts            # Microsoft company lesson
+        ├── tesla.ts                # Tesla company lesson
+        ├── google.ts               # Google company lesson
+        └── netflix.ts              # Netflix company lesson
 ```
 
 ## Architecture — How It Works
 
 ### Data-Driven Lessons
 
-All lesson content lives in typed data objects. The UI is generic — one `LessonPage` renders any lesson. To create a new lesson, you only create a new data file and add it to `index.ts`. No UI changes needed.
+All lesson content lives in typed data objects. The UI is generic — `LessonRunner` renders any lesson from its `steps` array. To create a new lesson, you only create a new data file and add it to `index.ts`. No UI changes needed.
 
-### Phase State Machine (LessonPage.tsx)
+### Step-Based Architecture
+
+Each lesson contains a `steps: LessonStep[]` array. Steps are a discriminated union on `kind`:
+
+| Kind | Component | Purpose |
+|------|-----------|---------|
+| `'drill'` | `DrillStep` | Binary left/right choices, rapid-fire |
+| `'estimate'` | `EstimateStep` | Numeric estimation with tolerance range |
+| `'tap'` | `TapStep` | Find signals in a text passage |
+| `'decide'` | `DecideStep` | Multiple choice with punchline reveal |
+| `'thinking'` | `ThinkingStepComponent` | Free-response synthesis (no grading) |
+
+Each step component receives its typed data and an `onDone(score)` callback. The `LessonRunner` advances through steps sequentially, accumulating scores.
+
+### Phase State Machine (LessonRunner.tsx)
 
 ```
-intro → answering → feedback → answering → ... → thinking → thinking-revealed → complete
+intro → running (step 0 → step 1 → ... → step N) → complete
 ```
 
 Phases:
-- **intro**: Lesson overview, key facts, topics, "Start Lesson" button
-- **answering**: Show question + options. If question has `gutCheck` and gut not done, show gut check first (auto-advances after 500ms on selection)
-- **feedback**: Question collapses to one-line reminder. Shows punchline (if exists) or full explanation. Shows reflection (if exists). Shows takeaway + continue.
-- **thinking**: Free-response textarea (min 10 chars). Only on company lessons.
-- **thinking-revealed**: Shows model answer + strong reasoning criteria
-- **complete**: Score, completion message, takeaways, restart/back buttons. Fires `onComplete` callback to mark lesson in localStorage.
+- **intro**: Lesson overview, key facts, topics, tier badge, "Start Lesson" button
+- **running**: Renders current step component. Progress bar + score counter at top. Each step calls `onDone` to advance.
+- **complete**: Score with star rating (0-3), completion message, takeaways, next lesson / redo / home buttons. Fires `onComplete` to persist in localStorage.
 
-### Lesson Picker (App.tsx)
+### Routing (App.tsx)
 
-- Splits lessons into "Foundations" (`id.startsWith('foundations-')`) and "Company Deep Dives"
-- Tracks completion via localStorage key `'stocklens-completed'` (JSON array of IDs)
-- Shows visual states: completed (green check, "Redo"), up next (accent border, "Up next"), locked (default)
-- `allLessons` array in `index.ts` controls ordering
+- `GET /` → `HomePage`
+- `GET /lesson/:id` → `LessonRunner` (via `getLessonById`)
+- `ScrollToTop` resets scroll on navigation
+- `ErrorBoundary` wraps everything for crash recovery
+
+### Home Page (HomePage.tsx)
+
+- Hero section with 3 value prop cards
+- Foundations split into Phase 1 ("Core Financial Vocabulary") and Phase 2 ("Investing Concepts")
+- Company Deep Dives section
+- Per-lesson star display on completed cards
+- Skills progress bars showing exposure across skill categories
+- Visual states: completed (green check + stars), up next (accent border), locked
+
+### Progression System (lib/progression.ts)
+
+- **Completion**: `Set<string>` of lesson IDs in localStorage
+- **Scores**: Per-lesson best score (`correct/total`) with 0-3 star ratings
+- **Skills**: Exposure count per skill category, incremented on lesson completion
+- Stars: 100% = 3 stars, 75%+ = 2 stars, 50%+ = 1 star, <50% = 0 stars
 
 ## Type System
 
-### QuizQuestion
+### LessonStep (discriminated union)
 
 ```typescript
-interface QuizQuestion {
-  topic: string;                    // Step label ("The Business", "Investor Quality")
-  topicIcon: LucideIcon;           // Icon displayed next to topic
-  context?: string;                // Setup text shown before question
-  gutCheck?: {                     // Optional pre-question instinct check
-    prompt: string;                // "Quick gut check..."
-    nudge: string;                 // "No wrong answer..."
-    options: string[];             // 2 choices
-    reflections: string[];         // 2 tailored responses
-  };
-  question: string;                // The main question
-  options: string[];               // 4 answer choices
-  correctIndex: number;            // Index of correct answer
-  punchline?: string;              // 1-2 sentence key insight (shown instead of full explanation)
-  reflection?: {                   // Optional post-punchline active step
-    prompt: string;                // Follow-up question
-    options: string[];             // 2-3 choices (no correct answer)
-    responses: string[];           // Tailored response per choice
-  };
-  explanation: string;             // Full explanation (behind "See why" if punchline exists)
-  wrongExplanations: string[];     // One per option (empty string for correct answer's slot)
-  takeaway: string;                // Key learning point
+// Binary choice drill
+interface DrillStep {
+  kind: 'drill';
+  topic: string;
+  topicIcon: LucideIcon;
+  intro: string;
+  prompts: DrillPrompt[];           // Array of binary choices
+  takeaway: string;
 }
+
+interface DrillPrompt {
+  setup?: string;                    // Optional shared setup line
+  left: { label: string; sublabel?: string };
+  right: { label: string; sublabel?: string };
+  correct: 'left' | 'right';
+  flash: string;                     // Short feedback after tap
+}
+
+// Numeric estimation
+interface EstimateStep {
+  kind: 'estimate';
+  topic: string;
+  topicIcon: LucideIcon;
+  context: string;
+  question: string;
+  answer: number;                    // Correct numeric answer
+  tolerance: number;                 // Acceptable distance from answer
+  unit?: string;                     // Display unit (%, $, x, etc.)
+  hint?: string;                     // Tiny hint above input
+  reveal: string;
+  takeaway: string;
+}
+
+// Signal-finding in text
+interface TapStep {
+  kind: 'tap';
+  topic: string;
+  topicIcon: LucideIcon;
+  intro: string;
+  passage: TapSegment[];            // Mixed text and tappable chips
+  requiredSignals: number;
+  reveal: string;
+  takeaway: string;
+}
+
+type TapSegment =
+  | { type: 'text'; value: string }
+  | { type: 'chip'; value: string; signal: boolean; feedback: string };
+
+// Multiple choice with reveal
+interface DecideStep {
+  kind: 'decide';
+  topic: string;
+  topicIcon: LucideIcon;
+  context?: string;
+  question: string;
+  options: string[];                 // 2-4 short options
+  correctIndex: number;
+  punchline: string;                 // 1-2 sentence key insight
+  wrongNudges?: string[];            // Optional per-wrong-option feedback
+  takeaway: string;
+}
+
+// Free-response synthesis (no grading)
+interface ThinkingStepNew {
+  kind: 'thinking';
+  prompt: string;
+  placeholder: string;
+  modelAnswer: string;
+  strongReasoningIncludes: string[];
+}
+
+type LessonStep = DrillStep | EstimateStep | TapStep | DecideStep | ThinkingStepNew;
 ```
 
 ### Lesson
 
 ```typescript
+type LessonTier = 'foundations-1' | 'foundations-2' | 'company';
+
+type Skill =
+  | 'margins'
+  | 'recurring_revenue'
+  | 'business_drivers'
+  | 'behavioral_biases'
+  | 'moats'
+  | 'valuation'
+  | 'risk';
+
 interface Lesson {
-  id: string;                      // 'foundations-margins', 'apple', etc.
-  emoji: string;                   // Displayed on cards and headers
+  id: string;
+  emoji: string;
   title: string;
   subtitle: string;
-  description: string;             // Multi-sentence overview for intro screen
+  description: string;
   estimatedMinutes: number;
-  dataAsOf: string;                // 'Q1 2025' or '' for foundations
-  keyFacts: { label, value, detail }[];  // Empty array for foundations
-  topics: { label, icon }[];       // 4 items, shown on intro + picker
-  storyArc?: string[];             // Optional narrative labels per question
-  questions: QuizQuestion[];       // Typically 4 questions
-  thinkingStep?: ThinkingStep;     // Optional final free-response
-  takeaways: string[];             // 4 bullet points for completion screen
-  completionMessages: { perfect, great, good, low: string };
+  dataAsOf: string;                  // 'Q1 2025' for company, '' for foundations
+  keyFacts: { label: string; value: string; detail: string }[];
+  topics: { label: string; icon: LucideIcon }[];
+  storyArc?: string[];
+  steps: LessonStep[];              // The interactive content
+  takeaways: string[];
+  completionMessages: { perfect: string; great: string; good: string; low: string };
+  tier?: LessonTier;
+  skills?: Skill[];
 }
 ```
 
-### ThinkingStep
+## Step Design Patterns
 
-```typescript
-interface ThinkingStep {
-  prompt: string;                  // Open-ended question
-  placeholder: string;             // Textarea hint
-  modelAnswer: string;             // Example strong answer
-  strongReasoningIncludes: string[]; // 3 criteria for good reasoning
-}
-```
+### DrillStep — Rapid Binary Choices
 
-## Interaction Patterns
-
-### 1. Gut Check (pre-question)
-
-**Purpose:** Activate System 1 thinking. Get the user to commit to an instinct BEFORE they see the analytical question. This creates a "stake" — they care about the answer because they already picked a side.
+**Purpose:** Build quick pattern recognition. User taps left or right, gets instant feedback.
 
 **Design rules:**
-- Always 2 options (binary choice)
-- No correct answer — both are valid first reactions
-- Auto-advances 500ms after selection (no confirm button)
-- Reflections acknowledge the user's instinct, then pivot to why reality is more nuanced
-- Use on questions where there's a common intuitive bias to surface
+- Each prompt has exactly 2 choices (left/right)
+- `flash` gives immediate 1-sentence feedback after each tap
+- Manual "Next" button between prompts (no auto-advance)
+- Score shown at end with takeaway
+- Good for: comparing two approaches, identifying better/worse options
 
-**Currently applied to:** foundations-margins Q2, foundations-recurring Q3, foundations-drivers Q3
+### EstimateStep — Numeric Intuition
 
-### 2. Punchline (post-answer)
-
-**Purpose:** Deliver the core insight in 1-2 sentences immediately after answering, instead of a wall of text. The full explanation goes behind a "See why" toggle.
+**Purpose:** Force the user to commit to a number before seeing the answer. Builds calibration.
 
 **Design rules:**
-- Maximum 2 sentences
-- Must contain the surprising reframe or key number
-- Should make the user feel like they learned something in 3 seconds
-- Full explanation + wrong-answer breakdowns are preserved behind "See why"
+- Single numeric input with optional unit display
+- `tolerance` defines acceptable range (e.g., answer=35, tolerance=10 accepts 25-45)
+- `hint` shown as small text above input (optional)
+- Reveal shows how close they were
+- Good for: margins, growth rates, valuations, ratios
 
-**Currently applied to:** All 4 Apple questions
+### TapStep — Signal Finding in Text
 
-### 3. Reflection (post-punchline)
-
-**Purpose:** Force the user to DO something with the insight instead of passively reading it. One quick tap, no typing.
+**Purpose:** Train the user to spot red flags, key signals, or important phrases in context.
 
 **Design rules:**
-- 2-3 options representing different thinking approaches, NOT random valid answers
-- Options should form a spectrum (e.g., risk tolerance levels, analytical lenses)
-- No correct answer, but responses subtly guide toward stronger reasoning
-- Gates the Continue button — user must engage before moving on
-- Responses should be 1-2 sentences, not paragraphs
+- `passage` mixes plain text with tappable chips
+- Chips are either signals (`signal: true`) or distractors (`signal: false`)
+- Each chip has per-tap `feedback` explaining why it is/isn't a signal
+- Correctly found signals show in amber with flag icon
+- Wrong taps show muted gray with X icon
+- Must find `requiredSignals` to unlock Done button
+- Good for: reading financial statements, spotting biases, identifying risks
 
-**Currently applied to:** Apple Q1 (analytical lens spectrum), Apple Q3 (risk tolerance spectrum)
+### DecideStep — Multiple Choice with Insight
 
-### 4. Thinking Step (end of lesson)
+**Purpose:** Classic question format but with a punchline reveal that delivers the core insight.
 
-**Purpose:** Synthesize everything learned into a written opinion. Forces integration of all concepts.
+**Design rules:**
+- 2-4 options, one correct
+- `punchline` is the 1-2 sentence key insight revealed after answering
+- `wrongNudges` optionally explains why each wrong answer is tempting
+- Radio-style selection with submit button
+- Good for: judgment calls, applying frameworks, decision-making
+
+### ThinkingStep — Free-Response Synthesis
+
+**Purpose:** Synthesize everything learned into a written opinion. Forces integration.
 
 **Design rules:**
 - One open-ended prompt asking for a judgment call
@@ -190,28 +294,7 @@ interface ThinkingStep {
 - Model answer shown after submission (not before)
 - 3 criteria for "what strong reasoning includes"
 - No AI grading — self-comparison only
-
-**Currently applied to:** All 3 company lessons (Apple, NVIDIA, Costco)
-
-## Ideal Interaction Loop (Duolingo-style)
-
-The tightest, most engaging loop per question:
-
-```
-[gut check — optional, 1 tap]
-     ↓
-[question — read context, pick answer, submit]
-     ↓
-[punchline — 1-2 sentences, instant insight]
-     ↓
-[reflection — optional, 1 tap, tailored response]
-     ↓
-[takeaway — 1 line]
-     ↓
-[continue → next question]
-```
-
-At any moment, the user should see ONLY what they need to act on right now. When feedback shows, the question collapses. When reflection is unanswered, the Continue button is hidden.
+- Typically the final step in company lessons
 
 ## Content Quality Standards
 
@@ -226,11 +309,11 @@ GOOD: "At 30x earnings with 8% growth, what is the most thoughtful investor reac
 ### Every Wrong Answer Should Be Plausibly Tempting
 
 Each wrong option should represent a real cognitive trap:
-- **Surface-level thinking**: "Revenue is spread across five segments, so Apple is well-diversified" (counts segments without tracing dependencies)
-- **Emotional reasoning**: "Buy immediately — Apple is a great business" (conflates business quality with stock quality)
-- **Anchoring on one number**: "Avoid it — the P/E is above average" (ignores quality premium)
+- **Surface-level thinking**: counts segments without tracing dependencies
+- **Emotional reasoning**: conflates business quality with stock quality
+- **Anchoring on one number**: ignores context and quality premiums
 
-### Wrong Explanations Should Teach, Not Dismiss
+### Feedback Should Teach, Not Dismiss
 
 BAD: "This is wrong because Services matters more."
 GOOD: "Total revenue isn't what drives valuation — profit quality is. A dollar of recurring, high-margin Services revenue is worth more to investors than a dollar of one-time hardware revenue."
@@ -257,49 +340,50 @@ export const myLesson: Lesson = {
   emoji: '📊',
   title: 'Lesson Title',
   subtitle: 'Short tagline',
-  description: '2-3 sentences explaining what the user will learn and why it matters.',
+  description: '2-3 sentences explaining what the user will learn.',
   estimatedMinutes: 2,
   dataAsOf: '',              // 'Q1 2025' for company lessons, '' for foundations
-  keyFacts: [],              // Empty for foundations, 4 items for company lessons
+  keyFacts: [],              // Empty for foundations, 3-4 items for company lessons
   topics: [
     { label: 'Topic 1', icon: IconA },
     { label: 'Topic 2', icon: IconB },
     { label: 'Topic 3', icon: IconC },
     { label: 'Topic 4', icon: IconD },
   ],
-  // storyArc: ['Step 1', 'Step 2', 'Step 3', 'Step 4'],  // Optional
-  questions: [
+  tier: 'foundations-1',     // 'foundations-1' | 'foundations-2' | 'company'
+  skills: ['margins'],       // Which skills this lesson develops
+  steps: [
     {
-      topic: 'Display Topic Name',
+      kind: 'drill',
+      topic: 'Topic Name',
       topicIcon: IconA,
+      intro: 'Setup text explaining the drill.',
+      prompts: [
+        {
+          setup: 'Optional context for this specific prompt.',
+          left: { label: 'Option A', sublabel: 'Brief detail' },
+          right: { label: 'Option B', sublabel: 'Brief detail' },
+          correct: 'left',
+          flash: 'Why A is the better choice — 1 sentence.',
+        },
+      ],
+      takeaway: 'Key learning from this drill.',
+    },
+    {
+      kind: 'decide',
+      topic: 'Topic Name',
+      topicIcon: IconB,
       context: 'Setup text with specific numbers and scenarios...',
       question: 'Question that requires reasoning, not recall?',
-      options: [
-        'Correct answer — the reasoning-based choice',
-        'Tempting wrong answer — surface-level trap',
-        'Tempting wrong answer — emotional reasoning trap',
-        'Tempting wrong answer — anchoring trap',
-      ],
+      options: ['Option A', 'Option B', 'Option C', 'Option D'],
       correctIndex: 0,
-      // punchline: 'Optional 1-2 sentence key insight.',
-      explanation: 'Full explanation (3-5 sentences). Shown directly or behind "See why".',
-      wrongExplanations: [
-        '',  // Empty string for correct answer's index
-        'Why option B is weaker (2-3 sentences, teaches not dismisses).',
-        'Why option C is weaker (2-3 sentences).',
-        'Why option D is weaker (2-3 sentences).',
-      ],
+      punchline: '1-2 sentence key insight.',
+      wrongNudges: ['', 'Why B is weaker.', 'Why C is weaker.', 'Why D is weaker.'],
       takeaway: 'One sentence the user should remember.',
     },
-    // ... more questions (typically 4 total)
+    // ... mix of drill, estimate, tap, decide, thinking steps
   ],
-  // thinkingStep: { ... },  // Optional, for company lessons
-  takeaways: [
-    'Takeaway 1',
-    'Takeaway 2',
-    'Takeaway 3',
-    'Takeaway 4',
-  ],
+  takeaways: ['Takeaway 1', 'Takeaway 2', 'Takeaway 3', 'Takeaway 4'],
   completionMessages: {
     perfect: 'Message for 100%.',
     great: 'Message for 75%+.',
@@ -311,91 +395,117 @@ export const myLesson: Lesson = {
 
 ### Step 2: Register in index.ts
 
-Add export and import to `src/data/lessons/index.ts`:
+Add export to `src/data/lessons/index.ts`:
 
 ```typescript
 export { myLesson } from './my-lesson';
 ```
 
-Add to the `allLessons` array in the correct position (foundations first, then company lessons).
+Add to the `allLessons` array in the correct position:
+- Foundations Phase 1 lessons first
+- Foundations Phase 2 lessons second
+- Company lessons last
 
 ### Step 3: Verify
 
-- Run `npx tsc --noEmit` (must pass with zero errors)
+- Run `npx tsc -b --force` (must pass with zero errors — stricter than `--noEmit`)
 - Run `npx vite build` (must succeed)
 - Lesson appears automatically in the picker
 
 ## Lesson Categories
 
-### Foundations Lessons (`id: 'foundations-*'`)
+### Foundations Phase 1 (`tier: 'foundations-1'`)
 
-Teach universal investing concepts using relatable, non-stock scenarios.
+Core financial vocabulary using relatable, non-stock scenarios.
 
-- **No keyFacts** (empty array)
-- **No dataAsOf** (empty string)
-- **No thinkingStep**
+- 7 lessons: Market, Basics, Margins, Income, Recurring, Drivers, Biases
+- **No keyFacts** (empty array), **no dataAsOf**
 - Use everyday businesses (restaurants, tutoring, snack boxes, SaaS)
-- 4 questions, ~2 minutes
-- May have gut checks on 1-2 questions
+- ~2 minutes each
 
-### Company Lessons
+### Foundations Phase 2 (`tier: 'foundations-2'`)
 
-Apply foundations concepts to real public companies using real data.
+Investing concepts that build on Phase 1 vocabulary.
 
-- **4 keyFacts** with real numbers and dates
+- 11 lessons: Moats, Valuation, Expectations, Cashflow, Risk, Debt, Growth-Value, Returns, Portfolio, Earnings, Selling
+- More analytical depth, still uses relatable scenarios
+- ~2-3 minutes each
+
+### Company Deep Dives (`tier: 'company'`)
+
+Apply concepts to real public companies using real data.
+
+- 8 lessons: Apple, NVIDIA, Costco, Amazon, Microsoft, Tesla, Google, Netflix
+- **keyFacts** with real numbers and dates
 - **dataAsOf** set to latest quarter
-- **thinkingStep** with investment judgment prompt
-- **storyArc** recommended (narrative labels per question)
-- 4 questions following the arc: business model → quality/bull case → risk/bear case → decision
-- All questions should have **punchlines**
-- 1-2 questions should have **reflections**
+- Final step should be a `thinking` step (investment judgment prompt)
+- ~3-5 minutes each
 
-## Curriculum Vision
+## Curriculum — 26 Lessons
 
-The full learning path (not all built yet):
+### Foundations Phase 1 (7 lessons)
+1. 📈 What Is the Stock Market?
+2. 💰 Follow the Money
+3. 💡 What a Business Keeps (margins)
+4. 📊 Reading the Scoreboard (income statements)
+5. 🔄 Money That Comes Back (recurring revenue)
+6. 🔍 What Actually Drives a Business (key drivers)
+7. 🧠 Your Brain vs. Your Portfolio (behavioral biases)
 
-### Phase 1: Foundations (concepts via everyday scenarios)
-- What a Business Keeps (margins) ✅
-- Money That Comes Back (recurring revenue) ✅
-- What Actually Drives a Business (key drivers) ✅
-- *Future: Reading an Income Statement, Cash Flow vs Profit, Competitive Moats, Valuation Basics, Market Expectations, Risk Assessment*
+### Foundations Phase 2 (11 lessons)
+8. 🏰 What Keeps Winners Winning (moats)
+9. ⚖️ What Is a Stock Worth? (valuation)
+10. 🎯 The Expectations Game
+11. 💸 Cash vs. Profit (cash flow)
+12. 🎲 Risk Is Not a Feeling
+13. 🏦 Debt: Fuel or Fire?
+14. ⚖️ Growth vs. Value
+15. 💰 Where the Profits Go (returns)
+16. 🧩 Building a Portfolio
+17. 📋 Reading an Earnings Report
+18. 🚪 When to Sell
 
-### Phase 2: Company Deep Dives (apply concepts to real stocks)
-- Apple ✅ (most advanced — has punchlines, reflections, story arc)
-- NVIDIA ✅
-- Costco ✅
-- *Future: Amazon, Microsoft, Tesla, Google, Netflix, etc.*
-
-### Phase 3: Advanced Topics
-- *Building a thesis, Portfolio construction, When to sell, Behavioral biases, Sector analysis*
+### Company Deep Dives (8 lessons)
+19. 🍎 Apple
+20. 🟢 NVIDIA
+21. 🏪 Costco
+22. 📦 Amazon
+23. 🪟 Microsoft
+24. ⚡ Tesla
+25. 🔍 Google
+26. 🎬 Netflix
 
 ## Design Constraints
 
 - **No backend** — localStorage only, no accounts, no databases
 - **No AI grading** — self-comparison via model answers and criteria
-- **No redesigns** — extend existing patterns, don't rebuild
-- **All fields are optional** — new features use optional fields on existing types so old lessons work unchanged
 - **Dark theme only** — custom color system in index.css
 - **Mobile-first** — max-w-2xl centered layout, touch-friendly tap targets
+- **Inputs min 16px font** — prevents iOS Safari auto-zoom
+- **prefers-reduced-motion** — respects user motion preferences
+- **Accessibility** — ARIA roles/labels on interactive elements
 
 ## Color System
 
 ```
-Background:    dark-900 (#0a0a0f)
-Cards:         dark-800 (#12121a)
-Hover:         dark-700 (#1a1a26)
-Borders:       border (#1e293b)
+Background:    dark-950 (#06060b) — page background
+Surface:       dark-900 (#0a0a12) — card insets
+Cards:         dark-800 (#111119)
+Interactive:   dark-700 (#1a1a25) — buttons, inputs
+Hover:         dark-600 (#222230)
+Borders:       border (#1e293b) / border-light (#334155)
 Accent:        accent (#6366f1) / accent-light (#818cf8)
 Correct:       green (#22c55e)
 Wrong:         red (#ef4444)
-Warning:       amber (#f59e0b)
-Text:          text-primary (#f1f5f9) / text-secondary (#94a3b8) / text-muted (#64748b)
+Warning/Flag:  amber (#f59e0b)
+Warm:          warm (#f59e0b) — takeaway boxes
+Text:          text-primary (#f1f5f9) / text-secondary (#94a3b8) / text-muted (#64748b) / text-faint (#475569)
 ```
 
 ## Common Commands
 
 ```bash
-npx tsc --noEmit          # Type check (must pass before committing)
+npx tsc -b --force        # Type check (stricter — catches unused imports)
 npx vite build            # Production build
 npm run dev               # Dev server
 ```
@@ -408,9 +518,10 @@ Most investing education is either:
 3. **Simulation-style** — fake trading with no conceptual foundation
 
 StockLens is different because:
-- **It teaches thinking patterns**, not facts. Every question requires reasoning.
-- **It uses cognitive science** — gut checks activate intuition, punchlines create surprise, reflections force application
-- **It builds progressively** — foundations teach concepts via everyday scenarios, then company lessons apply them to real stocks
+- **It teaches thinking patterns**, not facts. Every step requires reasoning.
+- **5 distinct interaction types** — drills, estimates, signal-finding, decisions, free-response — keep users engaged
+- **It builds progressively** — Phase 1 vocabulary → Phase 2 concepts → Company application
 - **Feedback teaches, not grades** — wrong answer explanations are mini-lessons, not dismissals
+- **Scores and skills tracking** — star ratings, skill exposure bars, and progression create motivation
 
 The goal is that after completing all lessons, a user can pick up any company's financials and form a reasoned opinion — not because they memorized what to think, but because they learned how to think.
