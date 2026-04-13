@@ -1,8 +1,17 @@
-import { Routes, Route, useParams, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Routes, Route, useParams, useNavigate, useLocation } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import LessonRunner from './pages/LessonRunner';
 import { getLessonById } from './data/lessons';
 import { markCompleted } from './lib/progression';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
 function LessonRoute() {
   const { id } = useParams<{ id: string }>();
@@ -37,9 +46,12 @@ function LessonRoute() {
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/lesson/:id" element={<LessonRoute />} />
-    </Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/lesson/:id" element={<LessonRoute />} />
+      </Routes>
+    </>
   );
 }
