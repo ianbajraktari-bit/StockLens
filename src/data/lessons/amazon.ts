@@ -300,11 +300,11 @@ export const amazonLesson: Lesson = {
       placeholder:
         'e.g. "I would / wouldn\'t buy Amazon because..."',
       modelAnswer:
-        'Amazon is a bet on AWS sustaining cloud dominance while the retail operation stays out of trouble. At 60x, I need AWS growth to reaccelerate and margins to hold against Azure and Google Cloud pricing pressure. The ad business is a genuine tailwind, but the core question is whether the cloud profit engine keeps compounding — because the retail operation can\'t justify this valuation on its own.',
+        'Amazon at 60x is really a bet on AWS, not on retail. The main thing that needs to go right is AWS holding its lead against Azure while growth stays strong. The ad business helps, but it can\'t carry the valuation alone. If cloud competition intensifies, the premium unwinds.',
       strongReasoningIncludes: [
-        'Identifies that the stock is really an AWS bet, not a retail bet',
-        'Addresses the specific risk of AWS growth deceleration and competitive pressure from Azure',
-        'Connects the 60x valuation to what must go right — not just whether Amazon is a "good company"',
+        'Recognizes that the stock depends on AWS, not the retail side',
+        'Mentions a specific risk — like Azure competition or AWS growth slowing',
+        'Connects the 60x price to what needs to go right for the investment to work',
       ],
     },
   ],

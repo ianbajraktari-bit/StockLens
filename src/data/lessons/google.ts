@@ -111,7 +111,7 @@ export const googleLesson: Lesson = {
       ],
       correctIndex: 1,
       punchline:
-        'The existential question isn\'t "will people still search?" — they will. It\'s "can Google make the same ad revenue per query when AI answers replace blue links?" If AI Overviews show one answer instead of ten links, there\'s less ad space. The $200B ad machine depends on the format, not just the traffic.',
+        'The existential question isn\'t "will people still search?" — they will. It\'s "can Google make the same ad revenue per query when AI answers replace blue links?" If AI Overviews show one answer instead of ten links, there\'s less ad space. But there\'s an upside scenario too: if Google successfully monetizes AI Overviews — showing sponsored answers or product recommendations within AI responses — the ad format change could actually increase revenue per query. The $200B outcome depends on which format wins.',
       wrongNudges: [
         'Full replacement is unlikely — Google has 90% market share and massive distribution advantages (default on Android, Chrome, iOS). The real risk isn\'t losing all traffic — it\'s losing the ad format that monetizes the traffic.',
         '',
@@ -229,7 +229,7 @@ export const googleLesson: Lesson = {
         'Google has the best financials of any mega-cap tech company but trades at the lowest multiple. In 2-3 sentences, explain why — and what would need to change for the discount to close.',
       placeholder: 'Google trades at a discount because...',
       modelAnswer:
-        'Google trades at 22x despite 30% margins, 14% growth, and $95B in cash because the market fears AI will disrupt Search advertising — the business that generates 77% of revenue and 55%+ margins. The discount would close if Google demonstrates that AI Overviews can be monetized as effectively as blue links (same ad revenue per query), or if YouTube and Cloud grow large enough to reduce the company\'s dependence on Search ads. Until one of those happens, the market will keep applying a "disruption risk" discount to an otherwise dominant business.',
+        'Google trades at a discount because the market worries AI could disrupt Search advertising — the business behind 77% of revenue and 55%+ margins. Even though Google has strong finances (30% margins, 14% growth, $95B cash), investors are pricing in the chance that AI answers reduce the ad revenue each search generates. The discount would likely shrink if Google shows it can make money from AI-powered search formats just as well as from traditional blue links, or if YouTube and Cloud keep growing enough to reduce the company\'s reliance on Search ads alone.',
       strongReasoningIncludes: [
         'Identifies the specific risk (AI disrupting the Search ad format) rather than vague "AI fears"',
         'Connects the discount to the revenue/margin structure — 77% from ads, 55% margins at risk',
