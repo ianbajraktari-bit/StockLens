@@ -7,6 +7,7 @@ import {
   Swords,
   Globe,
   Activity,
+  Lightbulb,
   Target,
 } from 'lucide-react';
 import { getCompanyById } from '../data/companies';
@@ -15,6 +16,7 @@ import MetricCard from '../components/MetricCard';
 import RevenueBar from '../components/RevenueBar';
 import PriceChart from '../components/PriceChart';
 import DecisionPanel from '../components/DecisionPanel';
+import ThinkingStep from '../components/ThinkingStep';
 
 export default function CompanyPage() {
   const { id } = useParams<{ id: string }>();
@@ -60,7 +62,7 @@ export default function CompanyPage() {
             <div className="mt-6 flex items-center gap-2 text-sm text-text-muted">
               <Activity className="w-4 h-4" />
               <span>
-                7 sections · ~10 min read · Interactive decision at the end
+                8 sections · ~12 min read · Interactive decision at the end
               </span>
             </div>
           </motion.div>
@@ -318,9 +320,19 @@ export default function CompanyPage() {
           </div>
         </SectionCard>
 
-        {/* 7. Your Decision */}
+        {/* 7. Form Your View */}
         <SectionCard
           step={7}
+          title="Form Your View"
+          subtitle="Pause and articulate your investor thinking before making a final call"
+          icon={<Lightbulb className="w-5 h-5" />}
+        >
+          <ThinkingStep company={company} />
+        </SectionCard>
+
+        {/* 8. Your Decision */}
+        <SectionCard
+          step={8}
           title="Make Your Decision"
           subtitle="Now that you've done the work, what do you think?"
           icon={<Target className="w-5 h-5" />}

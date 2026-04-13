@@ -175,6 +175,18 @@ export const costco: Company = {
     ],
   },
 
+  thinkingStep: {
+    prompt:
+      'Costco has one of the strongest business models in retail, but trades at a steep premium (~55x earnings). Would you consider this stock attractive at this valuation? Why or why not? (1–2 sentences)',
+    modelAnswer:
+      'Costco\'s business model is arguably the best in retail — high renewal rates, pricing power, and a loyal customer base create a durable competitive advantage. But at 55x earnings, you\'re paying a luxury price for a grocery store; the stock is attractive for patient investors who value predictability over upside, but poor for anyone expecting near-term returns, since even perfect execution may not drive the stock higher if the multiple compresses.',
+    strongReasoningIncludes: [
+      'Separates business quality from stock attractiveness — a great business can be a mediocre investment at the wrong price',
+      'Considers the valuation multiple as a risk factor, not just earnings growth',
+      'Specifies what type of investor this might suit (e.g., long-term compounder vs. growth seeker)',
+    ],
+  },
+
   decisionResponses: {
     bullish: {
       whatNeedsToHappen: [
