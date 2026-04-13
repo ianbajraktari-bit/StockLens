@@ -13,6 +13,7 @@ import {
   Target,
   Zap,
   Star,
+  Flame,
 } from 'lucide-react';
 import { allLessons, type Lesson } from '../data/lessons';
 import {
@@ -20,6 +21,7 @@ import {
   getFirstUncompletedId,
   getSkillsProgress,
   getLessonStars,
+  getStreak,
 } from '../lib/progression';
 
 const foundationsPhase1 = allLessons.filter((l) => l.tier === 'foundations-1');
@@ -33,6 +35,7 @@ export default function HomePage() {
   const nextId = getFirstUncompletedId();
   const skillsProgress = getSkillsProgress();
   const hasAnyProgress = skillsProgress.some((s) => s.exposure > 0);
+  const streak = getStreak();
   const completedCount = completedIds.size;
   const totalCount = allLessons.length;
   const progressPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
@@ -42,7 +45,7 @@ export default function HomePage() {
     navigate(`/lesson/${target}`);
   }
 
-  function renderLessonCard(lesson: Lesson, index: number, sectionDelay: number) {
+  function renderLessonCard(lesson: Lesson, index: number, sectionDelay: number, tierBorderColor: string) {
     const completed = completedIds.has(lesson.id);
     const isNext = lesson.id === nextId;
     const stars = completed ? getLessonStars(lesson.id) : null;
@@ -54,7 +57,7 @@ export default function HomePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: sectionDelay + index * 0.04 }}
         onClick={() => navigate(`/lesson/${lesson.id}`)}
-        className={`group w-full text-left rounded-xl border p-4 transition-all duration-200 cursor-pointer ${
+        className={`group w-full text-left rounded-xl border p-4 transition-all duration-200 cursor-pointer border-l-[3px] ${tierBorderColor} ${
           isNext && !completed
             ? 'border-accent/40 bg-dark-800 hover:border-accent/60 shadow-[0_0_20px_rgba(99,102,241,0.06)]'
             : completed
@@ -182,7 +185,18 @@ export default function HomePage() {
 
           {/* Stats bar or hero for new users */}
           {hasAnyProgress ? (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 flex-wrap">
+              {streak.current > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: 0.1 }}
+                  className="flex items-center gap-1.5 text-xs"
+                >
+                  <Flame className="w-3.5 h-3.5 text-warm" />
+                  <span className="text-warm font-semibold">{streak.current} day streak</span>
+                </motion.div>
+              )}
               <div className="flex items-center gap-1.5 text-xs text-text-secondary">
                 <CheckCircle2 className="w-3.5 h-3.5 text-green" />
                 <span>{completedCount} of {totalCount} lessons</span>
@@ -318,7 +332,7 @@ export default function HomePage() {
               Core Financial Vocabulary
             </p>
             {foundationsPhase1.map((lesson, i) =>
-              renderLessonCard(lesson, i, 0.15)
+              renderLessonCard(lesson, i, 0.15, 'border-l-amber/30')
             )}
           </div>
 
@@ -327,7 +341,7 @@ export default function HomePage() {
               Investing Concepts
             </p>
             {foundationsPhase2.map((lesson, i) =>
-              renderLessonCard(lesson, i, 0.25)
+              renderLessonCard(lesson, i, 0.25, 'border-l-accent/30')
             )}
           </div>
         </section>
@@ -353,7 +367,7 @@ export default function HomePage() {
 
           <div className="space-y-1.5">
             {companyLessons.map((lesson, i) =>
-              renderLessonCard(lesson, i, 0.35)
+              renderLessonCard(lesson, i, 0.35, 'border-l-warm/30')
             )}
           </div>
         </section>

@@ -4,7 +4,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import HomePage from './pages/HomePage';
 import LessonRunner from './pages/LessonRunner';
 import { getLessonById } from './data/lessons';
-import { markCompleted } from './lib/progression';
+import { markCompleted, updateStreak } from './lib/progression';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -40,7 +40,10 @@ function LessonRoute() {
       key={lesson.id}
       lesson={lesson}
       onBack={() => navigate('/')}
-      onComplete={(lessonId, correct, total) => markCompleted(lessonId, correct, total)}
+      onComplete={(lessonId, correct, total) => {
+        markCompleted(lessonId, correct, total);
+        updateStreak();
+      }}
     />
   );
 }

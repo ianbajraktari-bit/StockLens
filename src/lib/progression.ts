@@ -4,6 +4,7 @@ import type { Skill } from '../data/lessons';
 const COMPLETED_KEY = 'stocklens-completed';
 const SKILLS_KEY = 'stocklens-skills';
 const SCORES_KEY = 'stocklens-scores';
+const STREAK_KEY = 'stocklens-streak';
 
 // --- Completion ---
 
@@ -142,4 +143,59 @@ export function getSkillsProgress(): { skill: Skill; label: string; exposure: nu
     exposure: current[skill] ?? 0,
     maxExposure: maxExposures[skill] ?? 1,
   }));
+}
+
+// --- Streak tracking ---
+
+interface StreakData {
+  current: number;
+  lastActiveDate: string;
+}
+
+function getTodayDate(): string {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function getYesterdayDate(): string {
+  const now = new Date();
+  now.setDate(now.getDate() - 1);
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+export function getStreak(): StreakData {
+  try {
+    const raw = localStorage.getItem(STREAK_KEY);
+    if (!raw) return { current: 0, lastActiveDate: '' };
+    return JSON.parse(raw);
+  } catch {
+    return { current: 0, lastActiveDate: '' };
+  }
+}
+
+export function updateStreak(): void {
+  const streak = getStreak();
+  const today = getTodayDate();
+  const yesterday = getYesterdayDate();
+
+  if (streak.lastActiveDate === today) {
+    // Already active today — do nothing
+    return;
+  }
+
+  if (streak.lastActiveDate === yesterday) {
+    // Consecutive day — increment streak
+    const updated: StreakData = { current: streak.current + 1, lastActiveDate: today };
+    localStorage.setItem(STREAK_KEY, JSON.stringify(updated));
+  } else {
+    // Gap in activity (or first time) — reset to 1
+    const updated: StreakData = { current: 1, lastActiveDate: today };
+    localStorage.setItem(STREAK_KEY, JSON.stringify(updated));
+  }
 }
