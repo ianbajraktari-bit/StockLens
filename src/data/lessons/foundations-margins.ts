@@ -33,7 +33,7 @@ export const foundationsMarginsLesson: Lesson = {
           left: { label: 'Software app', sublabel: 'keeps 40¢ per $1' },
           right: { label: 'Bakery', sublabel: 'keeps 10¢ per $1' },
           correct: 'left',
-          flash: '40¢ vs 10¢ — software keeps four times more on every sale.',
+          flash: 'Software is written once and served to millions — each new user costs almost nothing. Every loaf costs flour, labor, and oven time.',
         },
         {
           setup: 'Two bakeries, same $1,000 in daily sales.',
@@ -52,13 +52,13 @@ export const foundationsMarginsLesson: Lesson = {
           left: { label: 'Airline', sublabel: 'keeps 4¢ per $1' },
           right: { label: 'Payment network', sublabel: 'keeps 50¢ per $1' },
           correct: 'right',
-          flash: 'Payment networks are quiet gold mines. Airlines are notoriously thin.',
+          flash: 'Payment networks process billions of transactions with minimal per-unit cost. Airlines burn fuel, pay crews, and maintain planes for every single flight.',
         },
         {
           left: { label: 'Auto manufacturer', sublabel: '6% margin' },
           right: { label: 'Enterprise software', sublabel: '30% margin' },
           correct: 'right',
-          flash: 'Cars need steel, labor, and warranties. Software ships copies of code.',
+          flash: 'Cars need steel, labor, and warranties for every unit. Software ships copies of code at near-zero cost.',
         },
         {
           left: { label: 'Power utility', sublabel: '20% margin' },
@@ -68,7 +68,7 @@ export const foundationsMarginsLesson: Lesson = {
         },
       ],
       takeaway:
-        'You\'re already starting to see it: per-dollar keeping power varies wildly across businesses. That gap is the heart of fundamental analysis.',
+        'Per-dollar keeping power varies wildly because of cost structure: businesses with low per-unit costs (software, networks) keep far more than those with high per-unit costs (food, manufacturing, airlines).',
     },
 
     // ─────────────────────────────────────────────────────────────────

@@ -38,7 +38,7 @@ export const foundationsIncomeLesson: Lesson = {
           left: { label: 'Cost of goods sold', sublabel: 'making the product' },
           right: { label: 'Operating expense', sublabel: 'running the company' },
           correct: 'left',
-          flash: 'Components go directly into the product. No phone, no cost. This is "cost of goods sold" (COGS).',
+          flash: 'Each phone needs its own chips and screen — costs rise with every unit sold. These variable, per-unit costs are "cost of goods sold" (COGS).',
         },
         {
           setup: 'The same company spends $5M/year on TV advertising.',
@@ -52,14 +52,14 @@ export const foundationsIncomeLesson: Lesson = {
           left: { label: 'Cost of goods sold', sublabel: 'making the product' },
           right: { label: 'Operating expense' },
           correct: 'left',
-          flash: 'Ingredients go directly into the cake. More cakes = more ingredient costs. Classic COGS.',
+          flash: 'Every cake needs flour — costs scale directly with production. That\'s a variable cost, and variable costs are the heart of COGS.',
         },
         {
           setup: 'A software company pays $40M/year for its 200 engineers.',
           left: { label: 'Cost of goods sold' },
           right: { label: 'Operating expense', sublabel: 'running the company' },
           correct: 'right',
-          flash: 'Engineers build and maintain the product, but their salary is fixed whether you have 100 or 100,000 users. That\'s an operating expense (R&D).',
+          flash: 'Engineers cost the same whether the app has 100 or 10 million users — that\'s a fixed cost. Ingredients cost more with every loaf — that\'s a variable cost. COGS is mostly variable; operating expenses are mostly fixed.',
         },
         {
           setup: 'A streaming service pays $500M/year in licensing fees to show movies.',
@@ -77,7 +77,7 @@ export const foundationsIncomeLesson: Lesson = {
         },
       ],
       takeaway:
-        'Cost of goods sold (COGS) = making/delivering the product. Operating expenses = running the company. This split creates the two profit layers investors care about most.',
+        'COGS is mostly variable costs that scale with each unit sold. Operating expenses are mostly fixed costs that stay flat as revenue grows. This distinction matters because businesses with mostly fixed costs (software) scale beautifully — revenue grows while costs barely budge. Businesses with mostly variable costs (manufacturing) grow revenue and costs in lockstep.',
     },
 
     // ─────────────────────────────────────────────────────────────────
@@ -208,7 +208,7 @@ export const foundationsIncomeLesson: Lesson = {
       ],
       requiredSignals: 3,
       reveal:
-        'The income statement tells a story in layers: CloudCo has excellent product economics (80% gross margin) but spends aggressively ($300M in opex), leaving just 5% operating margin. The investor question: is this a high-growth company investing to dominate, or a business that can\'t control its spending?',
+        'The income statement tells a story in layers: CloudCo has excellent product economics (80% gross margin) but spends aggressively ($300M in opex), leaving just 5% operating margin. High operating expenses aren\'t always bad — $100M in R&D might be building next year\'s product, and $160M in sales might be acquiring customers who stick for a decade. The investor question is whether the spending generates returns or just burns cash.',
       takeaway: 'An income statement is a funnel. Revenue goes in the top, costs peel off at each layer, and profit comes out the bottom. Each layer tells you something different about the business.',
     },
 

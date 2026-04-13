@@ -135,14 +135,14 @@ export const googleLesson: Lesson = {
           type: 'chip',
           value: 'YouTube generates ~$36B/year in ad revenue — more than Netflix\'s total revenue',
           signal: true,
-          feedback: 'Real strength. YouTube is the world\'s dominant video platform with massive, proven ad revenue. It\'s a second profit engine with its own moat (creator network effects, user habit).',
+          feedback: 'Real strength. YouTube generated ~$36B in ad revenue (2024) — more than Netflix\'s entire revenue. It\'s a second profit engine with its own moat (creator network effects, user habit) and still growing as TV ad budgets shift to streaming.',
         },
         { type: 'text', value: '. ' },
         {
           type: 'chip',
           value: 'Google Cloud is growing 28% and now generating operating profit',
           signal: true,
-          feedback: 'Real strength. Cloud crossed the profitability threshold and is at $43B revenue scale. It\'s the #3 cloud platform with AI/ML differentiation. This is no longer speculative — it\'s a real business.',
+          feedback: 'Real strength. Google Cloud hit ~$43B in revenue with operating margins improving from breakeven to ~10%. Together with YouTube\'s ~$36B, these two businesses represent ~$80B in revenue growing faster than Search. This is real diversification, not a promise.',
         },
         { type: 'text', value: '. Meanwhile, ' },
         {
@@ -156,7 +156,7 @@ export const googleLesson: Lesson = {
           type: 'chip',
           value: '$95B in cash and short-term investments on the balance sheet',
           signal: true,
-          feedback: 'Real strength. $95B in cash provides massive optionality: acquisitions, buybacks, weathering downturns, or funding new bets. This is a financial fortress.',
+          feedback: 'Real strength. Google\'s $95B in cash (net of ~$13B debt) gives it more acquisition and R&D firepower than any competitor. That\'s a strategic moat in the AI arms race — it can fund massive GPU buildouts, talent acquisition, and new bets without borrowing a dime.',
         },
         { type: 'text', value: '. And ' },
         {
