@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Routes, Route, useParams, useNavigate, useLocation } from 'react-router-dom';
+import ErrorBoundary from './components/ErrorBoundary';
 import HomePage from './pages/HomePage';
 import LessonRunner from './pages/LessonRunner';
 import { getLessonById } from './data/lessons';
@@ -46,12 +47,12 @@ function LessonRoute() {
 
 export default function App() {
   return (
-    <>
+    <ErrorBoundary>
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/lesson/:id" element={<LessonRoute />} />
       </Routes>
-    </>
+    </ErrorBoundary>
   );
 }

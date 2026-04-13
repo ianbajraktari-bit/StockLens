@@ -26,7 +26,7 @@ export default function ThinkingStepComponent({ step, onDone }: Props) {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-5"
       >
-        <div className="rounded-2xl border border-border bg-dark-800/60 p-5 space-y-3">
+        <div className="rounded-2xl border border-border bg-dark-800/60 p-6 space-y-3">
           <div className="flex items-center gap-2">
             <PenLine className="w-4 h-4 text-accent-light" />
             <p className="text-sm font-semibold text-text-primary">Your answer</p>
@@ -36,7 +36,7 @@ export default function ThinkingStepComponent({ step, onDone }: Props) {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-warm/20 bg-dark-800/60 p-5 space-y-3">
+        <div className="rounded-2xl border border-warm/20 bg-dark-800/60 p-6 space-y-3">
           <div className="flex items-center gap-2">
             <Lightbulb className="w-4 h-4 text-warm" />
             <p className="text-sm font-semibold text-text-primary">Example strong answer</p>
@@ -44,7 +44,7 @@ export default function ThinkingStepComponent({ step, onDone }: Props) {
           <p className="text-sm text-text-secondary leading-relaxed">{step.modelAnswer}</p>
         </div>
 
-        <div className="rounded-2xl border border-border bg-dark-800/60 p-5 space-y-3">
+        <div className="rounded-2xl border border-border bg-dark-800/60 p-6 space-y-3">
           <p className="text-xs text-text-muted font-semibold uppercase tracking-wide">
             Strong reasoning includes
           </p>
@@ -77,7 +77,7 @@ export default function ThinkingStepComponent({ step, onDone }: Props) {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-5"
     >
-      <div className="rounded-2xl border border-border bg-dark-800/60 p-5 space-y-4">
+      <div className="rounded-2xl border border-border bg-dark-800/60 p-6 space-y-4">
         <div className="flex items-center gap-2">
           <PenLine className="w-4 h-4 text-accent-light" />
           <p className="text-sm font-semibold text-text-primary">Your turn</p>
@@ -105,7 +105,7 @@ export default function ThinkingStepComponent({ step, onDone }: Props) {
             className={`px-5 py-2 rounded-xl font-semibold text-sm transition-colors ${
               canSubmit
                 ? 'bg-accent hover:bg-accent-light text-white cursor-pointer'
-                : 'bg-dark-700 text-text-muted cursor-not-allowed'
+                : 'bg-dark-700 border border-border text-text-muted cursor-not-allowed opacity-50'
             }`}
           >
             Submit

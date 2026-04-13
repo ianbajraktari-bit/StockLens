@@ -105,10 +105,10 @@ export default function EstimateStep({ step, onDone }: Props) {
             onKeyDown={handleKeyDown}
             disabled={submitted}
             placeholder="Type your answer"
-            className="w-full bg-transparent px-5 py-4 text-2xl font-bold text-text-primary placeholder:text-text-muted placeholder:text-base placeholder:font-normal focus:outline-none tabular-nums"
+            className="w-full bg-transparent px-5 py-4 text-xl sm:text-2xl font-bold text-text-primary placeholder:text-text-muted placeholder:text-base placeholder:font-normal focus:outline-none tabular-nums"
           />
           {step.unit && value && (
-            <span className="absolute right-5 top-1/2 -translate-y-1/2 text-2xl font-bold text-text-secondary tabular-nums pointer-events-none">
+            <span className="absolute right-5 top-1/2 -translate-y-1/2 text-xl sm:text-2xl font-bold text-text-secondary tabular-nums pointer-events-none">
               {step.unit}
             </span>
           )}
@@ -175,7 +175,7 @@ export default function EstimateStep({ step, onDone }: Props) {
           className={`w-full py-3 rounded-xl font-semibold transition-all ${
             canSubmit
               ? 'bg-accent hover:bg-accent-light text-white cursor-pointer'
-              : 'bg-dark-600 text-text-muted cursor-not-allowed'
+              : 'bg-dark-700 border border-border text-text-muted cursor-not-allowed opacity-50'
           }`}
         >
           Check

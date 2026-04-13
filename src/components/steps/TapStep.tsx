@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Flag, Check, X, Lightbulb } from 'lucide-react';
+import { ArrowRight, Flag, X, Lightbulb } from 'lucide-react';
 import type { TapStep as TapStepType } from '../../data/lessons/types';
 
 interface Props {
@@ -85,12 +85,12 @@ export default function TapStep({ step, onDone }: Props) {
                 isUntapped
                   ? 'bg-dark-700 text-text-primary border-b-2 border-dotted border-accent/50 hover:bg-dark-600 hover:border-accent cursor-pointer'
                   : wasRight
-                    ? 'bg-green/15 text-green border-b-2 border-green'
-                    : 'bg-red/15 text-red border-b-2 border-red line-through decoration-red/40'
+                    ? 'bg-amber/15 text-amber border-b-2 border-amber'
+                    : 'bg-dark-600 text-text-muted border-b-2 border-dark-500 line-through'
               }`}
             >
               {seg.value}
-              {wasRight && <Check className="inline w-3 h-3 ml-1" />}
+              {wasRight && <Flag className="inline w-3 h-3 ml-1" />}
               {wasWrong && <X className="inline w-3 h-3 ml-1" />}
             </button>
           );
@@ -108,8 +108,8 @@ export default function TapStep({ step, onDone }: Props) {
             transition={{ duration: 0.2 }}
             className={`rounded-xl border p-3.5 ${
               lastTap.right
-                ? 'border-green/30 bg-green/5'
-                : 'border-red/30 bg-red/5'
+                ? 'border-amber/30 bg-amber/5'
+                : 'border-border bg-dark-700'
             }`}
           >
             <p className="text-sm text-text-secondary leading-relaxed">{lastTap.feedback}</p>
@@ -165,7 +165,7 @@ export default function TapStep({ step, onDone }: Props) {
           className={`w-full py-3 rounded-xl font-semibold transition-all ${
             canFinish
               ? 'bg-accent hover:bg-accent-light text-white cursor-pointer'
-              : 'bg-dark-600 text-text-muted cursor-not-allowed'
+              : 'bg-dark-700 border border-border text-text-muted cursor-not-allowed opacity-50'
           }`}
         >
           {canFinish ? 'Done' : 'Keep looking'}

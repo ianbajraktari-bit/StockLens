@@ -83,11 +83,6 @@ export function getLessonStars(id: string): number | null {
   return 0;
 }
 
-/** Returns all lesson scores. */
-export function getAllScores(): ScoresMap {
-  return getScoresMap();
-}
-
 // --- Skills progress ---
 
 export type SkillsMap = Record<Skill, number>;

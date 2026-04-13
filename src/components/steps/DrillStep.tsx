@@ -214,7 +214,7 @@ export default function DrillStep({ step, onDone }: Props) {
                   onClick={handleNext}
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full py-2.5 rounded-xl border border-border bg-dark-700 hover:bg-dark-600 text-text-primary text-sm font-semibold transition-colors cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-xl border border-border bg-dark-700 hover:bg-dark-600 text-text-primary text-sm font-semibold transition-colors cursor-pointer flex items-center justify-center gap-2"
                 >
                   {index < total - 1 ? 'Next' : 'See Results'}
                   <ArrowRight className="w-3.5 h-3.5" />

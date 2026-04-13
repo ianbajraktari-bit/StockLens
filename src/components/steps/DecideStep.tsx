@@ -29,7 +29,7 @@ export default function DecideStep({ step, onDone }: Props) {
   }
 
   const wrongNudge =
-    submitted && !isCorrect && step.wrongNudges && selected !== null
+    submitted && !isCorrect && step.wrongNudges && selected !== null && selected < step.wrongNudges.length
       ? step.wrongNudges[selected]
       : null;
 
@@ -151,7 +151,7 @@ export default function DecideStep({ step, onDone }: Props) {
           className={`w-full py-3 rounded-xl font-semibold transition-all ${
             selected !== null
               ? 'bg-accent hover:bg-accent-light text-white cursor-pointer'
-              : 'bg-dark-600 text-text-muted cursor-not-allowed'
+              : 'bg-dark-700 border border-border text-text-muted cursor-not-allowed opacity-50'
           }`}
         >
           Submit

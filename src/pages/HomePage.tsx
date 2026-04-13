@@ -203,7 +203,7 @@ export default function HomePage() {
                 decisions. Not memorization — real reasoning.
               </p>
 
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {[
                   { icon: Brain, label: 'Think, don\'t memorize', color: 'text-accent-light', bg: 'bg-accent/10 border-accent/20' },
                   { icon: Target, label: 'Real companies, real data', color: 'text-warm', bg: 'bg-warm/10 border-warm/20' },
@@ -255,7 +255,7 @@ export default function HomePage() {
                         {complete ? 'Mastered' : `${s.exposure}/${s.maxExposure}`}
                       </span>
                     </div>
-                    <div className="h-1 rounded-full bg-dark-600 overflow-hidden">
+                    <div className="h-1.5 rounded-full bg-dark-600 overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${
                           complete ? 'bg-green' : 'bg-accent/80'

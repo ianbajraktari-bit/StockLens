@@ -226,14 +226,14 @@ export const netflixLesson: Lesson = {
     {
       kind: 'thinking',
       prompt:
-        'Netflix lost 0.09% of subscribers in 2022 and the stock crashed 75%. By 2025, it\'s at all-time highs. What does this teach you about how the market prices subscription businesses?',
-      placeholder: 'The Netflix crash and recovery teaches me that...',
+        'Based on everything you\'ve learned — subscriber growth dynamics at 300M users, $17B in annual content spending, operating margins expanding toward 30%, the ad tier capturing 70% of premium revenue, and a 45x P/E — would you invest in Netflix today? What\'s your bull case, your bear case, and where do you come down?',
+      placeholder: 'My investment opinion on Netflix is...',
       modelAnswer:
-        'The 2022 crash shows that at high multiples, subscription businesses are priced for the trajectory, not the current state. Losing 0.09% of subscribers was financially meaningless — but it broke the "perpetual growth" narrative, and at 50x earnings, the stock had no margin for error. The recovery teaches the opposite lesson: Netflix didn\'t need explosive subscriber growth to reach all-time highs. It needed to prove it could monetize its existing base through price hikes, password crackdowns, and ads. The market re-rated Netflix from "growth story" (paying for subscriber adds) to "profitability story" (paying for margin expansion). This is the lifecycle of every subscription business: first you grow the base, then you monetize it. The stock price rewards whichever phase the market is focused on.',
+        'Netflix at 45x earnings is a bet on margin expansion, not subscriber growth. The bull case: at 300M subscribers with industry-low 2% churn, Netflix has a locked-in base it can monetize through price hikes, ad tier growth, and operating leverage on $17B in content spending. If margins reach 35%+ (from 28% today), earnings could nearly double even without adding subscribers. The ad tier is especially compelling — at 70% of premium revenue with room for better targeting, it could eventually surpass ad-free tiers in per-user profitability. The bear case: 45x leaves almost no margin for error. Subscriber saturation in developed markets is real. Content spending must stay at $17B+ just to maintain the library moat, limiting how far margins can expand. And the 2022 crash proved that any narrative crack at a premium multiple can be catastrophic. I\'d want to own Netflix but would wait for a better entry point — the business is excellent, but at 45x, the stock is priced for near-perfect execution on the margin expansion story.',
       strongReasoningIncludes: [
-        'Connects the 75% crash to expectations (50x P/E pricing in perfection) rather than to the actual subscriber loss',
-        'Explains the recovery as a shift from growth narrative to monetization narrative',
-        'Recognizes the subscription business lifecycle: grow the base, then monetize it',
+        'Identifies margin expansion (not subscriber growth) as the key variable that determines whether 45x is justified',
+        'Weighs the ad tier\'s potential to increase per-user revenue against the risk that content spending limits margin expansion',
+        'Distinguishes between Netflix as a business (excellent) and Netflix as a stock (priced for perfection at 45x)',
       ],
     },
   ],
