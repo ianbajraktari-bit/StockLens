@@ -81,6 +81,7 @@ export default function TapStep({ step, onDone }: Props) {
               key={i}
               onClick={() => handleChipTap(i)}
               disabled={submitted || !!state}
+              aria-label={`${isUntapped ? 'Tap to check: ' : wasRight ? 'Flagged: ' : 'Not a flag: '}${seg.value}`}
               className={`inline px-2 py-1 mx-0.5 rounded-lg font-medium transition-all duration-150 ${
                 isUntapped
                   ? 'bg-dark-700 text-text-primary border-b-2 border-dotted border-accent/50 hover:bg-dark-600 hover:border-accent cursor-pointer'

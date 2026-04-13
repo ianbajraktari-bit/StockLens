@@ -58,7 +58,7 @@ export default function DecideStep({ step, onDone }: Props) {
       <p className="text-base font-semibold text-text-primary">{step.question}</p>
 
       {/* Options */}
-      <div className="space-y-2">
+      <div className="space-y-2" role="radiogroup" aria-label={step.question}>
         {step.options.map((opt, i) => {
           const isSelected = selected === i;
           const isThisCorrect = i === step.correctIndex;
@@ -68,6 +68,8 @@ export default function DecideStep({ step, onDone }: Props) {
               key={i}
               onClick={() => handleSelect(i)}
               disabled={submitted}
+              role="radio"
+              aria-checked={isSelected}
               whileTap={!submitted ? { scale: 0.99 } : {}}
               className={`w-full text-left rounded-xl border p-4 transition-all ${
                 showResult && isThisCorrect

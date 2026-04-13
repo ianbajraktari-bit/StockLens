@@ -59,7 +59,7 @@ export default function DrillStep({ step, onDone }: Props) {
         </div>
 
         <div className="text-center space-y-2 py-4">
-          <p className="text-4xl font-bold text-text-primary">
+          <p className="text-3xl font-bold text-text-primary">
             {correctCount}<span className="text-text-muted">/{total}</span>
           </p>
           <p className="text-sm text-text-secondary">
@@ -150,7 +150,7 @@ export default function DrillStep({ step, onDone }: Props) {
             </p>
           )}
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {(['left', 'right'] as const).map((side) => {
               const choice = prompt[side];
               const isPicked = picked === side;
@@ -161,6 +161,7 @@ export default function DrillStep({ step, onDone }: Props) {
                   key={side}
                   onClick={() => handlePick(side)}
                   disabled={phase !== 'running'}
+                  aria-label={`${choice.label}${choice.sublabel ? ` — ${choice.sublabel}` : ''}`}
                   whileTap={phase === 'running' ? { scale: 0.97 } : {}}
                   className={`rounded-xl border p-4 text-left transition-all min-h-[120px] flex flex-col justify-between ${
                     showResult && isThisCorrect
