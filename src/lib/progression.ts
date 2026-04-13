@@ -3,6 +3,7 @@ import type { Skill } from '../data/lessons';
 
 const COMPLETED_KEY = 'stocklens-completed';
 const SKILLS_KEY = 'stocklens-skills';
+const SCORES_KEY = 'stocklens-scores';
 
 // --- Completion ---
 
@@ -16,10 +17,15 @@ export function getCompletedIds(): Set<string> {
   }
 }
 
-export function markCompleted(id: string): void {
+export function markCompleted(id: string, correct?: number, total?: number): void {
   const ids = getCompletedIds();
   ids.add(id);
   localStorage.setItem(COMPLETED_KEY, JSON.stringify([...ids]));
+
+  // Store score if provided
+  if (correct !== undefined && total !== undefined && total > 0) {
+    saveScore(id, correct, total);
+  }
 
   // Update skills when completing a lesson
   const lesson = allLessons.find((l) => l.id === id);
@@ -39,6 +45,47 @@ export function getNextLessonId(currentId: string): string | null {
 export function getFirstUncompletedId(): string | null {
   const completed = getCompletedIds();
   return allLessons.find((l) => !completed.has(l.id))?.id ?? null;
+}
+
+// --- Scores ---
+
+type ScoresMap = Record<string, { correct: number; total: number }>;
+
+function getScoresMap(): ScoresMap {
+  try {
+    const raw = localStorage.getItem(SCORES_KEY);
+    if (!raw) return {};
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+}
+
+function saveScore(id: string, correct: number, total: number): void {
+  const scores = getScoresMap();
+  const existing = scores[id];
+  // Keep the best score
+  if (!existing || correct / total > existing.correct / existing.total) {
+    scores[id] = { correct, total };
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+  }
+}
+
+/** Returns 0-3 stars for a lesson, or null if not completed. */
+export function getLessonStars(id: string): number | null {
+  const scores = getScoresMap();
+  const score = scores[id];
+  if (!score) return null;
+  const ratio = score.total > 0 ? score.correct / score.total : 0;
+  if (ratio === 1) return 3;
+  if (ratio >= 0.75) return 2;
+  if (ratio >= 0.5) return 1;
+  return 0;
+}
+
+/** Returns all lesson scores. */
+export function getAllScores(): ScoresMap {
+  return getScoresMap();
 }
 
 // --- Skills progress ---

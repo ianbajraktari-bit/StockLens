@@ -12,12 +12,14 @@ import {
   Brain,
   Target,
   Zap,
+  Star,
 } from 'lucide-react';
 import { allLessons, type Lesson } from '../data/lessons';
 import {
   getCompletedIds,
   getFirstUncompletedId,
   getSkillsProgress,
+  getLessonStars,
 } from '../lib/progression';
 
 const foundationsPhase1 = allLessons.filter((l) => l.tier === 'foundations-1');
@@ -43,6 +45,7 @@ export default function HomePage() {
   function renderLessonCard(lesson: Lesson, index: number, sectionDelay: number) {
     const completed = completedIds.has(lesson.id);
     const isNext = lesson.id === nextId;
+    const stars = completed ? getLessonStars(lesson.id) : null;
 
     return (
       <motion.button
@@ -95,10 +98,23 @@ export default function HomePage() {
             </p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <div className="flex items-center gap-1 text-[10px] text-text-muted">
-              <Clock className="w-3 h-3" />
-              {lesson.estimatedMinutes}m
-            </div>
+            {completed && stars !== null ? (
+              <div className="flex items-center gap-0.5">
+                {[0, 1, 2].map((i) => (
+                  <Star
+                    key={i}
+                    className={`w-3 h-3 ${
+                      i < stars ? 'text-warm fill-warm' : 'text-dark-500'
+                    }`}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center gap-1 text-[10px] text-text-muted">
+                <Clock className="w-3 h-3" />
+                {lesson.estimatedMinutes}m
+              </div>
+            )}
             <ArrowRight
               className={`w-4 h-4 transition-transform group-hover:translate-x-0.5 ${
                 completed ? 'text-text-muted' : 'text-text-secondary'

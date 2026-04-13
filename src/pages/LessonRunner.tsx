@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -26,7 +26,7 @@ type Phase = 'intro' | 'running' | 'complete';
 interface Props {
   lesson: Lesson;
   onBack: () => void;
-  onComplete?: (lessonId: string) => void;
+  onComplete?: (lessonId: string, correct: number, total: number) => void;
 }
 
 export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
@@ -40,19 +40,16 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
   const total = steps.length;
   const currentStep = steps[stepIndex];
 
-  useEffect(() => {
-    if (phase === 'complete') {
-      onComplete?.(lesson.id);
-    }
-  }, [phase, lesson.id, onComplete]);
-
   function handleStepDone(score: { correct: number; total: number }) {
-    setCorrectTotal((c) => c + score.correct);
-    setMaxTotal((m) => m + score.total);
+    const newCorrect = correctTotal + score.correct;
+    const newMax = maxTotal + score.total;
+    setCorrectTotal(newCorrect);
+    setMaxTotal(newMax);
     if (stepIndex < total - 1) {
       setStepIndex((i) => i + 1);
     } else {
       setPhase('complete');
+      onComplete?.(lesson.id, newCorrect, newMax);
     }
   }
 

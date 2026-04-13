@@ -30,7 +30,7 @@ function LessonRoute() {
       key={lesson.id}
       lesson={lesson}
       onBack={() => navigate('/')}
-      onComplete={(lessonId) => markCompleted(lessonId)}
+      onComplete={(lessonId, correct, total) => markCompleted(lessonId, correct, total)}
     />
   );
 }
