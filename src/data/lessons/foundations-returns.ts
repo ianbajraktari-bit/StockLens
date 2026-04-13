@@ -93,7 +93,7 @@ export const foundationsReturnsLesson: Lesson = {
           flash: 'Apple buys back ~$80B/year of its own stock — the most aggressive buyback program ever. Since 2012, Apple has reduced shares outstanding by ~40%. Each remaining share now represents 40% more of the company.',
         },
       ],
-      takeaway: 'Dividends are predictable cash payments — sticky, expected, hard to cut. Buybacks are flexible — they reduce share count, can be timed opportunistically, and don\'t create an ongoing obligation.',
+      takeaway: 'Dividends are predictable cash payments — sticky, expected, hard to cut, and taxed immediately when you receive them. Buybacks are flexible — they reduce share count, can be timed opportunistically, don\'t create an ongoing obligation, and defer your taxes until you sell. This tax difference is a major reason companies increasingly prefer buybacks.',
     },
 
     // ─────────────────────────────────────────────────────────────────
@@ -111,8 +111,8 @@ export const foundationsReturnsLesson: Lesson = {
       unit: '$/share',
       hint: '$10B ÷ 800M shares',
       reveal:
-        '$10B ÷ 800M = $12.50/share. EPS grew 25% with zero profit growth — purely from reducing share count. If the stock trades at a constant 20x P/E, the share price rises from $200 to $250. This is how buybacks create shareholder value: same profit, fewer shares, higher EPS, higher stock price. Apple has done this for a decade — its profit grew ~60% but EPS grew ~120% because share count dropped 40%.',
-      takeaway: 'Buybacks boost EPS by shrinking the denominator. A company with flat profits can grow EPS 25% by buying back 20% of shares. This is real value creation — as long as the company isn\'t overpaying for the stock.',
+        '$10B ÷ 800M = $12.50/share. EPS grew 25% with zero profit growth — purely from reducing share count. This is how buybacks create value: same profit, fewer shares, higher EPS. Apple\'s profit grew ~60% while EPS grew ~120% partly due to a ~40% share reduction — though margin expansion and other factors also contributed. Important caveat: buybacks only create value if the stock is purchased at or below fair value. A company buying back overpriced shares is destroying capital, not creating it.',
+      takeaway: 'Buybacks boost EPS by shrinking the denominator — and they\'re tax-efficient: unlike dividends (taxed immediately when paid), buybacks defer taxes until you sell your shares. But this only creates value if the company buys at reasonable prices. Overpaying for your own stock is just as wasteful as overpaying for an acquisition.',
     },
 
     // ─────────────────────────────────────────────────────────────────
@@ -143,7 +143,7 @@ export const foundationsReturnsLesson: Lesson = {
           type: 'chip',
           value: 'acquired a competitor for $4B — 15x their revenue — to "expand our ecosystem"',
           signal: true,
-          feedback: 'Paying 15x revenue for an acquisition is extremely aggressive. Vague justifications like "expand our ecosystem" suggest the deal is strategic hand-waving, not financially disciplined. Most acquisitions at these multiples destroy value.',
+          feedback: 'Paying 15x revenue is wildly expensive — a fair acquisition typically costs 3-5x revenue or 15-25x earnings. At 15x revenue, the target would need enormous profit margins just to break even on the purchase price. Vague justifications like "expand our ecosystem" are strategic hand-waving, not financial discipline. Studies show 70-90% of acquisitions at these multiples destroy shareholder value.',
         },
         { type: 'text', value: '. We ' },
         {
@@ -185,21 +185,21 @@ export const foundationsReturnsLesson: Lesson = {
       ],
       correctIndex: 2,
       punchline:
-        'Company A is a capital allocation machine: dividends that grow reliably, buybacks only when cheap, and reinvestment earning 30% returns. Company B is undisciplined: buying back stock at any price (potentially overpaying) and making acquisitions that earn less than a savings account. Same earnings, vastly different shareholder outcomes over time.',
+        'The framework is simple: reinvest when the business earns returns above its cost of capital (Company A\'s 30% R&D returns), buy back stock when it trades below intrinsic value (A waits for <20x P/E), and pay dividends when the business is mature and cash exceeds reinvestment opportunities. Company B fails all three tests — buying back at any price and making acquisitions earning 3% (below any cost of capital). Same $5B in earnings, vastly different outcomes.',
       wrongNudges: [
-        'Flexibility without discipline is just recklessness. Company B buys back stock at any price — overpaying destroys value. No dividend isn\'t "flexible" — it just means shareholders receive nothing guaranteed.',
-        'Total dollars returned is irrelevant if half of it is overpaying for stock or making bad acquisitions. $3B in buybacks at inflated prices creates less value than $2B at fair prices.',
+        'Flexibility without discipline is recklessness. Company B buys back stock at any price — overpaying destroys value. The decision framework: buyback when undervalued, dividend when mature, reinvest when returns are high. B does none of these well.',
+        'Total dollars returned is irrelevant if half goes to overpriced buybacks or 3% acquisitions. $2B at fair prices creates more value than $3B at inflated prices. Quality of allocation matters more than quantity.',
         '',
-        'You have enough. Disciplined buyback timing (below 20x), growing dividends (15-year streak), and 30% return on reinvestment vs. indiscriminate buybacks and 3% acquisition returns. The quality difference is clear.',
+        'You have enough. The framework maps directly: A reinvests at 30% (above cost of capital), buys back below 20x (when cheap), and pays growing dividends (mature cash flow). B buys back indiscriminately and acquires at 3% returns (below cost of capital). The quality difference is clear.',
       ],
-      takeaway: 'Great capital allocators do three things: grow dividends sustainably, buy back stock when it\'s cheap (not always), and reinvest only in high-return opportunities. The CEO\'s skill at allocating capital is as important as the business itself.',
+      takeaway: 'The capital allocation decision framework: reinvest when returns exceed cost of capital, buy back stock when it\'s undervalued, pay dividends when the business is mature and cash exceeds reinvestment needs. Great CEOs match the right tool to the situation.',
     },
   ],
   takeaways: [
     'Companies have three choices with profit: dividends (cash to shareholders), buybacks (reduce shares outstanding), or reinvest. The right choice depends on what earns the highest return.',
     'Dividends are sticky commitments — hard to cut without crashing the stock. Buybacks are flexible and create value by boosting EPS, but only if the company buys when the stock is reasonably priced.',
-    'Buyback math: reducing shares by 20% increases EPS by 25% on flat profit. This is real value creation — Apple grew EPS 2x faster than profit by buying back 40% of its shares.',
-    'Capital allocation is the CEO\'s most important job. Watch for red flags: buybacks at all-time highs, overpriced acquisitions, and borrowing to fund spending rather than growth.',
+    'Buyback math: reducing shares by 20% increases EPS by 25% on flat profit. But buybacks only create value at reasonable prices — and they carry a tax advantage over dividends (taxes are deferred until you sell).',
+    'The capital allocation framework: reinvest when returns exceed cost of capital, buy back when the stock is undervalued, pay dividends when the business is mature. Watch for red flags: buybacks at all-time highs, acquisitions above 5x revenue without clear profit logic, and borrowing to fund spending.',
   ],
   completionMessages: {
     perfect: 'Flawless. You now understand capital allocation — the skill that separates good companies from great investments.',

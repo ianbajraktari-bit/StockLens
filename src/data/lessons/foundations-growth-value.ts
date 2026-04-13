@@ -111,7 +111,7 @@ export const foundationsGrowthValueLesson: Lesson = {
       unit: '$',
       hint: 'You paid $60. The stock is now $49.',
       reveal:
-        '$60 − $49 = $11 loss per share (18% loss). The company nearly doubled earnings — yet you lost money because the P/E multiple compressed from 60x to 25x. This is the growth trap: if you overpay for growth, even excellent results can\'t save you. The multiple you pay matters as much as the growth you get.',
+        '$60 − $49 = $11 loss per share (18% loss). The company nearly doubled earnings — yet you lost money because the P/E multiple compressed from 60x to 25x. Multiples compress when growth slows — investors who paid for 40% growth won\'t pay the same price for 20% growth. This is the growth trap: if you overpay for growth, even excellent results can\'t save you. The multiple you pay matters as much as the growth you get.',
       takeaway: 'Growth traps happen when you pay too much for growth. A company can execute perfectly — double earnings — and you still lose money if the starting P/E was too high and the market reprices expectations downward.',
     },
 
@@ -150,7 +150,7 @@ export const foundationsGrowthValueLesson: Lesson = {
           type: 'chip',
           value: 'same-store sales (revenue from existing locations) have declined for 8 consecutive quarters',
           signal: true,
-          feedback: 'Eight straight quarters of declining same-store sales is a structural problem, not a blip. This means existing customers are spending less — the core business is eroding. A cheap P/E on declining earnings means the stock might get even cheaper.',
+          feedback: 'Eight straight quarters of declining same-store sales is a structural problem, not a blip. Here\'s a framework: temporary problems have a clear fix (a bad quarter, a one-time event). Permanent problems are structural (technology shift, secular trend). Ask: would this problem still exist in 3 years? Eight quarters of decline with e-commerce gaining share points to permanent.',
         },
         { type: 'text', value: '. ' },
         {
@@ -192,12 +192,12 @@ export const foundationsGrowthValueLesson: Lesson = {
       ],
       correctIndex: 2,
       punchline:
-        'Both traps come from the same mistake: not understanding what the price already assumes. Growth traps happen when you pay for perfection. Value traps happen when cheapness masks permanent decline. The antidote is the same: reverse-engineer what the price implies, then ask if reality is likely to beat or miss those expectations.',
+        'Both traps come from the same mistake: not understanding what the price already assumes. Here\'s the method: compare a stock\'s P/E to the market average (15-18x). The gap is the growth premium. A 40x stock implies roughly 2-3x the growth of an average company. Ask: is that realistic? For value stocks, ask: is the discount driven by a fixable problem or a permanent one? Reverse-engineer the assumption, then judge whether reality will beat or miss it.',
       wrongNudges: [
         'Growth stocks that overshoot expectations can lose 50-80% of their value in months. "Always buy growth" ignores the biggest risk: overpaying for future earnings that may not arrive.',
         'Cheap stocks that keep getting cheaper can lose everything. Sears was "cheap" for years while going bankrupt. Value without quality is a trap.',
         '',
-        'Index funds are a reasonable choice — but understanding growth vs. value helps you evaluate any investment, including understanding what\'s inside your index fund.',
+        'Index funds are a reasonable choice — but understanding growth vs. value helps you evaluate any investment, including understanding what\'s inside your index fund. The real skill is reverse-engineering what any price assumes: take the P/E, compare to the market average (15-18x), and ask what growth rate justifies the premium.',
       ],
       takeaway: 'The key skill isn\'t choosing growth or value — it\'s understanding what any stock price already assumes. Growth traps and value traps are both caused by ignoring what\'s priced in. Always ask: "What does this price require to be right?"',
     },

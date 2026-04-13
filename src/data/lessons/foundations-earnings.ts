@@ -38,7 +38,7 @@ export const foundationsEarningsLesson: Lesson = {
       ],
       correctIndex: 1,
       punchline:
-        'The earnings press release is your entry point — 2-3 pages with revenue, profit, EPS, guidance, and key metrics. It\'s what moves the stock on earnings day. The 10-Q has the detail for deeper analysis. The earnings call reveals management\'s tone and priorities. News articles are someone else\'s interpretation — always go to the source.',
+        'The earnings press release is your entry point — 2-3 pages with revenue, profit, EPS, guidance, and key metrics. It\'s what moves the stock on earnings day. You can find it on any company\'s investor relations page (usually [company].com/investors) or by searching "[company name] earnings press release" on Google. The 10-Q has the detail for deeper analysis. The earnings call reveals management\'s tone and priorities. News articles are someone else\'s interpretation — always go to the source.',
       wrongNudges: [
         'The 10-Q is important but it\'s 50-100 pages of accounting detail. Starting there is like reading a dictionary to learn a language. Begin with the press release, then use the 10-Q for specific questions.',
         '',
@@ -117,21 +117,21 @@ export const foundationsEarningsLesson: Lesson = {
           type: 'chip',
           value: 'GAAP net income: $1.4B',
           signal: false,
-          feedback: 'GAAP (Generally Accepted Accounting Principles) net income is the official profit number. It\'s important but includes one-time items that can distort the picture. Check operating income for the core business.',
+          feedback: 'GAAP net income is the official profit number, but it includes one-time gains/losses, interest payments, and tax changes that can distort the picture. Operating income matters more because it strips all of that out and shows core business performance. A one-time asset sale or tax benefit can inflate net income without the business actually improving.',
         },
         { type: 'text', value: '. ' },
         {
           type: 'chip',
           value: 'Operating income: $2.1B, operating margin 25.6% (up from 22.3%)',
           signal: true,
-          feedback: 'Check #2: Operating margin and its trend. 25.6% up from 22.3% means the company is becoming more profitable per dollar of revenue. Expanding margins = the business is scaling efficiently.',
+          feedback: 'Check #2: Operating margin and its trend. 25.6% up from 22.3% means the company is becoming more profitable per dollar of revenue. Expanding margins = the business is scaling efficiently. Operating income is more reliable than net income here because it excludes one-time items, interest, and taxes — showing you what the core business actually earned.',
         },
         { type: 'text', value: '. ' },
         {
           type: 'chip',
           value: 'EPS: $2.15 (analysts expected $2.08)',
           signal: true,
-          feedback: 'Check #3: EPS vs. analyst expectations. $2.15 vs. $2.08 expected = a beat. This is what moves the stock on earnings day. The size of the beat ($0.07, or 3.4%) tells you if it\'s meaningful or trivial.',
+          feedback: 'Check #3: EPS vs. analyst expectations. $2.15 vs. $2.08 expected = a beat. This is what moves the stock on earnings day. The size of the beat ($0.07, or 3.4%) tells you if it\'s meaningful or trivial. Where to find the consensus estimate: Yahoo Finance, Google Finance, or Seeking Alpha all show "EPS Estimate" on any stock\'s page — for free.',
         },
         { type: 'text', value: '. ' },
         {
@@ -152,7 +152,7 @@ export const foundationsEarningsLesson: Lesson = {
           type: 'chip',
           value: 'Q4 guidance: revenue $8.5-8.7B (analysts expected $8.4B)',
           signal: true,
-          feedback: 'Check #5: Forward guidance vs. expectations. Management is guiding ABOVE analyst expectations for next quarter. This is often more important than the current quarter\'s results — it tells you where the business is heading.',
+          feedback: 'Check #5: Forward guidance vs. expectations. Management is guiding ABOVE analyst expectations for next quarter. This is often more important than the current quarter\'s results — it tells you where the business is heading. Analyst estimates are free on Yahoo Finance or Google Finance. Compare guidance to those estimates to see if management is confident or cautious.',
         },
         { type: 'text', value: '. The CEO commented: "We are pleased with our execution across all segments."\n"' },
       ],
@@ -199,7 +199,7 @@ export const foundationsEarningsLesson: Lesson = {
       ],
       correctIndex: 1,
       punchline:
-        'Management rarely says "we\'re struggling." Instead they use code words. "Operational efficiency" = cost cutting. "Navigating headwinds" = demand is weakening. "Maintaining guidance" = we almost missed but didn\'t. Meanwhile, "raising guidance" and "investing aggressively" signal genuine confidence. Learn the code.',
+        'Management rarely says "we\'re struggling." Instead they use code words. "Operational efficiency" = cost cutting. "Navigating headwinds" = demand is weakening. "Maintaining guidance" = we almost missed but didn\'t. Meanwhile, "raising guidance" and "investing aggressively" signal genuine confidence. Remember: guidance is directional, not precise. Companies that consistently beat their own guidance are sandbagging (conservative estimates). Companies that consistently miss guidance have lost visibility into their own business. Learn the code.',
       wrongNudges: [
         'It\'s not that simple — but you\'re on the right track. The key is HOW they\'re doing well vs. poorly. Company A is accelerating (raising guidance). Company B is decelerating (maintaining guidance with caveats). The direction matters more than the current state.',
         '',
