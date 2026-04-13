@@ -1,5 +1,15 @@
 # StockLens — Claude Agent Guide
 
+## Source of Truth
+
+- **Primary branch:** `main` — always pull/sync from `origin/main` before starting work
+- **Repository:** `ianbajraktari-bit/StockLens` on GitHub
+- **Production deployment:** Vercel (auto-deploys from `main`)
+- **Lesson count:** 27 lessons (18 foundations + 9 company deep dives)
+- **Architecture:** Step-based (`steps: LessonStep[]` with `kind: 'drill' | 'estimate' | 'decide' | 'tap' | 'thinking'`)
+
+> **IMPORTANT:** Before making changes, run `git fetch origin main` and verify your local `main` matches remote. The codebase uses the step-based architecture (NOT the old `questions: QuizQuestion[]` format). If you see `QuizQuestion` anywhere, you are on a stale branch.
+
 ## What This Project Is
 
 StockLens is a Duolingo-style app that teaches people how to think like investors. Not memorize facts — **think**. The app teaches users to form opinions on companies, weigh risks against valuations, and make investment decisions using real reasoning.
