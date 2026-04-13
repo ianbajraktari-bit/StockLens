@@ -9,6 +9,9 @@ import {
   BarChart3,
   Clock,
   BookOpen,
+  Brain,
+  Target,
+  Zap,
 } from 'lucide-react';
 import { allLessons, type Lesson } from '../data/lessons';
 import {
@@ -161,7 +164,7 @@ export default function HomePage() {
             )}
           </div>
 
-          {/* Stats bar */}
+          {/* Stats bar or hero for new users */}
           {hasAnyProgress ? (
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5 text-xs text-text-secondary">
@@ -178,16 +181,30 @@ export default function HomePage() {
               </div>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-5">
               <p className="text-sm text-text-secondary leading-relaxed">
                 Interactive lessons that teach you to analyze businesses and make investment
                 decisions. Not memorization — real reasoning.
               </p>
+
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { icon: Brain, label: 'Think, don\'t memorize', color: 'text-accent-light', bg: 'bg-accent/10 border-accent/20' },
+                  { icon: Target, label: 'Real companies, real data', color: 'text-warm', bg: 'bg-warm/10 border-warm/20' },
+                  { icon: Zap, label: '5 interactive formats', color: 'text-green', bg: 'bg-green/10 border-green/20' },
+                ].map(({ icon: Icon, label, color, bg }) => (
+                  <div key={label} className={`rounded-xl border p-3 ${bg} flex flex-col items-center gap-2 text-center`}>
+                    <Icon className={`w-4 h-4 ${color}`} />
+                    <span className="text-[11px] text-text-secondary leading-tight font-medium">{label}</span>
+                  </div>
+                ))}
+              </div>
+
               <motion.button
                 onClick={handleStart}
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent hover:bg-accent-light text-white text-sm font-semibold transition-colors cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-accent hover:bg-accent-light text-white text-sm font-semibold transition-colors cursor-pointer"
               >
                 Start Learning
                 <ArrowRight className="w-4 h-4" />
