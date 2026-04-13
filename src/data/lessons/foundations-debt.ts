@@ -31,7 +31,7 @@ export const foundationsDebtLesson: Lesson = {
       topic: 'The Debt Paradox',
       topicIcon: Landmark,
       context:
-        'Two restaurant owners each borrow $500K:\n\nOwner A borrows at 5% interest ($25K/year) to open a second location. The new restaurant generates $150K/year in profit. Return on borrowed money: 30%. Cost of debt: 5%.\n\nOwner B borrows at 8% interest ($40K/year) to renovate a struggling location. Revenue doesn\'t improve. The $40K interest payment eats into already thin margins.\n\nSame amount borrowed. Completely different outcomes.',
+        'Two restaurant owners each borrow $500K:\n\nOwner A borrows at 5% interest ($25K/year) to open a second location. The new restaurant generates $150K/year in profit. Return on borrowed money: 30% (meaning $150K in profit on $500K borrowed). Cost of debt: 5%.\n\nOwner B borrows at 8% interest ($40K/year) to renovate a struggling location. Revenue doesn\'t improve. The $40K interest payment eats into already thin margins.\n\nSame amount borrowed. Completely different outcomes.',
       question: 'What determines whether debt helps or hurts a business?',
       options: [
         'The interest rate — lower is always better',

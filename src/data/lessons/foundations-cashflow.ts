@@ -124,7 +124,7 @@ export const foundationsCashflowLesson: Lesson = {
       unit: '$M',
       hint: '$20M + $8M − $15M − $5M',
       reveal:
-        '$20M + $8M − $15M − $5M = $8M in free cash flow. The company reported $20M in profit but only generated $8M in real cash. We add back depreciation (a paper cost that reduced profit but didn\'t touch cash), subtract equipment purchases (real cash out that didn\'t hit profit), and subtract growing receivables (profit recorded but cash not yet collected). Free cash flow — not profit — is what investors trust most.',
+        '$20M + $8M − $15M − $5M = $8M in free cash flow. The company reported $20M in profit but only generated $8M in real cash. Here\'s why each adjustment matters: add back depreciation (it reduced profit on paper, but no cash actually left the building), subtract equipment purchases (cash went out the door, but profit wasn\'t reduced because the cost is spread over years), and subtract growing receivables (profit was recorded when the sale was made, but the cash hasn\'t arrived yet). Free cash flow — not profit — is what investors trust most.',
       takeaway: 'Free cash flow = the actual cash a business generates after everything. It\'s often very different from reported profit. $20M profit → $8M real cash is a common pattern.',
     },
 
