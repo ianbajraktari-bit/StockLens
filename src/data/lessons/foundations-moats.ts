@@ -137,7 +137,7 @@ export const foundationsMoatsLesson: Lesson = {
           left: { label: 'Network effects' },
           right: { label: 'Brand' },
           correct: 'left',
-          flash: 'Two-sided network. Merchants need cardholders. Cardholders need merchants. Unbreakable loop.',
+          flash: 'Two-sided network effect: merchants need cardholders, cardholders need merchants. In practice, moats overlap — Visa also benefits from switching costs (every terminal is configured for it) and scale (billions of transactions spread fixed costs thin).',
         },
         {
           setup: 'Cloud platform where developers build apps on proprietary APIs. Moving means rewriting everything.',

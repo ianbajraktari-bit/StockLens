@@ -151,7 +151,7 @@ export const foundationsBiasesLesson: Lesson = {
       topic: 'The Disposition Trap',
       topicIcon: Flag,
       intro:
-        'An investor is explaining her plan for two stocks. Tap every piece of reasoning driven by her purchase price instead of business fundamentals.',
+        'The disposition effect is the tendency to sell winners too early and hold losers too long. An investor is explaining her plan for two stocks. Tap every piece of reasoning driven by her purchase price instead of business fundamentals.',
       passage: [
         { type: 'text', value: '"Stock A is at $150, ' },
         {
@@ -277,7 +277,7 @@ export const foundationsBiasesLesson: Lesson = {
       ],
       correctIndex: 2,
       punchline:
-        "Investor C doesn't need better instincts during the crash — she just follows the plan her calm self already made. That's the only reliable defense against loss aversion.",
+        "Investor C doesn't need better instincts during the crash — she just follows the plan her calm self already made. A simple plan: 'I'm buying because [thesis]. I'll sell if [thesis breaks]. I'll add more if [price drops 20%+ and thesis is intact].' Writing these three sentences before you buy removes emotion from the hardest moments.",
       wrongNudges: [
         '"Buy back when things calm down" almost never works. Markets recover before headlines do — by the time it feels safe, the best prices are gone.',
         'Checking prices hourly activates loss aversion on every glance. The less you check, the less your brain can interfere.',

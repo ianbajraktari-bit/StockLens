@@ -70,7 +70,7 @@ export const foundationsExpectationsLesson: Lesson = {
           left: { label: 'Already priced in', sublabel: 'expected, no surprise' },
           right: { label: 'New information', sublabel: 'stock should react' },
           correct: 'left',
-          flash: 'Analysts expected 5%. They got 5%. No surprise = no stock movement. The price already assumed this would happen.',
+          flash: 'Analysts expected 5%. They got 5%. No surprise = no stock movement. The market moved BEFORE the announcement — by the time you hear the news, it\'s already in the price. This is why "buy the rumor, sell the news" exists.',
         },
         {
           setup: 'NVIDIA unexpectedly announces a major new contract with the US government.',
@@ -166,7 +166,7 @@ export const foundationsExpectationsLesson: Lesson = {
           type: 'chip',
           value: 'management guided next quarter revenue to $2.0B — below the $2.2B analysts expected',
           signal: true,
-          feedback: 'This is the stock killer. Guidance — management\'s own forecast of next quarter\'s or next year\'s results — is telling the market that the future will be weaker than expected. Forward guidance matters more than backward results because stock prices reflect the future.',
+          feedback: 'This is the stock killer. Guidance is management\'s own forecast of future results — and it matters more than backward-looking beats because stock prices reflect the future, not the past. Here, management is telling the market that next quarter will be weaker than analysts expected.',
         },
         { type: 'text', value: '. The CEO noted that ' },
         {

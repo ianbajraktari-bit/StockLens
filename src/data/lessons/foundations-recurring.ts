@@ -86,7 +86,7 @@ export const foundationsRecurringLesson: Lesson = {
       hint: '950 members × $50',
       reveal:
         '950 members × $50 = $47,500. Even with no new sign-ups, Gym B keeps 95% of its revenue — only 5% churn (the percentage of customers who cancel each period). That built-in floor is what makes recurring income so powerful.',
-      takeaway: 'Recurring revenue creates a floor — money that shows up even when growth stops.',
+      takeaway: 'Recurring revenue creates a floor — money that shows up even when growth stops. That 5% monthly loss rate is called churn. Low churn = strong floor. High churn = leaky bucket.',
     },
 
     // ─────────────────────────────────────────────────────────────────
@@ -254,7 +254,7 @@ export const foundationsRecurringLesson: Lesson = {
         },
       ],
       takeaway:
-        "Recurring businesses build on top of what they've already earned. One-time businesses rebuild from zero every period. That's the difference between compounding and treading water.",
+        "Recurring businesses build on top of what they've already earned. One-time businesses rebuild from zero every period. Here's why compounding wins: start with 1,000 subscribers at 95% retention, adding 50 new/month. After 12 months you have ~1,600. A one-time business adding the same 50 customers/month with zero retention? Just 50. The gap compounds every single month.",
     },
 
     // ─────────────────────────────────────────────────────────────────
