@@ -162,7 +162,7 @@ export const amazonLesson: Lesson = {
           type: 'chip',
           value: 'a high-margin profit engine growing 20%+',
           signal: false,
-          feedback: 'Amazon\'s ad business is real and high-margin (~$50B run rate). This is a verifiable growth trend, not just an assumption.',
+          feedback: 'Amazon\'s ad business (~$50B run rate, ~60% margins) is quietly becoming a third profit pillar — already larger than YouTube\'s ad revenue. This is a verifiable growth trend, not just an assumption.',
         },
         { type: 'text', value: '. At 60x earnings, Amazon is ' },
         {
@@ -193,7 +193,7 @@ export const amazonLesson: Lesson = {
           left: { label: 'Retail risk' },
           right: { label: 'AWS risk', sublabel: 'profit engine threatened' },
           correct: 'right',
-          flash: 'Azure gaining share directly attacks the segment that generates 60% of profit. This is a structural threat to the valuation.',
+          flash: 'AWS market share has held around 31% while Azure grew from ~20% to ~25%. The gap is narrowing, not widening — and this directly attacks the segment that generates 60% of profit.',
         },
         {
           setup: 'Fuel and labor costs rise 15% due to inflation.',
@@ -285,7 +285,7 @@ export const amazonLesson: Lesson = {
         '"Will dominate for decades" ignores that AWS growth is already decelerating and Azure is gaining share. Dominance is never guaranteed — especially in tech.',
         '',
         '',
-        'Waiting for a pullback assumes you\'ll act when it happens. More importantly, a pullback from 60x to 45x still requires AWS to perform. The price isn\'t the issue — the thesis is.',
+        'A pullback from 60x to 45x still requires AWS to keep compounding. If cloud growth slows to 10-15%, even 45x is expensive. The thesis matters more than the entry price.',
       ],
       takeaway: 'When a company has two businesses, figure out which one drives the stock price. For Amazon, every investment decision should start and end with AWS.',
     },
@@ -300,11 +300,11 @@ export const amazonLesson: Lesson = {
       placeholder:
         'e.g. "I would / wouldn\'t buy Amazon because..."',
       modelAnswer:
-        'Amazon is a bet on AWS sustaining cloud dominance while the retail operation stays out of trouble. At 60x, I need AWS growth to reaccelerate and margins to hold against Azure and Google Cloud pricing pressure. The ad business is a genuine tailwind, but the core question is whether the cloud profit engine keeps compounding — because the retail operation can\'t justify this valuation on its own.',
+        'Amazon at 60x is really a bet on AWS, not on retail. The main thing that needs to go right is AWS holding its lead against Azure while growth stays strong. The ad business helps, but it can\'t carry the valuation alone. If cloud competition intensifies, the premium unwinds.',
       strongReasoningIncludes: [
-        'Identifies that the stock is really an AWS bet, not a retail bet',
-        'Addresses the specific risk of AWS growth deceleration and competitive pressure from Azure',
-        'Connects the 60x valuation to what must go right — not just whether Amazon is a "good company"',
+        'Recognizes that the stock depends on AWS, not the retail side',
+        'Mentions a specific risk — like Azure competition or AWS growth slowing',
+        'Connects the 60x price to what needs to go right for the investment to work',
       ],
     },
   ],

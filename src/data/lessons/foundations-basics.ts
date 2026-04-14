@@ -253,6 +253,7 @@ export const foundationsBasicsLesson: Lesson = {
     'Profit = Revenue − Costs. This is the number investors care about most — not revenue.',
     'A stock is a piece of a business\'s profit. Earnings per share (EPS) tells you how much profit each share generates.',
     'When reading about any business, filter for signal: revenue, costs, profit. Everything else is noise until proven otherwise.',
+    'You\'ve learned that profit matters more than revenue. Next: why some businesses keep 40\u00A2 per dollar while others keep just 2\u00A2.',
   ],
   completionMessages: {
     perfect: 'Flawless. You\'ve learned the language that every other lesson is built on.',

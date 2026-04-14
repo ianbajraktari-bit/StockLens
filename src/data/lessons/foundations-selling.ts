@@ -188,6 +188,7 @@ export const foundationsSellingLesson: Lesson = {
     'Never sell because the price dropped. If the business hasn\'t changed, a lower price is a better deal, not a reason to exit.',
     'The disposition effect makes you sell winners too early and hold losers too long. Combat it by asking: "Am I selling the business, or selling my feelings?"',
     'The hardest sell: a stock at all-time highs with a deteriorating thesis. The ultimate test — would you buy it today at this price? If no, holding is just delayed buying of a bad investment.',
+    'You have the full toolkit. Next: put it all to work — analyzing real companies like Apple, NVIDIA, and Costco with real financial data.',
   ],
   completionMessages: {
     perfect: 'Flawless. You now have a selling framework most professional investors wish they had earlier in their careers.',

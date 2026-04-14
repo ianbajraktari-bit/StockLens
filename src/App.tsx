@@ -3,8 +3,10 @@ import { Routes, Route, useParams, useNavigate, useLocation } from 'react-router
 import ErrorBoundary from './components/ErrorBoundary';
 import HomePage from './pages/HomePage';
 import LessonRunner from './pages/LessonRunner';
+import AnalystModeHome from './pages/AnalystModeHome';
+import AnalystSession from './pages/AnalystSession';
 import { getLessonById } from './data/lessons';
-import { markCompleted } from './lib/progression';
+import { markCompleted, updateStreak } from './lib/progression';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -40,7 +42,10 @@ function LessonRoute() {
       key={lesson.id}
       lesson={lesson}
       onBack={() => navigate('/')}
-      onComplete={(lessonId, correct, total) => markCompleted(lessonId, correct, total)}
+      onComplete={(lessonId, correct, total) => {
+        markCompleted(lessonId, correct, total);
+        updateStreak();
+      }}
     />
   );
 }
@@ -52,6 +57,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/lesson/:id" element={<LessonRoute />} />
+        <Route path="/analyst" element={<AnalystModeHome />} />
+        <Route path="/analyst/:id" element={<AnalystSession />} />
       </Routes>
     </ErrorBoundary>
   );

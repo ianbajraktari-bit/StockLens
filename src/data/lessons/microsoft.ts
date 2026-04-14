@@ -90,7 +90,7 @@ export const microsoftLesson: Lesson = {
       topic: 'The Recurring Revenue Machine',
       topicIcon: Calculator,
       context:
-        'Microsoft has over 400 million paid Office 365 subscribers. The average revenue per user is roughly $150/year across consumer and commercial plans. Before the subscription transition, Office was a one-time $300-400 purchase every 5-7 years.',
+        'Microsoft has over 400 million paid Office 365 subscribers. The average revenue per user (ARPU) is roughly $150/year — based on ~$13/month blended across cheaper consumer plans and pricier commercial/enterprise seats. Before the subscription transition, Office was a one-time $300-400 purchase every 5-7 years.',
       question: 'How much annual recurring revenue does Office 365 generate from 400M subscribers at $150/user?',
       answer: 60,
       tolerance: 8,
@@ -109,7 +109,7 @@ export const microsoftLesson: Lesson = {
       topic: 'The Margin Advantage',
       topicIcon: Calculator,
       context:
-        'Microsoft earns a 44% operating margin on $245B in revenue. Apple earns ~30% on $391B. Google earns ~32% on $340B. Amazon earns ~10% on $620B.\n\nThe difference is business model: software subscriptions cost almost nothing to deliver. Each additional user is nearly pure profit.',
+        'Microsoft earns a 44% operating margin on $245B in revenue. Apple earns ~30% on $391B. Google earns ~32% on $340B. Amazon earns ~10% on $620B.\n\nThe difference is business model: software margins are high because each additional user costs almost nothing to serve — the code is already written. A subscription that serves 1 million users costs nearly the same to run as one that serves 100 million.',
       question: 'How much operating profit does Microsoft generate annually? ($245B × 44%)',
       answer: 108,
       tolerance: 10,
@@ -247,7 +247,7 @@ export const microsoftLesson: Lesson = {
       punchline:
         'Microsoft is arguably the highest-quality large business in the world. But quality has a price — and at 35x, most of that quality is already reflected. The investment question isn\'t "is it great?" but "is the stock pricing in more greatness than will materialize?"',
       wrongNudges: [
-        'Quality doesn\'t make a stock a buy at any price. You just identified real risks to Azure growth and AI monetization. Ignoring them because the business is great is how investors overpay.',
+        'Quality doesn\'t make a stock a buy at any price. At 35x, you\'re paying roughly double the market multiple — which means Azure needs to sustain 25%+ growth AND AI Copilot needs to deliver meaningful revenue. "Untouchable moat" addresses the business, not whether the stock price already reflects it.',
         '',
         '',
         'Waiting for proof means paying a higher price. If AI works, the stock will be at 40x+ by the time you know. The question is whether 35x already includes enough AI upside.',
@@ -265,7 +265,7 @@ export const microsoftLesson: Lesson = {
       placeholder:
         'e.g. "I would / wouldn\'t buy Microsoft because..."',
       modelAnswer:
-        'Microsoft is the closest thing to a compounding machine in public markets — recurring revenue, unmatched margins, and a moat that deepens with every year of enterprise lock-in. But at 35x, I\'m paying for Azure to sustain 25%+ growth and AI Copilot to become a meaningful revenue driver. The business quality gives me confidence, but the valuation leaves little room for disappointment on either front.',
+        'I think Microsoft is a really strong business — the recurring revenue, high margins, and lock-in are hard to beat. But at 35x earnings, I\'d be paying for a lot of good news that hasn\'t happened yet, like Azure keeping up 25%+ growth and AI Copilot actually bringing in serious revenue. I\'d feel good owning the business, but the price makes me nervous that there\'s not much room for things to go wrong.',
       strongReasoningIncludes: [
         'Acknowledges the genuine quality (margins, recurring revenue, moat) rather than dismissing 35x as simply "too expensive"',
         'Identifies the specific growth assumptions the price depends on (Azure sustained growth, AI monetization)',

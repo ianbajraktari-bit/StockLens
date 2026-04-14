@@ -4,6 +4,8 @@ import type { Skill } from '../data/lessons';
 const COMPLETED_KEY = 'stocklens-completed';
 const SKILLS_KEY = 'stocklens-skills';
 const SCORES_KEY = 'stocklens-scores';
+const STREAK_KEY = 'stocklens-streak';
+const ANALYSES_KEY = 'stocklens-analyses-completed';
 
 // --- Completion ---
 
@@ -142,4 +144,83 @@ export function getSkillsProgress(): { skill: Skill; label: string; exposure: nu
     exposure: current[skill] ?? 0,
     maxExposure: maxExposures[skill] ?? 1,
   }));
+}
+
+// --- Streak tracking ---
+
+interface StreakData {
+  current: number;
+  lastActiveDate: string;
+}
+
+function getTodayDate(): string {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function getYesterdayDate(): string {
+  const now = new Date();
+  now.setDate(now.getDate() - 1);
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+export function getStreak(): StreakData {
+  try {
+    const raw = localStorage.getItem(STREAK_KEY);
+    if (!raw) return { current: 0, lastActiveDate: '' };
+    return JSON.parse(raw);
+  } catch {
+    return { current: 0, lastActiveDate: '' };
+  }
+}
+
+// --- Analyst Mode completion tracking ---
+
+/**
+ * Returns the set of company IDs the user has completed an analysis on.
+ * A "completed" analysis means they walked through all 7 workflow steps.
+ */
+export function getCompletedAnalyses(): Set<string> {
+  try {
+    const raw = localStorage.getItem(ANALYSES_KEY);
+    if (!raw) return new Set();
+    return new Set(JSON.parse(raw));
+  } catch {
+    return new Set();
+  }
+}
+
+export function markAnalysisComplete(companyId: string): void {
+  const ids = getCompletedAnalyses();
+  ids.add(companyId);
+  localStorage.setItem(ANALYSES_KEY, JSON.stringify([...ids]));
+  // Completing an analysis counts as a daily active event for streaks
+  updateStreak();
+}
+
+export function updateStreak(): void {
+  const streak = getStreak();
+  const today = getTodayDate();
+  const yesterday = getYesterdayDate();
+
+  if (streak.lastActiveDate === today) {
+    // Already active today — do nothing
+    return;
+  }
+
+  if (streak.lastActiveDate === yesterday) {
+    // Consecutive day — increment streak
+    const updated: StreakData = { current: streak.current + 1, lastActiveDate: today };
+    localStorage.setItem(STREAK_KEY, JSON.stringify(updated));
+  } else {
+    // Gap in activity (or first time) — reset to 1
+    const updated: StreakData = { current: 1, lastActiveDate: today };
+    localStorage.setItem(STREAK_KEY, JSON.stringify(updated));
+  }
 }

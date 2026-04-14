@@ -158,7 +158,7 @@ export const costcoLesson: Lesson = {
           value: '300+ overseas warehouses will replicate US economics',
           signal: true,
           feedback:
-            'Japan and Korea worked well. But China, Europe, and new markets may not replicate US-level loyalty or membership economics. International execution is uncertain.',
+            'Costco has ~600 US warehouses but only ~280 international. Japan and Korea replicate US-level loyalty, but China and parts of Europe have been slower. International is the growth story — but it\'s unproven at scale.',
         },
         { type: 'text', value: '. Costco is ' },
         {
@@ -221,7 +221,7 @@ export const costcoLesson: Lesson = {
           left: { label: 'Likely', sublabel: 'domestic saturation is coming' },
           right: { label: 'Unlikely' },
           correct: 'left',
-          flash: 'Most of Costco\'s US addressable market is already tapped. Future member growth depends on international execution.',
+          flash: 'With ~70M US households as members out of ~130M total, Costco is over 50% penetrated in its core market. Growth increasingly depends on international expansion and fee increases.',
         },
         {
           setup: 'Amazon or Walmart breaks the membership model with a better alternative.',
@@ -315,7 +315,7 @@ export const costcoLesson: Lesson = {
       placeholder:
         'e.g. "I would / wouldn\'t pay 55x for Costco because..."',
       modelAnswer:
-        'I\'d be willing to own Costco at a premium — the membership model is genuinely rare, retention is exceptional, and the recession resilience gives it a defensive quality most stocks lack. But I\'d size the position modestly, because at 55x earnings I\'m vulnerable to multiple compression even if the business executes perfectly. The quality is real; the question is whether I\'m paying so much for consistency that I\'ve eliminated most of my upside.',
+        'Costco\'s membership model is genuinely rare — 93% renewals, recession resilience, and pricing power make a strong case for paying a premium. But at 55x earnings with 7% growth, even a small shift in what investors are willing to pay (say, from 55x to 40x) could mean a significant drop, regardless of how well the business performs. It\'s reasonable to own it, but with a modest position size that reflects the valuation risk.',
       strongReasoningIncludes: [
         'Engages with why the premium might be deserved (membership economics, predictability, recession resilience)',
         'Acknowledges the specific risk of multiple compression — being right about the business but still losing money at this valuation',

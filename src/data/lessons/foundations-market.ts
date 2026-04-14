@@ -146,24 +146,24 @@ export const foundationsMarketLesson: Lesson = {
       topic: 'Why Prices Move',
       topicIcon: TrendingUp,
       context:
-        'Maria\'s pizza shop is earning $500,000/year in profit. The stock trades at $100 per share. Then two things happen:\n\n1. A food blogger with 2 million followers posts a glowing review. Suddenly, the line is out the door.\n2. Maria announces she\'s opening 3 new locations next year.\n\nThe business hasn\'t earned a single extra dollar yet. But the stock price jumps to $140.',
+        'Maria\'s pizza shop is earning $500,000/year in profit. The stock trades at $100 per share. Then two things happen:\n\n1. A food blogger with 2 million followers posts a glowing review. Suddenly, the line is out the door.\n2. Maria announces she\'s opening 3 new locations next year.\n\nThe business hasn\'t earned a single extra dollar yet. But investors see this news and think: "This shop is about to make a lot more money." So they rush to buy shares. With more people wanting to buy than sell, the price gets bid up — from $100 to $140.',
       question: 'Why did the stock price rise before the profits actually increased?',
       options: [
         'The stock market is irrational — prices move randomly and don\'t reflect reality',
         'The blogger\'s review made the company "famous," and famous companies have higher stock prices',
-        'Buyers expect future profits to be higher, so they\'re willing to pay more per share today',
+        'Investors expected higher future profits, so more people rushed to buy than sell — and buying pressure pushed the price up',
         'The number of shares decreased, so each remaining share is worth more automatically',
       ],
       correctIndex: 2,
       punchline:
-        'Stock prices reflect what investors expect to happen next — not just what\'s happening now. The pizza shop hasn\'t earned more money yet, but buyers believe it will, so they bid the price up today. Prices are a bet on the future.',
+        'Prices move through a chain reaction: new information changes expectations, expectations drive buy and sell decisions, and the balance of buyers vs. sellers sets the price. More buyers than sellers? Price rises. More sellers than buyers? Price falls. Every price movement is the result of people acting on what they believe the future holds.',
       wrongNudges: [
-        'Markets aren\'t perfectly rational, but they\'re not random either. The price rose for a reason: new information (viral review + expansion plans) changed expectations about future profits. That\'s the market working, not failing.',
+        'Markets aren\'t perfectly rational, but they\'re not random either. The price rose for a specific reason: investors read the news, expected higher profits, and placed buy orders. More buyers than sellers pushed the price up. That\'s the market working, not failing.',
         '',
-        'Fame alone doesn\'t drive stock prices — expected profits do. The review matters because it signals more customers and more revenue ahead. If the review went viral but nobody actually visited, the stock wouldn\'t move.',
-        'The number of shares didn\'t change. Share count only changes through specific corporate actions like stock splits or buybacks. What changed here is how much buyers are willing to pay per share — driven by higher expectations.',
+        'Fame alone doesn\'t move prices — the flow of buy and sell orders does. The review matters because it changed profit expectations, which caused investors to buy. If the review went viral but nobody actually visited, no one would rush to buy shares, and the price wouldn\'t move.',
+        'The number of shares didn\'t change. Share count only changes through specific corporate actions like stock splits or buybacks. What changed here is how many people wanted to buy vs. sell — driven by new expectations about future profits.',
       ],
-      takeaway: 'Stock prices move based on expectations about the future. When investors believe a company will earn more tomorrow, they pay more for it today. Every stock price is an opinion about what comes next.',
+      takeaway: 'Stock prices move when new information changes expectations, causing more people to buy or sell. The price is set by the balance of buyers and sellers — and that balance shifts every time the outlook for the business changes.',
     },
 
     // ─────────────────────────────────────────────────────────────────
@@ -181,19 +181,19 @@ export const foundationsMarketLesson: Lesson = {
         'A friend says: "The stock market is basically gambling. You put money in, prices go up or down, and you either win or lose. It\'s just a casino with better marketing."\n\nMillions of people believe this. It\'s one of the biggest reasons people avoid investing entirely. But is it accurate?',
       question: 'What\'s the most accurate response?',
       options: [
-        'Your friend is right — stock prices are unpredictable, so buying stocks is a form of gambling',
+        'Stocks are risky because prices are unpredictable — so yes, it\'s a form of gambling',
+        'It depends on whether you do research first — informed stock picks aren\'t gambling, but uninformed ones are',
         'It\'s gambling if you buy randomly, but investing if you understand the business. Gambling has negative expected value; owning good businesses has positive expected value over time',
-        'The stock market is completely safe if you invest long-term — it always goes up eventually',
-        'It\'s only gambling if you lose money. If you make money, it was a good investment',
+        'It\'s not gambling because the stock market is regulated and protected by the government',
       ],
-      correctIndex: 1,
+      correctIndex: 2,
       punchline:
         'At a casino, the odds are rigged against you — the house always wins over time. In the stock market, you\'re buying real businesses that create real value. The S&P 500 has returned ~10% per year for a century — because the businesses inside it keep earning profits. The market isn\'t a casino. It\'s an ownership marketplace.',
       wrongNudges: [
-        'Stock prices are hard to predict in the short term, but stocks represent real businesses with real profits. A casino chip represents nothing. That\'s the fundamental difference — stocks have intrinsic value tied to business performance.',
+        'Risk and gambling aren\'t the same thing. Crossing the street is risky, but it\'s not gambling. Stocks are volatile in the short term, but they represent real businesses earning real profits. A casino chip represents nothing — that\'s the key difference.',
         '',
-        '"Always goes up" is dangerous thinking. Individual stocks can go to zero. Even broad markets can decline for a decade. Investing has positive expected value, but it\'s not safe or guaranteed. Respecting risk is part of investing, not gambling.',
-        'Whether you made or lost money doesn\'t determine if something was gambling. A gambler can win; an investor can lose. The difference is whether the odds were in your favor based on analysis — not the outcome.',
+        'Research helps, but that\'s not the core distinction. Even without research, buying a broad index fund isn\'t gambling — because you own hundreds of real businesses designed to earn profits. The difference is about expected value: casinos are structured so the house wins; businesses are structured to create value.',
+        'Regulation doesn\'t make something "not gambling" — casinos are regulated too. The real difference is what you own. A casino chip is a bet on chance. A stock is ownership of a real business that generates profits. The structure of the game matters, not who oversees it.',
       ],
       takeaway: 'Gambling is betting on chance. Investing is buying ownership in businesses that create value. The key difference: casinos are designed so you lose over time; businesses are designed to earn profits over time.',
     },
@@ -203,6 +203,7 @@ export const foundationsMarketLesson: Lesson = {
     'Shares are equal slices of ownership. Exchanges are marketplaces. Brokers execute your trades. Your risk is limited to what you invest.',
     'Stock prices reflect expectations about the future. When investors believe profits will grow, they bid the price up today — before the growth actually happens.',
     'Investing is not gambling. Gambling has negative expected value; owning real businesses that earn real profits has positive expected value over time.',
+    'Now that you know what stocks are, the next question is: how does a business actually make money — and how much does it keep?',
   ],
   completionMessages: {
     perfect: 'Flawless. You now understand what most people never bother to learn — what you\'re actually buying when you buy a stock.',

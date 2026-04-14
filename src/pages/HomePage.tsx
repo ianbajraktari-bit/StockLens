@@ -13,13 +13,18 @@ import {
   Target,
   Zap,
   Star,
+  Flame,
+  GraduationCap,
 } from 'lucide-react';
 import { allLessons, type Lesson } from '../data/lessons';
+import { allCompanies } from '../data/companies';
 import {
   getCompletedIds,
   getFirstUncompletedId,
   getSkillsProgress,
   getLessonStars,
+  getStreak,
+  getCompletedAnalyses,
 } from '../lib/progression';
 
 const foundationsPhase1 = allLessons.filter((l) => l.tier === 'foundations-1');
@@ -27,15 +32,29 @@ const foundationsPhase2 = allLessons.filter((l) => l.tier === 'foundations-2');
 const foundationLessons = [...foundationsPhase1, ...foundationsPhase2];
 const companyLessons = allLessons.filter((l) => l.tier === 'company');
 
+// Subtle tier accent colors for left border on lesson cards
+const TIER_COLORS = {
+  'foundations-1': 'rgba(99, 102, 241, 0.4)',   // indigo
+  'foundations-2': 'rgba(245, 158, 11, 0.4)',    // amber
+  'company': 'rgba(34, 197, 94, 0.4)',           // emerald
+} as const;
+
 export default function HomePage() {
   const navigate = useNavigate();
   const completedIds = getCompletedIds();
   const nextId = getFirstUncompletedId();
   const skillsProgress = getSkillsProgress();
   const hasAnyProgress = skillsProgress.some((s) => s.exposure > 0);
+  const streak = getStreak();
   const completedCount = completedIds.size;
   const totalCount = allLessons.length;
   const progressPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+  const analysesCompleted = getCompletedAnalyses();
+
+  // Per-section completion counts
+  const phase1Completed = foundationsPhase1.filter(l => completedIds.has(l.id)).length;
+  const phase2Completed = foundationsPhase2.filter(l => completedIds.has(l.id)).length;
+  const companyCompleted = companyLessons.filter(l => completedIds.has(l.id)).length;
 
   function handleStart() {
     const target = nextId ?? allLessons[0].id;
@@ -46,6 +65,8 @@ export default function HomePage() {
     const completed = completedIds.has(lesson.id);
     const isNext = lesson.id === nextId;
     const stars = completed ? getLessonStars(lesson.id) : null;
+    const tierKey = (lesson.tier ?? 'foundations-1') as keyof typeof TIER_COLORS;
+    const tierColor = TIER_COLORS[tierKey];
 
     return (
       <motion.button
@@ -54,7 +75,8 @@ export default function HomePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: sectionDelay + index * 0.04 }}
         onClick={() => navigate(`/lesson/${lesson.id}`)}
-        className={`group w-full text-left rounded-xl border p-4 transition-all duration-200 cursor-pointer ${
+        style={{ borderLeftColor: tierColor }}
+        className={`group w-full text-left rounded-xl border border-l-[3px] p-4 transition-all duration-200 cursor-pointer ${
           isNext && !completed
             ? 'border-accent/40 bg-dark-800 hover:border-accent/60 shadow-[0_0_20px_rgba(99,102,241,0.06)]'
             : completed
@@ -182,7 +204,27 @@ export default function HomePage() {
 
           {/* Stats bar or hero for new users */}
           {hasAnyProgress ? (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 flex-wrap">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
+                className="flex items-center gap-1.5 text-xs"
+              >
+                {streak.current > 0 ? (
+                  <>
+                    <Flame
+                      className={`w-3.5 h-3.5 text-warm ${streak.current >= 3 ? 'drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]' : ''}`}
+                    />
+                    <span className="text-warm font-semibold">{streak.current} day streak</span>
+                  </>
+                ) : (
+                  <>
+                    <Flame className="w-3.5 h-3.5 text-text-muted" />
+                    <span className="text-text-muted">Start your streak!</span>
+                  </>
+                )}
+              </motion.div>
               <div className="flex items-center gap-1.5 text-xs text-text-secondary">
                 <CheckCircle2 className="w-3.5 h-3.5 text-green" />
                 <span>{completedCount} of {totalCount} lessons</span>
@@ -294,38 +336,96 @@ export default function HomePage() {
           </motion.div>
         )}
 
-        {/* Foundations Phase 1 */}
+        {/* Analyst Mode — the capstone feature */}
+        <motion.button
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.08 }}
+          onClick={() => navigate('/analyst')}
+          className="group w-full text-left rounded-xl border border-warm/30 bg-gradient-to-br from-warm/[0.08] to-accent/[0.04] hover:from-warm/[0.12] hover:to-accent/[0.07] transition-all cursor-pointer overflow-hidden relative"
+        >
+          <div className="p-4 space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="w-11 h-11 rounded-xl bg-warm/15 border border-warm/30 flex items-center justify-center shrink-0">
+                <Target className="w-5 h-5 text-warm" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-sm font-semibold text-text-primary">
+                    Analyst Mode
+                  </h3>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-warm/20 text-warm font-bold uppercase tracking-wide">
+                    New
+                  </span>
+                </div>
+                <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">
+                  The capstone — pick a company and walk through a 7-step analysis workflow. Business, drivers, moat, risks, valuation, thesis, verdict.
+                </p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-text-muted group-hover:text-warm group-hover:translate-x-0.5 transition-all shrink-0" />
+            </div>
+            <div className="flex items-center gap-3 text-[10px] text-text-muted pl-14">
+              <span>{allCompanies.length} companies</span>
+              <span>•</span>
+              <span>{analysesCompleted.size} analyzed</span>
+              <span>•</span>
+              <span>~10-14 min each</span>
+            </div>
+          </div>
+        </motion.button>
+
+        {/* Foundations Phase 1 — Core Financial Vocabulary */}
         <section className="space-y-3">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="flex items-center justify-between"
+            className="border-l-[3px] border-l-accent/30 pl-3 flex items-center justify-between"
           >
             <div className="flex items-center gap-2">
-              <Lightbulb className="w-4 h-4 text-amber" />
+              <Lightbulb className="w-4 h-4 text-accent-light" />
               <h2 className="text-sm font-semibold text-text-primary">
-                Foundations
+                Core Financial Vocabulary
               </h2>
-              <span className="text-[10px] text-text-muted">
-                {foundationLessons.filter(l => completedIds.has(l.id)).length}/{foundationLessons.length}
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/10 text-accent-light font-medium">
+                Phase 1
               </span>
             </div>
+            <span className="text-[10px] text-text-muted font-medium">
+              {phase1Completed}/{foundationsPhase1.length} complete
+            </span>
           </motion.div>
 
           <div className="space-y-1.5">
-            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider px-1">
-              Core Financial Vocabulary
-            </p>
             {foundationsPhase1.map((lesson, i) =>
               renderLessonCard(lesson, i, 0.15)
             )}
           </div>
+        </section>
 
-          <div className="space-y-1.5 pt-2">
-            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider px-1">
-              Investing Concepts
-            </p>
+        {/* Foundations Phase 2 — Investing Concepts */}
+        <section className="space-y-3">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="border-l-[3px] border-l-amber/30 pl-3 flex items-center justify-between"
+          >
+            <div className="flex items-center gap-2">
+              <GraduationCap className="w-4 h-4 text-amber" />
+              <h2 className="text-sm font-semibold text-text-primary">
+                Investing Concepts
+              </h2>
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber/10 text-amber font-medium">
+                Phase 2
+              </span>
+            </div>
+            <span className="text-[10px] text-text-muted font-medium">
+              {phase2Completed}/{foundationsPhase2.length} complete
+            </span>
+          </motion.div>
+
+          <div className="space-y-1.5">
             {foundationsPhase2.map((lesson, i) =>
               renderLessonCard(lesson, i, 0.25)
             )}
@@ -338,17 +438,20 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
-            className="flex items-center justify-between"
+            className="border-l-[3px] border-l-green/30 pl-3 flex items-center justify-between"
           >
             <div className="flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-warm" />
+              <Building2 className="w-4 h-4 text-green" />
               <h2 className="text-sm font-semibold text-text-primary">
                 Company Deep Dives
               </h2>
-              <span className="text-[10px] text-text-muted">
-                {companyLessons.filter(l => completedIds.has(l.id)).length}/{companyLessons.length}
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green/10 text-green font-medium">
+                Applied
               </span>
             </div>
+            <span className="text-[10px] text-text-muted font-medium">
+              {companyCompleted}/{companyLessons.length} complete
+            </span>
           </motion.div>
 
           <div className="space-y-1.5">

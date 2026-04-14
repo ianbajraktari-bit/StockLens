@@ -1,5 +1,15 @@
 # StockLens — Claude Agent Guide
 
+## Source of Truth
+
+- **Primary branch:** `main` — always pull/sync from `origin/main` before starting work
+- **Repository:** `ianbajraktari-bit/StockLens` on GitHub
+- **Production deployment:** Vercel (auto-deploys from `main`)
+- **Lesson count:** 35 lessons (25 foundations + 10 company deep dives) + Analyst Mode (4 seeded companies)
+- **Architecture:** Step-based (`steps: LessonStep[]` with `kind: 'drill' | 'estimate' | 'decide' | 'tap' | 'thinking'`)
+
+> **IMPORTANT:** Before making changes, run `git fetch origin main` and verify your local `main` matches remote. The codebase uses the step-based architecture (NOT the old `questions: QuizQuestion[]` format). If you see `QuizQuestion` anywhere, you are on a stale branch.
+
 ## What This Project Is
 
 StockLens is a Duolingo-style app that teaches people how to think like investors. Not memorize facts — **think**. The app teaches users to form opinions on companies, weigh risks against valuations, and make investment decisions using real reasoning.
@@ -509,6 +519,110 @@ npx tsc -b --force        # Type check (stricter — catches unused imports)
 npx vite build            # Production build
 npm run dev               # Dev server
 ```
+
+## Analyst Mode — The Capstone Feature
+
+Analyst Mode is the "apply what you learned" layer. After a user works through the curriculum, Analyst Mode lets them pick a company NOT in the curriculum and walk through a structured 7-step analysis workflow. It's the bridge between *knowledge* (foundations lessons) and *skill* (forming actual investment opinions).
+
+### File Layout
+
+```
+src/
+├── data/
+│   └── companies/
+│       ├── types.ts              # CompanyProfile, AnalystStepKind, WorkflowStepTemplate, WORKFLOW_STEPS
+│       ├── index.ts              # allCompanies, getCompanyById, barrel exports
+│       ├── adobe.ts              # Adobe (ADBE) — SaaS moat + AI risk
+│       ├── visa.ts               # Visa (V) — network effect moat
+│       ├── starbucks.ts          # Starbucks (SBUX) — brand + saturation
+│       └── disney.ts             # Disney (DIS) — sum-of-parts, transition
+├── pages/
+│   ├── AnalystModeHome.tsx       # Company picker (lists all seeded companies)
+│   └── AnalystSession.tsx        # Workflow runner: intro → 7 steps → complete
+└── components/
+    └── analyst/
+        └── AnalystStepComponent.tsx  # Free-response step UI; reveals model answer after submit
+```
+
+### The Workflow (WORKFLOW_STEPS)
+
+Every company uses the same 7 steps in the same order. Each company supplies its own `modelAnswer` and `strongReasoningIncludes` for each step.
+
+1. **Business** — "What does this company actually do and how does it make money?"
+2. **Drivers** — "What 2-3 factors most drive revenue?"
+3. **Moat** — "Durable competitive advantage? What type?"
+4. **Risks** — "What 2-3 things could structurally hurt this business?"
+5. **Valuation** — "Priced as growth, value, or turnaround?"
+6. **Thesis** — "Make the strongest bull OR bear case."
+7. **Verdict** — "Buy, pass, or need info? What would change your mind?"
+
+Shared prompts live in `WORKFLOW_STEPS` (data/companies/types.ts). Company-specific content lives in each company's `workflow: Record<AnalystStepKind, AnalystStepContent>`.
+
+### Adding a New Company
+
+1. Create `src/data/companies/{id}.ts` following the `CompanyProfile` shape. You need:
+   - id, ticker, name, emoji, sector, oneLiner, description
+   - `dataAsOf` (e.g. 'Q4 2024'), `difficulty` ('intro' | 'standard' | 'advanced'), `estimatedMinutes`
+   - `keyFacts`: 4-6 real data points the user reasons from
+   - `workflow`: a Record with all 7 `AnalystStepKind` entries filled in
+2. Register in `src/data/companies/index.ts` — add the import, the named export, and append to `allCompanies`.
+3. Order in `allCompanies` is by difficulty (intro first). The picker displays them in array order.
+
+### Quality Bar for Model Analyses
+
+The `modelAnswer` is the single biggest thing that makes Analyst Mode educational. It should:
+
+- Be 4-8 sentences of actual reasoning — not a fact dump. Show HOW to think, not just what to think.
+- Reference specific numbers/drivers from the `keyFacts` when relevant.
+- Present both sides when the real answer is uncertain (classic example: "could be X or Y depending on whether Z").
+- End with something falsifiable — a specific number, trigger, or event that would change the conclusion.
+
+The `strongReasoningIncludes` is 3 criteria the user self-checks against. They should be:
+
+- Observable (the user can actually tell whether they covered it)
+- Not prescriptive about WHICH answer (the user can disagree with the model)
+- Focused on the reasoning structure, not the specific conclusion
+
+### Progression Tracking
+
+Completed analyses are stored in localStorage under `stocklens-analyses-completed` as a `Set<companyId>`. Completing an analysis also increments the daily streak via `updateStreak()`.
+
+Future: track individual responses + "compare past analyses" review mode.
+
+## Product Roadmap
+
+StockLens is evolving from a content engine into a complete "teaching machine" — beginner → intelligent investor. Tracked priorities:
+
+### Tier 1 — Differentiators (the moat)
+- [x] **Analyst Mode v1** — 7-step workflow, 4 seeded companies (Visa, Starbucks, Adobe, Disney)
+- [ ] **Analyst Mode v2** — expand to 10-15 companies (add: Shopify, Salesforce, Home Depot, Walmart, Chipotle, Spotify, etc.)
+- [ ] **Analyst Mode v3** — save user responses, "compare past analyses" view, ability to revisit and revise
+
+### Tier 2 — Retention (not started)
+- [ ] **Review / Spaced Repetition mode** — mixes questions from completed lessons on a schedule; surfaces weak areas
+- [ ] **Daily Practice** — 3-5 mixed questions per day, maintains the streak, keeps material fresh
+
+### Tier 3 — Critical curriculum gaps
+- [x] Index Funds & ETFs (foundations-index-funds)
+- [x] Reading a 10-K (foundations-ten-k)
+- [ ] **Options basics** — what calls/puts are, how they're used for income and hedging (literacy, not trading)
+- [ ] **Bonds and fixed income** — yield, duration, credit risk, role in portfolios
+- [ ] **Taxes for investors** — short vs. long-term capital gains, tax-advantaged accounts, tax-loss harvesting
+- [ ] **Recession/downturn playbook** — how to think about portfolio decisions during drawdowns
+
+### Tier 4 — Engagement layer
+- [ ] **XP + levels** — cumulative XP from all lessons and analyses, level titles ("Apprentice Investor" → "Analyst" → "Portfolio Manager")
+- [ ] **Quests / milestone badges** — "Complete all Foundations Phase 1", "Analyze 5 companies", "30-day streak"
+- [ ] **Diagnostic onboarding** — 5-question placement quiz to suggest a starting point
+- [ ] **Learning path narrative** — explicitly recommended order with contextual "why this next"
+
+### Tier 5 — Polish + scale
+- [ ] Mobile PWA polish, offline support
+- [ ] Social proof / shareable analysis cards (with care — no financial advice)
+- [ ] Creator-submitted company profiles (community curation with review)
+- [ ] Integration with a free markets API for live P/E and price (big decision — requires backend)
+
+The North Star: a user who completes all lessons + all Analyst Mode companies can pick up any public company's 10-K, work through a reasoned analysis in 30 minutes, and form a defensible investment opinion. **That's the difference between education and skill.**
 
 ## What Makes This Project Different
 

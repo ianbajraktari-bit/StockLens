@@ -68,10 +68,10 @@ export const teslaLesson: Lesson = {
         },
         {
           setup: 'What\'s Tesla\'s biggest revenue growth driver right now?',
-          left: { label: 'Energy storage', sublabel: 'Megapack deployments doubling' },
+          left: { label: 'Energy storage', sublabel: 'Megapack deployments surging' },
           right: { label: 'Full Self-Driving', sublabel: 'software subscriptions' },
           correct: 'left',
-          flash: 'Energy storage revenue doubled year-over-year. FSD revenue is still small and inconsistent — it\'s a future bet, not a current driver. Energy is the real growth story today.',
+          flash: 'Energy storage revenue roughly doubled from ~$6B to ~$12B (annualized run rate). FSD revenue is still small and inconsistent — it\'s a future bet, not a current driver. Energy is the real growth story today.',
         },
       ],
       takeaway: 'Tesla is a car company that sells 1.8M vehicles a year with declining growth and compressing margins. Everything else — FSD, robotaxi, energy, robots — is optionality the market is pricing in.',
@@ -148,14 +148,14 @@ export const teslaLesson: Lesson = {
           type: 'chip',
           value: 'Energy storage revenue doubled last year and Megapack has a massive backlog',
           signal: false,
-          feedback: 'This is real. Energy storage is Tesla\'s fastest-growing segment with actual revenue (~$10B run rate) and tangible demand. It\'s not a bet — it\'s happening.',
+          feedback: 'This is real. Energy storage grew from ~$6B to ~$12B annualized — Tesla\'s fastest-growing segment with tangible demand and a deep order backlog. It\'s not a bet — it\'s happening.',
         },
         { type: 'text', value: '. But that\'s just the start. ' },
         {
           type: 'chip',
           value: 'Full Self-Driving will generate $100B+ in recurring software revenue',
           signal: true,
-          feedback: 'FSD currently generates minimal revenue and still requires driver supervision. Jumping from "supervised beta" to "$100B in recurring revenue" requires technological breakthroughs, regulatory approval, and consumer trust that don\'t exist yet.',
+          feedback: 'FSD currently generates minimal revenue and still requires driver supervision. Here\'s a simple way to value a bet like this: probability it works × profit if it does. If you think FSD has a 30% chance of hitting $50B in revenue, its expected value is $15B. At 10% probability, it\'s $5B. The probability estimate changes everything — and jumping from "supervised beta" to "$100B" assumes near-certainty.',
         },
         { type: 'text', value: '. ' },
         {
@@ -189,7 +189,7 @@ export const teslaLesson: Lesson = {
       ],
       requiredSignals: 2,
       reveal:
-        'Tesla has real advantages: manufacturing efficiency, energy storage growth, and the Supercharger network. But the bull case for an $800B+ valuation leans heavily on FSD, robotaxis, and robots — businesses that generate little to no revenue today. The question isn\'t whether these could be huge. It\'s whether the stock price already assumes they will be.',
+        'Tesla has real advantages: manufacturing efficiency, energy storage growth (~$6B to ~$12B), and the Supercharger network. But the bull case for an $800B+ valuation leans heavily on FSD, robotaxis, and robots — businesses that generate little to no revenue today. To value optionality bets: estimate probability of success × potential profit. At high probabilities these bets are worth hundreds of billions. At low probabilities, they\'re worth very little. The question isn\'t whether these could be huge — it\'s what probability you assign, and whether the stock price already assumes near-certainty.',
       takeaway: 'Separate what a company does today from what it might do tomorrow. Real businesses (energy, manufacturing edge, Superchargers) are different from optionality bets (FSD, robotaxi, Optimus). Both have value — but only one has evidence.',
     },
 
@@ -204,15 +204,15 @@ export const teslaLesson: Lesson = {
       topic: 'What the Price Demands',
       topicIcon: Calculator,
       context:
-        'Tesla trades at ~120x earnings. The market average is ~20x. For Tesla\'s current price to look "normal," earnings need to grow until 120x becomes 20x.\n\nCurrent earnings: ~$7B/year\nCurrent market cap: ~$800B\n\nAt 20x, $800B market cap requires: $800B ÷ 20 = $40B in earnings.\n\nTesla currently earns $7B.',
-      question: 'By what multiple must Tesla\'s earnings grow to justify the current price at a market P/E?',
+        'Tesla trades at ~120x earnings. The market average is ~20x. For Tesla\'s current price to look "normal," earnings need to grow until 120x becomes 20x.\n\nCurrent net income: ~$7B/year\nCurrent market cap: ~$800B\n\nAt 20x, $800B market cap requires: $800B ÷ 20 = $40B in net income.\n\nTesla currently earns ~$7B in net income.',
+      question: 'By what multiple must Tesla\'s net income grow to justify the current price at a market P/E?',
       answer: 5.7,
       tolerance: 0.5,
       unit: 'x',
       hint: '$40B ÷ $7B',
       reveal:
-        '$40B ÷ $7B = 5.7x. Tesla needs to nearly 6x its earnings — from $7B to $40B — just for the current price to look fairly valued at a market multiple. For context: Toyota earns ~$25B. Tesla would need to earn significantly more than Toyota while selling a fraction of the cars. This is only possible if high-margin software (FSD), energy, or entirely new businesses contribute massive profit.',
-      takeaway: 'At 120x earnings, Tesla\'s stock price requires earnings to 6x just to reach a normal valuation. That means the market is pricing in massive profit from businesses that barely exist today.',
+        '$40B ÷ $7B = 5.7x. Tesla needs to nearly 6x its net income — from $7B to $40B — just for the current price to look fairly valued at a market multiple. For context: Toyota earns ~$25B in net income. Tesla would need to earn significantly more than Toyota while selling a fraction of the cars. This is only possible if high-margin software (FSD), energy, or entirely new businesses contribute massive profit.',
+      takeaway: 'At 120x earnings, Tesla\'s stock price requires net income to 6x just to reach a normal valuation. That means the market is pricing in massive profit from businesses that barely exist today.',
     },
 
     // ─────────────────────────────────────────────────────────────────
@@ -226,12 +226,12 @@ export const teslaLesson: Lesson = {
       topic: 'The Judgment Call',
       topicIcon: BrainCircuit,
       context:
-        'Here\'s the full picture:\n\n• 80% of revenue from cars. Margins falling. Deliveries declining.\n• Energy storage growing fast but still ~10% of revenue.\n• FSD, robotaxi, and Optimus: huge potential, minimal current revenue.\n• 120x P/E requires earnings to 6x.\n• Manufacturing cost advantage is real.\n• Brand loyalty is intense but polarizing.',
+        'Here\'s the full picture:\n\n• 80% of revenue from cars. Margins falling. Deliveries declining.\n• Energy storage growing fast (~$6B to ~$12B) but still ~10% of revenue.\n• FSD, robotaxi, and Optimus: huge potential, minimal current revenue.\n• 120x P/E requires net income to 6x (from ~$7B to ~$40B).\n• Manufacturing cost advantage is real.\n• Brand loyalty is intense but polarizing.',
       question: 'What\'s the most thoughtful investor stance on Tesla?',
       options: [
         'Sell — the auto business is deteriorating, and the future bets are too speculative to justify 120x earnings',
         'The valuation only makes sense if you believe FSD/robotaxi will work AND generate enormous profit within 5 years. That\'s a high-conviction technology bet, not a stock analysis',
-        'Buy — Tesla is the most innovative company in the world and will figure it out',
+        'Buy — Tesla\'s manufacturing scale and vertical integration give it a cost advantage competitors can\'t replicate, so margins will recover',
         'Wait for margins to stabilize, then reassess — the transition period makes the stock un-analyzable',
       ],
       correctIndex: 1,
@@ -240,7 +240,7 @@ export const teslaLesson: Lesson = {
       wrongNudges: [
         'The bear case is legitimate — but "sell" dismisses optionality entirely. Energy storage is real and growing. FSD could work. The honest answer is that the outcome depends on technology bets that can\'t be modeled with traditional tools.',
         '',
-        '"They\'ll figure it out" isn\'t an investment thesis. Tesla at 8x P/E might justify that level of trust. At 120x, you need specific conviction about which future business will generate $40B+ in profit.',
+        'The cost advantage is real — but it\'s already in the current 18% margin, which is good for a carmaker but not exceptional for a tech company. Even if margins recover to 22-24%, the car business alone generates maybe $15-18B in gross profit. That doesn\'t close the gap to $40B in net income needed to justify 120x. Cost advantages explain survival, not an $800B valuation.',
         'Waiting is reasonable but avoids the real question. Tesla\'s price already reflects expectations about the future. Understanding what\'s priced in matters whether you buy, sell, or hold.',
       ],
       takeaway: 'Some stocks aren\'t traditional stock analysis — they\'re technology bets. At 120x earnings, Tesla requires conviction about FSD, robotaxi, or energy generating massive profit. Without that conviction, the price can\'t be justified by the car business alone.',
@@ -255,7 +255,7 @@ export const teslaLesson: Lesson = {
         'A friend says: "Tesla is the future — I\'m putting 50% of my portfolio in it." Based on what you\'ve learned, what would you tell them? Consider the current business, the margin trend, the valuation, and the optionality bets.',
       placeholder: 'I would tell them that...',
       modelAnswer:
-        'I\'d acknowledge that Tesla has real competitive advantages — manufacturing efficiency, Supercharger dominance, and genuine energy storage growth. But I\'d push back on the 50% concentration. At 120x earnings, the stock needs earnings to 6x just to reach a normal valuation. That\'s only possible if FSD or robotaxi become massive, profitable businesses — which hasn\'t happened yet. The core auto business has declining deliveries and compressing margins. Putting 50% of your portfolio on what is essentially a technology bet means you need to be right about self-driving AND the timeline AND the monetization. If any one of those doesn\'t pan out, you\'re holding a car company stock at 120x earnings. The right question isn\'t "is Tesla a great company?" — it\'s "is this price right given what needs to happen?"',
+        'I\'d say Tesla is a cool company but 50% is a lot to bet on one stock. Right now, 80% of their money comes from selling cars, and that part of the business isn\'t growing — deliveries actually fell and margins dropped from 28% to 18%. The stock trades at 120x earnings, which means it needs to 6x its profits just to be valued like a normal company. That only works if self-driving or robotaxis become huge profitable businesses, and those haven\'t really launched yet. Energy storage is growing fast, which is great, but it\'s still a small piece. Basically, at this price you\'re not just betting Tesla is a good company — you\'re betting that specific future technologies will work, on a specific timeline, and make a specific amount of money. That\'s a lot of things that all need to go right. I\'d at least spread the risk around more.',
       strongReasoningIncludes: [
         'Acknowledges Tesla\'s real advantages while noting the auto business is deteriorating',
         'Connects the 120x valuation to specific requirements — what needs to be true for the price to make sense',

@@ -62,7 +62,7 @@ export const foundationsPortfolioLesson: Lesson = {
           left: { label: 'Truly diversified', sublabel: '5 different companies' },
           right: { label: 'Fake diversification', sublabel: 'all move together' },
           correct: 'right',
-          flash: 'Five tech stocks = one bet on the tech sector. When tech sells off (2022: all five dropped 25-65%), your "diversified" portfolio drops with it. Different company names ≠ different risks.',
+          flash: 'Five tech stocks = one bet on the tech sector with high correlation — how closely two investments move together. When tech sells off (2022: all five dropped 25-65%), your "diversified" portfolio drops with it. High correlation means they rise and fall in sync, providing less protection.',
         },
         {
           setup: 'Portfolio: Apple (tech), JPMorgan (banking), Johnson & Johnson (healthcare), Costco (retail), NextEra (energy).',
@@ -200,6 +200,7 @@ export const foundationsPortfolioLesson: Lesson = {
     'Real diversification means owning stocks that don\'t all move together. Five tech stocks isn\'t diversified — five stocks across different sectors is. Different risk drivers, not different names.',
     'Watch for hidden concentration: index funds already hold the biggest tech stocks. Adding tech ETFs and individual tech stocks on top creates far more exposure than you realize.',
     'The best starting portfolio: 80% broad index fund (guaranteed market participation) + 20% in 2-3 individual stocks (practice analysis with real but limited stakes).',
+    'You can build a portfolio. Next: how to read an earnings report in 10 minutes — the 5 numbers that tell 80% of the story.',
   ],
   completionMessages: {
     perfect: 'Flawless. You now understand the architecture of a real portfolio — not just which stocks to pick, but how to combine them safely.',

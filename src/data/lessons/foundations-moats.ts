@@ -137,7 +137,7 @@ export const foundationsMoatsLesson: Lesson = {
           left: { label: 'Network effects' },
           right: { label: 'Brand' },
           correct: 'left',
-          flash: 'Two-sided network. Merchants need cardholders. Cardholders need merchants. Unbreakable loop.',
+          flash: 'Two-sided network effect: merchants need cardholders, cardholders need merchants. In practice, moats overlap — Visa also benefits from switching costs (every terminal is configured for it) and scale (billions of transactions spread fixed costs thin).',
         },
         {
           setup: 'Cloud platform where developers build apps on proprietary APIs. Moving means rewriting everything.',
@@ -291,6 +291,7 @@ export const foundationsMoatsLesson: Lesson = {
     "The four most common moats are switching costs, network effects, brand, and scale. They're all structural, not personal.",
     'Real moats survive when people, trends, and competitors change. Fake moats depend on a person, a fad, or a moment.',
     'Moats translate directly into valuation. Investors pay a premium for profits they can count on for years.',
+    'You can spot moats. Next: the tool that tells you whether a stock is actually cheap or expensive.',
   ],
   completionMessages: {
     perfect:

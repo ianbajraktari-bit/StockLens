@@ -14,9 +14,16 @@ export { foundationsRiskLesson } from './foundations-risk';
 export { foundationsDebtLesson } from './foundations-debt';
 export { foundationsGrowthValueLesson } from './foundations-growth-value';
 export { foundationsReturnsLesson } from './foundations-returns';
+export { foundationsDividendsLesson } from './foundations-dividends';
 export { foundationsPortfolioLesson } from './foundations-portfolio';
 export { foundationsEarningsLesson } from './foundations-earnings';
 export { foundationsSellingLesson } from './foundations-selling';
+export { foundationsIndexFundsLesson } from './foundations-index-funds';
+export { foundationsTenKLesson } from './foundations-ten-k';
+export { foundationsMacroLesson } from './foundations-macro';
+export { foundationsHistoryLesson } from './foundations-history';
+export { foundationsSectorsLesson } from './foundations-sectors';
+export { foundationsStatementsLesson } from './foundations-statements';
 export { appleLesson } from './apple';
 export { nvidiaLesson } from './nvidia';
 export { costcoLesson } from './costco';
@@ -25,6 +32,8 @@ export { microsoftLesson } from './microsoft';
 export { teslaLesson } from './tesla';
 export { googleLesson } from './google';
 export { netflixLesson } from './netflix';
+export { metaLesson } from './meta';
+export { berkshireLesson } from './berkshire';
 
 import { foundationsMarketLesson } from './foundations-market';
 import { foundationsBasicsLesson } from './foundations-basics';
@@ -41,9 +50,16 @@ import { foundationsRiskLesson } from './foundations-risk';
 import { foundationsDebtLesson } from './foundations-debt';
 import { foundationsGrowthValueLesson } from './foundations-growth-value';
 import { foundationsReturnsLesson } from './foundations-returns';
+import { foundationsDividendsLesson } from './foundations-dividends';
 import { foundationsPortfolioLesson } from './foundations-portfolio';
 import { foundationsEarningsLesson } from './foundations-earnings';
 import { foundationsSellingLesson } from './foundations-selling';
+import { foundationsIndexFundsLesson } from './foundations-index-funds';
+import { foundationsTenKLesson } from './foundations-ten-k';
+import { foundationsMacroLesson } from './foundations-macro';
+import { foundationsHistoryLesson } from './foundations-history';
+import { foundationsSectorsLesson } from './foundations-sectors';
+import { foundationsStatementsLesson } from './foundations-statements';
 import { appleLesson } from './apple';
 import { nvidiaLesson } from './nvidia';
 import { costcoLesson } from './costco';
@@ -52,6 +68,8 @@ import { microsoftLesson } from './microsoft';
 import { teslaLesson } from './tesla';
 import { googleLesson } from './google';
 import { netflixLesson } from './netflix';
+import { metaLesson } from './meta';
+import { berkshireLesson } from './berkshire';
 import type { Lesson } from './types';
 
 export const allLessons: Lesson[] = [
@@ -73,9 +91,16 @@ export const allLessons: Lesson[] = [
   foundationsDebtLesson,           // balance sheets, leverage, interest coverage
   foundationsGrowthValueLesson,    // growth traps, value traps, both lenses
   foundationsReturnsLesson,        // dividends, buybacks, capital allocation
+  foundationsDividendsLesson,      // dividend yield, payout ratio, traps, compounding
   foundationsPortfolioLesson,      // position sizing, real diversification, starting point
   foundationsEarningsLesson,       // reading earnings reports, 5 key numbers, management tone
   foundationsSellingLesson,        // when to sell, thesis-broken framework, disposition effect
+  foundationsIndexFundsLesson,     // index funds, ETFs, why most active managers lose, core+satellite
+  foundationsTenKLesson,           // reading a 10-K filing: structure, sections, MD&A, risk factors
+  foundationsMacroLesson,          // interest rates, inflation, Fed policy, macro forces
+  foundationsHistoryLesson,        // bubbles, crashes, recovery patterns, panic selling
+  foundationsSectorsLesson,        // industry analysis, cyclical vs defensive, sector drivers
+  foundationsStatementsLesson,     // reading real financial statements line by line
 
   // Company Deep Dives
   appleLesson,
@@ -86,6 +111,8 @@ export const allLessons: Lesson[] = [
   teslaLesson,
   googleLesson,
   netflixLesson,
+  metaLesson,
+  berkshireLesson,
 ];
 
 export function getLessonById(id: string): Lesson | undefined {

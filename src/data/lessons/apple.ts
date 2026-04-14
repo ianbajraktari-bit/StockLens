@@ -97,7 +97,7 @@ export const appleLesson: Lesson = {
       unit: '%',
       hint: '($200B + $96B) ÷ $391B',
       reveal:
-        '($200B + $96B) ÷ $391B = 76%. And that\'s conservative — Wearables (Apple Watch, AirPods) also depend on having an iPhone. Real exposure is 70-80%. Apple looks like five segments but runs on one engine.',
+        '($200B + $96B) ÷ $391B = 76%. That means if iPhone sales decline 10%, Apple\'s total revenue drops ~7.6% — and Services growth can\'t offset that quickly. And that\'s conservative: Wearables (Apple Watch, AirPods) also depend on iPhone. Real exposure is 70-80%.',
       takeaway: 'Don\'t count segments — trace dependencies. Apple\'s real iPhone exposure is ~75%, not the 50% it appears.',
     },
 
@@ -186,7 +186,7 @@ export const appleLesson: Lesson = {
           value: 'Google search deal is secure',
           signal: true,
           feedback:
-            'Courts have already ruled Google\'s search monopoly illegal. This $20B/year deal — ~30% of Services profit — is actively under legal threat.',
+            'Apple\'s profit model depends on two regulatory assumptions: the Google search deal (~$20B/year) and 30% App Store commissions. Both are under active legal challenge. This one alone is ~30% of Services profit.',
         },
         { type: 'text', value: ' and the ' },
         {
@@ -307,11 +307,11 @@ export const appleLesson: Lesson = {
       placeholder:
         'e.g. "I think Apple is / isn\'t attractive because..."',
       modelAnswer:
-        'Apple is a high-quality business with a sticky ecosystem and a fast-growing Services segment — but at 30x earnings, a lot of that quality is already priced in. I\'d want to see Services growth accelerate or regulatory risk diminish before paying this premium, because even a small disappointment could hurt the stock at this valuation.',
+        'Apple has real strengths — a sticky ecosystem and high-margin Services — but at 30x earnings with only 8% growth, the price assumes a lot goes right. The key risks are regulatory (Google deal, App Store fees) and iPhone dependence. Whether you buy depends on whether you think those risks stay contained.',
       strongReasoningIncludes: [
-        'Weighs both strengths (ecosystem, Services margins) and risks (iPhone dependence, regulatory threat)',
-        'Considers whether the current stock price already reflects the positives — not just whether the business is good',
-        'Connects the valuation (30x) to what needs to go right for the investment to work',
+        'Mentions at least one strength and one risk — not just "good company" or "too expensive"',
+        'Thinks about whether the stock price already reflects the good news',
+        'Ties the 30x valuation to something specific that needs to go right',
       ],
     },
   ],
