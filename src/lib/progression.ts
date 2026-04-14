@@ -6,6 +6,7 @@ const SKILLS_KEY = 'stocklens-skills';
 const SCORES_KEY = 'stocklens-scores';
 const STREAK_KEY = 'stocklens-streak';
 const ANALYSES_KEY = 'stocklens-analyses-completed';
+const RESPONSES_KEY = 'stocklens-analyst-responses';
 
 // --- Completion ---
 
@@ -223,4 +224,74 @@ export function updateStreak(): void {
     const updated: StreakData = { current: 1, lastActiveDate: today };
     localStorage.setItem(STREAK_KEY, JSON.stringify(updated));
   }
+}
+
+// --- Analyst Mode saved responses ---
+
+export interface SavedAnalystResponse {
+  text: string;
+  /** ISO timestamp of most recent submission. */
+  submittedAt: string;
+}
+
+/** Storage shape: { [companyId]: { [stepKind]: { text, submittedAt } } } */
+export type AnalystResponsesMap = Record<string, Record<string, SavedAnalystResponse>>;
+
+function getAllResponsesMap(): AnalystResponsesMap {
+  try {
+    const raw = localStorage.getItem(RESPONSES_KEY);
+    if (!raw) return {};
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+}
+
+/** Returns all saved responses for a given company, keyed by step kind. */
+export function getCompanyResponses(
+  companyId: string,
+): Record<string, SavedAnalystResponse> {
+  const all = getAllResponsesMap();
+  return all[companyId] ?? {};
+}
+
+/** Returns a single saved response, or null if none. */
+export function getAnalystResponse(
+  companyId: string,
+  stepKind: string,
+): SavedAnalystResponse | null {
+  return getCompanyResponses(companyId)[stepKind] ?? null;
+}
+
+/** Saves (or overwrites) the user's response for a specific company step. */
+export function saveAnalystResponse(
+  companyId: string,
+  stepKind: string,
+  text: string,
+): void {
+  const all = getAllResponsesMap();
+  const company = { ...(all[companyId] ?? {}) };
+  company[stepKind] = { text, submittedAt: new Date().toISOString() };
+  all[companyId] = company;
+  localStorage.setItem(RESPONSES_KEY, JSON.stringify(all));
+}
+
+/** Number of step responses saved for this company (0-7). */
+export function getCompanyResponseCount(companyId: string): number {
+  return Object.keys(getCompanyResponses(companyId)).length;
+}
+
+/** Returns the ISO timestamp of the most recently saved response across all steps. */
+export function getCompanyLastActivity(companyId: string): string | null {
+  const responses = getCompanyResponses(companyId);
+  const timestamps = Object.values(responses).map((r) => r.submittedAt);
+  if (timestamps.length === 0) return null;
+  return timestamps.sort().at(-1) ?? null;
+}
+
+/** Deletes all saved responses for a company (used when user chooses to redo). */
+export function clearCompanyResponses(companyId: string): void {
+  const all = getAllResponsesMap();
+  delete all[companyId];
+  localStorage.setItem(RESPONSES_KEY, JSON.stringify(all));
 }

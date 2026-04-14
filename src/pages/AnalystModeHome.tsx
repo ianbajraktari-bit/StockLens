@@ -8,9 +8,10 @@ import {
   CheckCircle2,
   Sparkles,
   TrendingUp,
+  Pencil,
 } from 'lucide-react';
-import { allCompanies, type CompanyProfile } from '../data/companies';
-import { getCompletedAnalyses } from '../lib/progression';
+import { allCompanies, WORKFLOW_STEPS, type CompanyProfile } from '../data/companies';
+import { getCompanyResponseCount, getCompletedAnalyses } from '../lib/progression';
 
 const DIFFICULTY_COLORS = {
   intro: 'text-accent-light bg-accent/10 border-accent/20',
@@ -27,9 +28,16 @@ const DIFFICULTY_LABELS = {
 export default function AnalystModeHome() {
   const navigate = useNavigate();
   const completed = getCompletedAnalyses();
+  const inProgressCount = allCompanies.reduce((acc, c) => {
+    if (completed.has(c.id)) return acc;
+    return acc + (getCompanyResponseCount(c.id) > 0 ? 1 : 0);
+  }, 0);
 
   function renderCompanyCard(c: CompanyProfile, index: number) {
     const isComplete = completed.has(c.id);
+    const responseCount = getCompanyResponseCount(c.id);
+    const totalSteps = WORKFLOW_STEPS.length;
+    const inProgress = !isComplete && responseCount > 0;
 
     return (
       <motion.button
@@ -46,11 +54,15 @@ export default function AnalystModeHome() {
             className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0 ${
               isComplete
                 ? 'bg-green/10 border border-green/20'
-                : 'bg-dark-700 border border-border'
+                : inProgress
+                  ? 'bg-warm/10 border border-warm/20'
+                  : 'bg-dark-700 border border-border'
             }`}
           >
             {isComplete ? (
               <CheckCircle2 className="w-6 h-6 text-green" />
+            ) : inProgress ? (
+              <Pencil className="w-5 h-5 text-warm" />
             ) : (
               c.emoji
             )}
@@ -84,6 +96,18 @@ export default function AnalystModeHome() {
               <div className="text-[10px] text-text-muted">
                 {c.dataAsOf}
               </div>
+              {inProgress && (
+                <div className="flex items-center gap-1 text-[10px] text-warm font-semibold">
+                  <Pencil className="w-3 h-3" />
+                  {responseCount}/{totalSteps} saved
+                </div>
+              )}
+              {isComplete && (
+                <div className="flex items-center gap-1 text-[10px] text-green font-semibold">
+                  <CheckCircle2 className="w-3 h-3" />
+                  Analyzed
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -142,12 +166,24 @@ export default function AnalystModeHome() {
           </div>
 
           {/* Completion status */}
-          {completed.size > 0 && (
-            <div className="flex items-center gap-2 text-xs">
-              <TrendingUp className="w-3.5 h-3.5 text-green" />
-              <span className="text-text-secondary">
-                {completed.size} of {allCompanies.length} companies analyzed
-              </span>
+          {(completed.size > 0 || inProgressCount > 0) && (
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
+              {completed.size > 0 && (
+                <div className="flex items-center gap-1.5">
+                  <TrendingUp className="w-3.5 h-3.5 text-green" />
+                  <span className="text-text-secondary">
+                    {completed.size} of {allCompanies.length} analyzed
+                  </span>
+                </div>
+              )}
+              {inProgressCount > 0 && (
+                <div className="flex items-center gap-1.5">
+                  <Pencil className="w-3.5 h-3.5 text-warm" />
+                  <span className="text-text-secondary">
+                    {inProgressCount} in progress
+                  </span>
+                </div>
+              )}
             </div>
           )}
         </motion.div>

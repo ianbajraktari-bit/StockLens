@@ -9,6 +9,10 @@ interface Props {
   companyName: string;
   stepNumber: number;
   totalSteps: number;
+  /** Prefill the textarea with a previously saved response. */
+  savedResponse?: string;
+  /** Called when the user submits. Parent can persist the text to storage. */
+  onSubmit?: (text: string) => void;
   onDone: () => void;
 }
 
@@ -23,18 +27,22 @@ export default function AnalystStepComponent({
   companyName,
   stepNumber,
   totalSteps,
+  savedResponse,
+  onSubmit,
   onDone,
 }: Props) {
-  const [response, setResponse] = useState('');
+  const [response, setResponse] = useState(savedResponse ?? '');
   const [submitted, setSubmitted] = useState(false);
   const [showHints, setShowHints] = useState(false);
 
   const prompt = template.prompt.replace(/{name}/g, companyName);
   const placeholder = template.placeholder.replace(/{name}/g, companyName);
   const canSubmit = response.trim().length >= template.minChars;
+  const hasSavedResponse = (savedResponse ?? '').length > 0;
 
   function handleSubmit() {
     if (!canSubmit) return;
+    onSubmit?.(response.trim());
     setSubmitted(true);
   }
 
@@ -51,6 +59,11 @@ export default function AnalystStepComponent({
             <p className="text-[10px] text-text-muted">Step {stepNumber} of {totalSteps}</p>
           </div>
         </div>
+        {hasSavedResponse && !submitted && (
+          <span className="text-[9px] px-2 py-0.5 rounded-full bg-warm/10 border border-warm/20 text-warm font-semibold uppercase tracking-wide">
+            Saved draft
+          </span>
+        )}
       </div>
 
       {/* Prompt */}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -10,10 +10,20 @@ import {
   Award,
   RefreshCw,
   Home as HomeIcon,
+  History,
+  ChevronDown,
+  ChevronUp,
+  Trash2,
 } from 'lucide-react';
 import { getCompanyById, WORKFLOW_STEPS } from '../data/companies';
 import AnalystStepComponent from '../components/analyst/AnalystStepComponent';
-import { markAnalysisComplete } from '../lib/progression';
+import {
+  clearCompanyResponses,
+  getCompanyResponses,
+  markAnalysisComplete,
+  saveAnalystResponse,
+  type SavedAnalystResponse,
+} from '../lib/progression';
 
 type Phase = 'intro' | 'running' | 'complete';
 
@@ -24,6 +34,24 @@ export default function AnalystSession() {
 
   const [phase, setPhase] = useState<Phase>('intro');
   const [stepIndex, setStepIndex] = useState(0);
+  const [savedResponses, setSavedResponses] = useState<Record<string, SavedAnalystResponse>>(
+    () => (id ? getCompanyResponses(id) : {}),
+  );
+  const [showPastAnswers, setShowPastAnswers] = useState(false);
+
+  const hasPriorWork = Object.keys(savedResponses).length > 0;
+  const priorStepCount = Object.keys(savedResponses).length;
+  const lastActivity = useMemo(() => {
+    const stamps = Object.values(savedResponses).map((r) => r.submittedAt);
+    if (stamps.length === 0) return null;
+    const latest = stamps.sort().at(-1);
+    if (!latest) return null;
+    return new Date(latest).toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  }, [savedResponses]);
 
   if (!company) {
     return (
@@ -48,7 +76,18 @@ export default function AnalystSession() {
 
   function handleStart() {
     setPhase('running');
-    setStepIndex(0);
+    // Resume at first unanswered step if the user has prior work; otherwise start fresh.
+    const firstUnanswered = WORKFLOW_STEPS.findIndex((t) => !savedResponses[t.kind]);
+    setStepIndex(firstUnanswered === -1 ? 0 : firstUnanswered);
+  }
+
+  function handleStepSubmit(text: string) {
+    if (!currentTemplate) return;
+    saveAnalystResponse(company!.id, currentTemplate.kind, text);
+    setSavedResponses((prev) => ({
+      ...prev,
+      [currentTemplate.kind]: { text, submittedAt: new Date().toISOString() },
+    }));
   }
 
   function handleStepDone() {
@@ -61,8 +100,20 @@ export default function AnalystSession() {
   }
 
   function handleRedo() {
+    // Preserve saved responses on redo — the user may want them as drafts to revise.
     setPhase('intro');
     setStepIndex(0);
+  }
+
+  function handleClearResponses() {
+    if (!company) return;
+    const ok = window.confirm(
+      `Clear your saved responses for ${company.name}? This can't be undone.`,
+    );
+    if (!ok) return;
+    clearCompanyResponses(company.id);
+    setSavedResponses({});
+    setShowPastAnswers(false);
   }
 
   return (
@@ -204,13 +255,100 @@ export default function AnalystSession() {
                 </p>
               </div>
 
+              {/* Past answers — only shown if the user has prior saved responses */}
+              {hasPriorWork && (
+                <div className="rounded-xl border border-warm/20 bg-warm/[0.04] p-4 space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <History className="w-3.5 h-3.5 text-warm" />
+                      <h2 className="text-[11px] font-semibold text-warm uppercase tracking-wide">
+                        Your Prior Work
+                      </h2>
+                    </div>
+                    <span className="text-[10px] text-text-muted">
+                      {priorStepCount} of {totalSteps} step{priorStepCount === 1 ? '' : 's'} · last saved {lastActivity}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-text-secondary leading-relaxed">
+                    You've worked on this before. Your previous answers are saved as drafts — you can review them below, edit and resubmit, or keep what you wrote.
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      onClick={() => setShowPastAnswers((s) => !s)}
+                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-dark-800 border border-border hover:border-border-light text-[11px] text-text-primary font-semibold cursor-pointer transition-colors"
+                    >
+                      {showPastAnswers ? (
+                        <>
+                          <ChevronUp className="w-3 h-3" />
+                          Hide past answers
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown className="w-3 h-3" />
+                          Review past answers
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={handleClearResponses}
+                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-dark-800 border border-border hover:border-red/40 text-[11px] text-text-muted hover:text-red font-semibold cursor-pointer transition-colors"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      Start Fresh
+                    </button>
+                  </div>
+                  <AnimatePresence>
+                    {showPastAnswers && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="space-y-2 overflow-hidden"
+                      >
+                        {WORKFLOW_STEPS.map((t, i) => {
+                          const saved = savedResponses[t.kind];
+                          if (!saved) return null;
+                          return (
+                            <div
+                              key={t.kind}
+                              className="rounded-lg border border-border bg-dark-900/60 p-3 space-y-1.5"
+                            >
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-[10px] font-mono text-text-muted">
+                                    {i + 1}.
+                                  </span>
+                                  <span className="text-[11px] font-semibold text-text-primary">
+                                    {t.title}
+                                  </span>
+                                </div>
+                                <span className="text-[9px] text-text-faint">
+                                  {new Date(saved.submittedAt).toLocaleDateString(undefined, {
+                                    month: 'short',
+                                    day: 'numeric',
+                                  })}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-text-secondary leading-relaxed whitespace-pre-wrap">
+                                {saved.text}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+
               <motion.button
                 onClick={handleStart}
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
                 className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-accent hover:bg-accent-light text-white text-sm font-semibold transition-colors cursor-pointer"
               >
-                Start Analysis
+                {hasPriorWork ? (priorStepCount === totalSteps ? 'Review & Revise' : 'Resume Analysis') : 'Start Analysis'}
                 <ArrowRight className="w-4 h-4" />
               </motion.button>
             </motion.div>
@@ -226,11 +364,14 @@ export default function AnalystSession() {
               transition={{ duration: 0.25 }}
             >
               <AnalystStepComponent
+                key={currentTemplate.kind}
                 template={currentTemplate}
                 content={currentContent}
                 companyName={company.name}
                 stepNumber={stepIndex + 1}
                 totalSteps={totalSteps}
+                savedResponse={savedResponses[currentTemplate.kind]?.text}
+                onSubmit={handleStepSubmit}
                 onDone={handleStepDone}
               />
             </motion.div>
