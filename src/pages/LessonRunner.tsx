@@ -15,6 +15,8 @@ import {
   BarChart3,
   Zap,
   ChevronUp,
+  Trophy,
+  Lightbulb,
 } from 'lucide-react';
 import DrillStep from '../components/steps/DrillStep';
 import EstimateStep from '../components/steps/EstimateStep';
