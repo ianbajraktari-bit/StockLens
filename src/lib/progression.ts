@@ -1,5 +1,13 @@
 import { allLessons } from '../data/lessons';
 import type { Skill } from '../data/lessons';
+import { allCompanies } from '../data/companies';
+import {
+  awardAnalystComplete,
+  awardAnalystStep,
+  awardLessonCompletion,
+  type XpAwardResult,
+} from './xp';
+import { evaluateQuests, type EarnedQuest } from './quests';
 
 const COMPLETED_KEY = 'stocklens-completed';
 const SKILLS_KEY = 'stocklens-skills';
@@ -20,8 +28,19 @@ export function getCompletedIds(): Set<string> {
   }
 }
 
-export function markCompleted(id: string, correct?: number, total?: number): void {
+export interface LessonCompletionReward {
+  xp: XpAwardResult | null;
+  quests: EarnedQuest[];
+  firstCompletion: boolean;
+}
+
+export function markCompleted(
+  id: string,
+  correct?: number,
+  total?: number,
+): LessonCompletionReward {
   const ids = getCompletedIds();
+  const firstCompletion = !ids.has(id);
   ids.add(id);
   localStorage.setItem(COMPLETED_KEY, JSON.stringify([...ids]));
 
@@ -35,6 +54,21 @@ export function markCompleted(id: string, correct?: number, total?: number): voi
   if (lesson?.skills) {
     addSkills(lesson.skills);
   }
+
+  // Award XP (scaled by star rating) + evaluate quests. We run quests AFTER
+  // XP so the quest evaluator can see the new skills/completion state.
+  let xp: XpAwardResult | null = null;
+  if (lesson && correct !== undefined && total !== undefined && total > 0) {
+    xp = awardLessonCompletion({
+      lessonTitle: lesson.title,
+      correct,
+      total,
+      firstCompletion,
+    });
+  }
+  const quests = evaluateQuests();
+
+  return { xp, quests, firstCompletion };
 }
 
 export function getNextLessonId(currentId: string): string | null {
@@ -197,12 +231,29 @@ export function getCompletedAnalyses(): Set<string> {
   }
 }
 
-export function markAnalysisComplete(companyId: string): void {
+export interface AnalysisCompletionReward {
+  xp: XpAwardResult | null;
+  quests: EarnedQuest[];
+  firstCompletion: boolean;
+}
+
+export function markAnalysisComplete(companyId: string): AnalysisCompletionReward {
   const ids = getCompletedAnalyses();
+  const firstCompletion = !ids.has(companyId);
   ids.add(companyId);
   localStorage.setItem(ANALYSES_KEY, JSON.stringify([...ids]));
   // Completing an analysis counts as a daily active event for streaks
   updateStreak();
+
+  // XP + quest evaluation. Only awarded on first completion so repeats don't
+  // inflate XP (the user can still re-do an analysis; they just don't farm it).
+  let xp: XpAwardResult | null = null;
+  if (firstCompletion) {
+    const company = allCompanies.find((c) => c.id === companyId);
+    xp = awardAnalystComplete(company?.name ?? 'Company');
+  }
+  const quests = evaluateQuests();
+  return { xp, quests, firstCompletion };
 }
 
 export function updateStreak(): void {
@@ -263,17 +314,27 @@ export function getAnalystResponse(
   return getCompanyResponses(companyId)[stepKind] ?? null;
 }
 
-/** Saves (or overwrites) the user's response for a specific company step. */
+/**
+ * Saves (or overwrites) the user's response for a specific company step.
+ * First-time submissions for a step award XP; overwrites don't (no farming).
+ */
 export function saveAnalystResponse(
   companyId: string,
   stepKind: string,
   text: string,
-): void {
+): XpAwardResult | null {
   const all = getAllResponsesMap();
   const company = { ...(all[companyId] ?? {}) };
+  const wasFirstSubmission = !(stepKind in company);
   company[stepKind] = { text, submittedAt: new Date().toISOString() };
   all[companyId] = company;
   localStorage.setItem(RESPONSES_KEY, JSON.stringify(all));
+
+  if (wasFirstSubmission) {
+    const companyName = allCompanies.find((c) => c.id === companyId)?.name ?? 'Company';
+    return awardAnalystStep(companyName, stepKind);
+  }
+  return null;
 }
 
 /** Number of step responses saved for this company (0-7). */

@@ -648,6 +648,75 @@ If `getReviewPoolSize()` is 0, the home-page card doesn't render, and direct nav
 - Multiple practice sessions per day once the pool is large enough
 - Per-item history view (how many times you've seen X, current box, last miss)
 
+## XP + Levels + Quests — The Progression Spine
+
+Every action in the app — finishing a lesson, submitting an analyst step, completing daily practice — feeds one shared progression ledger. XP is the currency, Level is the headline, Quests are the milestones. This is what pulls lessons, Analyst Mode, and the retention loop into a single motivational arc.
+
+### Files
+
+- `src/lib/xp.ts` — ledger, level curve, titles, award helpers
+- `src/lib/quests.ts` — catalog, evaluation, earned-set persistence
+- Integrations: `src/lib/progression.ts`, `src/lib/review.ts`, `src/pages/HomePage.tsx`, `src/pages/LessonRunner.tsx`, `src/pages/ReviewSession.tsx`, `src/pages/AnalystSession.tsx`
+
+### Level curve
+
+Closed-form quadratic: `XP_required(L) = 25 * L * (L + 1)`. Level L→L+1 costs `50 * (L + 1)` XP, so gaps widen smoothly. Inversion: `L = floor((-1 + sqrt(1 + xp/6.25)) / 2)`. `getLevelInfo(xp)` returns `{ level, title, xpIntoLevel, xpForNextLevel, progressPct, totalXp }` for any XP total.
+
+### Title ladder
+
+8 bands keyed off level: Novice (L0) → Apprentice (L3) → Analyst (L6) → Portfolio Strategist (L10) → Principal (L15) → Senior Portfolio Manager (L22) → Chief Investment Officer (L32) → Market Wizard (L45+).
+
+### XP sources (gated to prevent farming)
+
+- **Lesson completion** — `awardLessonCompletion({ correct, total, firstCompletion })`. First-time award: `50 + 10*correct`; replay: 40% of that ceiling.
+- **Analyst step submission** — `awardAnalystStep()` — 15 XP, first-submission only.
+- **Analyst full completion** — `awardAnalystComplete()` — 100 XP bonus, first completion only.
+- **Daily practice** — `awardDailyPractice(correct, total)` — `20 + 5*correct`, once per day (gated by presence in daily-results map).
+- **Quest unlock** — `awardQuestXp(title, amount)` — the quest's own `xp` value.
+
+All writes go through `awardXp()`, which appends to a ring-buffered event ledger (`stocklens-xp-events`, max 50 entries) and returns `{ awarded, totalXp, leveledUp, currentLevel, levelsGained }` so UI can celebrate level-ups.
+
+### Quest catalog (17 quests)
+
+Categories: `lessons | analyst | habit | skills`. Each quest has a `check: () => { current, target }` — the universal shape lets the evaluator iterate uniformly. Notable quests: `first-light`, `phase-1-complete`, `phase-2-complete`, `deep-diver` (5 company lessons), `completionist` (all lessons), `perfect-mind` (5 3-stars), `flawless` (15 3-stars), `first-analysis`, `analyst` (5 companies), `wall-street-ready` (all companies), `habit-formed` (7-day streak), `disciplined` (30-day streak), `practice-maker` (5 daily practices), `sharpened` (20), `well-rounded` (3 mastered skills), `all-skills`, `grand-slam` (everything).
+
+`evaluateQuests()` is idempotent — it runs after any progress event, compares the newly-completed set against `stocklens-quests-earned`, fires XP for the delta, and persists the new earned set. Safe to call anywhere.
+
+### Integration pattern
+
+Return signatures were widened (not replaced) so existing callers keep working:
+
+- `markCompleted(id, score)` → `LessonCompletionReward { xp, quests, firstCompletion }`
+- `markAnalysisComplete(id)` → `AnalysisCompletionReward { xp, quests, firstCompletion }`
+- `saveAnalystResponse(...)` → `XpAwardResult | null` (first-submission only)
+- `saveDailyPracticeResult(correct, total)` → `DailyPracticeReward { result, xp, quests, firstCompletionToday }`
+
+Completion screens (`LessonRunner`, `ReviewSession`, `AnalystSession`) capture these rewards and render three reward blocks:
+
+1. **XP earned** — accent-gradient card with Zap icon and `+X XP`
+2. **Level up** — warm-gradient callout with animated chevron and new title
+3. **Quest unlocked** — one card per newly-earned quest, with icon, title, description, and XP chip
+
+### Home-page surface
+
+- Level badge in header ring (shows current level number instead of completion %)
+- Prominent level + XP card: title, total XP, progress bar to next level, quest count
+- Quests panel: 17 tiles in three states
+  - **Earned**: warm fill + trophy icon + XP chip
+  - **In progress**: accent border + current/target progress bar
+  - **Locked**: muted + Lock icon
+
+### Circular import note
+
+`progression.ts` and `quests.ts` cross-import each other. This is safe because all cross-module references happen inside function bodies (not during module initialization). Keep it that way — do not hoist imported identifiers into module-level constants in either file.
+
+### Future
+
+- Daily XP budget / anti-grind cap if replay XP becomes abusable
+- Quest progress toasts (notify mid-lesson when a quest ticks toward target)
+- Seasonal / rotating quest pool layered on top of the permanent catalog
+- Leaderboard (requires backend — out of scope while we remain localStorage-only)
+
 ## Product Roadmap
 
 StockLens is evolving from a content engine into a complete "teaching machine" — beginner → intelligent investor. Tracked priorities:
@@ -674,8 +743,8 @@ StockLens is evolving from a content engine into a complete "teaching machine" �
 - [ ] **Recession/downturn playbook** — how to think about portfolio decisions during drawdowns
 
 ### Tier 4 — Engagement layer
-- [ ] **XP + levels** — cumulative XP from all lessons and analyses, level titles ("Apprentice Investor" → "Analyst" → "Portfolio Manager")
-- [ ] **Quests / milestone badges** — "Complete all Foundations Phase 1", "Analyze 5 companies", "30-day streak"
+- [x] **XP + levels** — cumulative XP ledger (`src/lib/xp.ts`) with closed-form level curve `25·L·(L+1)`, 8-band title ladder (Novice → Market Wizard), award helpers for lessons/analyst/practice/quests, and level-up celebrations on every completion screen
+- [x] **Quests / milestone badges** — 17-quest catalog (`src/lib/quests.ts`) across lessons / analyst / habit / skills categories, idempotent evaluation, home-page panel with earned/in-progress/locked states, reward cards on completion screens
 - [ ] **Diagnostic onboarding** — 5-question placement quiz to suggest a starting point
 - [ ] **Learning path narrative** — explicitly recommended order with contextual "why this next"
 

@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Calendar,
+  ChevronUp,
   Flame,
   Home,
   Lightbulb,
@@ -13,6 +14,7 @@ import {
   Star,
   Target,
   Trophy,
+  Zap,
 } from 'lucide-react';
 import DrillStep from '../components/steps/DrillStep';
 import EstimateStep from '../components/steps/EstimateStep';
@@ -32,6 +34,8 @@ import {
   type PriorityReason,
 } from '../lib/spacedRepetition';
 import { getStreak } from '../lib/progression';
+import { titleForLevel } from '../lib/xp';
+import { type Quest } from '../lib/quests';
 
 type Phase = 'intro' | 'running' | 'complete';
 
@@ -53,6 +57,9 @@ export default function ReviewSession() {
   );
   const [maxTotal, setMaxTotal] = useState(existingResult?.total ?? 0);
   const [streakAfter, setStreakAfter] = useState<number | null>(null);
+  const [xpAwarded, setXpAwarded] = useState(0);
+  const [leveledUpTo, setLeveledUpTo] = useState<number | null>(null);
+  const [newQuests, setNewQuests] = useState<Quest[]>([]);
 
   const total = items.length;
   const current = items[stepIndex];
@@ -73,9 +80,15 @@ export default function ReviewSession() {
     if (stepIndex < total - 1) {
       setStepIndex((i) => i + 1);
     } else {
-      // Persist + update streak (happens inside saveDailyPracticeResult).
-      saveDailyPracticeResult(newCorrect, newMax);
+      // Persist + update streak + award XP + evaluate quests (happens inside
+      // saveDailyPracticeResult — returns the full reward envelope).
+      const reward = saveDailyPracticeResult(newCorrect, newMax);
       setStreakAfter(getStreak().current);
+      setXpAwarded(reward.xp?.awarded ?? 0);
+      if (reward.xp?.leveledUp) {
+        setLeveledUpTo(reward.xp.currentLevel);
+      }
+      setNewQuests(reward.quests.map((q) => q.quest));
       setPhase('complete');
     }
   }
@@ -389,6 +402,106 @@ export default function ReviewSession() {
               <p className="text-xs text-text-secondary">{message}</p>
             </div>
           </div>
+
+          {/* XP + level-up + quest unlock blocks (same shape as LessonRunner) */}
+          {xpAwarded > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 12, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ type: 'spring', stiffness: 220, damping: 16, delay: 0.4 }}
+              className="rounded-xl border border-accent/30 bg-gradient-to-r from-accent/[0.12] to-accent/[0.04] p-4 flex items-center gap-3"
+            >
+              <div className="w-11 h-11 rounded-xl bg-accent/20 border border-accent/40 flex items-center justify-center shrink-0 shadow-[0_0_14px_rgba(99,102,241,0.25)]">
+                <Zap className="w-5 h-5 text-accent-light" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-lg font-bold text-accent-light tabular-nums">
+                    +{xpAwarded} XP
+                  </span>
+                  <span className="text-[11px] text-text-muted">Daily practice reward</span>
+                </div>
+                <p className="text-[11px] text-text-secondary mt-0.5">
+                  20 base + 5 per correct — consistency compounds.
+                </p>
+              </div>
+            </motion.div>
+          )}
+
+          {leveledUpTo != null && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: 'spring', stiffness: 220, damping: 14, delay: 0.5 }}
+              className="relative rounded-xl border border-warm/40 bg-gradient-to-br from-warm/[0.2] via-warm/[0.06] to-transparent p-4 overflow-hidden"
+            >
+              <div className="absolute -top-10 -right-8 w-32 h-32 bg-warm/15 rounded-full blur-3xl pointer-events-none" />
+              <div className="relative flex items-center gap-3">
+                <motion.div
+                  animate={{ y: [0, -4, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                  className="w-12 h-12 rounded-xl bg-warm/25 border border-warm/50 flex items-center justify-center shrink-0 shadow-[0_0_18px_rgba(245,158,11,0.4)]"
+                >
+                  <ChevronUp className="w-6 h-6 text-warm" strokeWidth={3} />
+                </motion.div>
+                <div className="flex-1 min-w-0">
+                  <span className="text-xs font-bold uppercase tracking-[0.2em] text-warm">
+                    Level up!
+                  </span>
+                  <p className="text-sm font-bold text-text-primary mt-0.5">
+                    You are now a {titleForLevel(leveledUpTo)} (Lv {leveledUpTo})
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {newQuests.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: 0.55 }}
+              className="space-y-2"
+            >
+              {newQuests.map((quest, i) => {
+                const QuestIcon = quest.icon;
+                return (
+                  <motion.div
+                    key={quest.id}
+                    initial={{ opacity: 0, scale: 0.95, x: -10 }}
+                    animate={{ opacity: 1, scale: 1, x: 0 }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 250,
+                      damping: 18,
+                      delay: 0.6 + i * 0.1,
+                    }}
+                    className="rounded-xl border border-warm/40 bg-gradient-to-r from-warm/[0.14] to-warm/[0.04] p-4 flex items-center gap-3 shadow-[0_0_14px_rgba(245,158,11,0.1)]"
+                  >
+                    <div className="w-11 h-11 rounded-xl bg-warm/20 border border-warm/40 flex items-center justify-center shrink-0">
+                      <QuestIcon className="w-5 h-5 text-warm" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-warm">
+                          Quest unlocked
+                        </span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-warm/15 text-warm font-semibold tabular-nums">
+                          +{quest.xp} XP
+                        </span>
+                      </div>
+                      <p className="text-sm font-bold text-text-primary mt-0.5">
+                        {quest.title}
+                      </p>
+                      <p className="text-xs text-text-secondary mt-0.5">
+                        {quest.description}
+                      </p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          )}
 
           {/* Streak callout */}
           {displayedStreak > 0 && (

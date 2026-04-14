@@ -9,6 +9,12 @@ import {
   type ItemPriority,
   type PriorityReason,
 } from './spacedRepetition';
+import { awardDailyPractice, type XpAwardResult } from './xp';
+import {
+  evaluateQuests,
+  incrementDailyPracticeCount,
+  type EarnedQuest,
+} from './quests';
 
 const DAILY_PRACTICE_KEY = 'stocklens-daily-practice';
 
@@ -187,10 +193,23 @@ export function getTodayResult(): DailyPracticeResult | null {
   return results[getTodayDate()] ?? null;
 }
 
-/** Persist today's daily practice result. Overwrites any existing entry. */
-export function saveDailyPracticeResult(correct: number, total: number): DailyPracticeResult {
+export interface DailyPracticeReward {
+  result: DailyPracticeResult;
+  xp: XpAwardResult | null;
+  quests: EarnedQuest[];
+  /** True if this was the user's first completion of daily practice today. */
+  firstCompletionToday: boolean;
+}
+
+/**
+ * Persist today's daily practice result. Overwrites any existing entry.
+ * Awards XP + evaluates quests only on the first completion per day so
+ * users can retry freely without farming XP.
+ */
+export function saveDailyPracticeResult(correct: number, total: number): DailyPracticeReward {
   const results = getResultsMap();
   const today = getTodayDate();
+  const firstCompletionToday = !(today in results);
   const result: DailyPracticeResult = {
     date: today,
     correct,
@@ -201,7 +220,14 @@ export function saveDailyPracticeResult(correct: number, total: number): DailyPr
   localStorage.setItem(DAILY_PRACTICE_KEY, JSON.stringify(results));
   // Completing daily practice counts as a daily active event for streaks
   updateStreak();
-  return result;
+
+  let xp: XpAwardResult | null = null;
+  if (firstCompletionToday) {
+    incrementDailyPracticeCount();
+    xp = awardDailyPractice(correct, total);
+  }
+  const quests = evaluateQuests();
+  return { result, xp, quests, firstCompletionToday };
 }
 
 /** True if the user has completed daily practice today. */
