@@ -5,7 +5,7 @@
 - **Primary branch:** `main` — always pull/sync from `origin/main` before starting work
 - **Repository:** `ianbajraktari-bit/StockLens` on GitHub
 - **Production deployment:** Vercel (auto-deploys from `main`)
-- **Lesson count:** 35 lessons (25 foundations + 10 company deep dives) + Analyst Mode (16 seeded companies across every major sector)
+- **Lesson count:** 38 lessons (28 foundations + 10 company deep dives) + Analyst Mode (16 seeded companies across every major sector)
 - **Architecture:** Step-based (`steps: LessonStep[]` with `kind: 'drill' | 'estimate' | 'decide' | 'tap' | 'thinking'`)
 
 > **IMPORTANT:** Before making changes, run `git fetch origin main` and verify your local `main` matches remote. The codebase uses the step-based architecture (NOT the old `questions: QuizQuestion[]` format). If you see `QuizQuestion` anywhere, you are on a stale branch.
@@ -668,9 +668,9 @@ StockLens is evolving from a content engine into a complete "teaching machine" �
 ### Tier 3 — Critical curriculum gaps
 - [x] Index Funds & ETFs (foundations-index-funds)
 - [x] Reading a 10-K (foundations-ten-k)
-- [ ] **Options basics** — what calls/puts are, how they're used for income and hedging (literacy, not trading)
-- [ ] **Bonds and fixed income** — yield, duration, credit risk, role in portfolios
-- [ ] **Taxes for investors** — short vs. long-term capital gains, tax-advantaged accounts, tax-loss harvesting
+- [x] **Options basics** — calls, puts, hedging cost, covered-call tradeoffs, tools-vs-gambling framework (foundations-options)
+- [x] **Bonds and fixed income** — coupon/principal/maturity, duration, credit risk, role in portfolio (foundations-bonds)
+- [x] **Taxes for investors** — short vs. long-term gains, account hierarchy, tax-loss harvesting, tax drag compounding (foundations-taxes)
 - [ ] **Recession/downturn playbook** — how to think about portfolio decisions during drawdowns
 
 ### Tier 4 — Engagement layer

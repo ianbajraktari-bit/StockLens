@@ -24,6 +24,9 @@ export { foundationsMacroLesson } from './foundations-macro';
 export { foundationsHistoryLesson } from './foundations-history';
 export { foundationsSectorsLesson } from './foundations-sectors';
 export { foundationsStatementsLesson } from './foundations-statements';
+export { foundationsOptionsLesson } from './foundations-options';
+export { foundationsBondsLesson } from './foundations-bonds';
+export { foundationsTaxesLesson } from './foundations-taxes';
 export { appleLesson } from './apple';
 export { nvidiaLesson } from './nvidia';
 export { costcoLesson } from './costco';
@@ -60,6 +63,9 @@ import { foundationsMacroLesson } from './foundations-macro';
 import { foundationsHistoryLesson } from './foundations-history';
 import { foundationsSectorsLesson } from './foundations-sectors';
 import { foundationsStatementsLesson } from './foundations-statements';
+import { foundationsOptionsLesson } from './foundations-options';
+import { foundationsBondsLesson } from './foundations-bonds';
+import { foundationsTaxesLesson } from './foundations-taxes';
 import { appleLesson } from './apple';
 import { nvidiaLesson } from './nvidia';
 import { costcoLesson } from './costco';
@@ -101,6 +107,9 @@ export const allLessons: Lesson[] = [
   foundationsHistoryLesson,        // bubbles, crashes, recovery patterns, panic selling
   foundationsSectorsLesson,        // industry analysis, cyclical vs defensive, sector drivers
   foundationsStatementsLesson,     // reading real financial statements line by line
+  foundationsOptionsLesson,        // calls, puts, hedging, covered calls, when options are gambling
+  foundationsBondsLesson,          // bond mechanics, duration, credit risk, role in portfolio
+  foundationsTaxesLesson,          // short vs long-term gains, account types, tax-loss harvesting
 
   // Company Deep Dives
   appleLesson,
