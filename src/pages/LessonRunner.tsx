@@ -15,9 +15,12 @@ import {
   BarChart3,
   Zap,
   ChevronUp,
+  ChevronDown,
+  Calendar,
   Trophy,
   Lightbulb,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import DrillStep from '../components/steps/DrillStep';
 import EstimateStep from '../components/steps/EstimateStep';
 import TapStep from '../components/steps/TapStep';
@@ -66,6 +69,9 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
   const [stepIndex, setStepIndex] = useState(0);
   const [correctTotal, setCorrectTotal] = useState(0);
   const [maxTotal, setMaxTotal] = useState(0);
+  // Collapsible key facts — default collapsed for company deep dives so advanced
+  // lessons don't dump a wall of data before the user starts thinking.
+  const [factsOpen, setFactsOpen] = useState(false);
   const [snapshot, setSnapshot] = useState<CompletionSnapshot | null>(null);
 
   const steps = lesson.steps ?? [];
@@ -155,111 +161,216 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
   // Intro screen
   // ─────────────────────────────────────────────────────────────────────
   if (phase === 'intro') {
-    return (
-      <div className="min-h-screen bg-dark-950">
-        <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="space-y-6"
-          >
-            <button
-              onClick={onBack}
-              className="flex items-center gap-1.5 text-sm text-text-muted hover:text-text-secondary transition-colors cursor-pointer"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              All Lessons
-            </button>
+    const isCompany = lesson.tier === 'company';
+    const hasFacts = lesson.keyFacts.length > 0;
+    const tierLabel = isCompany
+      ? 'Company Deep Dive'
+      : lesson.tier === 'foundations-2'
+        ? 'Investing Concepts'
+        : 'Foundations';
 
-            {/* Lesson header */}
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center text-2xl shrink-0">
+    return (
+      <div className="min-h-screen bg-dark-950 relative overflow-hidden">
+        {/* Ambient scene glow */}
+        <div className="fixed inset-0 pointer-events-none">
+          <div
+            className={`absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[360px] rounded-full blur-[120px] ${
+              isCompany ? 'bg-warm/[0.04]' : 'bg-accent/[0.04]'
+            }`}
+          />
+        </div>
+
+        <div className="relative max-w-2xl mx-auto px-4 py-6 space-y-6">
+          <motion.button
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            onClick={onBack}
+            className="flex items-center gap-1.5 text-xs text-text-muted hover:text-text-secondary transition-colors cursor-pointer"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            All Lessons
+          </motion.button>
+
+          {/* Hero — emoji + title + subtitle in a unified block */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
+            className="space-y-4"
+          >
+            <div className="flex items-start gap-4">
+              <div
+                className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shrink-0 border ${
+                  isCompany
+                    ? 'bg-gradient-to-br from-warm/20 to-warm/[0.04] border-warm/30 shadow-[0_0_20px_rgba(245,158,11,0.12)]'
+                    : 'bg-gradient-to-br from-accent/20 to-accent/[0.04] border-accent/30 shadow-[0_0_20px_rgba(99,102,241,0.12)]'
+                }`}
+              >
                 {lesson.emoji}
               </div>
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                    lesson.tier === 'company'
-                      ? 'bg-warm/10 text-warm-light border border-warm/20'
-                      : 'bg-accent/10 text-accent-light border border-accent/20'
-                  }`}>
-                    {lesson.tier === 'company' ? 'Company Deep Dive' : 'Foundations'}
+              <div className="flex-1 min-w-0 pt-0.5">
+                <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                  <span
+                    className={`text-[10px] font-bold uppercase tracking-[0.12em] px-2 py-0.5 rounded-full ${
+                      isCompany
+                        ? 'bg-warm/10 text-warm border border-warm/25'
+                        : 'bg-accent/10 text-accent-light border border-accent/25'
+                    }`}
+                  >
+                    {tierLabel}
                   </span>
                 </div>
-                <h1 className="text-xl font-bold text-text-primary">{lesson.title}</h1>
-                <p className="text-sm text-text-secondary mt-0.5">{lesson.subtitle}</p>
+                <h1 className="text-[22px] font-bold text-text-primary leading-tight tracking-tight">
+                  {lesson.title}
+                </h1>
+                <p className="text-sm text-text-secondary mt-1 leading-snug">
+                  {lesson.subtitle}
+                </p>
               </div>
             </div>
 
-            {/* Main card */}
-            <div className="rounded-2xl border border-border bg-dark-800/60 overflow-hidden">
-              {/* Description */}
-              <div className="p-5">
-                <p className="text-sm text-text-secondary leading-relaxed">{lesson.description}</p>
-              </div>
-
-              {/* Key facts — company lessons only */}
-              {lesson.keyFacts.length > 0 && (
-                <div className="border-t border-border px-5 py-4">
-                  <p className="text-[10px] text-text-muted font-semibold uppercase tracking-wider mb-3">
-                    Key facts
-                    <span className="ml-1.5 font-normal normal-case tracking-normal text-text-faint">
-                      ({lesson.dataAsOf})
-                    </span>
-                  </p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {lesson.keyFacts.map((fact, i) => (
-                      <div key={i} className="rounded-lg bg-dark-900/50 border border-border p-3">
-                        <p className="text-[10px] text-text-muted">{fact.label}</p>
-                        <p className="text-sm font-bold text-text-primary mt-0.5">{fact.value}</p>
-                        <p className="text-[10px] text-text-muted mt-1 leading-relaxed">
-                          {fact.detail}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+            {/* Meta chip row */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <MetaChip icon={BookOpen} value={`${total} steps`} />
+              <MetaChip icon={Clock} value={`~${lesson.estimatedMinutes} min`} />
+              {lesson.dataAsOf && (
+                <MetaChip icon={Calendar} value={lesson.dataAsOf} />
               )}
+            </div>
+          </motion.div>
 
-              {/* Topics */}
-              <div className="border-t border-border px-5 py-4 space-y-2.5">
+          {/* Description — clean prose, no heavy card */}
+          <motion.p
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+            className="text-sm text-text-secondary leading-relaxed"
+          >
+            {lesson.description}
+          </motion.p>
+
+          {/* Topics — inline chips, scannable */}
+          {lesson.topics.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1], delay: 0.14 }}
+              className="space-y-2"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-text-muted">
+                What you&apos;ll touch
+              </p>
+              <div className="flex items-center gap-1.5 flex-wrap">
                 {lesson.topics.map((topic, i) => {
                   const Icon = topic.icon;
                   return (
-                    <div key={i} className="flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-lg bg-dark-700 border border-border flex items-center justify-center shrink-0">
-                        <Icon className="w-3 h-3 text-accent-light" />
-                      </div>
-                      <span className="text-xs text-text-primary">{topic.label}</span>
+                    <div
+                      key={i}
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-dark-800/60 border border-border"
+                    >
+                      <Icon className="w-3 h-3 text-accent-light" />
+                      <span className="text-[11px] text-text-primary font-medium">
+                        {topic.label}
+                      </span>
                     </div>
                   );
                 })}
               </div>
+            </motion.div>
+          )}
 
-              {/* Meta */}
-              <div className="border-t border-border px-5 py-3 flex items-center gap-4 text-[10px] text-text-muted">
-                <span className="flex items-center gap-1">
-                  <BookOpen className="w-3 h-3" />
-                  {total} steps
-                </span>
-                <span className="flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
-                  ~{lesson.estimatedMinutes} min
-                </span>
-              </div>
-            </div>
-
-            <motion.button
-              onClick={() => setPhase('running')}
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full py-3 rounded-xl bg-accent hover:bg-accent-light text-white font-semibold text-sm transition-colors cursor-pointer flex items-center justify-center gap-2"
+          {/* Key facts — collapsible disclosure (company/advanced lessons) */}
+          {hasFacts && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1], delay: 0.18 }}
             >
-              Start Lesson
-              <ArrowRight className="w-4 h-4" />
-            </motion.button>
-          </motion.div>
+              <button
+                onClick={() => setFactsOpen((v) => !v)}
+                aria-expanded={factsOpen}
+                aria-controls="key-facts-panel"
+                className="group w-full flex items-center gap-3 rounded-xl border border-border bg-dark-800/50 hover:bg-dark-800 hover:border-border-light transition-all px-4 py-3 cursor-pointer text-left"
+              >
+                <div className="w-8 h-8 rounded-lg bg-dark-700 border border-border flex items-center justify-center shrink-0">
+                  <BarChart3 className="w-3.5 h-3.5 text-accent-light" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-text-primary">
+                    Key facts
+                  </p>
+                  <p className="text-[10px] text-text-muted mt-0.5">
+                    {lesson.keyFacts.length} data points
+                    {lesson.dataAsOf && ` · ${lesson.dataAsOf}`}
+                    {' · '}
+                    {factsOpen ? 'tap to collapse' : 'tap to reveal'}
+                  </p>
+                </div>
+                <motion.div
+                  animate={{ rotate: factsOpen ? 180 : 0 }}
+                  transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                  className="shrink-0 text-text-muted group-hover:text-text-secondary"
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </motion.div>
+              </button>
+              <AnimatePresence initial={false}>
+                {factsOpen && (
+                  <motion.div
+                    id="key-facts-panel"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                    className="overflow-hidden"
+                  >
+                    <div className="grid grid-cols-2 gap-2 pt-2">
+                      {lesson.keyFacts.map((fact, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, y: 4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{
+                            duration: 0.25,
+                            ease: [0.22, 1, 0.36, 1],
+                            delay: Math.min(i, 6) * 0.03,
+                          }}
+                          className="rounded-lg bg-dark-900/60 border border-border p-3"
+                        >
+                          <p className="text-[10px] text-text-muted">{fact.label}</p>
+                          <p className="text-sm font-bold text-text-primary mt-0.5 tabular-nums">
+                            {fact.value}
+                          </p>
+                          <p className="text-[10px] text-text-muted mt-1 leading-relaxed">
+                            {fact.detail}
+                          </p>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          )}
+
+          {/* Start CTA */}
+          <motion.button
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0.22 }}
+            onClick={() => setPhase('running')}
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.98 }}
+            className={`w-full py-3.5 rounded-xl font-semibold text-sm transition-colors cursor-pointer flex items-center justify-center gap-2 text-white ${
+              isCompany
+                ? 'bg-warm hover:brightness-110 shadow-[0_0_24px_rgba(245,158,11,0.25)]'
+                : 'bg-accent hover:bg-accent-light shadow-[0_0_24px_rgba(99,102,241,0.2)]'
+            }`}
+          >
+            Start Lesson
+            <ArrowRight className="w-4 h-4" />
+          </motion.button>
         </div>
       </div>
     );
@@ -888,6 +999,21 @@ function Confetti() {
           className="absolute top-0 block"
         />
       ))}
+    </div>
+  );
+}
+
+function MetaChip({
+  icon: Icon,
+  value,
+}: {
+  icon: LucideIcon;
+  value: string;
+}) {
+  return (
+    <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-dark-800/70 border border-border text-[10px] text-text-secondary">
+      <Icon className="w-3 h-3 text-text-muted" />
+      <span className="font-medium">{value}</span>
     </div>
   );
 }
