@@ -5,7 +5,7 @@
 - **Primary branch:** `main` — always pull/sync from `origin/main` before starting work
 - **Repository:** `ianbajraktari-bit/StockLens` on GitHub
 - **Production deployment:** Vercel (auto-deploys from `main`)
-- **Lesson count:** 35 lessons (25 foundations + 10 company deep dives) + Analyst Mode (10 seeded companies)
+- **Lesson count:** 35 lessons (25 foundations + 10 company deep dives) + Analyst Mode (16 seeded companies across every major sector)
 - **Architecture:** Step-based (`steps: LessonStep[]` with `kind: 'drill' | 'estimate' | 'decide' | 'tap' | 'thinking'`)
 
 > **IMPORTANT:** Before making changes, run `git fetch origin main` and verify your local `main` matches remote. The codebase uses the step-based architecture (NOT the old `questions: QuizQuestion[]` format). If you see `QuizQuestion` anywhere, you are on a stale branch.
@@ -534,14 +534,20 @@ src/
 │       ├── index.ts              # allCompanies, getCompanyById, barrel exports
 │       ├── visa.ts               # Visa (V) — network effect moat
 │       ├── starbucks.ts          # Starbucks (SBUX) — brand + saturation
+│       ├── cocacola.ts           # Coca-Cola (KO) — consumer staples dividend compounder
 │       ├── walmart.ts            # Walmart (WMT) — scale + retail re-rating
 │       ├── homedepot.ts          # Home Depot (HD) — housing cycle + duopoly
 │       ├── chipotle.ts           # Chipotle (CMG) — restaurant unit economics
+│       ├── jpmorgan.ts           # JPMorgan Chase (JPM) — banking, cyclical, TBTF
+│       ├── unitedhealth.ts       # UnitedHealth (UNH) — insurance + Optum vertical integration
+│       ├── exxon.ts              # ExxonMobil (XOM) — integrated oil & gas, capital discipline
 │       ├── adobe.ts              # Adobe (ADBE) — SaaS moat + AI risk
 │       ├── salesforce.ts         # Salesforce (CRM) — enterprise SaaS + growth deceleration
 │       ├── shopify.ts            # Shopify (SHOP) — e-com platform + GMV sensitivity
 │       ├── disney.ts             # Disney (DIS) — sum-of-parts, streaming transition
-│       └── spotify.ts            # Spotify (SPOT) — label leverage, structural margin cap
+│       ├── spotify.ts            # Spotify (SPOT) — label leverage, structural margin cap
+│       ├── lilly.ts              # Eli Lilly (LLY) — pharma hypergrowth, GLP-1 bet
+│       └── tsmc.ts               # TSMC (TSM) — semis monopoly, Taiwan geopolitical risk
 ├── pages/
 │   ├── AnalystModeHome.tsx       # Company picker (lists all seeded companies)
 │   └── AnalystSession.tsx        # Workflow runner: intro → 7 steps → complete
@@ -608,7 +614,7 @@ StockLens is evolving from a content engine into a complete "teaching machine" �
 - [x] **Analyst Mode v1** — 7-step workflow, 4 seeded companies (Visa, Starbucks, Adobe, Disney)
 - [x] **Analyst Mode v2** — expanded to 10 companies (added: Walmart, Home Depot, Chipotle, Salesforce, Shopify, Spotify)
 - [x] **Analyst Mode v3** — save user responses to localStorage, review-past-answers card on intro, resume at first unanswered step, in-progress state on picker
-- [ ] **Analyst Mode v4** — expand to 15-20 companies (add a financial/bank, a pharma, a semi outside NVDA, an energy co.)
+- [x] **Analyst Mode v4** — expanded to 16 companies across every major sector (added: JPMorgan, UnitedHealth, Eli Lilly, TSMC, ExxonMobil, Coca-Cola). Now covers banking, healthcare, pharma, semis, energy, staples, retail, SaaS, e-commerce, restaurants, and media.
 - [ ] **Analyst Mode v5** — track response revisions over time (first-pass vs. current diff view); export a company analysis as a shareable card
 
 ### Tier 2 — Retention (not started)
