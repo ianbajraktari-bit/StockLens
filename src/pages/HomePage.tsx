@@ -17,12 +17,14 @@ import {
   GraduationCap,
 } from 'lucide-react';
 import { allLessons, type Lesson } from '../data/lessons';
+import { allCompanies } from '../data/companies';
 import {
   getCompletedIds,
   getFirstUncompletedId,
   getSkillsProgress,
   getLessonStars,
   getStreak,
+  getCompletedAnalyses,
 } from '../lib/progression';
 
 const foundationsPhase1 = allLessons.filter((l) => l.tier === 'foundations-1');
@@ -47,6 +49,7 @@ export default function HomePage() {
   const completedCount = completedIds.size;
   const totalCount = allLessons.length;
   const progressPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+  const analysesCompleted = getCompletedAnalyses();
 
   // Per-section completion counts
   const phase1Completed = foundationsPhase1.filter(l => completedIds.has(l.id)).length;
@@ -332,6 +335,44 @@ export default function HomePage() {
             </button>
           </motion.div>
         )}
+
+        {/* Analyst Mode — the capstone feature */}
+        <motion.button
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.08 }}
+          onClick={() => navigate('/analyst')}
+          className="group w-full text-left rounded-xl border border-warm/30 bg-gradient-to-br from-warm/[0.08] to-accent/[0.04] hover:from-warm/[0.12] hover:to-accent/[0.07] transition-all cursor-pointer overflow-hidden relative"
+        >
+          <div className="p-4 space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="w-11 h-11 rounded-xl bg-warm/15 border border-warm/30 flex items-center justify-center shrink-0">
+                <Target className="w-5 h-5 text-warm" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-sm font-semibold text-text-primary">
+                    Analyst Mode
+                  </h3>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-warm/20 text-warm font-bold uppercase tracking-wide">
+                    New
+                  </span>
+                </div>
+                <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">
+                  The capstone — pick a company and walk through a 7-step analysis workflow. Business, drivers, moat, risks, valuation, thesis, verdict.
+                </p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-text-muted group-hover:text-warm group-hover:translate-x-0.5 transition-all shrink-0" />
+            </div>
+            <div className="flex items-center gap-3 text-[10px] text-text-muted pl-14">
+              <span>{allCompanies.length} companies</span>
+              <span>•</span>
+              <span>{analysesCompleted.size} analyzed</span>
+              <span>•</span>
+              <span>~10-14 min each</span>
+            </div>
+          </div>
+        </motion.button>
 
         {/* Foundations Phase 1 — Core Financial Vocabulary */}
         <section className="space-y-3">

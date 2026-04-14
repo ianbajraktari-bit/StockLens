@@ -18,6 +18,8 @@ export { foundationsDividendsLesson } from './foundations-dividends';
 export { foundationsPortfolioLesson } from './foundations-portfolio';
 export { foundationsEarningsLesson } from './foundations-earnings';
 export { foundationsSellingLesson } from './foundations-selling';
+export { foundationsIndexFundsLesson } from './foundations-index-funds';
+export { foundationsTenKLesson } from './foundations-ten-k';
 export { foundationsMacroLesson } from './foundations-macro';
 export { foundationsHistoryLesson } from './foundations-history';
 export { foundationsSectorsLesson } from './foundations-sectors';
@@ -52,6 +54,8 @@ import { foundationsDividendsLesson } from './foundations-dividends';
 import { foundationsPortfolioLesson } from './foundations-portfolio';
 import { foundationsEarningsLesson } from './foundations-earnings';
 import { foundationsSellingLesson } from './foundations-selling';
+import { foundationsIndexFundsLesson } from './foundations-index-funds';
+import { foundationsTenKLesson } from './foundations-ten-k';
 import { foundationsMacroLesson } from './foundations-macro';
 import { foundationsHistoryLesson } from './foundations-history';
 import { foundationsSectorsLesson } from './foundations-sectors';
@@ -91,6 +95,8 @@ export const allLessons: Lesson[] = [
   foundationsPortfolioLesson,      // position sizing, real diversification, starting point
   foundationsEarningsLesson,       // reading earnings reports, 5 key numbers, management tone
   foundationsSellingLesson,        // when to sell, thesis-broken framework, disposition effect
+  foundationsIndexFundsLesson,     // index funds, ETFs, why most active managers lose, core+satellite
+  foundationsTenKLesson,           // reading a 10-K filing: structure, sections, MD&A, risk factors
   foundationsMacroLesson,          // interest rates, inflation, Fed policy, macro forces
   foundationsHistoryLesson,        // bubbles, crashes, recovery patterns, panic selling
   foundationsSectorsLesson,        // industry analysis, cyclical vs defensive, sector drivers

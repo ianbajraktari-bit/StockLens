@@ -5,6 +5,7 @@ const COMPLETED_KEY = 'stocklens-completed';
 const SKILLS_KEY = 'stocklens-skills';
 const SCORES_KEY = 'stocklens-scores';
 const STREAK_KEY = 'stocklens-streak';
+const ANALYSES_KEY = 'stocklens-analyses-completed';
 
 // --- Completion ---
 
@@ -177,6 +178,30 @@ export function getStreak(): StreakData {
   } catch {
     return { current: 0, lastActiveDate: '' };
   }
+}
+
+// --- Analyst Mode completion tracking ---
+
+/**
+ * Returns the set of company IDs the user has completed an analysis on.
+ * A "completed" analysis means they walked through all 7 workflow steps.
+ */
+export function getCompletedAnalyses(): Set<string> {
+  try {
+    const raw = localStorage.getItem(ANALYSES_KEY);
+    if (!raw) return new Set();
+    return new Set(JSON.parse(raw));
+  } catch {
+    return new Set();
+  }
+}
+
+export function markAnalysisComplete(companyId: string): void {
+  const ids = getCompletedAnalyses();
+  ids.add(companyId);
+  localStorage.setItem(ANALYSES_KEY, JSON.stringify([...ids]));
+  // Completing an analysis counts as a daily active event for streaks
+  updateStreak();
 }
 
 export function updateStreak(): void {
