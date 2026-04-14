@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import LessonRunner from './pages/LessonRunner';
 import AnalystModeHome from './pages/AnalystModeHome';
 import AnalystSession from './pages/AnalystSession';
+import ReviewSession from './pages/ReviewSession';
 import { getLessonById } from './data/lessons';
 import { markCompleted, updateStreak } from './lib/progression';
 
@@ -59,6 +60,7 @@ export default function App() {
         <Route path="/lesson/:id" element={<LessonRoute />} />
         <Route path="/analyst" element={<AnalystModeHome />} />
         <Route path="/analyst/:id" element={<AnalystSession />} />
+        <Route path="/review/daily" element={<ReviewSession />} />
       </Routes>
     </ErrorBoundary>
   );

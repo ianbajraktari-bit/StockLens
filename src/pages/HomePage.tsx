@@ -15,6 +15,7 @@ import {
   Star,
   Flame,
   GraduationCap,
+  Calendar,
 } from 'lucide-react';
 import { allLessons, type Lesson } from '../data/lessons';
 import { allCompanies } from '../data/companies';
@@ -26,6 +27,12 @@ import {
   getStreak,
   getCompletedAnalyses,
 } from '../lib/progression';
+import {
+  getReviewPoolSize,
+  hasCompletedToday,
+  getTodayResult,
+  DAILY_PRACTICE_SIZE,
+} from '../lib/review';
 
 const foundationsPhase1 = allLessons.filter((l) => l.tier === 'foundations-1');
 const foundationsPhase2 = allLessons.filter((l) => l.tier === 'foundations-2');
@@ -50,6 +57,9 @@ export default function HomePage() {
   const totalCount = allLessons.length;
   const progressPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
   const analysesCompleted = getCompletedAnalyses();
+  const reviewPoolSize = getReviewPoolSize();
+  const dailyDoneToday = hasCompletedToday();
+  const todayResult = dailyDoneToday ? getTodayResult() : null;
 
   // Per-section completion counts
   const phase1Completed = foundationsPhase1.filter(l => completedIds.has(l.id)).length;
@@ -334,6 +344,81 @@ export default function HomePage() {
               </div>
             </button>
           </motion.div>
+        )}
+
+        {/* Daily Practice — review loop, only shown once user has material to review */}
+        {reviewPoolSize > 0 && (
+          <motion.button
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: 0.07 }}
+            onClick={() => navigate('/review/daily')}
+            className={`group w-full text-left rounded-xl border transition-all cursor-pointer overflow-hidden relative ${
+              dailyDoneToday
+                ? 'border-green/30 bg-gradient-to-br from-green/[0.08] to-green/[0.02] hover:from-green/[0.11] hover:to-green/[0.04]'
+                : 'border-accent/40 bg-gradient-to-br from-accent/[0.1] to-accent/[0.03] hover:from-accent/[0.15] hover:to-accent/[0.05] shadow-[0_0_20px_rgba(99,102,241,0.06)]'
+            }`}
+          >
+            <div className="p-4 space-y-3">
+              <div className="flex items-start gap-3">
+                <div
+                  className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
+                    dailyDoneToday
+                      ? 'bg-green/15 border border-green/30'
+                      : 'bg-accent/15 border border-accent/30'
+                  }`}
+                >
+                  {dailyDoneToday ? (
+                    <CheckCircle2 className="w-5 h-5 text-green" />
+                  ) : (
+                    <Calendar className="w-5 h-5 text-accent-light" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-sm font-semibold text-text-primary">
+                      Daily Practice
+                    </h3>
+                    {dailyDoneToday ? (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-green/15 text-green font-bold uppercase tracking-wide">
+                        Done Today
+                      </span>
+                    ) : (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent-light font-bold uppercase tracking-wide">
+                        Ready
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">
+                    {dailyDoneToday && todayResult
+                      ? `You scored ${todayResult.correct}/${todayResult.total} today. Come back tomorrow for a fresh set.`
+                      : `${Math.min(DAILY_PRACTICE_SIZE, reviewPoolSize)} questions mixed from lessons you've completed. Keeps knowledge from decaying.`}
+                  </p>
+                </div>
+                <ArrowRight
+                  className={`w-4 h-4 transition-all shrink-0 ${
+                    dailyDoneToday
+                      ? 'text-text-muted group-hover:text-green'
+                      : 'text-text-muted group-hover:text-accent-light'
+                  } group-hover:translate-x-0.5`}
+                />
+              </div>
+              <div className="flex items-center gap-3 text-[10px] text-text-muted pl-14">
+                <span>{reviewPoolSize} in review pool</span>
+                <span>•</span>
+                <span>~3 min</span>
+                {streak.current > 0 && (
+                  <>
+                    <span>•</span>
+                    <span className="flex items-center gap-1 text-warm">
+                      <Flame className="w-2.5 h-2.5" />
+                      Keeps streak alive
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
+          </motion.button>
         )}
 
         {/* Analyst Mode — the capstone feature */}
