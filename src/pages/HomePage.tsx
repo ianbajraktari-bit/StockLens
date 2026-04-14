@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   TrendingUp,
   ArrowRight,
@@ -18,9 +19,15 @@ import {
   Calendar,
   Trophy,
   Lock,
+  Search,
+  Award,
+  Layers,
+  Sparkles,
+  ChevronRight,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { allLessons, type Lesson } from '../data/lessons';
-import { allCompanies } from '../data/companies';
+import { allCompanies, type CompanyProfile } from '../data/companies';
 import {
   getCompletedIds,
   getFirstUncompletedId,
@@ -28,6 +35,7 @@ import {
   getLessonStars,
   getStreak,
   getCompletedAnalyses,
+  getCompanyResponseCount,
 } from '../lib/progression';
 import {
   getReviewPoolSize,
@@ -39,17 +47,39 @@ import { getReviewStats } from '../lib/spacedRepetition';
 import { getLevelInfo } from '../lib/xp';
 import { getQuestProgress, type QuestStatus } from '../lib/quests';
 
+// ─────────────────────────────────────────────────────────────────────
+// Constants
+// ─────────────────────────────────────────────────────────────────────
+
 const foundationsPhase1 = allLessons.filter((l) => l.tier === 'foundations-1');
 const foundationsPhase2 = allLessons.filter((l) => l.tier === 'foundations-2');
-const foundationLessons = [...foundationsPhase1, ...foundationsPhase2];
 const companyLessons = allLessons.filter((l) => l.tier === 'company');
 
-// Subtle tier accent colors for left border on lesson cards
 const TIER_COLORS = {
-  'foundations-1': 'rgba(99, 102, 241, 0.4)',   // indigo
-  'foundations-2': 'rgba(245, 158, 11, 0.4)',    // amber
-  'company': 'rgba(34, 197, 94, 0.4)',           // emerald
+  'foundations-1': 'rgba(99, 102, 241, 0.4)',
+  'foundations-2': 'rgba(245, 158, 11, 0.4)',
+  company: 'rgba(34, 197, 94, 0.4)',
 } as const;
+
+type TabId = 'learn' | 'practice' | 'analyze' | 'progress';
+
+const TAB_STORAGE_KEY = 'stocklens-home-tab';
+const VALID_TABS: TabId[] = ['learn', 'practice', 'analyze', 'progress'];
+const EASE_CINEMATIC: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
+function getInitialTab(hasNext: boolean): TabId {
+  if (typeof window !== 'undefined') {
+    const stored = window.localStorage.getItem(TAB_STORAGE_KEY);
+    if (stored && (VALID_TABS as string[]).includes(stored)) {
+      return stored as TabId;
+    }
+  }
+  return hasNext ? 'learn' : 'progress';
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// HomePage shell
+// ─────────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -69,569 +99,148 @@ export default function HomePage() {
   const questProgress = getQuestProgress();
   const questsEarned = questProgress.filter((q) => q.earned).length;
 
-  // Per-section completion counts
-  const phase1Completed = foundationsPhase1.filter(l => completedIds.has(l.id)).length;
-  const phase2Completed = foundationsPhase2.filter(l => completedIds.has(l.id)).length;
-  const companyCompleted = companyLessons.filter(l => completedIds.has(l.id)).length;
+  const [activeTab, setActiveTab] = useState<TabId>(() =>
+    getInitialTab(Boolean(nextId)),
+  );
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(TAB_STORAGE_KEY, activeTab);
+    } catch {
+      // ignore storage failures (private mode, quota)
+    }
+  }, [activeTab]);
+
+  const practiceDue = reviewPoolSize > 0 && !dailyDoneToday;
 
   function handleStart() {
     const target = nextId ?? allLessons[0].id;
     navigate(`/lesson/${target}`);
   }
 
-  function renderLessonCard(lesson: Lesson, index: number, sectionDelay: number) {
-    const completed = completedIds.has(lesson.id);
-    const isNext = lesson.id === nextId;
-    const stars = completed ? getLessonStars(lesson.id) : null;
-    const tierKey = (lesson.tier ?? 'foundations-1') as keyof typeof TIER_COLORS;
-    const tierColor = TIER_COLORS[tierKey];
-
-    return (
-      <motion.button
-        key={lesson.id}
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: sectionDelay + index * 0.04 }}
-        onClick={() => navigate(`/lesson/${lesson.id}`)}
-        style={{ borderLeftColor: tierColor }}
-        className={`group w-full text-left rounded-xl border border-l-[3px] p-4 transition-all duration-200 cursor-pointer ${
-          isNext && !completed
-            ? 'border-accent/40 bg-dark-800 hover:border-accent/60 shadow-[0_0_20px_rgba(99,102,241,0.06)]'
-            : completed
-              ? 'border-border bg-dark-800/50 hover:bg-dark-800/80 hover:border-border-light'
-              : 'border-border bg-dark-800/70 hover:bg-dark-800 hover:border-border-light'
-        }`}
-      >
-        <div className="flex items-center gap-3">
-          <div
-            className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 ${
-              completed
-                ? 'bg-green/10 border border-green/20'
-                : isNext
-                  ? 'bg-accent/15 border border-accent/25'
-                  : 'bg-dark-700 border border-border'
-            }`}
-          >
-            {completed ? (
-              <CheckCircle2 className="w-5 h-5 text-green" />
-            ) : (
-              lesson.emoji
-            )}
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h3
-                className={`text-sm font-semibold truncate ${
-                  completed ? 'text-text-secondary' : 'text-text-primary'
-                }`}
-              >
-                {lesson.title}
-              </h3>
-              {isNext && !completed && (
-                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent-light font-semibold shrink-0">
-                  Up next
-                </span>
-              )}
-            </div>
-            <p className={`text-xs mt-0.5 ${completed ? 'text-text-muted' : 'text-text-secondary'}`}>
-              {lesson.subtitle}
-            </p>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            {completed && stars !== null ? (
-              <div className="flex items-center gap-0.5">
-                {[0, 1, 2].map((i) => (
-                  <Star
-                    key={i}
-                    className={`w-3 h-3 ${
-                      i < stars ? 'text-warm fill-warm' : 'text-dark-500'
-                    }`}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="flex items-center gap-1 text-[10px] text-text-muted">
-                <Clock className="w-3 h-3" />
-                {lesson.estimatedMinutes}m
-              </div>
-            )}
-            <ArrowRight
-              className={`w-4 h-4 transition-transform group-hover:translate-x-0.5 ${
-                completed ? 'text-text-muted' : 'text-text-secondary'
-              }`}
-            />
-          </div>
-        </div>
-      </motion.button>
-    );
-  }
+  const tabs: { id: TabId; label: string; icon: LucideIcon; dot?: boolean }[] = [
+    { id: 'learn', label: 'Learn', icon: BookOpen },
+    { id: 'practice', label: 'Practice', icon: Zap, dot: practiceDue },
+    { id: 'analyze', label: 'Analyze', icon: Search },
+    { id: 'progress', label: 'Progress', icon: Award },
+  ];
 
   return (
     <div className="min-h-screen bg-dark-950">
-      {/* Gradient background effect */}
+      {/* Ambient scene glow */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-accent/[0.03] rounded-full blur-[120px]" />
       </div>
 
-      <div className="relative max-w-2xl mx-auto px-4 py-8 space-y-8">
+      <div className="relative max-w-2xl mx-auto px-4">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
+        <motion.header
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="space-y-6"
+          transition={{ duration: 0.4, ease: EASE_CINEMATIC }}
+          className="py-6 flex items-center justify-between"
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-accent-light" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-text-primary tracking-tight">
-                  StockLens
-                </h1>
-                <p className="text-xs text-text-muted">Learn to think like an investor</p>
-              </div>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-accent-light" />
             </div>
-
-            {/* Level badge — replaces generic progress ring once user has XP */}
-            {hasAnyProgress && (
-              <div className="flex items-center gap-2">
-                <div className="relative w-11 h-11">
-                  <svg className="w-11 h-11 -rotate-90" viewBox="0 0 36 36">
-                    <circle
-                      cx="18" cy="18" r="15" fill="none"
-                      stroke="currentColor" strokeWidth="2.5"
-                      className="text-dark-700"
-                    />
-                    <circle
-                      cx="18" cy="18" r="15" fill="none"
-                      stroke="currentColor" strokeWidth="2.5"
-                      strokeDasharray={`${levelInfo.progressPct * 94.2} 100`}
-                      strokeLinecap="round"
-                      className="text-accent-light"
-                    />
-                  </svg>
-                  <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-text-primary tabular-nums">
-                    {levelInfo.level}
-                  </span>
-                </div>
-              </div>
-            )}
+            <div>
+              <h1 className="text-xl font-bold text-text-primary tracking-tight">
+                StockLens
+              </h1>
+              <p className="text-[11px] text-text-muted">
+                Learn to think like an investor
+              </p>
+            </div>
           </div>
 
-          {/* Stats bar or hero for new users */}
-          {hasAnyProgress ? (
-            <div className="space-y-4">
-              {/* Level + XP card — the progression spine */}
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, delay: 0.08 }}
-                className="rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/[0.12] via-accent/[0.04] to-transparent p-4 space-y-3 overflow-hidden relative"
-              >
-                {/* Subtle glow */}
-                <div className="absolute -top-12 -right-12 w-32 h-32 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
-
-                <div className="relative flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent/25 to-accent/10 border border-accent/40 flex items-center justify-center shrink-0 shadow-[0_0_18px_rgba(99,102,241,0.25)]">
-                    <span className="text-lg font-bold text-accent-light tabular-nums">
-                      {levelInfo.level}
-                    </span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <p className="text-sm font-bold text-text-primary truncate">
-                        {levelInfo.title}
-                      </p>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/10 text-accent-light font-semibold uppercase tracking-wider shrink-0">
-                        Lv {levelInfo.level}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 text-[10px] text-text-muted tabular-nums mt-0.5">
-                      <span>
-                        <span className="text-text-secondary font-semibold">
-                          {levelInfo.totalXp.toLocaleString()}
-                        </span>{' '}
-                        XP total
-                      </span>
-                      <span>•</span>
-                      <span>{levelInfo.xpToNextLevel} to Lv {levelInfo.level + 1}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 text-[10px] text-text-muted shrink-0">
-                    <Trophy className="w-3 h-3 text-warm" />
-                    <span className="tabular-nums font-semibold">
-                      {questsEarned}/{questProgress.length}
-                    </span>
-                  </div>
-                </div>
-
-                {/* XP progress bar */}
-                <div className="relative h-2 rounded-full bg-dark-700 overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${levelInfo.progressPct * 100}%` }}
-                    transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
-                    className="h-full rounded-full bg-gradient-to-r from-accent to-accent-light"
-                  />
-                </div>
-              </motion.div>
-
-              {/* Stats strip */}
-              <div className="flex items-center gap-4 flex-wrap">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3, delay: 0.1 }}
-                  className="flex items-center gap-1.5 text-xs"
-                >
-                  {streak.current > 0 ? (
-                    <>
-                      <Flame
-                        className={`w-3.5 h-3.5 text-warm ${streak.current >= 3 ? 'drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]' : ''}`}
-                      />
-                      <span className="text-warm font-semibold">{streak.current} day streak</span>
-                    </>
-                  ) : (
-                    <>
-                      <Flame className="w-3.5 h-3.5 text-text-muted" />
-                      <span className="text-text-muted">Start your streak!</span>
-                    </>
-                  )}
-                </motion.div>
-                <div className="flex items-center gap-1.5 text-xs text-text-secondary">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-green" />
-                  <span>{completedCount} of {totalCount} lessons</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs text-text-secondary">
-                  <BookOpen className="w-3.5 h-3.5 text-accent-light" />
-                  <span>{foundationLessons.filter(l => completedIds.has(l.id)).length} foundations</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs text-text-secondary">
-                  <Building2 className="w-3.5 h-3.5 text-warm" />
-                  <span>{companyLessons.filter(l => completedIds.has(l.id)).length} companies</span>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-5">
-              <p className="text-sm text-text-secondary leading-relaxed">
-                Interactive lessons that teach you to analyze businesses and make investment
-                decisions. Not memorization — real reasoning.
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                {[
-                  { icon: Brain, label: 'Think, don\'t memorize', color: 'text-accent-light', bg: 'bg-accent/10 border-accent/20' },
-                  { icon: Target, label: 'Real companies, real data', color: 'text-warm', bg: 'bg-warm/10 border-warm/20' },
-                  { icon: Zap, label: '5 interactive formats', color: 'text-green', bg: 'bg-green/10 border-green/20' },
-                ].map(({ icon: Icon, label, color, bg }) => (
-                  <div key={label} className={`rounded-xl border p-3 ${bg} flex flex-col items-center gap-2 text-center`}>
-                    <Icon className={`w-4 h-4 ${color}`} />
-                    <span className="text-[11px] text-text-secondary leading-tight font-medium">{label}</span>
-                  </div>
-                ))}
-              </div>
-
-              <motion.button
-                onClick={handleStart}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-accent hover:bg-accent-light text-white text-sm font-semibold transition-colors cursor-pointer"
-              >
-                Start Learning
-                <ArrowRight className="w-4 h-4" />
-              </motion.button>
-            </div>
-          )}
-        </motion.div>
-
-        {/* Skills Progress — compact */}
-        {hasAnyProgress && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: 0.05 }}
-            className="rounded-xl border border-border bg-dark-800/60 p-4 space-y-3"
-          >
+          {hasAnyProgress && (
             <div className="flex items-center gap-2">
-              <BarChart3 className="w-3.5 h-3.5 text-accent-light" />
-              <h2 className="text-xs font-semibold text-text-secondary">
-                Skills Progress
-              </h2>
-            </div>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-2.5">
-              {skillsProgress.map((s) => {
-                const pct = Math.min((s.exposure / s.maxExposure) * 100, 100);
-                const complete = s.exposure >= s.maxExposure;
-                return (
-                  <div key={s.skill} className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-text-secondary">{s.label}</span>
-                      <span className={`text-[10px] font-medium ${complete ? 'text-green' : 'text-text-muted'}`}>
-                        {complete ? 'Mastered' : `${s.exposure}/${s.maxExposure}`}
-                      </span>
-                    </div>
-                    <div className="h-1.5 rounded-full bg-dark-600 overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all duration-500 ${
-                          complete ? 'bg-green' : 'bg-accent/80'
-                        }`}
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </motion.div>
-        )}
-
-        {/* Quests — milestone badges */}
-        {hasAnyProgress && (
-          <QuestsPanel quests={questProgress} earned={questsEarned} />
-        )}
-
-        {/* Continue button for returning users */}
-        {hasAnyProgress && nextId && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
-          >
-            <button
-              onClick={handleStart}
-              className="w-full flex items-center gap-3 p-4 rounded-xl border border-accent/30 bg-accent/[0.06] hover:bg-accent/[0.1] transition-colors cursor-pointer text-left"
-            >
-              <div className="w-10 h-10 rounded-xl bg-accent/15 border border-accent/25 flex items-center justify-center shrink-0">
-                <ArrowRight className="w-5 h-5 text-accent-light" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-text-primary">Continue Learning</p>
-                <p className="text-xs text-text-secondary truncate">
-                  {allLessons.find(l => l.id === nextId)?.title}
-                </p>
-              </div>
-            </button>
-          </motion.div>
-        )}
-
-        {/* Daily Practice — review loop, only shown once user has material to review */}
-        {reviewPoolSize > 0 && (
-          <motion.button
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: 0.07 }}
-            onClick={() => navigate('/review/daily')}
-            className={`group w-full text-left rounded-xl border transition-all cursor-pointer overflow-hidden relative ${
-              dailyDoneToday
-                ? 'border-green/30 bg-gradient-to-br from-green/[0.08] to-green/[0.02] hover:from-green/[0.11] hover:to-green/[0.04]'
-                : 'border-accent/40 bg-gradient-to-br from-accent/[0.1] to-accent/[0.03] hover:from-accent/[0.15] hover:to-accent/[0.05] shadow-[0_0_20px_rgba(99,102,241,0.06)]'
-            }`}
-          >
-            <div className="p-4 space-y-3">
-              <div className="flex items-start gap-3">
+              {streak.current > 0 && (
                 <div
-                  className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
-                    dailyDoneToday
-                      ? 'bg-green/15 border border-green/30'
-                      : 'bg-accent/15 border border-accent/30'
+                  className={`hidden sm:flex items-center gap-1 px-2 py-1 rounded-lg bg-warm/10 border border-warm/25 text-[11px] font-semibold text-warm ${
+                    streak.current >= 3
+                      ? 'shadow-[0_0_12px_rgba(245,158,11,0.15)]'
+                      : ''
                   }`}
                 >
-                  {dailyDoneToday ? (
-                    <CheckCircle2 className="w-5 h-5 text-green" />
-                  ) : (
-                    <Calendar className="w-5 h-5 text-accent-light" />
-                  )}
+                  <Flame className="w-3 h-3" />
+                  <span className="tabular-nums">{streak.current}</span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-sm font-semibold text-text-primary">
-                      Daily Practice
-                    </h3>
-                    {dailyDoneToday ? (
-                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-green/15 text-green font-bold uppercase tracking-wide">
-                        Done Today
-                      </span>
-                    ) : (
-                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent-light font-bold uppercase tracking-wide">
-                        Ready
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">
-                    {dailyDoneToday && todayResult
-                      ? `You scored ${todayResult.correct}/${todayResult.total} today. Come back tomorrow for a fresh set.`
-                      : `${Math.min(DAILY_PRACTICE_SIZE, reviewPoolSize)} questions mixed from lessons you've completed. Keeps knowledge from decaying.`}
-                  </p>
-                </div>
-                <ArrowRight
-                  className={`w-4 h-4 transition-all shrink-0 ${
-                    dailyDoneToday
-                      ? 'text-text-muted group-hover:text-green'
-                      : 'text-text-muted group-hover:text-accent-light'
-                  } group-hover:translate-x-0.5`}
-                />
-              </div>
-              <div className="flex items-center gap-3 text-[10px] text-text-muted pl-14 flex-wrap">
-                <span>{reviewPoolSize} in review pool</span>
-                {reviewStats.wrong > 0 && (
-                  <>
-                    <span>•</span>
-                    <span className="text-red font-semibold">
-                      {reviewStats.wrong} flagged
-                    </span>
-                  </>
-                )}
-                {reviewStats.mastered > 0 && (
-                  <>
-                    <span>•</span>
-                    <span className="text-green font-semibold">
-                      {reviewStats.mastered} mastered
-                    </span>
-                  </>
-                )}
-                <span>•</span>
-                <span>~3 min</span>
-                {streak.current > 0 && !dailyDoneToday && (
-                  <>
-                    <span>•</span>
-                    <span className="flex items-center gap-1 text-warm">
-                      <Flame className="w-2.5 h-2.5" />
-                      Keeps streak alive
-                    </span>
-                  </>
-                )}
-              </div>
+              )}
+              <LevelBadgeRing
+                level={levelInfo.level}
+                progressPct={levelInfo.progressPct}
+              />
             </div>
-          </motion.button>
+          )}
+        </motion.header>
+
+        {/* Onboarding hero — only for brand-new users */}
+        {!hasAnyProgress && (
+          <OnboardingHero onStart={handleStart} />
         )}
 
-        {/* Analyst Mode — the capstone feature */}
-        <motion.button
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.08 }}
-          onClick={() => navigate('/analyst')}
-          className="group w-full text-left rounded-xl border border-warm/30 bg-gradient-to-br from-warm/[0.08] to-accent/[0.04] hover:from-warm/[0.12] hover:to-accent/[0.07] transition-all cursor-pointer overflow-hidden relative"
-        >
-          <div className="p-4 space-y-3">
-            <div className="flex items-start gap-3">
-              <div className="w-11 h-11 rounded-xl bg-warm/15 border border-warm/30 flex items-center justify-center shrink-0">
-                <Target className="w-5 h-5 text-warm" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="text-sm font-semibold text-text-primary">
-                    Analyst Mode
-                  </h3>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-warm/20 text-warm font-bold uppercase tracking-wide">
-                    New
-                  </span>
-                </div>
-                <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">
-                  The capstone — pick a company and walk through a 7-step analysis workflow. Business, drivers, moat, risks, valuation, thesis, verdict.
-                </p>
-              </div>
-              <ArrowRight className="w-4 h-4 text-text-muted group-hover:text-warm group-hover:translate-x-0.5 transition-all shrink-0" />
-            </div>
-            <div className="flex items-center gap-3 text-[10px] text-text-muted pl-14">
-              <span>{allCompanies.length} companies</span>
-              <span>•</span>
-              <span>{analysesCompleted.size} analyzed</span>
-              <span>•</span>
-              <span>~10-14 min each</span>
-            </div>
-          </div>
-        </motion.button>
+        {/* Sticky tab bar */}
+        <div className="sticky top-0 z-10 -mx-4 px-4 py-2 bg-dark-950/85 backdrop-blur-md border-b border-border/60">
+          <TabBar
+            tabs={tabs}
+            active={activeTab}
+            onChange={setActiveTab}
+          />
+        </div>
 
-        {/* Foundations Phase 1 — Core Financial Vocabulary */}
-        <section className="space-y-3">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
-            className="border-l-[3px] border-l-accent/30 pl-3 flex items-center justify-between"
-          >
-            <div className="flex items-center gap-2">
-              <Lightbulb className="w-4 h-4 text-accent-light" />
-              <h2 className="text-sm font-semibold text-text-primary">
-                Core Financial Vocabulary
-              </h2>
-              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/10 text-accent-light font-medium">
-                Phase 1
-              </span>
-            </div>
-            <span className="text-[10px] text-text-muted font-medium">
-              {phase1Completed}/{foundationsPhase1.length} complete
-            </span>
-          </motion.div>
-
-          <div className="space-y-1.5">
-            {foundationsPhase1.map((lesson, i) =>
-              renderLessonCard(lesson, i, 0.15)
-            )}
-          </div>
-        </section>
-
-        {/* Foundations Phase 2 — Investing Concepts */}
-        <section className="space-y-3">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.2 }}
-            className="border-l-[3px] border-l-amber/30 pl-3 flex items-center justify-between"
-          >
-            <div className="flex items-center gap-2">
-              <GraduationCap className="w-4 h-4 text-amber" />
-              <h2 className="text-sm font-semibold text-text-primary">
-                Investing Concepts
-              </h2>
-              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber/10 text-amber font-medium">
-                Phase 2
-              </span>
-            </div>
-            <span className="text-[10px] text-text-muted font-medium">
-              {phase2Completed}/{foundationsPhase2.length} complete
-            </span>
-          </motion.div>
-
-          <div className="space-y-1.5">
-            {foundationsPhase2.map((lesson, i) =>
-              renderLessonCard(lesson, i, 0.25)
-            )}
-          </div>
-        </section>
-
-        {/* Company Deep Dives */}
-        <section className="space-y-3">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.3 }}
-            className="border-l-[3px] border-l-green/30 pl-3 flex items-center justify-between"
-          >
-            <div className="flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-green" />
-              <h2 className="text-sm font-semibold text-text-primary">
-                Company Deep Dives
-              </h2>
-              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green/10 text-green font-medium">
-                Applied
-              </span>
-            </div>
-            <span className="text-[10px] text-text-muted font-medium">
-              {companyCompleted}/{companyLessons.length} complete
-            </span>
-          </motion.div>
-
-          <div className="space-y-1.5">
-            {companyLessons.map((lesson, i) =>
-              renderLessonCard(lesson, i, 0.35)
-            )}
-          </div>
-        </section>
+        {/* Tab content */}
+        <div className="py-6 pb-12">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25, ease: EASE_CINEMATIC }}
+            >
+              {activeTab === 'learn' && (
+                <LearnTab
+                  completedIds={completedIds}
+                  nextId={nextId}
+                  onStart={handleStart}
+                  onLessonClick={(id) => navigate(`/lesson/${id}`)}
+                />
+              )}
+              {activeTab === 'practice' && (
+                <PracticeTab
+                  reviewPoolSize={reviewPoolSize}
+                  dailyDoneToday={dailyDoneToday}
+                  todayResult={todayResult}
+                  reviewStats={reviewStats}
+                  streak={streak}
+                  onStart={() => navigate('/review/daily')}
+                  onGoLearn={() => setActiveTab('learn')}
+                />
+              )}
+              {activeTab === 'analyze' && (
+                <AnalyzeTab
+                  analysesCompleted={analysesCompleted}
+                  onGoAnalystMode={() => navigate('/analyst')}
+                  onCompanyClick={(id) => navigate(`/analyst/${id}`)}
+                />
+              )}
+              {activeTab === 'progress' && (
+                <ProgressTab
+                  levelInfo={levelInfo}
+                  questsEarned={questsEarned}
+                  questProgress={questProgress}
+                  skillsProgress={skillsProgress}
+                  streak={streak}
+                  completedCount={completedCount}
+                  totalCount={totalCount}
+                  analysesCount={analysesCompleted.size}
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
         {/* Footer */}
         <div className="text-center py-6 border-t border-border">
@@ -645,9 +254,1218 @@ export default function HomePage() {
 }
 
 // ─────────────────────────────────────────────────────────────────────
-// Quests panel — shows earned + closest-to-complete + locked badges.
-// Sort order: earned (most recent first) → in-progress (closest to done
-// first) → locked (furthest, so they aren't overwhelming).
+// Header helpers
+// ─────────────────────────────────────────────────────────────────────
+
+function LevelBadgeRing({
+  level,
+  progressPct,
+}: {
+  level: number;
+  progressPct: number;
+}) {
+  return (
+    <div
+      className="relative w-11 h-11"
+      aria-label={`Level ${level}, ${Math.round(progressPct * 100)} percent to next level`}
+    >
+      <svg className="w-11 h-11 -rotate-90" viewBox="0 0 36 36">
+        <circle
+          cx="18"
+          cy="18"
+          r="15"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          className="text-dark-700"
+        />
+        <motion.circle
+          cx="18"
+          cy="18"
+          r="15"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          className="text-accent-light"
+          initial={{ strokeDasharray: '0 100' }}
+          animate={{ strokeDasharray: `${progressPct * 94.2} 100` }}
+          transition={{ duration: 0.9, ease: EASE_CINEMATIC, delay: 0.2 }}
+        />
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-text-primary tabular-nums">
+        {level}
+      </span>
+    </div>
+  );
+}
+
+function OnboardingHero({ onStart }: { onStart: () => void }) {
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: EASE_CINEMATIC, delay: 0.08 }}
+      className="mb-6 space-y-5"
+    >
+      <p className="text-sm text-text-secondary leading-relaxed">
+        Interactive lessons that teach you to analyze businesses and make
+        investment decisions. Not memorization — real reasoning.
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        {[
+          {
+            icon: Brain,
+            label: "Think, don't memorize",
+            color: 'text-accent-light',
+            bg: 'bg-accent/10 border-accent/20',
+          },
+          {
+            icon: Target,
+            label: 'Real companies, real data',
+            color: 'text-warm',
+            bg: 'bg-warm/10 border-warm/20',
+          },
+          {
+            icon: Zap,
+            label: '5 interactive formats',
+            color: 'text-green',
+            bg: 'bg-green/10 border-green/20',
+          },
+        ].map(({ icon: Icon, label, color, bg }) => (
+          <div
+            key={label}
+            className={`rounded-xl border p-3 ${bg} flex flex-col items-center gap-2 text-center`}
+          >
+            <Icon className={`w-4 h-4 ${color}`} />
+            <span className="text-[11px] text-text-secondary leading-tight font-medium">
+              {label}
+            </span>
+          </div>
+        ))}
+      </div>
+      <motion.button
+        onClick={onStart}
+        whileHover={{ scale: 1.01 }}
+        whileTap={{ scale: 0.98 }}
+        className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-accent hover:bg-accent-light text-white text-sm font-semibold transition-colors cursor-pointer"
+      >
+        Start Learning
+        <ArrowRight className="w-4 h-4" />
+      </motion.button>
+    </motion.section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// Tab bar — sliding pill indicator via framer-motion layoutId
+// ─────────────────────────────────────────────────────────────────────
+
+function TabBar({
+  tabs,
+  active,
+  onChange,
+}: {
+  tabs: { id: TabId; label: string; icon: LucideIcon; dot?: boolean }[];
+  active: TabId;
+  onChange: (id: TabId) => void;
+}) {
+  return (
+    <div
+      role="tablist"
+      aria-label="Home sections"
+      className="relative grid grid-cols-4 gap-1 rounded-xl bg-dark-800/60 border border-border p-1"
+    >
+      {tabs.map((tab) => {
+        const isActive = tab.id === active;
+        const Icon = tab.icon;
+        return (
+          <button
+            key={tab.id}
+            role="tab"
+            aria-selected={isActive}
+            aria-controls={`panel-${tab.id}`}
+            onClick={() => onChange(tab.id)}
+            className="relative flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer"
+          >
+            {isActive && (
+              <motion.span
+                layoutId="tabbar-active-pill"
+                className="absolute inset-0 rounded-lg bg-accent/15 border border-accent/30 shadow-[0_0_16px_rgba(99,102,241,0.12)]"
+                transition={{
+                  type: 'spring',
+                  stiffness: 380,
+                  damping: 32,
+                }}
+              />
+            )}
+            <span
+              className={`relative flex items-center gap-1.5 ${
+                isActive ? 'text-accent-light' : 'text-text-muted'
+              }`}
+            >
+              <Icon className="w-3.5 h-3.5" />
+              <span>{tab.label}</span>
+              {tab.dot && !isActive && (
+                <span
+                  className="absolute -top-0.5 -right-2 w-1.5 h-1.5 rounded-full bg-accent-light shadow-[0_0_6px_rgba(129,140,248,0.7)]"
+                  aria-hidden
+                />
+              )}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// Shared: section eyebrow + lesson card
+// ─────────────────────────────────────────────────────────────────────
+
+function TabIntro({
+  eyebrow,
+  headline,
+  sub,
+}: {
+  eyebrow: string;
+  headline: string;
+  sub?: string;
+}) {
+  return (
+    <div className="mb-5">
+      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-accent-light/80">
+        {eyebrow}
+      </p>
+      <h2 className="text-lg font-bold text-text-primary mt-1 tracking-tight">
+        {headline}
+      </h2>
+      {sub && (
+        <p className="text-xs text-text-muted mt-1 leading-relaxed">{sub}</p>
+      )}
+    </div>
+  );
+}
+
+function LessonCard({
+  lesson,
+  completed,
+  isNext,
+  stars,
+  onClick,
+  index,
+}: {
+  lesson: Lesson;
+  completed: boolean;
+  isNext: boolean;
+  stars: number | null;
+  onClick: () => void;
+  index: number;
+}) {
+  const tierKey = (lesson.tier ?? 'foundations-1') as keyof typeof TIER_COLORS;
+  const tierColor = TIER_COLORS[tierKey];
+
+  return (
+    <motion.button
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: 0.3,
+        ease: EASE_CINEMATIC,
+        delay: Math.min(index, 10) * 0.03,
+      }}
+      onClick={onClick}
+      style={{ borderLeftColor: tierColor }}
+      className={`group w-full text-left rounded-xl border border-l-[3px] p-4 transition-all duration-200 cursor-pointer ${
+        isNext && !completed
+          ? 'border-accent/40 bg-dark-800 hover:border-accent/60 shadow-[0_0_20px_rgba(99,102,241,0.06)]'
+          : completed
+            ? 'border-border bg-dark-800/50 hover:bg-dark-800/80 hover:border-border-light'
+            : 'border-border bg-dark-800/70 hover:bg-dark-800 hover:border-border-light'
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <div
+          className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 ${
+            completed
+              ? 'bg-green/10 border border-green/20'
+              : isNext
+                ? 'bg-accent/15 border border-accent/25'
+                : 'bg-dark-700 border border-border'
+          }`}
+        >
+          {completed ? (
+            <CheckCircle2 className="w-5 h-5 text-green" />
+          ) : (
+            lesson.emoji
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3
+              className={`text-sm font-semibold truncate ${
+                completed ? 'text-text-secondary' : 'text-text-primary'
+              }`}
+            >
+              {lesson.title}
+            </h3>
+            {isNext && !completed && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent-light font-semibold shrink-0">
+                Up next
+              </span>
+            )}
+          </div>
+          <p
+            className={`text-xs mt-0.5 ${
+              completed ? 'text-text-muted' : 'text-text-secondary'
+            }`}
+          >
+            {lesson.subtitle}
+          </p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {completed && stars !== null ? (
+            <div className="flex items-center gap-0.5">
+              {[0, 1, 2].map((i) => (
+                <Star
+                  key={i}
+                  className={`w-3 h-3 ${
+                    i < stars ? 'text-warm fill-warm' : 'text-dark-500'
+                  }`}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center gap-1 text-[10px] text-text-muted">
+              <Clock className="w-3 h-3" />
+              {lesson.estimatedMinutes}m
+            </div>
+          )}
+          <ArrowRight
+            className={`w-4 h-4 transition-transform group-hover:translate-x-0.5 ${
+              completed ? 'text-text-muted' : 'text-text-secondary'
+            }`}
+          />
+        </div>
+      </div>
+    </motion.button>
+  );
+}
+
+function SectionHeader({
+  icon: Icon,
+  label,
+  badge,
+  badgeColor,
+  accentColor,
+  count,
+  total,
+}: {
+  icon: LucideIcon;
+  label: string;
+  badge: string;
+  badgeColor: string;
+  accentColor: string;
+  count: number;
+  total: number;
+}) {
+  return (
+    <div
+      style={{ borderLeftColor: accentColor }}
+      className="border-l-[3px] pl-3 flex items-center justify-between"
+    >
+      <div className="flex items-center gap-2">
+        <Icon className="w-4 h-4" style={{ color: accentColor }} />
+        <h3 className="text-sm font-semibold text-text-primary">{label}</h3>
+        <span
+          className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${badgeColor}`}
+        >
+          {badge}
+        </span>
+      </div>
+      <span className="text-[10px] text-text-muted font-medium tabular-nums">
+        {count}/{total} complete
+      </span>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// LEARN TAB — curriculum
+// ─────────────────────────────────────────────────────────────────────
+
+function LearnTab({
+  completedIds,
+  nextId,
+  onStart,
+  onLessonClick,
+}: {
+  completedIds: Set<string>;
+  nextId: string | null;
+  onStart: () => void;
+  onLessonClick: (id: string) => void;
+}) {
+  const phase1Completed = foundationsPhase1.filter((l) =>
+    completedIds.has(l.id),
+  ).length;
+  const phase2Completed = foundationsPhase2.filter((l) =>
+    completedIds.has(l.id),
+  ).length;
+  const companyCompleted = companyLessons.filter((l) =>
+    completedIds.has(l.id),
+  ).length;
+  const nextLesson = nextId
+    ? allLessons.find((l) => l.id === nextId)
+    : null;
+
+  return (
+    <section id="panel-learn" role="tabpanel" className="space-y-6">
+      <TabIntro
+        eyebrow="Curriculum"
+        headline="Master the vocabulary, then apply it."
+        sub="Foundations build the mental models. Deep dives test them on real companies."
+      />
+
+      {nextLesson && (
+        <motion.button
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: EASE_CINEMATIC }}
+          onClick={onStart}
+          className="group w-full flex items-center gap-3 p-4 rounded-xl border border-accent/30 bg-gradient-to-br from-accent/[0.1] via-accent/[0.04] to-transparent hover:from-accent/[0.14] transition-all cursor-pointer text-left overflow-hidden relative"
+        >
+          <div className="absolute -top-10 -right-10 w-28 h-28 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative w-11 h-11 rounded-xl bg-accent/15 border border-accent/25 flex items-center justify-center shrink-0">
+            <ArrowRight className="w-5 h-5 text-accent-light" />
+          </div>
+          <div className="relative flex-1 min-w-0">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-accent-light/80">
+              Continue
+            </p>
+            <p className="text-sm font-semibold text-text-primary truncate mt-0.5">
+              {nextLesson.title}
+            </p>
+            <p className="text-xs text-text-muted truncate">
+              {nextLesson.subtitle}
+            </p>
+          </div>
+          <div className="relative flex items-center gap-1 text-[10px] text-text-muted shrink-0">
+            <Clock className="w-3 h-3" />
+            {nextLesson.estimatedMinutes}m
+          </div>
+        </motion.button>
+      )}
+
+      <div className="space-y-3">
+        <SectionHeader
+          icon={Lightbulb}
+          label="Core Financial Vocabulary"
+          badge="Phase 1"
+          badgeColor="bg-accent/10 text-accent-light"
+          accentColor="rgba(99, 102, 241, 0.5)"
+          count={phase1Completed}
+          total={foundationsPhase1.length}
+        />
+        <div className="space-y-1.5">
+          {foundationsPhase1.map((lesson, i) => (
+            <LessonCard
+              key={lesson.id}
+              lesson={lesson}
+              completed={completedIds.has(lesson.id)}
+              isNext={lesson.id === nextId}
+              stars={completedIds.has(lesson.id) ? getLessonStars(lesson.id) : null}
+              onClick={() => onLessonClick(lesson.id)}
+              index={i}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <SectionHeader
+          icon={GraduationCap}
+          label="Investing Concepts"
+          badge="Phase 2"
+          badgeColor="bg-amber/10 text-amber"
+          accentColor="rgba(245, 158, 11, 0.5)"
+          count={phase2Completed}
+          total={foundationsPhase2.length}
+        />
+        <div className="space-y-1.5">
+          {foundationsPhase2.map((lesson, i) => (
+            <LessonCard
+              key={lesson.id}
+              lesson={lesson}
+              completed={completedIds.has(lesson.id)}
+              isNext={lesson.id === nextId}
+              stars={completedIds.has(lesson.id) ? getLessonStars(lesson.id) : null}
+              onClick={() => onLessonClick(lesson.id)}
+              index={i}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <SectionHeader
+          icon={Building2}
+          label="Company Deep Dives"
+          badge="Applied"
+          badgeColor="bg-green/10 text-green"
+          accentColor="rgba(34, 197, 94, 0.5)"
+          count={companyCompleted}
+          total={companyLessons.length}
+        />
+        <div className="space-y-1.5">
+          {companyLessons.map((lesson, i) => (
+            <LessonCard
+              key={lesson.id}
+              lesson={lesson}
+              completed={completedIds.has(lesson.id)}
+              isNext={lesson.id === nextId}
+              stars={completedIds.has(lesson.id) ? getLessonStars(lesson.id) : null}
+              onClick={() => onLessonClick(lesson.id)}
+              index={i}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// PRACTICE TAB — the review dojo
+// ─────────────────────────────────────────────────────────────────────
+
+function PracticeTab({
+  reviewPoolSize,
+  dailyDoneToday,
+  todayResult,
+  reviewStats,
+  streak,
+  onStart,
+  onGoLearn,
+}: {
+  reviewPoolSize: number;
+  dailyDoneToday: boolean;
+  todayResult: { correct: number; total: number } | null;
+  reviewStats: { tracked: number; mastered: number; due: number; wrong: number };
+  streak: { current: number };
+  onStart: () => void;
+  onGoLearn: () => void;
+}) {
+  if (reviewPoolSize === 0) {
+    return (
+      <section id="panel-practice" role="tabpanel" className="space-y-6">
+        <TabIntro
+          eyebrow="Review Dojo"
+          headline="Sharpen what you've learned."
+          sub="Your personal rehearsal room, powered by spaced repetition."
+        />
+        <div className="rounded-2xl border border-border bg-dark-800/50 p-8 text-center space-y-4">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-dark-700 border border-border flex items-center justify-center">
+            <Lock className="w-6 h-6 text-text-muted" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-sm font-semibold text-text-primary">
+              Locked — for now
+            </h3>
+            <p className="text-xs text-text-secondary leading-relaxed max-w-sm mx-auto">
+              Daily Practice pulls questions from lessons you've completed.
+              Finish your first lesson and it unlocks immediately.
+            </p>
+          </div>
+          <button
+            onClick={onGoLearn}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent hover:bg-accent-light text-white text-xs font-semibold transition-colors cursor-pointer"
+          >
+            Start a lesson
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  const practiceSize = Math.min(DAILY_PRACTICE_SIZE, reviewPoolSize);
+
+  return (
+    <section id="panel-practice" role="tabpanel" className="space-y-6">
+      <TabIntro
+        eyebrow="Review Dojo"
+        headline="Sharpen what you've learned."
+        sub="Spaced repetition surfaces what you're about to forget. Miss something and it comes back tomorrow."
+      />
+
+      {/* Stats trio */}
+      <div className="grid grid-cols-3 gap-2">
+        <DojoStat
+          label="Flagged"
+          value={reviewStats.wrong}
+          tone="red"
+          caption="missed last time"
+        />
+        <DojoStat
+          label="Due today"
+          value={reviewStats.due}
+          tone="accent"
+          caption="ready to review"
+        />
+        <DojoStat
+          label="Mastered"
+          value={reviewStats.mastered}
+          tone="green"
+          caption="locked in"
+        />
+      </div>
+
+      {/* Primary CTA */}
+      <motion.button
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: EASE_CINEMATIC, delay: 0.05 }}
+        onClick={onStart}
+        className={`group w-full text-left rounded-2xl border transition-all cursor-pointer overflow-hidden relative ${
+          dailyDoneToday
+            ? 'border-green/30 bg-gradient-to-br from-green/[0.1] via-green/[0.03] to-transparent hover:from-green/[0.14]'
+            : 'border-accent/40 bg-gradient-to-br from-accent/[0.12] via-accent/[0.04] to-transparent hover:from-accent/[0.16] shadow-[0_0_24px_rgba(99,102,241,0.08)]'
+        }`}
+      >
+        <div
+          className={`absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl pointer-events-none ${
+            dailyDoneToday ? 'bg-green/10' : 'bg-accent/15'
+          }`}
+        />
+        <div className="relative p-5 space-y-4">
+          <div className="flex items-start gap-3">
+            <div
+              className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
+                dailyDoneToday
+                  ? 'bg-green/15 border border-green/30'
+                  : 'bg-accent/15 border border-accent/30 shadow-[0_0_14px_rgba(99,102,241,0.2)]'
+              }`}
+            >
+              {dailyDoneToday ? (
+                <CheckCircle2 className="w-6 h-6 text-green" />
+              ) : (
+                <Calendar className="w-6 h-6 text-accent-light" />
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="text-base font-bold text-text-primary">
+                  Daily Practice
+                </h3>
+                {dailyDoneToday ? (
+                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-green/15 text-green font-bold uppercase tracking-wide">
+                    Done
+                  </span>
+                ) : (
+                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent-light font-bold uppercase tracking-wide">
+                    Ready
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-text-secondary mt-1 leading-relaxed">
+                {dailyDoneToday && todayResult
+                  ? `You scored ${todayResult.correct}/${todayResult.total} today. Come back tomorrow for a fresh set.`
+                  : `${practiceSize} questions today — mixed from everything you've completed. ~3 min.`}
+              </p>
+            </div>
+            <ArrowRight
+              className={`w-5 h-5 transition-all shrink-0 ${
+                dailyDoneToday
+                  ? 'text-text-muted group-hover:text-green'
+                  : 'text-text-muted group-hover:text-accent-light'
+              } group-hover:translate-x-0.5`}
+            />
+          </div>
+
+          {!dailyDoneToday && streak.current > 0 && (
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-warm/8 border border-warm/20">
+              <Flame
+                className={`w-3.5 h-3.5 text-warm ${
+                  streak.current >= 3
+                    ? 'drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]'
+                    : ''
+                }`}
+              />
+              <span className="text-[11px] text-warm font-semibold">
+                Complete today to keep your {streak.current}-day streak alive
+              </span>
+            </div>
+          )}
+        </div>
+      </motion.button>
+
+      {/* Pool context */}
+      <div className="rounded-xl border border-border bg-dark-800/40 p-4 space-y-2.5">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-3.5 h-3.5 text-text-muted" />
+          <h3 className="text-xs font-semibold text-text-secondary">
+            How the dojo picks questions
+          </h3>
+        </div>
+        <ul className="space-y-1.5 text-[11px] text-text-muted leading-relaxed">
+          <li className="flex gap-2">
+            <span className="text-red shrink-0 font-bold">•</span>
+            <span>
+              <span className="text-red font-semibold">Missed</span> questions
+              come back tomorrow — no escape.
+            </span>
+          </li>
+          <li className="flex gap-2">
+            <span className="text-accent-light shrink-0 font-bold">•</span>
+            <span>
+              <span className="text-accent-light font-semibold">Due</span>{' '}
+              questions surface on a Leitner schedule (1 → 30 days).
+            </span>
+          </li>
+          <li className="flex gap-2">
+            <span className="text-green shrink-0 font-bold">•</span>
+            <span>
+              <span className="text-green font-semibold">Mastered</span>{' '}
+              questions go quiet so you focus on weak spots.
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      {/* Pool size footer */}
+      <div className="flex items-center justify-between text-[10px] text-text-faint pt-1">
+        <span>
+          {reviewStats.tracked > 0
+            ? `${reviewStats.tracked} questions tracked in your review history`
+            : `${reviewPoolSize} questions available in the pool`}
+        </span>
+        {streak.current > 0 && (
+          <span className="tabular-nums">
+            Current streak: {streak.current}d
+          </span>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function DojoStat({
+  label,
+  value,
+  tone,
+  caption,
+}: {
+  label: string;
+  value: number;
+  tone: 'red' | 'accent' | 'green';
+  caption: string;
+}) {
+  const toneClasses =
+    tone === 'red'
+      ? { value: 'text-red', border: 'border-red/25 bg-red/[0.05]' }
+      : tone === 'green'
+        ? { value: 'text-green', border: 'border-green/25 bg-green/[0.05]' }
+        : {
+            value: 'text-accent-light',
+            border: 'border-accent/25 bg-accent/[0.05]',
+          };
+
+  return (
+    <div
+      className={`rounded-xl border p-3 ${toneClasses.border} text-center`}
+    >
+      <div
+        className={`text-lg font-bold tabular-nums leading-none ${toneClasses.value}`}
+      >
+        {value}
+      </div>
+      <div className="text-[10px] text-text-secondary font-semibold mt-1.5 uppercase tracking-wide">
+        {label}
+      </div>
+      <div className="text-[9px] text-text-muted mt-0.5 leading-tight">
+        {caption}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// ANALYZE TAB — the research desk
+// ─────────────────────────────────────────────────────────────────────
+
+function AnalyzeTab({
+  analysesCompleted,
+  onGoAnalystMode,
+  onCompanyClick,
+}: {
+  analysesCompleted: Set<string>;
+  onGoAnalystMode: () => void;
+  onCompanyClick: (id: string) => void;
+}) {
+  // Pick a teaser set — 6 companies, preferring intro/standard for new analysts
+  const teaserCompanies = [...allCompanies]
+    .sort((a, b) => {
+      const order = { intro: 0, standard: 1, advanced: 2 } as const;
+      return order[a.difficulty] - order[b.difficulty];
+    })
+    .slice(0, 6);
+
+  const inProgressCount = allCompanies.filter((c) => {
+    const n = getCompanyResponseCount(c.id);
+    return n > 0 && !analysesCompleted.has(c.id);
+  }).length;
+
+  const workflowSteps = [
+    'Business',
+    'Drivers',
+    'Moat',
+    'Risks',
+    'Valuation',
+    'Thesis',
+    'Verdict',
+  ];
+
+  return (
+    <section id="panel-analyze" role="tabpanel" className="space-y-6">
+      <TabIntro
+        eyebrow="Research Desk"
+        headline="Form a thesis on real companies."
+        sub="Pick any company and walk through a 7-step analyst workflow. The same structure a real portfolio manager uses."
+      />
+
+      {/* Editorial CTA card */}
+      <motion.button
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: EASE_CINEMATIC }}
+        onClick={onGoAnalystMode}
+        className="group w-full text-left rounded-2xl border border-warm/30 bg-gradient-to-br from-warm/[0.1] via-warm/[0.03] to-accent/[0.04] hover:from-warm/[0.14] transition-all cursor-pointer overflow-hidden relative"
+      >
+        <div className="absolute -top-16 -right-16 w-40 h-40 bg-warm/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative p-5 space-y-4">
+          <div className="flex items-start gap-3">
+            <div className="w-12 h-12 rounded-xl bg-warm/15 border border-warm/30 flex items-center justify-center shrink-0 shadow-[0_0_14px_rgba(245,158,11,0.2)]">
+              <Target className="w-6 h-6 text-warm" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="text-base font-bold text-text-primary">
+                  Analyst Mode
+                </h3>
+                <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-warm/20 text-warm font-bold uppercase tracking-wide">
+                  Capstone
+                </span>
+              </div>
+              <p className="text-xs text-text-secondary mt-1 leading-relaxed">
+                {allCompanies.length} companies across every major sector. Each
+                analysis saves as you go — resume, revise, compare.
+              </p>
+            </div>
+            <ArrowRight className="w-5 h-5 text-text-muted group-hover:text-warm group-hover:translate-x-0.5 transition-all shrink-0" />
+          </div>
+
+          {/* Workflow preview */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {workflowSteps.map((step, i) => (
+              <div key={step} className="flex items-center gap-1.5">
+                <span className="text-[10px] font-semibold text-text-secondary px-2 py-1 rounded-md bg-dark-800/70 border border-border">
+                  {step}
+                </span>
+                {i < workflowSteps.length - 1 && (
+                  <ChevronRight className="w-3 h-3 text-text-faint" />
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Stats strip */}
+          <div className="flex items-center gap-3 text-[10px] text-text-muted flex-wrap pt-1">
+            <span className="flex items-center gap-1">
+              <Building2 className="w-3 h-3" />
+              {allCompanies.length} companies
+            </span>
+            <span className="text-text-faint">•</span>
+            <span className="flex items-center gap-1 text-green">
+              <CheckCircle2 className="w-3 h-3" />
+              {analysesCompleted.size} analyzed
+            </span>
+            {inProgressCount > 0 && (
+              <>
+                <span className="text-text-faint">•</span>
+                <span className="flex items-center gap-1 text-accent-light">
+                  <Layers className="w-3 h-3" />
+                  {inProgressCount} in progress
+                </span>
+              </>
+            )}
+            <span className="text-text-faint">•</span>
+            <span>~10-14 min each</span>
+          </div>
+        </div>
+      </motion.button>
+
+      {/* Company teaser grid */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-3.5 h-3.5 text-text-muted" />
+            <h3 className="text-xs font-semibold text-text-secondary">
+              Start with one of these
+            </h3>
+          </div>
+          <button
+            onClick={onGoAnalystMode}
+            className="text-[10px] font-semibold text-accent-light hover:text-accent uppercase tracking-wide transition-colors cursor-pointer flex items-center gap-1"
+          >
+            All {allCompanies.length}
+            <ChevronRight className="w-3 h-3" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          {teaserCompanies.map((company, i) => (
+            <CompanyTile
+              key={company.id}
+              company={company}
+              completed={analysesCompleted.has(company.id)}
+              progressCount={getCompanyResponseCount(company.id)}
+              onClick={() => onCompanyClick(company.id)}
+              index={i}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CompanyTile({
+  company,
+  completed,
+  progressCount,
+  onClick,
+  index,
+}: {
+  company: CompanyProfile;
+  completed: boolean;
+  progressCount: number;
+  onClick: () => void;
+  index: number;
+}) {
+  const inProgress = progressCount > 0 && !completed;
+
+  return (
+    <motion.button
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: 0.3,
+        ease: EASE_CINEMATIC,
+        delay: 0.04 + Math.min(index, 6) * 0.03,
+      }}
+      onClick={onClick}
+      className={`group relative rounded-xl border p-3 text-left transition-all cursor-pointer overflow-hidden ${
+        completed
+          ? 'border-green/30 bg-green/[0.05] hover:bg-green/[0.08]'
+          : inProgress
+            ? 'border-accent/30 bg-accent/[0.05] hover:bg-accent/[0.08]'
+            : 'border-border bg-dark-800/50 hover:bg-dark-800 hover:border-border-light'
+      }`}
+    >
+      <div className="flex items-start gap-2">
+        <div
+          className={`w-9 h-9 rounded-lg flex items-center justify-center text-base shrink-0 ${
+            completed
+              ? 'bg-green/10 border border-green/20'
+              : inProgress
+                ? 'bg-accent/10 border border-accent/20'
+                : 'bg-dark-700 border border-border'
+          }`}
+        >
+          {completed ? (
+            <CheckCircle2 className="w-4 h-4 text-green" />
+          ) : (
+            company.emoji
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5">
+            <p className="text-[11px] font-bold text-text-primary truncate">
+              {company.ticker}
+            </p>
+            <span className="text-[9px] text-text-muted">•</span>
+            <p className="text-[10px] text-text-muted truncate">
+              {company.sector}
+            </p>
+          </div>
+          <p className="text-[11px] text-text-secondary truncate mt-0.5">
+            {company.name}
+          </p>
+          {inProgress && (
+            <div className="mt-1.5 flex items-center gap-1.5">
+              <div className="flex-1 h-1 rounded-full bg-dark-700 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-accent/70"
+                  style={{ width: `${(progressCount / 7) * 100}%` }}
+                />
+              </div>
+              <span className="text-[9px] text-accent-light font-semibold tabular-nums">
+                {progressCount}/7
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    </motion.button>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// PROGRESS TAB — the character sheet
+// ─────────────────────────────────────────────────────────────────────
+
+function ProgressTab({
+  levelInfo,
+  questsEarned,
+  questProgress,
+  skillsProgress,
+  streak,
+  completedCount,
+  totalCount,
+  analysesCount,
+}: {
+  levelInfo: ReturnType<typeof getLevelInfo>;
+  questsEarned: number;
+  questProgress: QuestStatus[];
+  skillsProgress: {
+    skill: string;
+    label: string;
+    exposure: number;
+    maxExposure: number;
+  }[];
+  streak: { current: number };
+  completedCount: number;
+  totalCount: number;
+  analysesCount: number;
+}) {
+  const hasAnyProgress = skillsProgress.some((s) => s.exposure > 0);
+
+  if (!hasAnyProgress) {
+    return (
+      <section id="panel-progress" role="tabpanel" className="space-y-6">
+        <TabIntro
+          eyebrow="Character Sheet"
+          headline="Your investor profile."
+          sub="Track level, skills, streaks, and quests as you grow."
+        />
+        <div className="rounded-2xl border border-border bg-dark-800/50 p-8 text-center space-y-4">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-dark-700 border border-border flex items-center justify-center">
+            <Award className="w-6 h-6 text-text-muted" />
+          </div>
+          <p className="text-xs text-text-secondary max-w-sm mx-auto leading-relaxed">
+            Complete your first lesson to start building your investor profile.
+            XP, skill mastery, and quests all track automatically.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section id="panel-progress" role="tabpanel" className="space-y-6">
+      <TabIntro
+        eyebrow="Character Sheet"
+        headline="Your investor profile."
+        sub="Level, streak, skills, and quests — the long arc of getting sharper."
+      />
+
+      {/* Level + XP hero card */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: EASE_CINEMATIC }}
+        className="rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/[0.14] via-accent/[0.04] to-transparent p-5 space-y-4 overflow-hidden relative"
+      >
+        <div className="absolute -top-16 -right-16 w-40 h-40 bg-accent/15 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative flex items-center gap-4">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent/30 to-accent/10 border border-accent/40 flex items-center justify-center shrink-0 shadow-[0_0_24px_rgba(99,102,241,0.3)]">
+            <span className="text-2xl font-bold text-accent-light tabular-nums">
+              {levelInfo.level}
+            </span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-base font-bold text-text-primary truncate">
+                {levelInfo.title}
+              </p>
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent-light font-bold uppercase tracking-wider shrink-0">
+                Lv {levelInfo.level}
+              </span>
+            </div>
+            <div className="text-[11px] text-text-muted tabular-nums mt-1">
+              <span className="text-text-secondary font-semibold">
+                {levelInfo.totalXp.toLocaleString()}
+              </span>{' '}
+              XP total · {levelInfo.xpToNextLevel} to Lv {levelInfo.level + 1}
+            </div>
+          </div>
+        </div>
+
+        <div className="relative space-y-1.5">
+          <div className="h-2.5 rounded-full bg-dark-700/80 overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${levelInfo.progressPct * 100}%` }}
+              transition={{ duration: 0.9, ease: EASE_CINEMATIC, delay: 0.2 }}
+              className="h-full rounded-full bg-gradient-to-r from-accent to-accent-light shadow-[0_0_10px_rgba(129,140,248,0.4)]"
+            />
+          </div>
+          <div className="flex justify-between text-[10px] text-text-faint tabular-nums">
+            <span>Lv {levelInfo.level}</span>
+            <span>{Math.round(levelInfo.progressPct * 100)}%</span>
+            <span>Lv {levelInfo.level + 1}</span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Stats row */}
+      <div className="grid grid-cols-4 gap-2">
+        <ProfileStat
+          icon={Flame}
+          value={streak.current}
+          label="day streak"
+          tone="warm"
+          highlight={streak.current >= 3}
+        />
+        <ProfileStat
+          icon={CheckCircle2}
+          value={completedCount}
+          label={`of ${totalCount} lessons`}
+          tone="green"
+        />
+        <ProfileStat
+          icon={Target}
+          value={analysesCount}
+          label="analyzed"
+          tone="accent"
+        />
+        <ProfileStat
+          icon={Trophy}
+          value={questsEarned}
+          label={`of ${questProgress.length} quests`}
+          tone="warm"
+        />
+      </div>
+
+      {/* Skills */}
+      <div className="rounded-xl border border-border bg-dark-800/60 p-4 space-y-3">
+        <div className="flex items-center gap-2">
+          <BarChart3 className="w-3.5 h-3.5 text-accent-light" />
+          <h3 className="text-xs font-semibold text-text-secondary">
+            Skills
+          </h3>
+          <span className="text-[10px] text-text-muted ml-auto tabular-nums">
+            {skillsProgress.filter((s) => s.exposure >= s.maxExposure).length}/
+            {skillsProgress.length} mastered
+          </span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-2.5">
+          {skillsProgress.map((s) => {
+            const pct = Math.min((s.exposure / s.maxExposure) * 100, 100);
+            const complete = s.exposure >= s.maxExposure;
+            return (
+              <div key={s.skill} className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-text-secondary">{s.label}</span>
+                  <span
+                    className={`text-[10px] font-medium tabular-nums ${
+                      complete ? 'text-green' : 'text-text-muted'
+                    }`}
+                  >
+                    {complete ? 'Mastered' : `${s.exposure}/${s.maxExposure}`}
+                  </span>
+                </div>
+                <div className="h-1.5 rounded-full bg-dark-700 overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${pct}%` }}
+                    transition={{
+                      duration: 0.7,
+                      ease: EASE_CINEMATIC,
+                      delay: 0.15,
+                    }}
+                    className={`h-full rounded-full ${
+                      complete ? 'bg-green' : 'bg-accent/80'
+                    }`}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Quests */}
+      <QuestsPanel quests={questProgress} earned={questsEarned} />
+    </section>
+  );
+}
+
+function ProfileStat({
+  icon: Icon,
+  value,
+  label,
+  tone,
+  highlight,
+}: {
+  icon: LucideIcon;
+  value: number;
+  label: string;
+  tone: 'warm' | 'green' | 'accent';
+  highlight?: boolean;
+}) {
+  const toneClasses =
+    tone === 'warm'
+      ? {
+          text: 'text-warm',
+          bg: 'bg-warm/[0.06] border-warm/20',
+          icon: highlight
+            ? 'text-warm drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]'
+            : 'text-warm',
+        }
+      : tone === 'green'
+        ? {
+            text: 'text-green',
+            bg: 'bg-green/[0.05] border-green/20',
+            icon: 'text-green',
+          }
+        : {
+            text: 'text-accent-light',
+            bg: 'bg-accent/[0.05] border-accent/20',
+            icon: 'text-accent-light',
+          };
+
+  return (
+    <div
+      className={`rounded-xl border p-2.5 text-center ${toneClasses.bg}`}
+    >
+      <Icon className={`w-3.5 h-3.5 mx-auto ${toneClasses.icon}`} />
+      <div
+        className={`text-base font-bold tabular-nums mt-1 leading-none ${toneClasses.text}`}
+      >
+        {value}
+      </div>
+      <div className="text-[9px] text-text-muted mt-1 leading-tight">
+        {label}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// Quests panel
 // ─────────────────────────────────────────────────────────────────────
 
 function QuestsPanel({
@@ -657,8 +1475,6 @@ function QuestsPanel({
   quests: QuestStatus[];
   earned: number;
 }) {
-  // Sort: earned first (freshest wins at top), then in-progress by closeness,
-  // then locked with zero progress at the end.
   const sorted = [...quests].sort((a, b) => {
     if (a.earned !== b.earned) return a.earned ? -1 : 1;
     if (a.earned && b.earned) return 0;
@@ -666,16 +1482,11 @@ function QuestsPanel({
   });
 
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: 0.09 }}
-      className="space-y-3"
-    >
-      <div className="border-l-[3px] border-l-warm/40 pl-3 flex items-center justify-between">
+    <div className="space-y-3">
+      <div className="border-l-[3px] border-l-warm/50 pl-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Trophy className="w-4 h-4 text-warm" />
-          <h2 className="text-sm font-semibold text-text-primary">Quests</h2>
+          <h3 className="text-sm font-semibold text-text-primary">Quests</h3>
           <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-warm/10 text-warm font-medium">
             Milestones
           </span>
@@ -690,7 +1501,7 @@ function QuestsPanel({
           <QuestTile key={q.quest.id} status={q} index={i} />
         ))}
       </div>
-    </motion.section>
+    </div>
   );
 }
 
@@ -709,7 +1520,11 @@ function QuestTile({
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: 0.05 + Math.min(index, 6) * 0.03 }}
+      transition={{
+        duration: 0.3,
+        ease: EASE_CINEMATIC,
+        delay: 0.05 + Math.min(index, 6) * 0.03,
+      }}
       className={`relative rounded-xl border p-3 overflow-hidden ${
         earned
           ? 'border-warm/40 bg-gradient-to-br from-warm/[0.14] to-warm/[0.04] shadow-[0_0_14px_rgba(245,158,11,0.1)]'
