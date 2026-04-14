@@ -5,7 +5,7 @@
 - **Primary branch:** `main` — always pull/sync from `origin/main` before starting work
 - **Repository:** `ianbajraktari-bit/StockLens` on GitHub
 - **Production deployment:** Vercel (auto-deploys from `main`)
-- **Lesson count:** 35 lessons (25 foundations + 10 company deep dives) + Analyst Mode (4 seeded companies)
+- **Lesson count:** 35 lessons (25 foundations + 10 company deep dives) + Analyst Mode (10 seeded companies)
 - **Architecture:** Step-based (`steps: LessonStep[]` with `kind: 'drill' | 'estimate' | 'decide' | 'tap' | 'thinking'`)
 
 > **IMPORTANT:** Before making changes, run `git fetch origin main` and verify your local `main` matches remote. The codebase uses the step-based architecture (NOT the old `questions: QuizQuestion[]` format). If you see `QuizQuestion` anywhere, you are on a stale branch.
@@ -532,10 +532,16 @@ src/
 │   └── companies/
 │       ├── types.ts              # CompanyProfile, AnalystStepKind, WorkflowStepTemplate, WORKFLOW_STEPS
 │       ├── index.ts              # allCompanies, getCompanyById, barrel exports
-│       ├── adobe.ts              # Adobe (ADBE) — SaaS moat + AI risk
 │       ├── visa.ts               # Visa (V) — network effect moat
 │       ├── starbucks.ts          # Starbucks (SBUX) — brand + saturation
-│       └── disney.ts             # Disney (DIS) — sum-of-parts, transition
+│       ├── walmart.ts            # Walmart (WMT) — scale + retail re-rating
+│       ├── homedepot.ts          # Home Depot (HD) — housing cycle + duopoly
+│       ├── chipotle.ts           # Chipotle (CMG) — restaurant unit economics
+│       ├── adobe.ts              # Adobe (ADBE) — SaaS moat + AI risk
+│       ├── salesforce.ts         # Salesforce (CRM) — enterprise SaaS + growth deceleration
+│       ├── shopify.ts            # Shopify (SHOP) — e-com platform + GMV sensitivity
+│       ├── disney.ts             # Disney (DIS) — sum-of-parts, streaming transition
+│       └── spotify.ts            # Spotify (SPOT) — label leverage, structural margin cap
 ├── pages/
 │   ├── AnalystModeHome.tsx       # Company picker (lists all seeded companies)
 │   └── AnalystSession.tsx        # Workflow runner: intro → 7 steps → complete
@@ -595,8 +601,9 @@ StockLens is evolving from a content engine into a complete "teaching machine" �
 
 ### Tier 1 — Differentiators (the moat)
 - [x] **Analyst Mode v1** — 7-step workflow, 4 seeded companies (Visa, Starbucks, Adobe, Disney)
-- [ ] **Analyst Mode v2** — expand to 10-15 companies (add: Shopify, Salesforce, Home Depot, Walmart, Chipotle, Spotify, etc.)
+- [x] **Analyst Mode v2** — expanded to 10 companies (added: Walmart, Home Depot, Chipotle, Salesforce, Shopify, Spotify)
 - [ ] **Analyst Mode v3** — save user responses, "compare past analyses" view, ability to revisit and revise
+- [ ] **Analyst Mode v4** — expand to 15-20 companies (add a financial/bank, a pharma, a semi outside NVDA, an energy co.)
 
 ### Tier 2 — Retention (not started)
 - [ ] **Review / Spaced Repetition mode** — mixes questions from completed lessons on a schedule; surfaces weak areas
