@@ -3,11 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   BookOpen,
-  Trophy,
   RotateCcw,
   ArrowRight,
   ArrowLeft,
-  Lightbulb,
   Home,
   Sparkles,
   Clock,
