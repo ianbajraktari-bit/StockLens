@@ -41,7 +41,7 @@ export const foundationsRiskLesson: Lesson = {
       ],
       correctIndex: 1,
       punchline:
-        'Volatility is your stock going down and coming back. Risk is your stock going down and never coming back. They feel the same in the moment — but only one actually destroys wealth. Professional investors obsess over permanent loss, not price swings.',
+        'Volatility is your stock going down and coming back. Risk is your stock going down and never coming back. They\'re different because volatility is temporary — healthy businesses recover from panics since their earnings power is intact. Risk is permanent because the earnings power itself is destroyed. Professional investors obsess over permanent loss, not price swings.',
       wrongNudges: [
         'A temporary dip you sit through isn\'t a loss — it\'s noise. The 30% drop in Stock A was unpleasant, but your wealth was fully restored. Stock B destroyed real money permanently.',
         '',
@@ -207,7 +207,7 @@ export const foundationsRiskLesson: Lesson = {
       ],
       correctIndex: 1,
       punchline:
-        'A 2% premium for going from "very low risk" to "moderate risk of permanent loss" is a bad deal. Professional investors demand large premiums for taking real risk. If a risky investment doesn\'t offer dramatically higher expected returns, you\'re taking danger without being paid for it.',
+        'A 2% premium for going from "very low risk" to "moderate risk of permanent loss" is a bad deal. Professional investors typically demand at least 5-10% extra annual return for taking real risk of permanent loss. If a risky investment doesn\'t offer dramatically higher expected returns, you\'re taking danger without being paid for it.',
       wrongNudges: [
         'Raw return ignores what you could lose. An investment that returns 10% most years but goes to zero 10% of the time has a negative expected outcome. Return without risk context is meaningless.',
         '',
@@ -222,6 +222,7 @@ export const foundationsRiskLesson: Lesson = {
     'Concentration amplifies everything. Putting 50% in one stock means that one stock controls your financial future. Diversification doesn\'t prevent losses — it prevents catastrophic ones.',
     'Risk comes in layers: product dependency, position size, valuation, and narrative dependence. The danger multiplies when risks stack.',
     'Never take risk without reward. If a risky investment offers only slightly higher returns than a safe one, the risk isn\'t worth taking.',
+    'You can separate volatility from real risk. Next: when borrowing money makes a business stronger — and when it kills one.',
   ],
   completionMessages: {
     perfect: 'Flawless. You now understand risk the way professionals do — not as a feeling, but as something you measure, manage, and demand compensation for.',

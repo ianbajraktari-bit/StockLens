@@ -1,5 +1,15 @@
 # StockLens — Claude Agent Guide
 
+## Source of Truth
+
+- **Primary branch:** `main` — always pull/sync from `origin/main` before starting work
+- **Repository:** `ianbajraktari-bit/StockLens` on GitHub
+- **Production deployment:** Vercel (auto-deploys from `main`)
+- **Lesson count:** 38 lessons (28 foundations + 10 company deep dives) + Analyst Mode (16 seeded companies across every major sector)
+- **Architecture:** Step-based (`steps: LessonStep[]` with `kind: 'drill' | 'estimate' | 'decide' | 'tap' | 'thinking'`)
+
+> **IMPORTANT:** Before making changes, run `git fetch origin main` and verify your local `main` matches remote. The codebase uses the step-based architecture (NOT the old `questions: QuizQuestion[]` format). If you see `QuizQuestion` anywhere, you are on a stale branch.
+
 ## What This Project Is
 
 StockLens is a Duolingo-style app that teaches people how to think like investors. Not memorize facts — **think**. The app teaches users to form opinions on companies, weigh risks against valuations, and make investment decisions using real reasoning.
@@ -509,6 +519,242 @@ npx tsc -b --force        # Type check (stricter — catches unused imports)
 npx vite build            # Production build
 npm run dev               # Dev server
 ```
+
+## Analyst Mode — The Capstone Feature
+
+Analyst Mode is the "apply what you learned" layer. After a user works through the curriculum, Analyst Mode lets them pick a company NOT in the curriculum and walk through a structured 7-step analysis workflow. It's the bridge between *knowledge* (foundations lessons) and *skill* (forming actual investment opinions).
+
+### File Layout
+
+```
+src/
+├── data/
+│   └── companies/
+│       ├── types.ts              # CompanyProfile, AnalystStepKind, WorkflowStepTemplate, WORKFLOW_STEPS
+│       ├── index.ts              # allCompanies, getCompanyById, barrel exports
+│       ├── visa.ts               # Visa (V) — network effect moat
+│       ├── starbucks.ts          # Starbucks (SBUX) — brand + saturation
+│       ├── cocacola.ts           # Coca-Cola (KO) — consumer staples dividend compounder
+│       ├── walmart.ts            # Walmart (WMT) — scale + retail re-rating
+│       ├── homedepot.ts          # Home Depot (HD) — housing cycle + duopoly
+│       ├── chipotle.ts           # Chipotle (CMG) — restaurant unit economics
+│       ├── jpmorgan.ts           # JPMorgan Chase (JPM) — banking, cyclical, TBTF
+│       ├── unitedhealth.ts       # UnitedHealth (UNH) — insurance + Optum vertical integration
+│       ├── exxon.ts              # ExxonMobil (XOM) — integrated oil & gas, capital discipline
+│       ├── adobe.ts              # Adobe (ADBE) — SaaS moat + AI risk
+│       ├── salesforce.ts         # Salesforce (CRM) — enterprise SaaS + growth deceleration
+│       ├── shopify.ts            # Shopify (SHOP) — e-com platform + GMV sensitivity
+│       ├── disney.ts             # Disney (DIS) — sum-of-parts, streaming transition
+│       ├── spotify.ts            # Spotify (SPOT) — label leverage, structural margin cap
+│       ├── lilly.ts              # Eli Lilly (LLY) — pharma hypergrowth, GLP-1 bet
+│       └── tsmc.ts               # TSMC (TSM) — semis monopoly, Taiwan geopolitical risk
+├── pages/
+│   ├── AnalystModeHome.tsx       # Company picker (lists all seeded companies)
+│   └── AnalystSession.tsx        # Workflow runner: intro → 7 steps → complete
+└── components/
+    └── analyst/
+        └── AnalystStepComponent.tsx  # Free-response step UI; reveals model answer after submit
+```
+
+### The Workflow (WORKFLOW_STEPS)
+
+Every company uses the same 7 steps in the same order. Each company supplies its own `modelAnswer` and `strongReasoningIncludes` for each step.
+
+1. **Business** — "What does this company actually do and how does it make money?"
+2. **Drivers** — "What 2-3 factors most drive revenue?"
+3. **Moat** — "Durable competitive advantage? What type?"
+4. **Risks** — "What 2-3 things could structurally hurt this business?"
+5. **Valuation** — "Priced as growth, value, or turnaround?"
+6. **Thesis** — "Make the strongest bull OR bear case."
+7. **Verdict** — "Buy, pass, or need info? What would change your mind?"
+
+Shared prompts live in `WORKFLOW_STEPS` (data/companies/types.ts). Company-specific content lives in each company's `workflow: Record<AnalystStepKind, AnalystStepContent>`.
+
+### Adding a New Company
+
+1. Create `src/data/companies/{id}.ts` following the `CompanyProfile` shape. You need:
+   - id, ticker, name, emoji, sector, oneLiner, description
+   - `dataAsOf` (e.g. 'Q4 2024'), `difficulty` ('intro' | 'standard' | 'advanced'), `estimatedMinutes`
+   - `keyFacts`: 4-6 real data points the user reasons from
+   - `workflow`: a Record with all 7 `AnalystStepKind` entries filled in
+2. Register in `src/data/companies/index.ts` — add the import, the named export, and append to `allCompanies`.
+3. Order in `allCompanies` is by difficulty (intro first). The picker displays them in array order.
+
+### Quality Bar for Model Analyses
+
+The `modelAnswer` is the single biggest thing that makes Analyst Mode educational. It should:
+
+- Be 4-8 sentences of actual reasoning — not a fact dump. Show HOW to think, not just what to think.
+- Reference specific numbers/drivers from the `keyFacts` when relevant.
+- Present both sides when the real answer is uncertain (classic example: "could be X or Y depending on whether Z").
+- End with something falsifiable — a specific number, trigger, or event that would change the conclusion.
+
+The `strongReasoningIncludes` is 3 criteria the user self-checks against. They should be:
+
+- Observable (the user can actually tell whether they covered it)
+- Not prescriptive about WHICH answer (the user can disagree with the model)
+- Focused on the reasoning structure, not the specific conclusion
+
+### Progression Tracking
+
+Two separate localStorage structures track Analyst Mode progress:
+
+- **`stocklens-analyses-completed`** — `Set<companyId>` of companies the user fully walked through. Completion increments the daily streak via `updateStreak()`.
+- **`stocklens-analyst-responses`** — `Record<companyId, Record<stepKind, { text, submittedAt }>>`. Each free-response is saved as soon as the user submits that step. This lets the user resume, review, revise, and compare their own past reasoning.
+
+The picker (`AnalystModeHome`) surfaces three states per company: unstarted, in-progress (N of 7 steps saved), and analyzed. The session (`AnalystSession`) detects prior responses on mount, shows a "Prior Work" review card in the intro phase, and resumes at the first unanswered step. Users can also "Start Fresh" to wipe responses for a company via `clearCompanyResponses`.
+
+Future: diff-view comparing a user's first pass vs. current responses (track multiple revisions over time, not just last-saved).
+
+## Daily Practice — The Retention Loop
+
+Daily Practice is the "come back tomorrow" feature. Once a user has completed at least one lesson, a pool of gradable steps (drill, estimate, tap, decide — all except `thinking`) becomes available for review. Each day, the app selects 5 of those steps deterministically (seeded by the date), runs them as a sequential session, and records the result.
+
+### Files
+
+- `src/lib/spacedRepetition.ts` — per-item Leitner-box state, priority scoring, aggregate stats
+- `src/lib/review.ts` — pool collection, scheduled selection, daily-result storage, public API
+- `src/pages/ReviewSession.tsx` — intro → running → complete flow; reuses the same step components as `LessonRunner`
+- Entry card on `HomePage.tsx`, route `/review/daily` in `App.tsx`
+
+### Selection (Leitner spaced repetition)
+
+Each review item (`itemId = lessonId:stepIndex`) lives in a Leitner box 0-5. Box intervals are `[1, 2, 4, 8, 16, 30]` days. On a perfect step (`correct === total`), the item moves up one box. On any miss, it resets to box 0 (due tomorrow) — which is how missed-question carryover is implemented.
+
+`getScheduledDailyPractice()` walks the pool of gradable steps from completed lessons, computes a priority per item, sorts descending, and slices `DAILY_PRACTICE_SIZE` (5). Priority tiers:
+
+- **`wrong`** (1000 + days since): item was missed most recently — highest priority
+- **`due`** (400 + days overdue × 20): last-seen + box interval has elapsed
+- **`new`** (500): item has no stat yet — lands between wrong and due
+- **`upcoming`** (max(0, 100 - days until due × 5)): not yet due, low-priority refresher
+
+Deterministic seeded jitter breaks ties reproducibly within a day. Stats are only mutated at session completion, so mid-day reopens see the same selection.
+
+Each selected item carries its `reason` (`wrong | due | new | upcoming`) into the UI as a colored pill — users can see why each question surfaced and get an aggregate "today's mix" summary on the intro screen.
+
+### Storage
+
+- `stocklens-review-item-stats` — `Record<itemId, { box, lastSeen, timesSeen, timesCorrect, lastCorrect }>` — per-item SR state, updated after each step in a session
+- `stocklens-daily-practice` — `Record<YYYY-MM-DD, { correct, total, completedAt }>` — session-level daily result; `saveDailyPracticeResult` also calls `updateStreak()`, so daily practice alone maintains a streak
+
+### Empty-pool handling
+
+If `getReviewPoolSize()` is 0, the home-page card doesn't render, and direct navigation to `/review/daily` shows a "no material yet" screen that routes the user to the lesson picker.
+
+### Future
+
+- Weak-area surfacing (route practice toward low-mastery skill tags)
+- Heatmap / streak calendar visualization
+- Multiple practice sessions per day once the pool is large enough
+- Per-item history view (how many times you've seen X, current box, last miss)
+
+## XP + Levels + Quests — The Progression Spine
+
+Every action in the app — finishing a lesson, submitting an analyst step, completing daily practice — feeds one shared progression ledger. XP is the currency, Level is the headline, Quests are the milestones. This is what pulls lessons, Analyst Mode, and the retention loop into a single motivational arc.
+
+### Files
+
+- `src/lib/xp.ts` — ledger, level curve, titles, award helpers
+- `src/lib/quests.ts` — catalog, evaluation, earned-set persistence
+- Integrations: `src/lib/progression.ts`, `src/lib/review.ts`, `src/pages/HomePage.tsx`, `src/pages/LessonRunner.tsx`, `src/pages/ReviewSession.tsx`, `src/pages/AnalystSession.tsx`
+
+### Level curve
+
+Closed-form quadratic: `XP_required(L) = 25 * L * (L + 1)`. Level L→L+1 costs `50 * (L + 1)` XP, so gaps widen smoothly. Inversion: `L = floor((-1 + sqrt(1 + xp/6.25)) / 2)`. `getLevelInfo(xp)` returns `{ level, title, xpIntoLevel, xpForNextLevel, progressPct, totalXp }` for any XP total.
+
+### Title ladder
+
+8 bands keyed off level: Novice (L0) → Apprentice (L3) → Analyst (L6) → Portfolio Strategist (L10) → Principal (L15) → Senior Portfolio Manager (L22) → Chief Investment Officer (L32) → Market Wizard (L45+).
+
+### XP sources (gated to prevent farming)
+
+- **Lesson completion** — `awardLessonCompletion({ correct, total, firstCompletion })`. First-time award: `50 + 10*correct`; replay: 40% of that ceiling.
+- **Analyst step submission** — `awardAnalystStep()` — 15 XP, first-submission only.
+- **Analyst full completion** — `awardAnalystComplete()` — 100 XP bonus, first completion only.
+- **Daily practice** — `awardDailyPractice(correct, total)` — `20 + 5*correct`, once per day (gated by presence in daily-results map).
+- **Quest unlock** — `awardQuestXp(title, amount)` — the quest's own `xp` value.
+
+All writes go through `awardXp()`, which appends to a ring-buffered event ledger (`stocklens-xp-events`, max 50 entries) and returns `{ awarded, totalXp, leveledUp, currentLevel, levelsGained }` so UI can celebrate level-ups.
+
+### Quest catalog (17 quests)
+
+Categories: `lessons | analyst | habit | skills`. Each quest has a `check: () => { current, target }` — the universal shape lets the evaluator iterate uniformly. Notable quests: `first-light`, `phase-1-complete`, `phase-2-complete`, `deep-diver` (5 company lessons), `completionist` (all lessons), `perfect-mind` (5 3-stars), `flawless` (15 3-stars), `first-analysis`, `analyst` (5 companies), `wall-street-ready` (all companies), `habit-formed` (7-day streak), `disciplined` (30-day streak), `practice-maker` (5 daily practices), `sharpened` (20), `well-rounded` (3 mastered skills), `all-skills`, `grand-slam` (everything).
+
+`evaluateQuests()` is idempotent — it runs after any progress event, compares the newly-completed set against `stocklens-quests-earned`, fires XP for the delta, and persists the new earned set. Safe to call anywhere.
+
+### Integration pattern
+
+Return signatures were widened (not replaced) so existing callers keep working:
+
+- `markCompleted(id, score)` → `LessonCompletionReward { xp, quests, firstCompletion }`
+- `markAnalysisComplete(id)` → `AnalysisCompletionReward { xp, quests, firstCompletion }`
+- `saveAnalystResponse(...)` → `XpAwardResult | null` (first-submission only)
+- `saveDailyPracticeResult(correct, total)` → `DailyPracticeReward { result, xp, quests, firstCompletionToday }`
+
+Completion screens (`LessonRunner`, `ReviewSession`, `AnalystSession`) capture these rewards and render three reward blocks:
+
+1. **XP earned** — accent-gradient card with Zap icon and `+X XP`
+2. **Level up** — warm-gradient callout with animated chevron and new title
+3. **Quest unlocked** — one card per newly-earned quest, with icon, title, description, and XP chip
+
+### Home-page surface
+
+- Level badge in header ring (shows current level number instead of completion %)
+- Prominent level + XP card: title, total XP, progress bar to next level, quest count
+- Quests panel: 17 tiles in three states
+  - **Earned**: warm fill + trophy icon + XP chip
+  - **In progress**: accent border + current/target progress bar
+  - **Locked**: muted + Lock icon
+
+### Circular import note
+
+`progression.ts` and `quests.ts` cross-import each other. This is safe because all cross-module references happen inside function bodies (not during module initialization). Keep it that way — do not hoist imported identifiers into module-level constants in either file.
+
+### Future
+
+- Daily XP budget / anti-grind cap if replay XP becomes abusable
+- Quest progress toasts (notify mid-lesson when a quest ticks toward target)
+- Seasonal / rotating quest pool layered on top of the permanent catalog
+- Leaderboard (requires backend — out of scope while we remain localStorage-only)
+
+## Product Roadmap
+
+StockLens is evolving from a content engine into a complete "teaching machine" — beginner → intelligent investor. Tracked priorities:
+
+### Tier 1 — Differentiators (the moat)
+- [x] **Analyst Mode v1** — 7-step workflow, 4 seeded companies (Visa, Starbucks, Adobe, Disney)
+- [x] **Analyst Mode v2** — expanded to 10 companies (added: Walmart, Home Depot, Chipotle, Salesforce, Shopify, Spotify)
+- [x] **Analyst Mode v3** — save user responses to localStorage, review-past-answers card on intro, resume at first unanswered step, in-progress state on picker
+- [x] **Analyst Mode v4** — expanded to 16 companies across every major sector (added: JPMorgan, UnitedHealth, Eli Lilly, TSMC, ExxonMobil, Coca-Cola). Now covers banking, healthcare, pharma, semis, energy, staples, retail, SaaS, e-commerce, restaurants, and media.
+- [ ] **Analyst Mode v5** — track response revisions over time (first-pass vs. current diff view); export a company analysis as a shareable card
+
+### Tier 2 — Retention
+- [x] **Daily Practice v1** — deterministic 5-question mix pulled from completed lessons; one session per day; feeds the streak (`/review/daily`)
+- [x] **Review v2 — spaced repetition scheduling** — Leitner-box per-item tracking (`src/lib/spacedRepetition.ts`), priority-scored selection (wrong > due > new > upcoming), missed items auto-carry to box 0 and surface next day; UI shows per-item reason tags and session-level mastery/flagged counts
+- [ ] **Weak-area surfacing** — highlight skills with low mastery and route practice toward them
+- [ ] **Practice heatmap / calendar view** — visualize daily completion history and streak shape over time
+
+### Tier 3 — Critical curriculum gaps
+- [x] Index Funds & ETFs (foundations-index-funds)
+- [x] Reading a 10-K (foundations-ten-k)
+- [x] **Options basics** — calls, puts, hedging cost, covered-call tradeoffs, tools-vs-gambling framework (foundations-options)
+- [x] **Bonds and fixed income** — coupon/principal/maturity, duration, credit risk, role in portfolio (foundations-bonds)
+- [x] **Taxes for investors** — short vs. long-term gains, account hierarchy, tax-loss harvesting, tax drag compounding (foundations-taxes)
+- [ ] **Recession/downturn playbook** — how to think about portfolio decisions during drawdowns
+
+### Tier 4 — Engagement layer
+- [x] **XP + levels** — cumulative XP ledger (`src/lib/xp.ts`) with closed-form level curve `25·L·(L+1)`, 8-band title ladder (Novice → Market Wizard), award helpers for lessons/analyst/practice/quests, and level-up celebrations on every completion screen
+- [x] **Quests / milestone badges** — 17-quest catalog (`src/lib/quests.ts`) across lessons / analyst / habit / skills categories, idempotent evaluation, home-page panel with earned/in-progress/locked states, reward cards on completion screens
+- [ ] **Diagnostic onboarding** — 5-question placement quiz to suggest a starting point
+- [ ] **Learning path narrative** — explicitly recommended order with contextual "why this next"
+
+### Tier 5 — Polish + scale
+- [ ] Mobile PWA polish, offline support
+- [ ] Social proof / shareable analysis cards (with care — no financial advice)
+- [ ] Creator-submitted company profiles (community curation with review)
+- [ ] Integration with a free markets API for live P/E and price (big decision — requires backend)
+
+The North Star: a user who completes all lessons + all Analyst Mode companies can pick up any public company's 10-K, work through a reasoned analysis in 30 minutes, and form a defensible investment opinion. **That's the difference between education and skill.**
 
 ## What Makes This Project Different
 

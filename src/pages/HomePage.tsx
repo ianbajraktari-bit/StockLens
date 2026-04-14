@@ -13,19 +13,43 @@ import {
   Target,
   Zap,
   Star,
+  Flame,
+  GraduationCap,
+  Calendar,
+  Trophy,
+  Lock,
 } from 'lucide-react';
 import { allLessons, type Lesson } from '../data/lessons';
+import { allCompanies } from '../data/companies';
 import {
   getCompletedIds,
   getFirstUncompletedId,
   getSkillsProgress,
   getLessonStars,
+  getStreak,
+  getCompletedAnalyses,
 } from '../lib/progression';
+import {
+  getReviewPoolSize,
+  hasCompletedToday,
+  getTodayResult,
+  DAILY_PRACTICE_SIZE,
+} from '../lib/review';
+import { getReviewStats } from '../lib/spacedRepetition';
+import { getLevelInfo } from '../lib/xp';
+import { getQuestProgress, type QuestStatus } from '../lib/quests';
 
 const foundationsPhase1 = allLessons.filter((l) => l.tier === 'foundations-1');
 const foundationsPhase2 = allLessons.filter((l) => l.tier === 'foundations-2');
 const foundationLessons = [...foundationsPhase1, ...foundationsPhase2];
 const companyLessons = allLessons.filter((l) => l.tier === 'company');
+
+// Subtle tier accent colors for left border on lesson cards
+const TIER_COLORS = {
+  'foundations-1': 'rgba(99, 102, 241, 0.4)',   // indigo
+  'foundations-2': 'rgba(245, 158, 11, 0.4)',    // amber
+  'company': 'rgba(34, 197, 94, 0.4)',           // emerald
+} as const;
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -33,9 +57,22 @@ export default function HomePage() {
   const nextId = getFirstUncompletedId();
   const skillsProgress = getSkillsProgress();
   const hasAnyProgress = skillsProgress.some((s) => s.exposure > 0);
+  const streak = getStreak();
   const completedCount = completedIds.size;
   const totalCount = allLessons.length;
-  const progressPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+  const analysesCompleted = getCompletedAnalyses();
+  const reviewPoolSize = getReviewPoolSize();
+  const dailyDoneToday = hasCompletedToday();
+  const todayResult = dailyDoneToday ? getTodayResult() : null;
+  const reviewStats = getReviewStats();
+  const levelInfo = getLevelInfo();
+  const questProgress = getQuestProgress();
+  const questsEarned = questProgress.filter((q) => q.earned).length;
+
+  // Per-section completion counts
+  const phase1Completed = foundationsPhase1.filter(l => completedIds.has(l.id)).length;
+  const phase2Completed = foundationsPhase2.filter(l => completedIds.has(l.id)).length;
+  const companyCompleted = companyLessons.filter(l => completedIds.has(l.id)).length;
 
   function handleStart() {
     const target = nextId ?? allLessons[0].id;
@@ -46,6 +83,8 @@ export default function HomePage() {
     const completed = completedIds.has(lesson.id);
     const isNext = lesson.id === nextId;
     const stars = completed ? getLessonStars(lesson.id) : null;
+    const tierKey = (lesson.tier ?? 'foundations-1') as keyof typeof TIER_COLORS;
+    const tierColor = TIER_COLORS[tierKey];
 
     return (
       <motion.button
@@ -54,7 +93,8 @@ export default function HomePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: sectionDelay + index * 0.04 }}
         onClick={() => navigate(`/lesson/${lesson.id}`)}
-        className={`group w-full text-left rounded-xl border p-4 transition-all duration-200 cursor-pointer ${
+        style={{ borderLeftColor: tierColor }}
+        className={`group w-full text-left rounded-xl border border-l-[3px] p-4 transition-all duration-200 cursor-pointer ${
           isNext && !completed
             ? 'border-accent/40 bg-dark-800 hover:border-accent/60 shadow-[0_0_20px_rgba(99,102,241,0.06)]'
             : completed
@@ -154,11 +194,11 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Overall progress ring */}
+            {/* Level badge — replaces generic progress ring once user has XP */}
             {hasAnyProgress && (
               <div className="flex items-center gap-2">
-                <div className="relative w-10 h-10">
-                  <svg className="w-10 h-10 -rotate-90" viewBox="0 0 36 36">
+                <div className="relative w-11 h-11">
+                  <svg className="w-11 h-11 -rotate-90" viewBox="0 0 36 36">
                     <circle
                       cx="18" cy="18" r="15" fill="none"
                       stroke="currentColor" strokeWidth="2.5"
@@ -167,13 +207,13 @@ export default function HomePage() {
                     <circle
                       cx="18" cy="18" r="15" fill="none"
                       stroke="currentColor" strokeWidth="2.5"
-                      strokeDasharray={`${progressPct * 0.942} 100`}
+                      strokeDasharray={`${levelInfo.progressPct * 94.2} 100`}
                       strokeLinecap="round"
                       className="text-accent-light"
                     />
                   </svg>
-                  <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-text-primary">
-                    {progressPct}%
+                  <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-text-primary tabular-nums">
+                    {levelInfo.level}
                   </span>
                 </div>
               </div>
@@ -182,18 +222,96 @@ export default function HomePage() {
 
           {/* Stats bar or hero for new users */}
           {hasAnyProgress ? (
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5 text-xs text-text-secondary">
-                <CheckCircle2 className="w-3.5 h-3.5 text-green" />
-                <span>{completedCount} of {totalCount} lessons</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-xs text-text-secondary">
-                <BookOpen className="w-3.5 h-3.5 text-accent-light" />
-                <span>{foundationLessons.filter(l => completedIds.has(l.id)).length} foundations</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-xs text-text-secondary">
-                <Building2 className="w-3.5 h-3.5 text-warm" />
-                <span>{companyLessons.filter(l => completedIds.has(l.id)).length} companies</span>
+            <div className="space-y-4">
+              {/* Level + XP card — the progression spine */}
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.08 }}
+                className="rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/[0.12] via-accent/[0.04] to-transparent p-4 space-y-3 overflow-hidden relative"
+              >
+                {/* Subtle glow */}
+                <div className="absolute -top-12 -right-12 w-32 h-32 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+
+                <div className="relative flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent/25 to-accent/10 border border-accent/40 flex items-center justify-center shrink-0 shadow-[0_0_18px_rgba(99,102,241,0.25)]">
+                    <span className="text-lg font-bold text-accent-light tabular-nums">
+                      {levelInfo.level}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-sm font-bold text-text-primary truncate">
+                        {levelInfo.title}
+                      </p>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/10 text-accent-light font-semibold uppercase tracking-wider shrink-0">
+                        Lv {levelInfo.level}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[10px] text-text-muted tabular-nums mt-0.5">
+                      <span>
+                        <span className="text-text-secondary font-semibold">
+                          {levelInfo.totalXp.toLocaleString()}
+                        </span>{' '}
+                        XP total
+                      </span>
+                      <span>•</span>
+                      <span>{levelInfo.xpToNextLevel} to Lv {levelInfo.level + 1}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 text-[10px] text-text-muted shrink-0">
+                    <Trophy className="w-3 h-3 text-warm" />
+                    <span className="tabular-nums font-semibold">
+                      {questsEarned}/{questProgress.length}
+                    </span>
+                  </div>
+                </div>
+
+                {/* XP progress bar */}
+                <div className="relative h-2 rounded-full bg-dark-700 overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${levelInfo.progressPct * 100}%` }}
+                    transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+                    className="h-full rounded-full bg-gradient-to-r from-accent to-accent-light"
+                  />
+                </div>
+              </motion.div>
+
+              {/* Stats strip */}
+              <div className="flex items-center gap-4 flex-wrap">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: 0.1 }}
+                  className="flex items-center gap-1.5 text-xs"
+                >
+                  {streak.current > 0 ? (
+                    <>
+                      <Flame
+                        className={`w-3.5 h-3.5 text-warm ${streak.current >= 3 ? 'drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]' : ''}`}
+                      />
+                      <span className="text-warm font-semibold">{streak.current} day streak</span>
+                    </>
+                  ) : (
+                    <>
+                      <Flame className="w-3.5 h-3.5 text-text-muted" />
+                      <span className="text-text-muted">Start your streak!</span>
+                    </>
+                  )}
+                </motion.div>
+                <div className="flex items-center gap-1.5 text-xs text-text-secondary">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-green" />
+                  <span>{completedCount} of {totalCount} lessons</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-xs text-text-secondary">
+                  <BookOpen className="w-3.5 h-3.5 text-accent-light" />
+                  <span>{foundationLessons.filter(l => completedIds.has(l.id)).length} foundations</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-xs text-text-secondary">
+                  <Building2 className="w-3.5 h-3.5 text-warm" />
+                  <span>{companyLessons.filter(l => completedIds.has(l.id)).length} companies</span>
+                </div>
               </div>
             </div>
           ) : (
@@ -270,6 +388,11 @@ export default function HomePage() {
           </motion.div>
         )}
 
+        {/* Quests — milestone badges */}
+        {hasAnyProgress && (
+          <QuestsPanel quests={questProgress} earned={questsEarned} />
+        )}
+
         {/* Continue button for returning users */}
         {hasAnyProgress && nextId && (
           <motion.div
@@ -294,38 +417,187 @@ export default function HomePage() {
           </motion.div>
         )}
 
-        {/* Foundations Phase 1 */}
+        {/* Daily Practice — review loop, only shown once user has material to review */}
+        {reviewPoolSize > 0 && (
+          <motion.button
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: 0.07 }}
+            onClick={() => navigate('/review/daily')}
+            className={`group w-full text-left rounded-xl border transition-all cursor-pointer overflow-hidden relative ${
+              dailyDoneToday
+                ? 'border-green/30 bg-gradient-to-br from-green/[0.08] to-green/[0.02] hover:from-green/[0.11] hover:to-green/[0.04]'
+                : 'border-accent/40 bg-gradient-to-br from-accent/[0.1] to-accent/[0.03] hover:from-accent/[0.15] hover:to-accent/[0.05] shadow-[0_0_20px_rgba(99,102,241,0.06)]'
+            }`}
+          >
+            <div className="p-4 space-y-3">
+              <div className="flex items-start gap-3">
+                <div
+                  className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
+                    dailyDoneToday
+                      ? 'bg-green/15 border border-green/30'
+                      : 'bg-accent/15 border border-accent/30'
+                  }`}
+                >
+                  {dailyDoneToday ? (
+                    <CheckCircle2 className="w-5 h-5 text-green" />
+                  ) : (
+                    <Calendar className="w-5 h-5 text-accent-light" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-sm font-semibold text-text-primary">
+                      Daily Practice
+                    </h3>
+                    {dailyDoneToday ? (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-green/15 text-green font-bold uppercase tracking-wide">
+                        Done Today
+                      </span>
+                    ) : (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent-light font-bold uppercase tracking-wide">
+                        Ready
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">
+                    {dailyDoneToday && todayResult
+                      ? `You scored ${todayResult.correct}/${todayResult.total} today. Come back tomorrow for a fresh set.`
+                      : `${Math.min(DAILY_PRACTICE_SIZE, reviewPoolSize)} questions mixed from lessons you've completed. Keeps knowledge from decaying.`}
+                  </p>
+                </div>
+                <ArrowRight
+                  className={`w-4 h-4 transition-all shrink-0 ${
+                    dailyDoneToday
+                      ? 'text-text-muted group-hover:text-green'
+                      : 'text-text-muted group-hover:text-accent-light'
+                  } group-hover:translate-x-0.5`}
+                />
+              </div>
+              <div className="flex items-center gap-3 text-[10px] text-text-muted pl-14 flex-wrap">
+                <span>{reviewPoolSize} in review pool</span>
+                {reviewStats.wrong > 0 && (
+                  <>
+                    <span>•</span>
+                    <span className="text-red font-semibold">
+                      {reviewStats.wrong} flagged
+                    </span>
+                  </>
+                )}
+                {reviewStats.mastered > 0 && (
+                  <>
+                    <span>•</span>
+                    <span className="text-green font-semibold">
+                      {reviewStats.mastered} mastered
+                    </span>
+                  </>
+                )}
+                <span>•</span>
+                <span>~3 min</span>
+                {streak.current > 0 && !dailyDoneToday && (
+                  <>
+                    <span>•</span>
+                    <span className="flex items-center gap-1 text-warm">
+                      <Flame className="w-2.5 h-2.5" />
+                      Keeps streak alive
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
+          </motion.button>
+        )}
+
+        {/* Analyst Mode — the capstone feature */}
+        <motion.button
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.08 }}
+          onClick={() => navigate('/analyst')}
+          className="group w-full text-left rounded-xl border border-warm/30 bg-gradient-to-br from-warm/[0.08] to-accent/[0.04] hover:from-warm/[0.12] hover:to-accent/[0.07] transition-all cursor-pointer overflow-hidden relative"
+        >
+          <div className="p-4 space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="w-11 h-11 rounded-xl bg-warm/15 border border-warm/30 flex items-center justify-center shrink-0">
+                <Target className="w-5 h-5 text-warm" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-sm font-semibold text-text-primary">
+                    Analyst Mode
+                  </h3>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-warm/20 text-warm font-bold uppercase tracking-wide">
+                    New
+                  </span>
+                </div>
+                <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">
+                  The capstone — pick a company and walk through a 7-step analysis workflow. Business, drivers, moat, risks, valuation, thesis, verdict.
+                </p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-text-muted group-hover:text-warm group-hover:translate-x-0.5 transition-all shrink-0" />
+            </div>
+            <div className="flex items-center gap-3 text-[10px] text-text-muted pl-14">
+              <span>{allCompanies.length} companies</span>
+              <span>•</span>
+              <span>{analysesCompleted.size} analyzed</span>
+              <span>•</span>
+              <span>~10-14 min each</span>
+            </div>
+          </div>
+        </motion.button>
+
+        {/* Foundations Phase 1 — Core Financial Vocabulary */}
         <section className="space-y-3">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="flex items-center justify-between"
+            className="border-l-[3px] border-l-accent/30 pl-3 flex items-center justify-between"
           >
             <div className="flex items-center gap-2">
-              <Lightbulb className="w-4 h-4 text-amber" />
+              <Lightbulb className="w-4 h-4 text-accent-light" />
               <h2 className="text-sm font-semibold text-text-primary">
-                Foundations
+                Core Financial Vocabulary
               </h2>
-              <span className="text-[10px] text-text-muted">
-                {foundationLessons.filter(l => completedIds.has(l.id)).length}/{foundationLessons.length}
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/10 text-accent-light font-medium">
+                Phase 1
               </span>
             </div>
+            <span className="text-[10px] text-text-muted font-medium">
+              {phase1Completed}/{foundationsPhase1.length} complete
+            </span>
           </motion.div>
 
           <div className="space-y-1.5">
-            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider px-1">
-              Core Financial Vocabulary
-            </p>
             {foundationsPhase1.map((lesson, i) =>
               renderLessonCard(lesson, i, 0.15)
             )}
           </div>
+        </section>
 
-          <div className="space-y-1.5 pt-2">
-            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider px-1">
-              Investing Concepts
-            </p>
+        {/* Foundations Phase 2 — Investing Concepts */}
+        <section className="space-y-3">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="border-l-[3px] border-l-amber/30 pl-3 flex items-center justify-between"
+          >
+            <div className="flex items-center gap-2">
+              <GraduationCap className="w-4 h-4 text-amber" />
+              <h2 className="text-sm font-semibold text-text-primary">
+                Investing Concepts
+              </h2>
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber/10 text-amber font-medium">
+                Phase 2
+              </span>
+            </div>
+            <span className="text-[10px] text-text-muted font-medium">
+              {phase2Completed}/{foundationsPhase2.length} complete
+            </span>
+          </motion.div>
+
+          <div className="space-y-1.5">
             {foundationsPhase2.map((lesson, i) =>
               renderLessonCard(lesson, i, 0.25)
             )}
@@ -338,17 +610,20 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
-            className="flex items-center justify-between"
+            className="border-l-[3px] border-l-green/30 pl-3 flex items-center justify-between"
           >
             <div className="flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-warm" />
+              <Building2 className="w-4 h-4 text-green" />
               <h2 className="text-sm font-semibold text-text-primary">
                 Company Deep Dives
               </h2>
-              <span className="text-[10px] text-text-muted">
-                {companyLessons.filter(l => completedIds.has(l.id)).length}/{companyLessons.length}
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green/10 text-green font-medium">
+                Applied
               </span>
             </div>
+            <span className="text-[10px] text-text-muted font-medium">
+              {companyCompleted}/{companyLessons.length} complete
+            </span>
           </motion.div>
 
           <div className="space-y-1.5">
@@ -366,5 +641,138 @@ export default function HomePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// Quests panel — shows earned + closest-to-complete + locked badges.
+// Sort order: earned (most recent first) → in-progress (closest to done
+// first) → locked (furthest, so they aren't overwhelming).
+// ─────────────────────────────────────────────────────────────────────
+
+function QuestsPanel({
+  quests,
+  earned,
+}: {
+  quests: QuestStatus[];
+  earned: number;
+}) {
+  // Sort: earned first (freshest wins at top), then in-progress by closeness,
+  // then locked with zero progress at the end.
+  const sorted = [...quests].sort((a, b) => {
+    if (a.earned !== b.earned) return a.earned ? -1 : 1;
+    if (a.earned && b.earned) return 0;
+    return b.progressPct - a.progressPct;
+  });
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, delay: 0.09 }}
+      className="space-y-3"
+    >
+      <div className="border-l-[3px] border-l-warm/40 pl-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Trophy className="w-4 h-4 text-warm" />
+          <h2 className="text-sm font-semibold text-text-primary">Quests</h2>
+          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-warm/10 text-warm font-medium">
+            Milestones
+          </span>
+        </div>
+        <span className="text-[10px] text-text-muted font-medium tabular-nums">
+          {earned}/{quests.length} earned
+        </span>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2">
+        {sorted.map((q, i) => (
+          <QuestTile key={q.quest.id} status={q} index={i} />
+        ))}
+      </div>
+    </motion.section>
+  );
+}
+
+function QuestTile({
+  status,
+  index,
+}: {
+  status: QuestStatus;
+  index: number;
+}) {
+  const { quest, current, target, earned, progressPct } = status;
+  const Icon = quest.icon;
+  const locked = !earned && progressPct === 0;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: 0.05 + Math.min(index, 6) * 0.03 }}
+      className={`relative rounded-xl border p-3 overflow-hidden ${
+        earned
+          ? 'border-warm/40 bg-gradient-to-br from-warm/[0.14] to-warm/[0.04] shadow-[0_0_14px_rgba(245,158,11,0.1)]'
+          : locked
+            ? 'border-border bg-dark-900/40'
+            : 'border-accent/25 bg-gradient-to-br from-accent/[0.08] to-transparent'
+      }`}
+    >
+      <div className="flex items-start gap-2.5">
+        <div
+          className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+            earned
+              ? 'bg-warm/20 border border-warm/40'
+              : locked
+                ? 'bg-dark-800 border border-border'
+                : 'bg-accent/15 border border-accent/30'
+          }`}
+        >
+          {locked ? (
+            <Lock className="w-3.5 h-3.5 text-text-faint" />
+          ) : (
+            <Icon
+              className={`w-3.5 h-3.5 ${
+                earned ? 'text-warm' : 'text-accent-light'
+              }`}
+            />
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p
+            className={`text-[11px] font-bold leading-tight ${
+              earned
+                ? 'text-warm'
+                : locked
+                  ? 'text-text-muted'
+                  : 'text-text-primary'
+            }`}
+          >
+            {quest.title}
+          </p>
+          <p className="text-[10px] text-text-muted leading-tight mt-0.5 line-clamp-2">
+            {quest.description}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-2 flex items-center gap-2">
+        <div className="flex-1 h-1 rounded-full bg-dark-700 overflow-hidden">
+          <div
+            className={`h-full rounded-full ${
+              earned ? 'bg-warm' : 'bg-accent/70'
+            }`}
+            style={{ width: `${progressPct * 100}%` }}
+          />
+        </div>
+        <span
+          className={`text-[9px] font-semibold tabular-nums shrink-0 ${
+            earned ? 'text-warm' : locked ? 'text-text-faint' : 'text-text-muted'
+          }`}
+        >
+          {earned ? `+${quest.xp} XP` : `${current}/${target}`}
+        </span>
+      </div>
+    </motion.div>
   );
 }

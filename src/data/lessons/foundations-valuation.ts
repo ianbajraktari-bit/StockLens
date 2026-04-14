@@ -69,7 +69,7 @@ export const foundationsValuationLesson: Lesson = {
       unit: 'x',
       hint: '$150 ÷ $10',
       reveal:
-        '$150 ÷ $10 = 15x. Investors are paying $15 for every $1 of annual profit. Another way to read it: if earnings stayed flat, it would take 15 years of profit to "pay back" the stock price. A P/E of 15x is roughly average for the US stock market.',
+        '$150 ÷ $10 = 15x. That means investors pay $15 for every $1 of current annual earnings — it\'s a price-to-profit ratio, not a literal payback period, because if earnings grow, the effective payback is much faster. A P/E of 15x is roughly average for the US stock market.',
       takeaway: 'P/E = Price ÷ Earnings. It tells you how many dollars you\'re paying for each dollar of profit. The average US stock trades at roughly 15–20x.',
     },
 
@@ -241,6 +241,7 @@ export const foundationsValuationLesson: Lesson = {
     'P/E = Price ÷ Earnings Per Share. It tells you how many dollars you pay for $1 of profit. The US average is roughly 15–20x.',
     'A high P/E is a bet on the future — the higher the multiple, the more growth must happen to justify the price.',
     'Premiums are justified by predictability, superior margins, or faster growth — not hype, fame, or past returns.',
+    'You can calculate P/E ratios. Next: why a company can report record profits and still see its stock drop.',
   ],
   completionMessages: {
     perfect: 'Flawless. You now have the tool that separates investors from speculators: comparing price to what you actually get.',
