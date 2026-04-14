@@ -19,13 +19,18 @@ import EstimateStep from '../components/steps/EstimateStep';
 import TapStep from '../components/steps/TapStep';
 import DecideStep from '../components/steps/DecideStep';
 import {
-  getDailyPractice,
+  getScheduledDailyPractice,
   getReviewPoolSize,
   getTodayResult,
   saveDailyPracticeResult,
   DAILY_PRACTICE_SIZE,
-  type ReviewItem,
+  type ScheduledReviewItem,
 } from '../lib/review';
+import {
+  recordItemResult,
+  getReviewStats,
+  type PriorityReason,
+} from '../lib/spacedRepetition';
 import { getStreak } from '../lib/progression';
 
 type Phase = 'intro' | 'running' | 'complete';
@@ -34,9 +39,10 @@ export default function ReviewSession() {
   const navigate = useNavigate();
 
   // Freeze today's items for this session — don't re-derive on every render.
-  const items = useMemo<ReviewItem[]>(() => getDailyPractice(), []);
+  const items = useMemo<ScheduledReviewItem[]>(() => getScheduledDailyPractice(), []);
   const poolSize = useMemo(() => getReviewPoolSize(), []);
   const existingResult = useMemo(() => getTodayResult(), []);
+  const initialStats = useMemo(() => getReviewStats(), []);
 
   const [phase, setPhase] = useState<Phase>(
     existingResult ? 'complete' : 'intro',
@@ -52,6 +58,14 @@ export default function ReviewSession() {
   const current = items[stepIndex];
 
   function handleStepDone(score: { correct: number; total: number }) {
+    // Record per-item SR outcome. "Pass" = perfect on this step. Anything
+    // less resets the item to Leitner box 0 so it surfaces tomorrow.
+    const passed = score.total > 0 && score.correct === score.total;
+    const item = items[stepIndex];
+    if (item) {
+      recordItemResult(item.itemId, passed);
+    }
+
     const newCorrect = correctTotal + score.correct;
     const newMax = maxTotal + score.total;
     setCorrectTotal(newCorrect);
@@ -190,6 +204,40 @@ export default function ReviewSession() {
                   value={`${getStreak().current}`}
                   sub="day"
                 />
+              </div>
+
+              {/* Today's mix — SR priority breakdown */}
+              <div className="border-t border-border px-5 py-4 space-y-2">
+                <p className="text-[10px] text-text-muted font-semibold uppercase tracking-wider">
+                  Today's mix
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {summarizeReasons(items).map(({ reason, count }) => (
+                    <ReasonPill key={reason} reason={reason} count={count} />
+                  ))}
+                </div>
+                {initialStats.tracked > 0 && (
+                  <p className="text-[10px] text-text-muted pt-1">
+                    <span className="text-green font-semibold">
+                      {initialStats.mastered}
+                    </span>{' '}
+                    mastered
+                    {initialStats.wrong > 0 && (
+                      <>
+                        {' • '}
+                        <span className="text-red font-semibold">
+                          {initialStats.wrong}
+                        </span>{' '}
+                        flagged
+                      </>
+                    )}
+                    {' • '}
+                    <span className="text-warm font-semibold">
+                      {initialStats.due}
+                    </span>{' '}
+                    due
+                  </p>
+                )}
               </div>
 
               {/* Preview of source lessons */}
@@ -457,11 +505,13 @@ export default function ReviewSession() {
             </div>
           </div>
 
-          {/* Provenance — which lesson this step is from */}
+          {/* Provenance + SR reason — which lesson this step is from, why it's in the mix */}
           {current && (
-            <div className="flex items-center gap-2 text-[11px] text-text-muted">
+            <div className="flex items-center gap-2 text-[11px] text-text-muted flex-wrap">
               <span className="text-sm">{current.lessonEmoji}</span>
               <span className="truncate">From: {current.lessonTitle}</span>
+              <span className="text-text-faint">•</span>
+              <ReasonPill reason={current.reason} />
             </div>
           )}
         </div>
@@ -525,3 +575,63 @@ function Stat({
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────
+// SR reason pill — shows why an item is in today's mix
+// ─────────────────────────────────────────────────────────────────────
+
+const REASON_STYLE: Record<
+  PriorityReason,
+  { color: string; label: string }
+> = {
+  wrong: {
+    color: 'bg-red/10 text-red border-red/30',
+    label: 'Missed last time',
+  },
+  due: {
+    color: 'bg-warm/10 text-warm border-warm/30',
+    label: 'Due for review',
+  },
+  new: {
+    color: 'bg-accent/10 text-accent-light border-accent/30',
+    label: 'New',
+  },
+  upcoming: {
+    color: 'bg-dark-700 text-text-muted border-border',
+    label: 'Refresher',
+  },
+};
+
+function ReasonPill({
+  reason,
+  count,
+}: {
+  reason: PriorityReason;
+  count?: number;
+}) {
+  const style = REASON_STYLE[reason];
+  return (
+    <span
+      className={`inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-full border ${style.color}`}
+    >
+      {style.label}
+      {count !== undefined && (
+        <span className="tabular-nums opacity-80">×{count}</span>
+      )}
+    </span>
+  );
+}
+
+/** Groups items by reason and returns counts for the intro summary. */
+function summarizeReasons(
+  items: ScheduledReviewItem[],
+): { reason: PriorityReason; count: number }[] {
+  const counts = new Map<PriorityReason, number>();
+  for (const it of items) {
+    counts.set(it.reason, (counts.get(it.reason) ?? 0) + 1);
+  }
+  // Order: wrong → due → new → upcoming (matches priority order).
+  const order: PriorityReason[] = ['wrong', 'due', 'new', 'upcoming'];
+  return order
+    .filter((r) => counts.has(r))
+    .map((r) => ({ reason: r, count: counts.get(r) ?? 0 }));
+}

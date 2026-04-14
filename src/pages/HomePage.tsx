@@ -33,6 +33,7 @@ import {
   getTodayResult,
   DAILY_PRACTICE_SIZE,
 } from '../lib/review';
+import { getReviewStats } from '../lib/spacedRepetition';
 
 const foundationsPhase1 = allLessons.filter((l) => l.tier === 'foundations-1');
 const foundationsPhase2 = allLessons.filter((l) => l.tier === 'foundations-2');
@@ -60,6 +61,7 @@ export default function HomePage() {
   const reviewPoolSize = getReviewPoolSize();
   const dailyDoneToday = hasCompletedToday();
   const todayResult = dailyDoneToday ? getTodayResult() : null;
+  const reviewStats = getReviewStats();
 
   // Per-section completion counts
   const phase1Completed = foundationsPhase1.filter(l => completedIds.has(l.id)).length;
@@ -403,11 +405,27 @@ export default function HomePage() {
                   } group-hover:translate-x-0.5`}
                 />
               </div>
-              <div className="flex items-center gap-3 text-[10px] text-text-muted pl-14">
+              <div className="flex items-center gap-3 text-[10px] text-text-muted pl-14 flex-wrap">
                 <span>{reviewPoolSize} in review pool</span>
+                {reviewStats.wrong > 0 && (
+                  <>
+                    <span>•</span>
+                    <span className="text-red font-semibold">
+                      {reviewStats.wrong} flagged
+                    </span>
+                  </>
+                )}
+                {reviewStats.mastered > 0 && (
+                  <>
+                    <span>•</span>
+                    <span className="text-green font-semibold">
+                      {reviewStats.mastered} mastered
+                    </span>
+                  </>
+                )}
                 <span>•</span>
                 <span>~3 min</span>
-                {streak.current > 0 && (
+                {streak.current > 0 && !dailyDoneToday && (
                   <>
                     <span>•</span>
                     <span className="flex items-center gap-1 text-warm">

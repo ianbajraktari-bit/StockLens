@@ -612,17 +612,30 @@ Daily Practice is the "come back tomorrow" feature. Once a user has completed at
 
 ### Files
 
-- `src/lib/review.ts` — selection logic, storage, and public API
+- `src/lib/spacedRepetition.ts` — per-item Leitner-box state, priority scoring, aggregate stats
+- `src/lib/review.ts` — pool collection, scheduled selection, daily-result storage, public API
 - `src/pages/ReviewSession.tsx` — intro → running → complete flow; reuses the same step components as `LessonRunner`
 - Entry card on `HomePage.tsx`, route `/review/daily` in `App.tsx`
 
-### Selection
+### Selection (Leitner spaced repetition)
 
-`getDailyPractice()` walks every completed lesson, collects all gradable steps (a flat `ReviewItem[]`), hashes today's date into a seed, and shuffles deterministically via an LCG. The first `DAILY_PRACTICE_SIZE` (5) items are today's practice. Two runs on the same day return the same items in the same order — users can't re-roll for easier questions, and the choice is reproducible for testing.
+Each review item (`itemId = lessonId:stepIndex`) lives in a Leitner box 0-5. Box intervals are `[1, 2, 4, 8, 16, 30]` days. On a perfect step (`correct === total`), the item moves up one box. On any miss, it resets to box 0 (due tomorrow) — which is how missed-question carryover is implemented.
+
+`getScheduledDailyPractice()` walks the pool of gradable steps from completed lessons, computes a priority per item, sorts descending, and slices `DAILY_PRACTICE_SIZE` (5). Priority tiers:
+
+- **`wrong`** (1000 + days since): item was missed most recently — highest priority
+- **`due`** (400 + days overdue × 20): last-seen + box interval has elapsed
+- **`new`** (500): item has no stat yet — lands between wrong and due
+- **`upcoming`** (max(0, 100 - days until due × 5)): not yet due, low-priority refresher
+
+Deterministic seeded jitter breaks ties reproducibly within a day. Stats are only mutated at session completion, so mid-day reopens see the same selection.
+
+Each selected item carries its `reason` (`wrong | due | new | upcoming`) into the UI as a colored pill — users can see why each question surfaced and get an aggregate "today's mix" summary on the intro screen.
 
 ### Storage
 
-`stocklens-daily-practice` — `Record<YYYY-MM-DD, { correct, total, completedAt }>`. Results from every past day are kept (cheap; future feature could visualize a heatmap). `saveDailyPracticeResult` also calls `updateStreak()`, so daily practice alone is enough to maintain a streak.
+- `stocklens-review-item-stats` — `Record<itemId, { box, lastSeen, timesSeen, timesCorrect, lastCorrect }>` — per-item SR state, updated after each step in a session
+- `stocklens-daily-practice` — `Record<YYYY-MM-DD, { correct, total, completedAt }>` — session-level daily result; `saveDailyPracticeResult` also calls `updateStreak()`, so daily practice alone maintains a streak
 
 ### Empty-pool handling
 
@@ -630,10 +643,10 @@ If `getReviewPoolSize()` is 0, the home-page card doesn't render, and direct nav
 
 ### Future
 
-- Per-item spacing (weight questions by last-seen + got-wrong) — moves from "shuffle today's set" to true spaced repetition
-- Missed-question surfacing (today's wrong answers get priority tomorrow)
+- Weak-area surfacing (route practice toward low-mastery skill tags)
 - Heatmap / streak calendar visualization
-- Multiple practice sessions per day once the pool is big enough
+- Multiple practice sessions per day once the pool is large enough
+- Per-item history view (how many times you've seen X, current box, last miss)
 
 ## Product Roadmap
 
@@ -648,8 +661,9 @@ StockLens is evolving from a content engine into a complete "teaching machine" �
 
 ### Tier 2 — Retention
 - [x] **Daily Practice v1** — deterministic 5-question mix pulled from completed lessons; one session per day; feeds the streak (`/review/daily`)
-- [ ] **Review v2 — spaced repetition scheduling** — weight toward questions the user has seen least recently or got wrong; per-item difficulty/last-seen tracking
+- [x] **Review v2 — spaced repetition scheduling** — Leitner-box per-item tracking (`src/lib/spacedRepetition.ts`), priority-scored selection (wrong > due > new > upcoming), missed items auto-carry to box 0 and surface next day; UI shows per-item reason tags and session-level mastery/flagged counts
 - [ ] **Weak-area surfacing** — highlight skills with low mastery and route practice toward them
+- [ ] **Practice heatmap / calendar view** — visualize daily completion history and streak shape over time
 
 ### Tier 3 — Critical curriculum gaps
 - [x] Index Funds & ETFs (foundations-index-funds)

@@ -2,6 +2,13 @@ import { allLessons } from '../data/lessons';
 import type { Lesson } from '../data/lessons';
 import type { LessonStep } from '../data/lessons/types';
 import { getCompletedIds, updateStreak } from './progression';
+import {
+  computePriority,
+  makeItemId,
+  seededFraction,
+  type ItemPriority,
+  type PriorityReason,
+} from './spacedRepetition';
 
 const DAILY_PRACTICE_KEY = 'stocklens-daily-practice';
 
@@ -28,6 +35,28 @@ export interface ReviewItem {
   step: LessonStep;
 }
 
+/** A ReviewItem with its SR priority breakdown attached, for UI labeling. */
+export interface ScheduledReviewItem extends ReviewItem {
+  itemId: string;
+  reason: PriorityReason;
+  daysOverdue: number;
+  box: number | null;
+}
+
+/** Human-readable label for a priority reason — used as a chip on items. */
+export function priorityReasonLabel(reason: PriorityReason): string {
+  switch (reason) {
+    case 'wrong':
+      return 'Missed last time';
+    case 'due':
+      return 'Due for review';
+    case 'new':
+      return 'New material';
+    case 'upcoming':
+      return 'Refresher';
+  }
+}
+
 /** Stable YYYY-MM-DD for "today" in local time. */
 function getTodayDate(): string {
   const d = new Date();
@@ -45,18 +74,6 @@ function hashDate(dateStr: string): number {
     h = (h * 16777619) >>> 0;
   }
   return h >>> 0;
-}
-
-/** Seeded LCG so two runs on the same day produce the same order. */
-function seededShuffle<T>(arr: T[], seed: number): T[] {
-  const out = arr.slice();
-  let s = seed || 1;
-  for (let i = out.length - 1; i > 0; i--) {
-    s = (s * 1664525 + 1013904223) >>> 0;
-    const j = s % (i + 1);
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
 }
 
 /** All gradable steps across all completed lessons. */
@@ -80,17 +97,62 @@ function collectReviewPool(): ReviewItem[] {
 }
 
 /**
- * Returns today's 5 daily-practice items. Deterministic per date:
- * running this twice on the same day returns the same items in the
- * same order. Returns an empty array if the user has no completed
- * lessons (review only covers material they've already learned).
+ * Returns today's daily-practice items, scheduled by spaced repetition.
+ *
+ * Selection prioritizes:
+ *   1. Items the user got wrong most recently (Leitner box 0) — surface fast
+ *   2. Items that are due (last-seen + interval ≤ today)
+ *   3. Items the user has never seen (new material from recently-completed lessons)
+ *   4. Not-yet-due items (fill remaining slots — the refresher tier)
+ *
+ * Deterministic per date: two runs on the same day return the same items
+ * in the same order (stats are only mutated at session end, so mid-day
+ * reopens see the same selection).
  */
 export function getDailyPractice(): ReviewItem[] {
+  return getScheduledDailyPractice().map(({ itemId, reason, daysOverdue, box, ...item }) => {
+    void itemId;
+    void reason;
+    void daysOverdue;
+    void box;
+    return item;
+  });
+}
+
+/**
+ * Same as getDailyPractice but returns each item with its SR priority
+ * breakdown attached — lets the UI label why each item is in the set.
+ */
+export function getScheduledDailyPractice(): ScheduledReviewItem[] {
   const pool = collectReviewPool();
   if (pool.length === 0) return [];
-  const seed = hashDate(getTodayDate());
-  const shuffled = seededShuffle(pool, seed);
-  return shuffled.slice(0, Math.min(DAILY_PRACTICE_SIZE, shuffled.length));
+  const today = getTodayDate();
+  const seed = hashDate(today);
+
+  const scored = pool.map((item) => {
+    const itemId = makeItemId(item.lessonId, item.stepIndex);
+    const p: ItemPriority = computePriority(itemId, today);
+    // Add < 1.0 jitter so ties resolve deterministically without
+    // crossing priority-tier boundaries.
+    const jitter = seededFraction(seed, itemId);
+    return {
+      ...item,
+      itemId,
+      reason: p.reason,
+      daysOverdue: p.daysOverdue,
+      box: p.box,
+      _sortKey: p.priority + jitter,
+    };
+  });
+
+  scored.sort((a, b) => b._sortKey - a._sortKey);
+
+  return scored
+    .slice(0, Math.min(DAILY_PRACTICE_SIZE, scored.length))
+    .map(({ _sortKey, ...rest }) => {
+      void _sortKey;
+      return rest;
+    });
 }
 
 /** How many gradable steps exist across the user's completed lessons. */
