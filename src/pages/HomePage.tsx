@@ -46,6 +46,9 @@ import {
 import { getReviewStats } from '../lib/spacedRepetition';
 import { getLevelInfo } from '../lib/xp';
 import { getQuestProgress, type QuestStatus } from '../lib/quests';
+import { CountUp } from '../components/hud/CountUp';
+import { GlassPanel } from '../components/hud/GlassPanel';
+import { SPRING_CELEBRATION } from '../lib/motion';
 
 // ─────────────────────────────────────────────────────────────────────
 // Constants
@@ -1280,55 +1283,10 @@ function ProgressTab({
         sub="Level, streak, skills, and quests — the long arc of getting sharper."
       />
 
-      {/* Level + XP hero card */}
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: EASE_CINEMATIC }}
-        className="rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/[0.14] via-accent/[0.04] to-transparent p-5 space-y-4 overflow-hidden relative"
-      >
-        <div className="absolute -top-16 -right-16 w-40 h-40 bg-accent/15 rounded-full blur-3xl pointer-events-none" />
+      {/* Level + XP showcase — HUD surface */}
+      <LevelShowcase levelInfo={levelInfo} />
 
-        <div className="relative flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent/30 to-accent/10 border border-accent/40 flex items-center justify-center shrink-0 shadow-[0_0_24px_rgba(99,102,241,0.3)]">
-            <span className="text-2xl font-bold text-accent-light tabular-nums">
-              {levelInfo.level}
-            </span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <p className="text-base font-bold text-text-primary truncate">
-                {levelInfo.title}
-              </p>
-              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent-light font-bold uppercase tracking-wider shrink-0">
-                Lv {levelInfo.level}
-              </span>
-            </div>
-            <div className="text-[11px] text-text-muted tabular-nums mt-1">
-              <span className="text-text-secondary font-semibold">
-                {levelInfo.totalXp.toLocaleString()}
-              </span>{' '}
-              XP total · {levelInfo.xpToNextLevel} to Lv {levelInfo.level + 1}
-            </div>
-          </div>
-        </div>
-
-        <div className="relative space-y-1.5">
-          <div className="h-2.5 rounded-full bg-dark-700/80 overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${levelInfo.progressPct * 100}%` }}
-              transition={{ duration: 0.9, ease: EASE_CINEMATIC, delay: 0.2 }}
-              className="h-full rounded-full bg-gradient-to-r from-accent to-accent-light shadow-[0_0_10px_rgba(129,140,248,0.4)]"
-            />
-          </div>
-          <div className="flex justify-between text-[10px] text-text-faint tabular-nums">
-            <span>Lv {levelInfo.level}</span>
-            <span>{Math.round(levelInfo.progressPct * 100)}%</span>
-            <span>Lv {levelInfo.level + 1}</span>
-          </div>
-        </div>
-      </motion.div>
+      <div className="hairline" aria-hidden />
 
       {/* Stats row */}
       <div className="grid grid-cols-4 gap-2">
@@ -1588,6 +1546,118 @@ function QuestTile({
           {earned ? `+${quest.xp} XP` : `${current}/${target}`}
         </span>
       </div>
+    </motion.div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// LevelShowcase — HUD-style hero for the character sheet
+// ─────────────────────────────────────────────────────────────────────
+
+function LevelShowcase({
+  levelInfo,
+}: {
+  levelInfo: ReturnType<typeof getLevelInfo>;
+}) {
+  const pct = Math.max(0, Math.min(1, levelInfo.progressPct));
+  const segments = 24;
+  const filledSegments = Math.round(pct * segments);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: EASE_CINEMATIC }}
+    >
+      <GlassPanel tone="accent" aurora scanlines noise={false} className="px-5 py-5">
+        {/* Header row: level badge + title + XP total */}
+        <div className="flex items-center gap-4">
+          {/* Level badge with pulse ring */}
+          <div className="relative shrink-0">
+            <motion.div
+              initial={{ scale: 0.6, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={SPRING_CELEBRATION}
+              className="relative w-[68px] h-[68px] rounded-2xl flex items-center justify-center
+                         bg-gradient-to-br from-accent/25 via-accent/10 to-transparent
+                         border border-accent/40
+                         shadow-[0_0_24px_-4px_rgba(99,102,241,0.45),inset_0_1px_0_rgba(255,255,255,0.08)]"
+            >
+              <span className="display-num text-[30px] text-accent-light leading-none">
+                {levelInfo.level}
+              </span>
+              <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 px-1.5 py-0.5 rounded-md
+                               bg-dark-900/90 border border-accent/30
+                               text-[8px] font-bold uppercase tracking-[0.18em] text-accent-light">
+                LVL
+              </span>
+            </motion.div>
+          </div>
+
+          {/* Title + XP total */}
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent-light/80">
+              Rank
+            </p>
+            <h3 className="text-lg font-semibold tracking-tight text-text-primary truncate mt-0.5">
+              {levelInfo.title}
+            </h3>
+            <div className="flex items-baseline gap-1.5 mt-1">
+              <CountUp
+                value={levelInfo.totalXp}
+                duration={1.1}
+                format={(n) => n.toLocaleString()}
+                className="display-num text-[22px] text-text-primary leading-none"
+              />
+              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+                XP
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Hairline divider */}
+        <div className="hairline my-4" aria-hidden />
+
+        {/* Segmented progression gauge */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.18em]">
+            <span className="text-text-muted">
+              Progress to Lv <span className="text-text-secondary">{levelInfo.level + 1}</span>
+            </span>
+            <span className="display-num text-text-secondary tabular-nums normal-case tracking-normal text-[11px]">
+              {levelInfo.xpIntoLevel}
+              <span className="text-text-faint"> / {levelInfo.xpSpanOfLevel}</span>
+            </span>
+          </div>
+
+          {/* Segmented bar */}
+          <div className="relative h-2.5 flex items-stretch gap-[2px]">
+            {Array.from({ length: segments }).map((_, i) => {
+              const active = i < filledSegments;
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scaleY: 0.4 }}
+                  animate={{ opacity: 1, scaleY: 1 }}
+                  transition={{ duration: 0.35, delay: 0.25 + i * 0.015, ease: EASE_CINEMATIC }}
+                  className={`flex-1 rounded-[2px] origin-bottom ${
+                    active
+                      ? 'bg-gradient-to-t from-accent/90 to-accent-light shadow-[0_0_6px_rgba(129,140,248,0.45)]'
+                      : 'bg-dark-700/80'
+                  }`}
+                />
+              );
+            })}
+          </div>
+
+          {/* Fine data line */}
+          <div className="flex justify-between text-[10px] text-text-faint tabular-nums">
+            <span>{Math.round(pct * 100)}% complete</span>
+            <span>{levelInfo.xpToNextLevel} XP remaining</span>
+          </div>
+        </div>
+      </GlassPanel>
     </motion.div>
   );
 }
