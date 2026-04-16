@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Skill runtime caches
+.claude/skills/**/__pycache__/
+.claude/skills/**/*.pyc

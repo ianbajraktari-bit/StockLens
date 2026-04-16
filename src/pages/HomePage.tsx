@@ -48,7 +48,10 @@ import { getLevelInfo } from '../lib/xp';
 import { getQuestProgress, type QuestStatus } from '../lib/quests';
 import { CountUp } from '../components/hud/CountUp';
 import { GlassPanel } from '../components/hud/GlassPanel';
-import { SPRING_CELEBRATION } from '../lib/motion';
+import {
+  SPRING_CELEBRATION,
+  SPRING_FLUID,
+} from '../lib/motion';
 
 // ─────────────────────────────────────────────────────────────────────
 // Constants
@@ -130,9 +133,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-dark-950">
-      {/* Ambient scene glow */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-accent/[0.03] rounded-full blur-[120px]" />
+      {/* Ambient scene glow — subtle aurora wash */}
+      <div className="fixed inset-0 pointer-events-none" aria-hidden>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-accent/[0.04] rounded-full blur-[140px]" />
+        <div className="absolute top-20 right-1/4 w-[400px] h-[300px] bg-signal/[0.03] rounded-full blur-[120px]" />
       </div>
 
       <div className="relative max-w-2xl mx-auto px-4">
@@ -144,15 +148,18 @@ export default function HomePage() {
           className="py-6 flex items-center justify-between"
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center
+                            bg-gradient-to-br from-accent/20 to-accent/[0.04]
+                            border border-accent/30
+                            shadow-[0_0_16px_-4px_rgba(99,102,241,0.35),inset_0_1px_0_rgba(255,255,255,0.06)]">
               <TrendingUp className="w-5 h-5 text-accent-light" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-text-primary tracking-tight">
+              <h1 className="text-lg font-bold text-text-primary tracking-tight leading-none">
                 StockLens
               </h1>
-              <p className="text-[11px] text-text-muted">
-                Learn to think like an investor
+              <p className="text-[10px] text-text-muted mt-0.5 font-medium tracking-wide">
+                Think like an investor
               </p>
             </div>
           </div>
@@ -185,7 +192,7 @@ export default function HomePage() {
         )}
 
         {/* Sticky tab bar */}
-        <div className="sticky top-0 z-10 -mx-4 px-4 py-2 bg-dark-950/85 backdrop-blur-md border-b border-border/60">
+        <div className="sticky top-0 z-10 -mx-4 px-4 py-2 bg-dark-950/80 backdrop-blur-xl border-b border-white/[0.04]">
           <TabBar
             tabs={tabs}
             active={activeTab}
@@ -304,58 +311,81 @@ function LevelBadgeRing({
 }
 
 function OnboardingHero({ onStart }: { onStart: () => void }) {
+  const props = [
+    {
+      icon: Brain,
+      title: "Think, don't memorize",
+      sub: 'Every step forces reasoning, not recall.',
+      color: 'text-accent-light',
+      glow: 'bg-accent/10 border-accent/25',
+    },
+    {
+      icon: Target,
+      title: 'Real companies, real data',
+      sub: 'Apple, NVIDIA, Costco — actual financials.',
+      color: 'text-warm',
+      glow: 'bg-warm/10 border-warm/25',
+    },
+    {
+      icon: Layers,
+      title: '5 interactive formats',
+      sub: 'Drills, estimates, signal-finding, decisions, synthesis.',
+      color: 'text-green',
+      glow: 'bg-green/10 border-green/25',
+    },
+  ];
+
   return (
     <motion.section
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.45, ease: EASE_CINEMATIC, delay: 0.08 }}
-      className="mb-6 space-y-5"
+      transition={{ duration: 0.5, ease: EASE_CINEMATIC, delay: 0.08 }}
+      className="mb-6"
     >
-      <p className="text-sm text-text-secondary leading-relaxed">
-        Interactive lessons that teach you to analyze businesses and make
-        investment decisions. Not memorization — real reasoning.
-      </p>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-        {[
-          {
-            icon: Brain,
-            label: "Think, don't memorize",
-            color: 'text-accent-light',
-            bg: 'bg-accent/10 border-accent/20',
-          },
-          {
-            icon: Target,
-            label: 'Real companies, real data',
-            color: 'text-warm',
-            bg: 'bg-warm/10 border-warm/20',
-          },
-          {
-            icon: Zap,
-            label: '5 interactive formats',
-            color: 'text-green',
-            bg: 'bg-green/10 border-green/20',
-          },
-        ].map(({ icon: Icon, label, color, bg }) => (
-          <div
-            key={label}
-            className={`rounded-xl border p-3 ${bg} flex flex-col items-center gap-2 text-center`}
-          >
-            <Icon className={`w-4 h-4 ${color}`} />
-            <span className="text-[11px] text-text-secondary leading-tight font-medium">
-              {label}
-            </span>
-          </div>
-        ))}
-      </div>
-      <motion.button
-        onClick={onStart}
-        whileHover={{ scale: 1.01 }}
-        whileTap={{ scale: 0.98 }}
-        className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-accent hover:bg-accent-light text-white text-sm font-semibold transition-colors cursor-pointer"
-      >
-        Start Learning
-        <ArrowRight className="w-4 h-4" />
-      </motion.button>
+      <GlassPanel tone="accent" aurora scanlines className="px-5 pt-6 pb-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-accent-light/80 mb-2">
+          Welcome to StockLens
+        </p>
+        <h2 className="text-xl font-bold text-text-primary tracking-tight leading-snug">
+          Learn to analyze businesses<br />
+          <span className="text-accent-light">like a real investor.</span>
+        </h2>
+        <p className="text-sm text-text-secondary leading-relaxed mt-2 max-w-md">
+          Interactive lessons that teach reasoning — not memorization.
+          Free, no account required.
+        </p>
+
+        <div className="hairline my-4" aria-hidden />
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          {props.map(({ icon: Icon, title, sub, color, glow }, i) => (
+            <motion.div
+              key={title}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: 0.25 + i * 0.08, ease: EASE_CINEMATIC }}
+              className={`rounded-xl border p-3.5 ${glow} space-y-1.5`}
+            >
+              <Icon className={`w-4 h-4 ${color}`} />
+              <p className="text-[12px] font-semibold text-text-primary leading-snug">{title}</p>
+              <p className="text-[11px] text-text-muted leading-snug">{sub}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.button
+          onClick={onStart}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.5 }}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.97 }}
+          className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-accent hover:bg-accent-light text-white text-sm font-semibold cursor-pointer mt-4 shadow-[0_8px_24px_-8px_rgba(99,102,241,0.6)]"
+        >
+          Start Learning
+          <ArrowRight className="w-4 h-4" />
+        </motion.button>
+      </GlassPanel>
     </motion.section>
   );
 }
@@ -377,7 +407,11 @@ function TabBar({
     <div
       role="tablist"
       aria-label="Home sections"
-      className="relative grid grid-cols-4 gap-1 rounded-xl bg-dark-800/60 border border-border p-1"
+      className="relative grid grid-cols-4 gap-0.5 rounded-xl p-1
+                 bg-gradient-to-b from-dark-800/80 to-dark-900/80
+                 border border-white/[0.06]
+                 backdrop-blur-xl
+                 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.04)]"
     >
       {tabs.map((tab) => {
         const isActive = tab.id === active;
@@ -389,22 +423,21 @@ function TabBar({
             aria-selected={isActive}
             aria-controls={`panel-${tab.id}`}
             onClick={() => onChange(tab.id)}
-            className="relative flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer"
+            className="relative flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-lg text-[11px] font-semibold cursor-pointer"
           >
             {isActive && (
               <motion.span
                 layoutId="tabbar-active-pill"
-                className="absolute inset-0 rounded-lg bg-accent/15 border border-accent/30 shadow-[0_0_16px_rgba(99,102,241,0.12)]"
-                transition={{
-                  type: 'spring',
-                  stiffness: 380,
-                  damping: 32,
-                }}
+                className="absolute inset-0 rounded-lg
+                           bg-gradient-to-b from-accent/20 to-accent/[0.06]
+                           border border-accent/35
+                           shadow-[0_0_20px_-4px_rgba(99,102,241,0.25),inset_0_1px_0_rgba(255,255,255,0.06)]"
+                transition={SPRING_FLUID}
               />
             )}
             <span
-              className={`relative flex items-center gap-1.5 ${
-                isActive ? 'text-accent-light' : 'text-text-muted'
+              className={`relative flex items-center gap-1.5 transition-colors duration-200 ${
+                isActive ? 'text-accent-light' : 'text-text-muted hover:text-text-secondary'
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
@@ -479,29 +512,31 @@ function LessonCard({
         delay: Math.min(index, 10) * 0.03,
       }}
       onClick={onClick}
+      whileHover={{ y: -2, scale: 1.008 }}
+      whileTap={{ scale: 0.995 }}
       style={{ borderLeftColor: tierColor }}
-      className={`group w-full text-left rounded-xl border border-l-[3px] p-4 transition-all duration-200 cursor-pointer ${
+      className={`group w-full text-left rounded-xl border border-l-[3px] p-4 cursor-pointer transition-shadow duration-200 ${
         isNext && !completed
-          ? 'border-accent/40 bg-dark-800 hover:border-accent/60 shadow-[0_0_20px_rgba(99,102,241,0.06)]'
+          ? 'border-accent/40 bg-gradient-to-br from-dark-800 to-dark-800/60 hover:border-accent/60 hover:shadow-[0_8px_32px_-8px_rgba(99,102,241,0.2)] shadow-[0_2px_12px_-4px_rgba(99,102,241,0.1)]'
           : completed
-            ? 'border-border bg-dark-800/50 hover:bg-dark-800/80 hover:border-border-light'
-            : 'border-border bg-dark-800/70 hover:bg-dark-800 hover:border-border-light'
+            ? 'border-border bg-dark-800/40 hover:bg-dark-800/70 hover:border-border-light hover:shadow-[0_4px_16px_-4px_rgba(0,0,0,0.3)]'
+            : 'border-border bg-dark-800/60 hover:bg-dark-800/90 hover:border-border-light hover:shadow-[0_4px_16px_-4px_rgba(0,0,0,0.3)]'
       }`}
     >
       <div className="flex items-center gap-3">
         <div
-          className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 ${
+          className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 transition-colors duration-200 ${
             completed
-              ? 'bg-green/10 border border-green/20'
+              ? 'bg-green/10 border border-green/25'
               : isNext
-                ? 'bg-accent/15 border border-accent/25'
-                : 'bg-dark-700 border border-border'
+                ? 'bg-accent/15 border border-accent/30 shadow-[0_0_12px_-4px_rgba(99,102,241,0.3)]'
+                : 'bg-dark-700 border border-border group-hover:border-border-light'
           }`}
         >
           {completed ? (
             <CheckCircle2 className="w-5 h-5 text-green" />
           ) : (
-            lesson.emoji
+            <span className="text-base">{lesson.emoji}</span>
           )}
         </div>
         <div className="flex-1 min-w-0">
@@ -514,40 +549,44 @@ function LessonCard({
               {lesson.title}
             </h3>
             {isNext && !completed && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent-light font-semibold shrink-0">
-                Up next
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent-light font-bold uppercase tracking-[0.1em] shrink-0 border border-accent/25">
+                Next
               </span>
             )}
           </div>
           <p
-            className={`text-xs mt-0.5 ${
+            className={`text-xs mt-0.5 leading-snug ${
               completed ? 'text-text-muted' : 'text-text-secondary'
             }`}
           >
             {lesson.subtitle}
           </p>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2.5 shrink-0">
           {completed && stars !== null ? (
             <div className="flex items-center gap-0.5">
               {[0, 1, 2].map((i) => (
                 <Star
                   key={i}
-                  className={`w-3 h-3 ${
-                    i < stars ? 'text-warm fill-warm' : 'text-dark-500'
+                  className={`w-3.5 h-3.5 ${
+                    i < stars ? 'text-warm fill-warm drop-shadow-[0_0_4px_rgba(245,158,11,0.4)]' : 'text-dark-500'
                   }`}
                 />
               ))}
             </div>
           ) : (
-            <div className="flex items-center gap-1 text-[10px] text-text-muted">
+            <div className="flex items-center gap-1 text-[10px] text-text-muted display-num">
               <Clock className="w-3 h-3" />
               {lesson.estimatedMinutes}m
             </div>
           )}
           <ArrowRight
-            className={`w-4 h-4 transition-transform group-hover:translate-x-0.5 ${
-              completed ? 'text-text-muted' : 'text-text-secondary'
+            className={`w-4 h-4 transition-all duration-200 group-hover:translate-x-1 ${
+              isNext && !completed
+                ? 'text-accent-light'
+                : completed
+                  ? 'text-text-muted'
+                  : 'text-text-secondary'
             }`}
           />
         </div>
@@ -573,23 +612,45 @@ function SectionHeader({
   count: number;
   total: number;
 }) {
+  const pct = total > 0 ? count / total : 0;
   return (
-    <div
-      style={{ borderLeftColor: accentColor }}
-      className="border-l-[3px] pl-3 flex items-center justify-between"
-    >
-      <div className="flex items-center gap-2">
-        <Icon className="w-4 h-4" style={{ color: accentColor }} />
-        <h3 className="text-sm font-semibold text-text-primary">{label}</h3>
-        <span
-          className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${badgeColor}`}
-        >
-          {badge}
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div
+            className="w-7 h-7 rounded-lg flex items-center justify-center border"
+            style={{
+              backgroundColor: accentColor.replace('0.4)', '0.1)'),
+              borderColor: accentColor.replace('0.4)', '0.25)'),
+            }}
+          >
+            <Icon className="w-3.5 h-3.5" style={{ color: accentColor.replace('0.4)', '1)') }} />
+          </div>
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-text-primary">{label}</h3>
+            <span
+              className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-[0.1em] ${badgeColor}`}
+            >
+              {badge}
+            </span>
+          </div>
+        </div>
+        <span className="display-num text-[10px] text-text-muted font-medium">
+          {count}/{total}
         </span>
       </div>
-      <span className="text-[10px] text-text-muted font-medium tabular-nums">
-        {count}/{total} complete
-      </span>
+      {/* Section completion bar */}
+      <div className="h-[3px] rounded-full bg-dark-700/80 overflow-hidden">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${pct * 100}%` }}
+          transition={{ duration: 0.7, ease: EASE_CINEMATIC, delay: 0.15 }}
+          className="h-full rounded-full"
+          style={{
+            background: `linear-gradient(90deg, ${accentColor.replace('0.4)', '0.7)')}, ${accentColor.replace('0.4)', '1)')})`,
+          }}
+        />
+      </div>
     </div>
   );
 }
