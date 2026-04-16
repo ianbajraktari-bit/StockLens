@@ -1,7 +1,14 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Flag, X, Lightbulb } from 'lucide-react';
+import { ArrowRight, Flag, X, Lightbulb, Sparkles } from 'lucide-react';
 import type { TapStep as TapStepType } from '../../data/lessons/types';
+import {
+  EASE_CINEMATIC,
+  EASE_GAME_IN,
+  SPRING_CELEBRATION,
+  SPRING_TACTILE,
+  SPRING_FLUID,
+} from '../../lib/motion';
 
 interface Props {
   step: TapStepType;
@@ -24,6 +31,7 @@ export default function TapStep({ step, onDone }: Props) {
   const wrongTaps = Object.values(tapped).filter((v) => v === 'wrong').length;
 
   const canFinish = foundSignals >= step.requiredSignals;
+  const progressPct = step.requiredSignals > 0 ? foundSignals / step.requiredSignals : 0;
 
   function handleChipTap(index: number) {
     if (submitted || tapped[index]) return;
@@ -51,16 +59,36 @@ export default function TapStep({ step, onDone }: Props) {
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <step.topicIcon className="w-3.5 h-3.5 text-accent-light" />
-          <span className="text-xs font-semibold text-accent-light uppercase tracking-wide">
+          <span className="text-[11px] font-semibold text-accent-light uppercase tracking-[0.14em]">
             {step.topic}
           </span>
         </div>
         <div className="flex items-center gap-1.5">
           <Flag className="w-3 h-3 text-amber" />
-          <span className="text-xs font-semibold text-text-muted tabular-nums">
-            {foundSignals}/{step.requiredSignals}
+          <span className="display-num text-[11px] font-semibold text-text-muted">
+            {foundSignals}
+            <span className="text-text-faint"> / {step.requiredSignals}</span>
           </span>
         </div>
+      </div>
+
+      {/* Signal progress gauge */}
+      <div className="flex items-stretch gap-[3px] h-1.5">
+        {Array.from({ length: step.requiredSignals }).map((_, i) => {
+          const lit = i < foundSignals;
+          return (
+            <motion.div
+              key={i}
+              animate={lit ? { scaleY: [1, 1.4, 1] } : undefined}
+              transition={lit ? { duration: 0.25, ease: EASE_CINEMATIC } : undefined}
+              className={`flex-1 rounded-[2px] transition-colors duration-300 ${
+                lit
+                  ? 'bg-amber shadow-[0_0_6px_rgba(245,158,11,0.5)]'
+                  : 'bg-dark-700'
+              }`}
+            />
+          );
+        })}
       </div>
 
       {/* Intro */}
@@ -77,12 +105,20 @@ export default function TapStep({ step, onDone }: Props) {
           const wasRight = state === 'right';
           const wasWrong = state === 'wrong';
           return (
-            <button
+            <motion.button
               key={i}
               onClick={() => handleChipTap(i)}
               disabled={submitted || !!state}
               aria-label={`${isUntapped ? 'Tap to check: ' : wasRight ? 'Flagged: ' : 'Not a flag: '}${seg.value}`}
-              className={`inline px-2 py-1 mx-0.5 rounded-lg font-medium transition-all duration-150 ${
+              whileHover={isUntapped ? { y: -1, scale: 1.03 } : undefined}
+              whileTap={isUntapped ? { scale: 0.96 } : undefined}
+              animate={wasWrong ? { x: [0, -3, 3, -1.5, 1.5, 0] } : undefined}
+              transition={
+                wasWrong
+                  ? { duration: 0.3, ease: EASE_CINEMATIC }
+                  : SPRING_FLUID
+              }
+              className={`inline px-2.5 py-1 mx-0.5 rounded-lg font-medium transition-colors duration-200 ${
                 isUntapped
                   ? 'bg-dark-700 text-text-primary border-b-2 border-dotted border-accent/50 hover:bg-dark-600 hover:border-accent cursor-pointer'
                   : wasRight
@@ -91,9 +127,25 @@ export default function TapStep({ step, onDone }: Props) {
               }`}
             >
               {seg.value}
-              {wasRight && <Flag className="inline w-3 h-3 ml-1" />}
-              {wasWrong && <X className="inline w-3 h-3 ml-1" />}
-            </button>
+              {wasRight && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={SPRING_CELEBRATION}
+                >
+                  <Flag className="inline w-3 h-3 ml-1" />
+                </motion.span>
+              )}
+              {wasWrong && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={SPRING_TACTILE}
+                >
+                  <X className="inline w-3 h-3 ml-1" />
+                </motion.span>
+              )}
+            </motion.button>
           );
         })}
       </div>
@@ -103,16 +155,21 @@ export default function TapStep({ step, onDone }: Props) {
         {lastTap && !submitted && (
           <motion.div
             key={lastTap.index}
-            initial={{ opacity: 0, y: 6 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className={`rounded-xl border p-3.5 ${
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.25, ease: EASE_GAME_IN }}
+            className={`rounded-xl border p-3.5 flex items-start gap-2.5 ${
               lastTap.right
-                ? 'border-amber/30 bg-amber/5'
-                : 'border-border bg-dark-700'
+                ? 'border-amber/30 bg-gradient-to-br from-amber/[0.08] to-transparent'
+                : 'border-border bg-dark-900/60'
             }`}
           >
+            {lastTap.right ? (
+              <Sparkles className="w-4 h-4 text-amber shrink-0 mt-0.5" />
+            ) : (
+              <X className="w-4 h-4 text-text-muted shrink-0 mt-0.5" />
+            )}
             <p className="text-sm text-text-secondary leading-relaxed">{lastTap.feedback}</p>
           </motion.div>
         )}
@@ -120,52 +177,77 @@ export default function TapStep({ step, onDone }: Props) {
 
       {/* Stats */}
       {!submitted && (
-        <div className="flex items-center justify-between text-xs text-text-muted">
-          <span>
+        <div className="flex items-center justify-between text-[11px]">
+          <span className="text-text-muted">
             {foundSignals < step.requiredSignals
-              ? `Find ${step.requiredSignals - foundSignals} more red flag${step.requiredSignals - foundSignals === 1 ? '' : 's'}`
-              : 'All required red flags found'}
+              ? `Find ${step.requiredSignals - foundSignals} more signal${step.requiredSignals - foundSignals === 1 ? '' : 's'}`
+              : 'All signals found'}
           </span>
-          {wrongTaps > 0 && (
-            <span className="text-red/70">{wrongTaps} wrong tap{wrongTaps === 1 ? '' : 's'}</span>
-          )}
+          <div className="flex items-center gap-3">
+            {wrongTaps > 0 && (
+              <span className="text-red/70 display-num">
+                {wrongTaps} miss{wrongTaps === 1 ? '' : 'es'}
+              </span>
+            )}
+            <span className="text-text-faint display-num">
+              {Math.round(progressPct * 100)}%
+            </span>
+          </div>
         </div>
       )}
 
       {/* Reveal after finish */}
-      {submitted && (
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
-          className="space-y-4"
-        >
-          <p className="text-sm text-text-secondary leading-relaxed">{step.reveal}</p>
-          <div className="rounded-xl border border-warm/20 bg-warm/5 p-4 flex items-start gap-2.5">
-            <Lightbulb className="w-4 h-4 text-warm shrink-0 mt-0.5" />
-            <p className="text-sm text-text-secondary leading-relaxed">{step.takeaway}</p>
-          </div>
-          <motion.button
-            onClick={handleContinue}
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-            className="w-full py-3 rounded-xl bg-accent hover:bg-accent-light text-white font-semibold transition-colors cursor-pointer flex items-center justify-center gap-2"
+      <AnimatePresence>
+        {submitted && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: EASE_GAME_IN, delay: 0.1 }}
+            className="space-y-3"
           >
-            Continue
-            <ArrowRight className="w-4 h-4" />
-          </motion.button>
-        </motion.div>
-      )}
+            <motion.p
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.15 }}
+              className="text-sm text-text-secondary leading-relaxed"
+            >
+              {step.reveal}
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.25 }}
+              className="rounded-xl border border-warm/20 bg-warm/[0.05] p-4 flex items-start gap-2.5"
+            >
+              <Lightbulb className="w-4 h-4 text-warm shrink-0 mt-0.5" />
+              <p className="text-sm text-text-secondary leading-relaxed">{step.takeaway}</p>
+            </motion.div>
+            <motion.button
+              onClick={handleContinue}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.35 }}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.97 }}
+              className="w-full py-3 rounded-xl bg-accent hover:bg-accent-light text-white font-semibold cursor-pointer flex items-center justify-center gap-2 shadow-[0_8px_24px_-8px_rgba(99,102,241,0.6)]"
+            >
+              Continue
+              <ArrowRight className="w-4 h-4" />
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {!submitted && (
         <motion.button
           onClick={handleFinish}
           disabled={!canFinish}
-          whileHover={canFinish ? { scale: 1.01 } : {}}
-          whileTap={canFinish ? { scale: 0.98 } : {}}
-          className={`w-full py-3 rounded-xl font-semibold transition-all ${
+          whileHover={canFinish ? { scale: 1.01 } : undefined}
+          whileTap={canFinish ? { scale: 0.97 } : undefined}
+          transition={SPRING_TACTILE}
+          className={`w-full py-3 rounded-xl font-semibold transition-colors ${
             canFinish
-              ? 'bg-accent hover:bg-accent-light text-white cursor-pointer'
+              ? 'bg-accent hover:bg-accent-light text-white cursor-pointer shadow-[0_8px_24px_-8px_rgba(99,102,241,0.6)]'
               : 'bg-dark-700 border border-border text-text-muted cursor-not-allowed opacity-50'
           }`}
         >
