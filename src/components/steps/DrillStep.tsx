@@ -113,17 +113,17 @@ export default function DrillStep({ step, onDone }: Props) {
           </p>
         </div>
 
-        <div className="rounded-xl border border-warm/20 bg-warm/5 p-4 flex items-start gap-2.5">
+        <div className="rounded-xl border border-warm/15 bg-gradient-to-br from-warm/[0.06] to-transparent p-4 flex items-start gap-2.5">
           <Lightbulb className="w-4 h-4 text-warm shrink-0 mt-0.5" />
           <p className="text-sm text-text-secondary leading-relaxed">{step.takeaway}</p>
         </div>
 
         <motion.button
           onClick={handleContinue}
-          whileHover={{ scale: 1.01 }}
+          whileHover={{ scale: 1.015, y: -1 }}
           whileTap={{ scale: 0.97 }}
           transition={SPRING_TACTILE}
-          className="w-full py-3 rounded-xl bg-accent hover:bg-accent-light text-white font-semibold cursor-pointer flex items-center justify-center gap-2 shadow-[0_8px_24px_-8px_rgba(99,102,241,0.6)]"
+          className="btn-glow w-full py-3.5 rounded-xl bg-gradient-to-r from-accent to-accent-light text-white font-bold cursor-pointer flex items-center justify-center gap-2 shadow-[0_8px_32px_-8px_rgba(99,102,241,0.6)] hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.7)] transition-shadow duration-300"
         >
           Continue
           <ArrowRight className="w-4 h-4" />
@@ -228,14 +228,14 @@ export default function DrillStep({ step, onDone }: Props) {
                       ? { duration: 0.4, ease: EASE_CINEMATIC }
                       : SPRING_FLUID
                   }
-                  className={`relative rounded-xl border p-4 text-left min-h-[120px] flex flex-col justify-between overflow-hidden ${
+                  className={`relative rounded-2xl border p-4 text-left min-h-[120px] flex flex-col justify-between overflow-hidden transition-all duration-300 ${
                     celebrate
-                      ? 'border-green/60 bg-gradient-to-br from-green/[0.14] to-green/[0.03]'
+                      ? 'border-green/50 bg-gradient-to-br from-green/[0.12] via-green/[0.04] to-transparent shadow-[0_0_20px_-6px_rgba(34,197,94,0.3)]'
                       : pickedWrong
-                        ? 'border-red/60 bg-gradient-to-br from-red/[0.12] to-red/[0.02]'
+                        ? 'border-red/50 bg-gradient-to-br from-red/[0.1] via-red/[0.03] to-transparent'
                         : showResult
-                          ? 'border-border bg-dark-700 opacity-40'
-                          : 'border-border bg-dark-700 hover:border-accent/40 hover:bg-dark-600 cursor-pointer'
+                          ? 'border-white/[0.03] bg-dark-700/40 opacity-40'
+                          : 'border-white/[0.06] bg-dark-700/60 hover:border-accent/35 hover:bg-dark-600/70 hover:shadow-[0_4px_20px_-8px_rgba(99,102,241,0.2)] cursor-pointer'
                   }`}
                 >
                   {/* Celebrate: subtle pulse ring on the correct card */}
@@ -304,10 +304,10 @@ export default function DrillStep({ step, onDone }: Props) {
                 className="space-y-4"
               >
                 <div
-                  className={`rounded-xl border p-3.5 flex items-start gap-2.5 ${
+                  className={`rounded-xl border p-3.5 flex items-start gap-2.5 backdrop-blur-sm ${
                     isCorrect
-                      ? 'border-green/25 bg-green/[0.06]'
-                      : 'border-border bg-dark-900/60'
+                      ? 'border-green/20 bg-gradient-to-br from-green/[0.06] to-transparent'
+                      : 'border-white/[0.05] bg-dark-900/40'
                   }`}
                 >
                   {isCorrect ? (
@@ -321,10 +321,10 @@ export default function DrillStep({ step, onDone }: Props) {
                 </div>
                 <motion.button
                   onClick={handleNext}
-                  whileHover={{ scale: 1.01 }}
+                  whileHover={{ scale: 1.01, y: -1 }}
                   whileTap={{ scale: 0.97 }}
                   transition={SPRING_TACTILE}
-                  className="w-full py-3 rounded-xl border border-border-light/40 bg-dark-700 hover:bg-dark-600 text-text-primary text-sm font-semibold cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-xl border border-white/[0.08] bg-dark-700/60 hover:bg-dark-600/80 hover:border-white/[0.12] text-text-primary text-sm font-semibold cursor-pointer flex items-center justify-center gap-2 transition-all duration-200"
                 >
                   {index < total - 1 ? 'Next' : 'See Results'}
                   <ArrowRight className="w-3.5 h-3.5" />

@@ -119,12 +119,12 @@ export default function TapStep({ step, onDone }: Props) {
                   ? { duration: 0.3, ease: EASE_CINEMATIC }
                   : SPRING_FLUID
               }
-              className={`inline px-2.5 py-1 mx-0.5 rounded-lg font-medium transition-colors duration-200 ${
+              className={`inline px-2.5 py-1 mx-0.5 rounded-lg font-medium transition-all duration-200 ${
                 isUntapped
-                  ? 'bg-dark-700 text-text-primary border-b-2 border-dotted border-accent/50 hover:bg-dark-600 hover:border-accent cursor-pointer'
+                  ? 'bg-dark-700/80 text-text-primary border-b-2 border-dotted border-accent/50 hover:bg-accent/[0.12] hover:border-accent hover:shadow-[0_2px_12px_-4px_rgba(99,102,241,0.3)] cursor-pointer'
                   : wasRight
-                    ? 'bg-amber/15 text-amber border-b-2 border-amber'
-                    : 'bg-dark-600 text-text-muted border-b-2 border-dark-500 line-through'
+                    ? 'bg-amber/15 text-amber border-b-2 border-amber shadow-[0_2px_8px_-3px_rgba(245,158,11,0.3)]'
+                    : 'bg-dark-600/60 text-text-muted border-b-2 border-dark-500 line-through'
               }`}
             >
               {seg.value}
@@ -218,7 +218,7 @@ export default function TapStep({ step, onDone }: Props) {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.25 }}
-              className="rounded-xl border border-warm/20 bg-warm/[0.05] p-4 flex items-start gap-2.5"
+              className="rounded-xl border border-warm/15 bg-gradient-to-br from-warm/[0.06] to-transparent p-4 flex items-start gap-2.5"
             >
               <Lightbulb className="w-4 h-4 text-warm shrink-0 mt-0.5" />
               <p className="text-sm text-text-secondary leading-relaxed">{step.takeaway}</p>
@@ -228,9 +228,9 @@ export default function TapStep({ step, onDone }: Props) {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.35 }}
-              whileHover={{ scale: 1.01 }}
+              whileHover={{ scale: 1.015, y: -1 }}
               whileTap={{ scale: 0.97 }}
-              className="w-full py-3 rounded-xl bg-accent hover:bg-accent-light text-white font-semibold cursor-pointer flex items-center justify-center gap-2 shadow-[0_8px_24px_-8px_rgba(99,102,241,0.6)]"
+              className="btn-glow w-full py-3.5 rounded-xl bg-gradient-to-r from-accent to-accent-light text-white font-bold cursor-pointer flex items-center justify-center gap-2 shadow-[0_8px_32px_-8px_rgba(99,102,241,0.6)] hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.7)] transition-shadow duration-300"
             >
               Continue
               <ArrowRight className="w-4 h-4" />
@@ -243,13 +243,13 @@ export default function TapStep({ step, onDone }: Props) {
         <motion.button
           onClick={handleFinish}
           disabled={!canFinish}
-          whileHover={canFinish ? { scale: 1.01 } : undefined}
+          whileHover={canFinish ? { scale: 1.015, y: -1 } : undefined}
           whileTap={canFinish ? { scale: 0.97 } : undefined}
           transition={SPRING_TACTILE}
-          className={`w-full py-3 rounded-xl font-semibold transition-colors ${
+          className={`w-full py-3.5 rounded-xl font-bold transition-all duration-300 ${
             canFinish
-              ? 'bg-accent hover:bg-accent-light text-white cursor-pointer shadow-[0_8px_24px_-8px_rgba(99,102,241,0.6)]'
-              : 'bg-dark-700 border border-border text-text-muted cursor-not-allowed opacity-50'
+              ? 'btn-glow bg-gradient-to-r from-accent to-accent-light text-white cursor-pointer shadow-[0_8px_32px_-8px_rgba(99,102,241,0.6)] hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.7)]'
+              : 'bg-dark-700/60 border border-white/[0.06] text-text-muted cursor-not-allowed opacity-50'
           }`}
         >
           {canFinish ? 'Done' : 'Keep looking'}

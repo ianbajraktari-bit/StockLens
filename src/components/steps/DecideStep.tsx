@@ -91,16 +91,16 @@ export default function DecideStep({ step, onDone }: Props) {
                   ? { duration: 0.35, ease: EASE_CINEMATIC }
                   : SPRING_FLUID
               }
-              className={`relative w-full text-left rounded-xl border p-4 overflow-hidden ${
+              className={`relative w-full text-left rounded-2xl border p-4 overflow-hidden transition-all duration-300 ${
                 celebrate
-                  ? 'border-green/60 bg-gradient-to-br from-green/[0.12] to-green/[0.02]'
+                  ? 'border-green/50 bg-gradient-to-br from-green/[0.1] via-green/[0.04] to-transparent shadow-[0_0_20px_-6px_rgba(34,197,94,0.3)]'
                   : pickedWrong
-                    ? 'border-red/60 bg-gradient-to-br from-red/[0.12] to-red/[0.02]'
+                    ? 'border-red/50 bg-gradient-to-br from-red/[0.1] via-red/[0.03] to-transparent'
                     : showResult
-                      ? 'border-border bg-dark-700 opacity-40'
+                      ? 'border-white/[0.03] bg-dark-700/40 opacity-40'
                       : isSelected
-                        ? 'border-accent/60 bg-gradient-to-br from-accent/[0.14] to-accent/[0.03] cursor-pointer shadow-[0_0_16px_-8px_rgba(99,102,241,0.6)]'
-                        : 'border-border bg-dark-700 hover:border-accent/40 hover:bg-dark-600 cursor-pointer'
+                        ? 'border-accent/50 bg-gradient-to-br from-accent/[0.12] to-accent/[0.03] cursor-pointer shadow-[0_0_20px_-6px_rgba(99,102,241,0.35)]'
+                        : 'border-white/[0.06] bg-dark-700/60 hover:border-accent/30 hover:bg-dark-600/70 hover:shadow-[0_4px_16px_-6px_rgba(99,102,241,0.15)] cursor-pointer'
               }`}
             >
               {celebrate && (
@@ -199,7 +199,7 @@ export default function DecideStep({ step, onDone }: Props) {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: 0.3 }}
-              className="rounded-xl border border-warm/20 bg-warm/[0.05] p-4 flex items-start gap-2.5"
+              className="rounded-xl border border-warm/15 bg-gradient-to-br from-warm/[0.06] to-transparent p-4 flex items-start gap-2.5"
             >
               <Lightbulb className="w-4 h-4 text-warm shrink-0 mt-0.5" />
               <p className="text-sm text-text-secondary leading-relaxed">{step.takeaway}</p>
@@ -210,9 +210,9 @@ export default function DecideStep({ step, onDone }: Props) {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.4 }}
-              whileHover={{ scale: 1.01 }}
+              whileHover={{ scale: 1.015, y: -1 }}
               whileTap={{ scale: 0.97 }}
-              className="w-full py-3 rounded-xl bg-accent hover:bg-accent-light text-white font-semibold cursor-pointer flex items-center justify-center gap-2 shadow-[0_8px_24px_-8px_rgba(99,102,241,0.6)]"
+              className="btn-glow w-full py-3.5 rounded-xl bg-gradient-to-r from-accent to-accent-light text-white font-bold cursor-pointer flex items-center justify-center gap-2 shadow-[0_8px_32px_-8px_rgba(99,102,241,0.6)] hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.7)] transition-shadow duration-300"
             >
               Continue
               <ArrowRight className="w-4 h-4" />
@@ -225,13 +225,13 @@ export default function DecideStep({ step, onDone }: Props) {
         <motion.button
           onClick={handleSubmit}
           disabled={selected === null}
-          whileHover={selected !== null ? { scale: 1.01 } : undefined}
+          whileHover={selected !== null ? { scale: 1.015, y: -1 } : undefined}
           whileTap={selected !== null ? { scale: 0.97 } : undefined}
           transition={SPRING_TACTILE}
-          className={`w-full py-3 rounded-xl font-semibold transition-colors ${
+          className={`w-full py-3.5 rounded-xl font-bold transition-all duration-300 ${
             selected !== null
-              ? 'bg-accent hover:bg-accent-light text-white cursor-pointer shadow-[0_8px_24px_-8px_rgba(99,102,241,0.6)]'
-              : 'bg-dark-700 border border-border text-text-muted cursor-not-allowed opacity-50'
+              ? 'btn-glow bg-gradient-to-r from-accent to-accent-light text-white cursor-pointer shadow-[0_8px_32px_-8px_rgba(99,102,241,0.6)] hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.7)]'
+              : 'bg-dark-700/60 border border-white/[0.06] text-text-muted cursor-not-allowed opacity-50'
           }`}
         >
           Submit
