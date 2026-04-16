@@ -121,7 +121,7 @@ export default function ReviewSession() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="rounded-2xl border border-border bg-dark-800/60 p-6 space-y-4 text-center"
+            className="rounded-2xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-6 space-y-4 text-center"
           >
             <div className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mx-auto">
               <Calendar className="w-6 h-6 text-accent-light" />
@@ -138,7 +138,7 @@ export default function ReviewSession() {
             </div>
             <button
               onClick={() => navigate('/')}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent hover:bg-accent-light text-white text-sm font-semibold transition-colors cursor-pointer"
+              className="btn-glow inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-light text-white text-sm font-bold shadow-[0_8px_32px_-8px_rgba(99,102,241,0.6)] hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.7)] transition-shadow duration-300 cursor-pointer"
             >
               Pick a lesson
               <ArrowRight className="w-4 h-4" />
@@ -191,7 +191,7 @@ export default function ReviewSession() {
             </div>
 
             {/* Why this matters card */}
-            <div className="rounded-2xl border border-border bg-dark-800/60 overflow-hidden">
+            <div className="rounded-2xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm overflow-hidden">
               <div className="p-5">
                 <p className="text-sm text-text-secondary leading-relaxed">
                   Spaced repetition is how knowledge becomes instinct. Each
@@ -200,7 +200,7 @@ export default function ReviewSession() {
                   surface first.
                 </p>
               </div>
-              <div className="border-t border-border px-5 py-4 grid grid-cols-3 gap-3">
+              <div className="border-t border-white/[0.06] px-5 py-4 grid grid-cols-3 gap-3">
                 <Stat
                   icon={<Sparkles className="w-3.5 h-3.5 text-accent-light" />}
                   label="Today's set"
@@ -221,7 +221,7 @@ export default function ReviewSession() {
               </div>
 
               {/* Today's mix — SR priority breakdown */}
-              <div className="border-t border-border px-5 py-4 space-y-2">
+              <div className="border-t border-white/[0.06] px-5 py-4 space-y-2">
                 <p className="text-[10px] text-text-muted font-semibold uppercase tracking-wider">
                   Today's mix
                 </p>
@@ -255,7 +255,7 @@ export default function ReviewSession() {
               </div>
 
               {/* Preview of source lessons */}
-              <div className="border-t border-border px-5 py-4 space-y-2">
+              <div className="border-t border-white/[0.06] px-5 py-4 space-y-2">
                 <p className="text-[10px] text-text-muted font-semibold uppercase tracking-wider">
                   Pulled from
                 </p>
@@ -265,7 +265,7 @@ export default function ReviewSession() {
                   ).map((it) => (
                     <div
                       key={it.lessonId}
-                      className="flex items-center gap-1.5 rounded-lg bg-dark-900/50 border border-border px-2 py-1"
+                      className="flex items-center gap-1.5 rounded-lg bg-dark-900/40 border border-white/[0.06] px-2 py-1"
                     >
                       <span className="text-xs">{it.lessonEmoji}</span>
                       <span className="text-[11px] text-text-secondary">
@@ -279,9 +279,9 @@ export default function ReviewSession() {
 
             <motion.button
               onClick={() => setPhase('running')}
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full py-3 rounded-xl bg-accent hover:bg-accent-light text-white font-semibold text-sm transition-colors cursor-pointer flex items-center justify-center gap-2"
+              whileHover={{ scale: 1.015, y: -1 }}
+              whileTap={{ scale: 0.97 }}
+              className="btn-glow w-full py-3.5 rounded-xl bg-gradient-to-r from-accent to-accent-light text-white font-bold text-sm cursor-pointer flex items-center justify-center gap-2 shadow-[0_8px_32px_-8px_rgba(99,102,241,0.6)] hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.7)] transition-shadow duration-300"
             >
               Start Daily Practice
               <ArrowRight className="w-4 h-4" />
@@ -378,7 +378,7 @@ export default function ReviewSession() {
             </div>
 
             {/* Score */}
-            <div className="rounded-xl border border-border bg-dark-800/60 p-5 space-y-3 mx-auto max-w-xs">
+            <div className="rounded-xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-5 space-y-3 mx-auto max-w-xs">
               <div className="flex items-center justify-center gap-3">
                 <Sparkles className="w-4 h-4 text-accent-light" />
                 <p className="text-3xl font-bold text-text-primary tabular-nums">
@@ -386,17 +386,17 @@ export default function ReviewSession() {
                   <span className="text-text-muted text-lg">/{maxTotal}</span>
                 </p>
               </div>
-              <div className="h-2 rounded-full bg-dark-600 overflow-hidden">
+              <div className="h-2 rounded-full bg-dark-700/80 overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${ratio * 100}%` }}
                   transition={{ duration: 0.6, delay: 0.2 }}
                   className={`h-full rounded-full ${
                     ratio >= 0.75
-                      ? 'bg-green'
+                      ? 'bg-gradient-to-r from-green to-green-light shadow-[0_0_8px_rgba(34,197,94,0.4)]'
                       : ratio >= 0.5
-                        ? 'bg-amber'
-                        : 'bg-red'
+                        ? 'bg-gradient-to-r from-amber to-amber shadow-[0_0_8px_rgba(245,158,11,0.4)]'
+                        : 'bg-red/70'
                   }`}
                 />
               </div>
@@ -540,7 +540,7 @@ export default function ReviewSession() {
           )}
 
           {/* Reminder — what tomorrow looks like */}
-          <div className="rounded-xl border border-border bg-dark-800/60 p-5 space-y-2.5">
+          <div className="rounded-xl border border-warm/15 bg-gradient-to-br from-warm/[0.06] to-transparent backdrop-blur-sm p-5 space-y-2.5">
             <div className="flex items-center gap-2">
               <Lightbulb className="w-4 h-4 text-warm" />
               <p className="text-xs font-semibold text-text-primary">
@@ -558,14 +558,14 @@ export default function ReviewSession() {
           <div className="flex gap-2">
             <button
               onClick={() => navigate('/')}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-dark-800/60 hover:bg-dark-800 text-text-secondary text-xs font-semibold transition-colors cursor-pointer"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm hover:bg-dark-700/70 hover:border-white/[0.1] text-text-secondary text-xs font-semibold transition-all duration-200 cursor-pointer"
             >
               <Home className="w-3.5 h-3.5" />
               Home
             </button>
             <button
               onClick={handleRestart}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-dark-800/60 hover:bg-dark-800 text-text-muted text-xs font-semibold transition-colors cursor-pointer"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm hover:bg-dark-700/70 hover:border-white/[0.1] text-text-muted text-xs font-semibold transition-all duration-200 cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Try Again
@@ -578,14 +578,15 @@ export default function ReviewSession() {
 
   // ─── Running a step ────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-dark-950">
-      <div className="max-w-2xl mx-auto px-4 py-6 space-y-5">
+    <div className="min-h-screen bg-dark-950 relative">
+      <div className="scene-mesh" />
+      <div className="relative z-10 max-w-2xl mx-auto px-4 py-6 space-y-5">
         {/* Header + progress */}
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/')}
-              className="w-8 h-8 rounded-lg bg-dark-800 border border-border flex items-center justify-center hover:bg-dark-700 transition-colors cursor-pointer shrink-0"
+              className="w-8 h-8 rounded-lg bg-dark-800/60 border border-white/[0.06] backdrop-blur-sm flex items-center justify-center hover:bg-dark-700/80 hover:border-white/[0.1] transition-all duration-200 cursor-pointer shrink-0"
               aria-label="Exit daily practice"
             >
               <ArrowLeft className="w-4 h-4 text-text-secondary" />

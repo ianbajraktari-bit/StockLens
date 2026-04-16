@@ -209,7 +209,7 @@ export default function AnalystSession() {
               {/* Header */}
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-xl bg-dark-800 border border-border flex items-center justify-center text-3xl">
+                  <div className="w-14 h-14 rounded-xl bg-dark-800/60 border border-white/[0.06] flex items-center justify-center text-3xl">
                     {company.emoji}
                   </div>
                   <div>
@@ -228,7 +228,7 @@ export default function AnalystSession() {
               </div>
 
               {/* Key facts */}
-              <div className="rounded-xl border border-border bg-dark-800/60 p-4 space-y-3">
+              <div className="rounded-xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-4 space-y-3">
                 <div className="flex items-center gap-1.5">
                   <BarChart3 className="w-3.5 h-3.5 text-accent-light" />
                   <h2 className="text-[11px] font-semibold text-text-secondary uppercase tracking-wide">
@@ -291,7 +291,7 @@ export default function AnalystSession() {
                   <div className="flex flex-wrap items-center gap-2">
                     <button
                       onClick={() => setShowPastAnswers((s) => !s)}
-                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-dark-800 border border-border hover:border-border-light text-[11px] text-text-primary font-semibold cursor-pointer transition-colors"
+                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-dark-800/60 border border-white/[0.06] hover:border-white/[0.12] hover:bg-dark-700/70 text-[11px] text-text-primary font-semibold cursor-pointer transition-all duration-200"
                     >
                       {showPastAnswers ? (
                         <>
@@ -307,7 +307,7 @@ export default function AnalystSession() {
                     </button>
                     <button
                       onClick={handleClearResponses}
-                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-dark-800 border border-border hover:border-red/40 text-[11px] text-text-muted hover:text-red font-semibold cursor-pointer transition-colors"
+                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-dark-800/60 border border-white/[0.06] hover:border-red/40 text-[11px] text-text-muted hover:text-red font-semibold cursor-pointer transition-all duration-200"
                     >
                       <Trash2 className="w-3 h-3" />
                       Start Fresh
@@ -328,7 +328,7 @@ export default function AnalystSession() {
                           return (
                             <div
                               key={t.kind}
-                              className="rounded-lg border border-border bg-dark-900/60 p-3 space-y-1.5"
+                              className="rounded-lg border border-white/[0.06] bg-dark-900/40 p-3 space-y-1.5"
                             >
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-1.5">
@@ -360,9 +360,9 @@ export default function AnalystSession() {
 
               <motion.button
                 onClick={handleStart}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-accent hover:bg-accent-light text-white text-sm font-semibold transition-colors cursor-pointer"
+                whileHover={{ scale: 1.015, y: -1 }}
+                whileTap={{ scale: 0.97 }}
+                className="btn-glow w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-accent to-accent-light text-white text-sm font-bold cursor-pointer shadow-[0_8px_32px_-8px_rgba(99,102,241,0.6)] hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.7)] transition-shadow duration-300"
               >
                 {hasPriorWork ? (priorStepCount === totalSteps ? 'Review & Revise' : 'Resume Analysis') : 'Start Analysis'}
                 <ArrowRight className="w-4 h-4" />
@@ -524,7 +524,7 @@ export default function AnalystSession() {
                 </motion.div>
               )}
 
-              <div className="rounded-xl border border-border bg-dark-800/60 p-4 space-y-2">
+              <div className="rounded-xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-4 space-y-2">
                 <h3 className="text-[11px] font-semibold text-text-secondary uppercase tracking-wide">
                   What to do next
                 </h3>
@@ -547,14 +547,14 @@ export default function AnalystSession() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <button
                   onClick={handleRedo}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-dark-800 hover:bg-dark-700 text-text-primary text-sm font-semibold transition-colors cursor-pointer"
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm hover:bg-dark-700/70 hover:border-white/[0.1] text-text-primary text-sm font-semibold transition-all duration-200 cursor-pointer"
                 >
                   <RefreshCw className="w-4 h-4" />
                   Redo This Company
                 </button>
                 <button
                   onClick={() => navigate('/analyst')}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-accent hover:bg-accent-light text-white text-sm font-semibold transition-colors cursor-pointer"
+                  className="btn-glow flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent-light text-white text-sm font-bold shadow-[0_8px_32px_-8px_rgba(99,102,241,0.6)] hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.7)] transition-shadow duration-300 cursor-pointer"
                 >
                   <ArrowRight className="w-4 h-4" />
                   Next Company

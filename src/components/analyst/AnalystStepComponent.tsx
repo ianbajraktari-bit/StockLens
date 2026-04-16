@@ -72,7 +72,7 @@ export default function AnalystStepComponent({
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="rounded-xl border border-border bg-dark-800/60 p-4 space-y-3"
+        className="rounded-xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-4 space-y-3"
       >
         <p className="text-sm text-text-primary leading-relaxed">{prompt}</p>
 
@@ -115,10 +115,10 @@ export default function AnalystStepComponent({
           placeholder={placeholder}
           disabled={submitted}
           rows={6}
-          className={`w-full rounded-xl border bg-dark-700 p-3 text-sm text-text-primary placeholder-text-faint resize-none transition-colors focus:outline-none ${
+          className={`w-full rounded-xl border bg-dark-900/40 backdrop-blur-sm p-3 text-sm text-text-primary placeholder-text-faint resize-none focus:outline-none transition-all duration-300 ${
             submitted
-              ? 'border-border'
-              : 'border-border-light focus:border-accent/50'
+              ? 'border-white/[0.06]'
+              : 'border-white/[0.08] focus:border-accent/50 focus:shadow-[0_0_24px_-8px_rgba(99,102,241,0.3)]'
           }`}
           style={{ fontSize: '16px' }}
         />
@@ -130,10 +130,10 @@ export default function AnalystStepComponent({
             <button
               onClick={handleSubmit}
               disabled={!canSubmit}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-colors ${
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-[11px] font-bold transition-all duration-300 ${
                 canSubmit
-                  ? 'bg-accent text-white hover:bg-accent-light cursor-pointer'
-                  : 'bg-dark-600 text-text-muted cursor-not-allowed'
+                  ? 'btn-glow bg-gradient-to-r from-accent to-accent-light text-white cursor-pointer shadow-[0_6px_24px_-6px_rgba(99,102,241,0.5)] hover:shadow-[0_8px_32px_-6px_rgba(99,102,241,0.6)]'
+                  : 'bg-dark-700/60 border border-white/[0.06] text-text-muted cursor-not-allowed opacity-50'
               }`}
             >
               Submit
@@ -192,7 +192,7 @@ export default function AnalystStepComponent({
             {/* Next button */}
             <button
               onClick={onDone}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-accent hover:bg-accent-light text-white text-sm font-semibold transition-colors cursor-pointer"
+              className="btn-glow w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-gradient-to-r from-accent to-accent-light text-white text-sm font-bold cursor-pointer shadow-[0_8px_32px_-8px_rgba(99,102,241,0.6)] hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.7)] transition-shadow duration-300"
             >
               {stepNumber === totalSteps ? 'Finish Analysis' : 'Next Step'}
               <ArrowRight className="w-4 h-4" />
