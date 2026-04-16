@@ -171,18 +171,18 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
 
     return (
       <div className="min-h-screen bg-dark-950 relative overflow-hidden">
-        {/* Ambient scene glow */}
-        <div className="fixed inset-0 pointer-events-none">
-          <div
-            className={`absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[360px] rounded-full blur-[120px] ${
-              isCompany ? 'bg-warm/[0.04]' : 'bg-accent/[0.04]'
-            }`}
-          />
+        {/* Ambient scene */}
+        <div className="scene-mesh" />
+        <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden>
+          <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full blur-[100px] ${
+            isCompany ? 'bg-warm/[0.06]' : 'bg-accent/[0.06]'
+          }`} />
+          <div className="absolute bottom-0 right-0 w-[400px] h-[300px] rounded-full blur-[80px] bg-signal/[0.04]" />
         </div>
 
-        <div className="relative max-w-2xl mx-auto px-4 py-6 space-y-6">
+        <div className="relative z-10 max-w-2xl mx-auto px-4 py-6 space-y-6">
           <motion.button
-            initial={{ opacity: 0, x: -8 }}
+            initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             onClick={onBack}
@@ -192,36 +192,39 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
             All Lessons
           </motion.button>
 
-          {/* Hero — emoji + title + subtitle in a unified block */}
+          {/* Hero */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
             className="space-y-4"
           >
             <div className="flex items-start gap-4">
-              <div
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.1 }}
                 className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shrink-0 border ${
                   isCompany
-                    ? 'bg-gradient-to-br from-warm/20 to-warm/[0.04] border-warm/30 shadow-[0_0_20px_rgba(245,158,11,0.12)]'
-                    : 'bg-gradient-to-br from-accent/20 to-accent/[0.04] border-accent/30 shadow-[0_0_20px_rgba(99,102,241,0.12)]'
+                    ? 'bg-gradient-to-br from-warm/25 via-warm/10 to-transparent border-warm/30 shadow-[0_0_28px_-4px_rgba(245,158,11,0.25)]'
+                    : 'bg-gradient-to-br from-accent/25 via-accent/10 to-signal/[0.05] border-accent/30 shadow-[0_0_28px_-4px_rgba(99,102,241,0.25)]'
                 }`}
               >
                 {lesson.emoji}
-              </div>
+              </motion.div>
               <div className="flex-1 min-w-0 pt-0.5">
                 <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                   <span
-                    className={`text-[10px] font-bold uppercase tracking-[0.12em] px-2 py-0.5 rounded-full ${
+                    className={`text-[10px] font-bold uppercase tracking-[0.15em] px-2.5 py-0.5 rounded-full ${
                       isCompany
-                        ? 'bg-warm/10 text-warm border border-warm/25'
-                        : 'bg-accent/10 text-accent-light border border-accent/25'
+                        ? 'bg-warm/12 text-warm border border-warm/20'
+                        : 'bg-accent/12 text-accent-light border border-accent/20'
                     }`}
                   >
                     {tierLabel}
                   </span>
                 </div>
-                <h1 className="text-[22px] font-bold text-text-primary leading-tight tracking-tight">
+                <h1 className="text-[22px] font-extrabold text-text-primary leading-tight tracking-tight">
                   {lesson.title}
                 </h1>
                 <p className="text-sm text-text-secondary mt-1 leading-snug">
@@ -240,9 +243,9 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
             </div>
           </motion.div>
 
-          {/* Description — clean prose, no heavy card */}
+          {/* Description */}
           <motion.p
-            initial={{ opacity: 0, y: 6 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
             className="text-sm text-text-secondary leading-relaxed"
@@ -250,16 +253,16 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
             {lesson.description}
           </motion.p>
 
-          {/* Topics — inline chips, scannable */}
+          {/* Topics */}
           {lesson.topics.length > 0 && (
             <motion.div
-              initial={{ opacity: 0, y: 6 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1], delay: 0.14 }}
               className="space-y-2"
             >
-              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-text-muted">
-                What you&apos;ll touch
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-text-muted">
+                What you&apos;ll cover
               </p>
               <div className="flex items-center gap-1.5 flex-wrap">
                 {lesson.topics.map((topic, i) => {
@@ -267,7 +270,7 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
                   return (
                     <div
                       key={i}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-dark-800/60 border border-border"
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-dark-800/50 border border-white/[0.06] backdrop-blur-sm"
                     >
                       <Icon className="w-3 h-3 text-accent-light" />
                       <span className="text-[11px] text-text-primary font-medium">
@@ -291,9 +294,9 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
                 onClick={() => setFactsOpen((v) => !v)}
                 aria-expanded={factsOpen}
                 aria-controls="key-facts-panel"
-                className="group w-full flex items-center gap-3 rounded-xl border border-border bg-dark-800/50 hover:bg-dark-800 hover:border-border-light transition-all px-4 py-3 cursor-pointer text-left"
+                className="group w-full flex items-center gap-3 rounded-2xl border border-white/[0.06] bg-dark-800/40 hover:bg-dark-800/70 hover:border-white/[0.1] transition-all px-4 py-3.5 cursor-pointer text-left backdrop-blur-sm"
               >
-                <div className="w-8 h-8 rounded-lg bg-dark-700 border border-border flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-dark-700/80 border border-white/[0.06] flex items-center justify-center shrink-0">
                   <BarChart3 className="w-3.5 h-3.5 text-accent-light" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -356,16 +359,16 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
 
           {/* Start CTA */}
           <motion.button
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0.22 }}
             onClick={() => setPhase('running')}
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-            className={`w-full py-3.5 rounded-xl font-semibold text-sm transition-colors cursor-pointer flex items-center justify-center gap-2 text-white ${
+            whileHover={{ scale: 1.015, y: -1 }}
+            whileTap={{ scale: 0.97 }}
+            className={`btn-glow w-full py-4 rounded-2xl font-bold text-sm cursor-pointer flex items-center justify-center gap-2.5 text-white transition-shadow duration-300 ${
               isCompany
-                ? 'bg-warm hover:brightness-110 shadow-[0_0_24px_rgba(245,158,11,0.25)]'
-                : 'bg-accent hover:bg-accent-light shadow-[0_0_24px_rgba(99,102,241,0.2)]'
+                ? 'bg-gradient-to-r from-warm via-warm to-amber shadow-[0_8px_32px_-8px_rgba(245,158,11,0.5),0_0_0_1px_rgba(245,158,11,0.25)] hover:shadow-[0_12px_40px_-8px_rgba(245,158,11,0.6)]'
+                : 'bg-gradient-to-r from-accent via-accent to-signal/80 shadow-[0_8px_32px_-8px_rgba(99,102,241,0.6),0_0_0_1px_rgba(99,102,241,0.25)] hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.7)]'
             }`}
           >
             Start Lesson
@@ -399,38 +402,43 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
   // ─────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-dark-950">
-      <div className="max-w-2xl mx-auto px-4 py-6 space-y-5">
+    <div className="min-h-screen bg-dark-950 relative">
+      <div className="scene-mesh" />
+      <div className="relative z-10 max-w-2xl mx-auto px-4 py-6 space-y-5">
         {/* Header + Progress */}
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <button
               onClick={onBack}
-              className="w-8 h-8 rounded-lg bg-dark-800 border border-border flex items-center justify-center hover:bg-dark-700 transition-colors cursor-pointer shrink-0"
+              className="w-8 h-8 rounded-xl bg-dark-800/60 border border-white/[0.06] flex items-center justify-center hover:bg-dark-700 hover:border-white/[0.1] transition-all cursor-pointer shrink-0 backdrop-blur-sm"
             >
               <ArrowLeft className="w-4 h-4 text-text-secondary" />
             </button>
 
             {/* Segmented progress bar */}
-            <div className="flex-1 flex items-center gap-0.5">
+            <div className="flex-1 flex items-center gap-[3px]">
               {steps.map((_, i) => (
                 <div
                   key={i}
-                  className="flex-1 h-1.5 rounded-full overflow-hidden bg-dark-700"
+                  className="flex-1 h-1.5 rounded-full overflow-hidden bg-dark-700/60"
                 >
                   <motion.div
                     className={`h-full rounded-full ${
-                      i < stepIndex ? 'bg-accent' : i === stepIndex ? 'bg-accent-light' : ''
+                      i < stepIndex
+                        ? 'bg-accent shadow-[0_0_4px_rgba(99,102,241,0.4)]'
+                        : i === stepIndex
+                          ? 'bg-accent-light shadow-[0_0_6px_rgba(129,140,248,0.5)]'
+                          : ''
                     }`}
                     initial={false}
                     animate={{ width: i <= stepIndex ? '100%' : '0%' }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.35 }}
                   />
                 </div>
               ))}
             </div>
 
-            <div className="flex items-center gap-1 text-xs text-text-muted tabular-nums shrink-0">
+            <div className="flex items-center gap-1.5 text-xs text-text-muted tabular-nums shrink-0 px-2 py-1 rounded-lg bg-dark-800/40 border border-white/[0.04]">
               <Sparkles className="w-3 h-3 text-accent-light" />
               {correctTotal}
             </div>
@@ -510,49 +518,59 @@ function CompletionScreen({
 
   return (
     <div className="relative min-h-screen bg-dark-950 flex items-center justify-center p-4 overflow-hidden">
+      {/* Ambient glow */}
+      <div className="scene-mesh" />
+      <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden>
+        <div className={`absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full blur-[120px] ${
+          isPerfect ? 'bg-warm/[0.08]' : 'bg-accent/[0.06]'
+        }`} />
+      </div>
+
       {/* Confetti overlay for perfect scores */}
       {isPerfect && <Confetti />}
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4 }}
-        className="relative w-full max-w-2xl space-y-5"
+        initial={{ opacity: 0, scale: 0.93, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 w-full max-w-2xl space-y-5"
       >
         {/* Celebration header */}
         <div className="text-center space-y-4">
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.1 }}
-            className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto ${
+            initial={{ scale: 0, rotate: -15 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 14, delay: 0.1 }}
+            className={`w-20 h-20 rounded-2xl flex items-center justify-center mx-auto ${
               isPerfect
-                ? 'bg-gradient-to-br from-warm/25 to-warm/5 border border-warm/40'
-                : 'bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/30'
+                ? 'bg-gradient-to-br from-warm/30 via-warm/15 to-transparent border border-warm/40 shadow-[0_0_40px_-8px_rgba(245,158,11,0.4)]'
+                : 'bg-gradient-to-br from-accent/25 via-accent/10 to-transparent border border-accent/30 shadow-[0_0_40px_-8px_rgba(99,102,241,0.3)]'
             }`}
           >
-            <Trophy className={`w-10 h-10 ${isPerfect ? 'text-warm' : 'text-accent-light'}`} />
+            <Trophy className={`w-10 h-10 ${isPerfect ? 'text-warm drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'text-accent-light'}`} />
           </motion.div>
 
           <div>
-            <h1 className="text-2xl font-bold text-text-primary">
+            <h1 className="text-2xl font-extrabold text-text-primary tracking-tight">
               {isPerfect ? 'Perfect!' : 'Lesson Complete'}
             </h1>
             <p className="text-sm text-text-secondary mt-1">{lesson.title}</p>
           </div>
 
           {/* Stars */}
-          <div className="flex items-center justify-center gap-1.5">
+          <div className="flex items-center justify-center gap-2">
             {[0, 1, 2].map((i) => (
               <motion.div
                 key={i}
                 initial={{ scale: 0, rotate: -30 }}
                 animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.3 + i * 0.1 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 14, delay: 0.3 + i * 0.12 }}
               >
                 <Star
-                  className={`w-7 h-7 ${
-                    i < stars ? 'text-warm fill-warm' : 'text-dark-500'
+                  className={`w-8 h-8 ${
+                    i < stars
+                      ? 'text-warm fill-warm drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]'
+                      : 'text-dark-500'
                   }`}
                 />
               </motion.div>
@@ -560,21 +578,25 @@ function CompletionScreen({
           </div>
 
           {/* Score */}
-          <div className="rounded-xl border border-border bg-dark-800/60 p-5 space-y-3 mx-auto max-w-xs">
+          <div className="rounded-2xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-5 space-y-3 mx-auto max-w-xs">
             <div className="flex items-center justify-center gap-3">
               <Sparkles className="w-4 h-4 text-accent-light" />
-              <p className="text-3xl font-bold text-text-primary tabular-nums">
+              <p className="text-3xl font-extrabold text-text-primary tabular-nums">
                 {correctTotal}
-                <span className="text-text-muted text-lg">/{maxTotal}</span>
+                <span className="text-text-muted text-lg font-bold">/{maxTotal}</span>
               </p>
             </div>
-            <div className="h-2 rounded-full bg-dark-600 overflow-hidden">
+            <div className="h-2.5 rounded-full bg-dark-600/60 overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${ratio * 100}%` }}
-                transition={{ duration: 0.6, delay: 0.2 }}
+                transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
                 className={`h-full rounded-full ${
-                  ratio >= 0.75 ? 'bg-green' : ratio >= 0.5 ? 'bg-amber' : 'bg-red'
+                  ratio >= 0.75
+                    ? 'bg-gradient-to-r from-green to-green-light shadow-[0_0_8px_rgba(34,197,94,0.4)]'
+                    : ratio >= 0.5
+                      ? 'bg-gradient-to-r from-amber to-warm shadow-[0_0_8px_rgba(245,158,11,0.4)]'
+                      : 'bg-gradient-to-r from-red to-red-light'
                 }`}
               />
             </div>
@@ -588,7 +610,7 @@ function CompletionScreen({
             initial={{ opacity: 0, y: 12, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ type: 'spring', stiffness: 220, damping: 16, delay: 0.4 }}
-            className="rounded-xl border border-accent/30 bg-gradient-to-r from-accent/[0.12] to-accent/[0.04] p-4"
+            className="rounded-2xl border border-accent/25 bg-gradient-to-r from-accent/[0.1] to-accent/[0.03] p-4 backdrop-blur-sm shadow-[0_0_20px_-8px_rgba(99,102,241,0.2)]"
           >
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 rounded-xl bg-accent/20 border border-accent/40 flex items-center justify-center shrink-0 shadow-[0_0_14px_rgba(99,102,241,0.25)]">
@@ -777,10 +799,10 @@ function CompletionScreen({
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: 0.75 }}
-            whileHover={{ scale: 1.01 }}
+            whileHover={{ scale: 1.01, y: -2 }}
             whileTap={{ scale: 0.99 }}
             onClick={() => onNext(nextLesson.id)}
-            className="group w-full text-left rounded-xl border border-accent/40 bg-gradient-to-br from-accent/[0.12] to-accent/[0.04] hover:from-accent/[0.18] hover:to-accent/[0.06] p-4 transition-colors cursor-pointer shadow-[0_0_24px_rgba(99,102,241,0.08)]"
+            className="group w-full text-left rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/[0.1] to-accent/[0.03] hover:from-accent/[0.15] p-4 transition-all duration-300 cursor-pointer shadow-[0_4px_24px_-8px_rgba(99,102,241,0.15)] hover:shadow-[0_8px_32px_-8px_rgba(99,102,241,0.25)] relative overflow-hidden"
           >
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-dark-900/60 border border-accent/30 flex items-center justify-center text-2xl shrink-0">
@@ -823,17 +845,17 @@ function CompletionScreen({
         )}
 
         {/* Secondary actions */}
-        <div className="flex gap-2">
+        <div className="flex gap-2.5">
           <button
             onClick={onHome}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-dark-800/60 hover:bg-dark-800 text-text-secondary text-xs font-semibold transition-colors cursor-pointer"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border border-white/[0.06] bg-dark-800/40 hover:bg-dark-800/70 hover:border-white/[0.1] text-text-secondary text-xs font-semibold transition-all cursor-pointer backdrop-blur-sm"
           >
             <Home className="w-3.5 h-3.5" />
             Home
           </button>
           <button
             onClick={onRestart}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-dark-800/60 hover:bg-dark-800 text-text-muted text-xs font-semibold transition-colors cursor-pointer"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border border-white/[0.06] bg-dark-800/40 hover:bg-dark-800/70 hover:border-white/[0.1] text-text-muted text-xs font-semibold transition-all cursor-pointer backdrop-blur-sm"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Try Again

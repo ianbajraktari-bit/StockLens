@@ -152,8 +152,9 @@ export default function ReviewSession() {
   // ─── Intro ─────────────────────────────────────────────────────────
   if (phase === 'intro') {
     return (
-      <div className="min-h-screen bg-dark-950">
-        <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+      <div className="min-h-screen bg-dark-950 relative">
+        <div className="scene-mesh" />
+        <div className="relative z-10 max-w-2xl mx-auto px-4 py-8 space-y-6">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -170,7 +171,7 @@ export default function ReviewSession() {
 
             {/* Header */}
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-warm/10 border border-warm/25 flex items-center justify-center shrink-0">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-warm/15 to-warm/[0.03] border border-warm/20 flex items-center justify-center shrink-0 shadow-[0_0_20px_-4px_rgba(245,158,11,0.25)]">
                 <Calendar className="w-6 h-6 text-warm" />
               </div>
               <div>

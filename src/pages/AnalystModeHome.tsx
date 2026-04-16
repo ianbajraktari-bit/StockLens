@@ -46,7 +46,7 @@ export default function AnalystModeHome() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 + index * 0.05 }}
         onClick={() => navigate(`/analyst/${c.id}`)}
-        className="group w-full text-left rounded-xl border border-border bg-dark-800/70 hover:bg-dark-800 hover:border-border-light p-4 transition-all cursor-pointer"
+        className="group w-full text-left rounded-2xl border border-white/[0.06] bg-dark-800/40 hover:bg-dark-800/70 hover:border-white/[0.1] p-4 transition-all duration-300 cursor-pointer backdrop-blur-sm relative overflow-hidden"
       >
         <div className="flex items-start gap-3">
           {/* Emoji / logo block */}
@@ -116,12 +116,14 @@ export default function AnalystModeHome() {
   }
 
   return (
-    <div className="min-h-screen bg-dark-950">
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-accent/[0.03] rounded-full blur-[120px]" />
+    <div className="min-h-screen bg-dark-950 relative">
+      <div className="scene-mesh" />
+      <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden>
+        <div className="orb orb-1" />
+        <div className="orb orb-2" />
       </div>
 
-      <div className="relative max-w-2xl mx-auto px-4 py-6 space-y-6">
+      <div className="relative z-10 max-w-2xl mx-auto px-4 py-6 space-y-6">
         {/* Back */}
         <button
           onClick={() => navigate('/')}
@@ -139,21 +141,21 @@ export default function AnalystModeHome() {
           className="space-y-4"
         >
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent/20 to-signal/10 border border-accent/25 flex items-center justify-center shadow-[0_0_20px_-4px_rgba(99,102,241,0.3)]">
               <Target className="w-6 h-6 text-accent-light" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold text-text-primary tracking-tight">Analyst Mode</h1>
-                <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent-light font-bold uppercase tracking-wide">
-                  New
+                <h1 className="text-xl font-extrabold text-text-primary tracking-tight">Analyst Mode</h1>
+                <span className="text-[9px] px-2 py-0.5 rounded-full bg-gradient-to-r from-accent/15 to-signal/10 text-accent-light font-bold uppercase tracking-[0.12em] border border-accent/20">
+                  Capstone
                 </span>
               </div>
-              <p className="text-xs text-text-muted">The capstone — apply everything you've learned</p>
+              <p className="text-xs text-text-muted">Apply everything you've learned to real companies</p>
             </div>
           </div>
 
-          <div className="rounded-xl border border-accent/20 bg-accent/[0.04] p-4 space-y-2">
+          <div className="rounded-2xl border border-accent/15 bg-gradient-to-br from-accent/[0.06] to-transparent p-4 space-y-2 backdrop-blur-sm">
             <div className="flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-accent-light" />
               <h2 className="text-[11px] font-semibold text-accent-light uppercase tracking-wide">

@@ -26,7 +26,7 @@ export default function ThinkingStepComponent({ step, onDone }: Props) {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-5"
       >
-        <div className="rounded-2xl border border-border bg-dark-800/60 p-6 space-y-3">
+        <div className="rounded-2xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-6 space-y-3">
           <div className="flex items-center gap-2">
             <PenLine className="w-4 h-4 text-accent-light" />
             <p className="text-sm font-semibold text-text-primary">Your answer</p>
@@ -44,7 +44,7 @@ export default function ThinkingStepComponent({ step, onDone }: Props) {
           <p className="text-sm text-text-secondary leading-relaxed">{step.modelAnswer}</p>
         </div>
 
-        <div className="rounded-2xl border border-border bg-dark-800/60 p-6 space-y-3">
+        <div className="rounded-2xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-6 space-y-3">
           <p className="text-xs text-text-muted font-semibold uppercase tracking-wide">
             Strong reasoning includes
           </p>
@@ -77,7 +77,7 @@ export default function ThinkingStepComponent({ step, onDone }: Props) {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-5"
     >
-      <div className="rounded-2xl border border-border bg-dark-800/60 p-6 space-y-4">
+      <div className="rounded-2xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-6 space-y-4">
         <div className="flex items-center gap-2">
           <PenLine className="w-4 h-4 text-accent-light" />
           <p className="text-sm font-semibold text-text-primary">Your turn</p>

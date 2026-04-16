@@ -41,11 +41,12 @@ export default function DecideStep({ step, onDone }: Props) {
       : null;
 
   return (
-    <div className="rounded-2xl border border-border bg-dark-800/60 p-6 space-y-5">
+    <div className="rounded-2xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-6 space-y-5 relative overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/25 to-transparent" />
       {/* Header */}
       <div className="flex items-center gap-2">
         <step.topicIcon className="w-3.5 h-3.5 text-accent-light" />
-        <span className="text-[11px] font-semibold text-accent-light uppercase tracking-[0.14em]">
+        <span className="text-[11px] font-bold text-accent-light uppercase tracking-[0.16em]">
           {step.topic}
         </span>
       </div>
