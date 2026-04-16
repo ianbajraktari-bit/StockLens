@@ -61,12 +61,6 @@ const foundationsPhase1 = allLessons.filter((l) => l.tier === 'foundations-1');
 const foundationsPhase2 = allLessons.filter((l) => l.tier === 'foundations-2');
 const companyLessons = allLessons.filter((l) => l.tier === 'company');
 
-const TIER_COLORS = {
-  'foundations-1': 'rgba(99, 102, 241, 0.4)',
-  'foundations-2': 'rgba(245, 158, 11, 0.4)',
-  company: 'rgba(34, 197, 94, 0.4)',
-} as const;
-
 type TabId = 'learn' | 'practice' | 'analyze' | 'progress';
 
 const TAB_STORAGE_KEY = 'stocklens-home-tab';
@@ -132,51 +126,60 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-dark-950">
-      {/* Ambient scene glow — subtle aurora wash */}
-      <div className="fixed inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-accent/[0.04] rounded-full blur-[140px]" />
-        <div className="absolute top-20 right-1/4 w-[400px] h-[300px] bg-signal/[0.03] rounded-full blur-[120px]" />
+    <div className="min-h-screen bg-dark-950 relative">
+      {/* Ambient scene — mesh gradient + floating orbs */}
+      <div className="scene-mesh" aria-hidden />
+      <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden>
+        <div className="orb orb-1" />
+        <div className="orb orb-2" />
+        <div className="orb orb-3" />
       </div>
 
-      <div className="relative max-w-2xl mx-auto px-4">
+      <div className="relative z-10 max-w-2xl mx-auto px-4">
         {/* Header */}
         <motion.header
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: EASE_CINEMATIC }}
-          className="py-6 flex items-center justify-between"
+          transition={{ duration: 0.5, ease: EASE_CINEMATIC }}
+          className="py-5 flex items-center justify-between"
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center
-                            bg-gradient-to-br from-accent/20 to-accent/[0.04]
-                            border border-accent/30
-                            shadow-[0_0_16px_-4px_rgba(99,102,241,0.35),inset_0_1px_0_rgba(255,255,255,0.06)]">
+            <div className="relative w-10 h-10 rounded-xl flex items-center justify-center
+                            bg-gradient-to-br from-accent/25 via-accent/10 to-signal/10
+                            border border-white/[0.08]
+                            shadow-[0_0_20px_-4px_rgba(99,102,241,0.4),inset_0_1px_0_rgba(255,255,255,0.1)]">
               <TrendingUp className="w-5 h-5 text-accent-light" />
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-t from-transparent to-white/[0.06]" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-text-primary tracking-tight leading-none">
-                StockLens
+              <h1 className="text-lg font-bold tracking-tight leading-none">
+                <span className="gradient-text">StockLens</span>
               </h1>
-              <p className="text-[10px] text-text-muted mt-0.5 font-medium tracking-wide">
-                Think like an investor
+              <p className="text-[10px] text-text-muted mt-0.5 font-medium tracking-widest uppercase">
+                Investor Education
               </p>
             </div>
           </div>
 
           {hasAnyProgress && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               {streak.current > 0 && (
-                <div
-                  className={`hidden sm:flex items-center gap-1 px-2 py-1 rounded-lg bg-warm/10 border border-warm/25 text-[11px] font-semibold text-warm ${
-                    streak.current >= 3
-                      ? 'shadow-[0_0_12px_rgba(245,158,11,0.15)]'
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={SPRING_FLUID}
+                  className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-warm
+                    bg-gradient-to-br from-warm/15 to-warm/[0.03]
+                    border border-warm/20
+                    shadow-[0_0_16px_-4px_rgba(245,158,11,0.2)] ${
+                    streak.current >= 7
+                      ? 'shadow-[0_0_20px_-2px_rgba(245,158,11,0.35)]'
                       : ''
                   }`}
                 >
-                  <Flame className="w-3 h-3" />
+                  <Flame className={`w-3.5 h-3.5 ${streak.current >= 3 ? 'drop-shadow-[0_0_4px_rgba(245,158,11,0.6)]' : ''}`} />
                   <span className="tabular-nums">{streak.current}</span>
-                </div>
+                </motion.div>
               )}
               <LevelBadgeRing
                 level={levelInfo.level}
@@ -192,7 +195,7 @@ export default function HomePage() {
         )}
 
         {/* Sticky tab bar */}
-        <div className="sticky top-0 z-10 -mx-4 px-4 py-2 bg-dark-950/80 backdrop-blur-xl border-b border-white/[0.04]">
+        <div className="sticky top-0 z-20 -mx-4 px-4 py-2.5 bg-dark-950/60 backdrop-blur-2xl border-b border-white/[0.04]">
           <TabBar
             tabs={tabs}
             active={activeTab}
@@ -253,8 +256,8 @@ export default function HomePage() {
         </div>
 
         {/* Footer */}
-        <div className="text-center py-6 border-t border-border">
-          <p className="text-[10px] text-text-faint">
+        <div className="text-center py-8 border-t border-white/[0.04]">
+          <p className="text-[10px] text-text-faint tracking-wide">
             StockLens — A learning tool, not financial advice.
           </p>
         </div>
@@ -315,72 +318,104 @@ function OnboardingHero({ onStart }: { onStart: () => void }) {
     {
       icon: Brain,
       title: "Think, don't memorize",
-      sub: 'Every step forces reasoning, not recall.',
+      sub: 'Every interaction forces reasoning.',
       color: 'text-accent-light',
-      glow: 'bg-accent/10 border-accent/25',
+      bg: 'from-accent/15 to-accent/[0.02]',
+      border: 'border-accent/20',
     },
     {
       icon: Target,
-      title: 'Real companies, real data',
-      sub: 'Apple, NVIDIA, Costco — actual financials.',
+      title: 'Real companies',
+      sub: 'Apple, NVIDIA, Costco — real data.',
       color: 'text-warm',
-      glow: 'bg-warm/10 border-warm/25',
+      bg: 'from-warm/12 to-warm/[0.02]',
+      border: 'border-warm/20',
     },
     {
       icon: Layers,
-      title: '5 interactive formats',
-      sub: 'Drills, estimates, signal-finding, decisions, synthesis.',
-      color: 'text-green',
-      glow: 'bg-green/10 border-green/25',
+      title: '5 formats',
+      sub: 'Drills, estimates, decisions & more.',
+      color: 'text-green-light',
+      bg: 'from-green/12 to-green/[0.02]',
+      border: 'border-green/20',
     },
   ];
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 14 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: EASE_CINEMATIC, delay: 0.08 }}
-      className="mb-6"
+      transition={{ duration: 0.6, ease: EASE_CINEMATIC, delay: 0.08 }}
+      className="mb-8"
     >
-      <GlassPanel tone="accent" aurora scanlines className="px-5 pt-6 pb-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-accent-light/80 mb-2">
+      <GlassPanel tone="accent" aurora scanlines className="px-6 pt-8 pb-6">
+        {/* Overline */}
+        <motion.p
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.15 }}
+          className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent-light/70 mb-3"
+        >
           Welcome to StockLens
-        </p>
-        <h2 className="text-xl font-bold text-text-primary tracking-tight leading-snug">
-          Learn to analyze businesses<br />
-          <span className="text-accent-light">like a real investor.</span>
-        </h2>
-        <p className="text-sm text-text-secondary leading-relaxed mt-2 max-w-md">
+        </motion.p>
+
+        {/* Headline with gradient text */}
+        <motion.h2
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-[1.15]"
+        >
+          Learn to invest
+          <br />
+          <span className="gradient-text-animated">like a real analyst.</span>
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.35 }}
+          className="text-sm text-text-secondary leading-relaxed mt-3 max-w-md"
+        >
           Interactive lessons that teach reasoning — not memorization.
           Free, no account required.
-        </p>
+        </motion.p>
 
-        <div className="hairline my-4" aria-hidden />
+        <div className="hairline my-5" aria-hidden />
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-          {props.map(({ icon: Icon, title, sub, color, glow }, i) => (
+        {/* Value prop cards */}
+        <div className="grid grid-cols-3 gap-2">
+          {props.map(({ icon: Icon, title, sub, color, bg, border }, i) => (
             <motion.div
               key={title}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, delay: 0.25 + i * 0.08, ease: EASE_CINEMATIC }}
-              className={`rounded-xl border p-3.5 ${glow} space-y-1.5`}
+              initial={{ opacity: 0, y: 12, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.4 + i * 0.08, ease: EASE_CINEMATIC }}
+              className={`rounded-xl border ${border} bg-gradient-to-br ${bg} p-3 space-y-2 backdrop-blur-sm`}
             >
-              <Icon className={`w-4 h-4 ${color}`} />
-              <p className="text-[12px] font-semibold text-text-primary leading-snug">{title}</p>
-              <p className="text-[11px] text-text-muted leading-snug">{sub}</p>
+              <div className={`w-7 h-7 rounded-lg bg-dark-900/60 border border-white/[0.06] flex items-center justify-center`}>
+                <Icon className={`w-3.5 h-3.5 ${color}`} />
+              </div>
+              <p className="text-[11px] font-bold text-text-primary leading-tight">{title}</p>
+              <p className="text-[10px] text-text-muted leading-snug">{sub}</p>
             </motion.div>
           ))}
         </div>
 
+        {/* CTA button */}
         <motion.button
           onClick={onStart}
-          initial={{ opacity: 0, y: 6 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.5 }}
-          whileHover={{ scale: 1.01 }}
+          transition={{ duration: 0.4, delay: 0.65 }}
+          whileHover={{ scale: 1.015, y: -1 }}
           whileTap={{ scale: 0.97 }}
-          className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-accent hover:bg-accent-light text-white text-sm font-semibold cursor-pointer mt-4 shadow-[0_8px_24px_-8px_rgba(99,102,241,0.6)]"
+          className="btn-glow w-full flex items-center justify-center gap-2.5 px-5 py-4 rounded-xl
+                     bg-gradient-to-r from-accent via-accent to-signal/80
+                     text-white text-sm font-bold cursor-pointer mt-5
+                     shadow-[0_8px_32px_-8px_rgba(99,102,241,0.7),0_0_0_1px_rgba(99,102,241,0.3)]
+                     hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.8),0_0_0_1px_rgba(99,102,241,0.4)]
+                     transition-shadow duration-300"
         >
           Start Learning
           <ArrowRight className="w-4 h-4" />
@@ -407,11 +442,11 @@ function TabBar({
     <div
       role="tablist"
       aria-label="Home sections"
-      className="relative grid grid-cols-4 gap-0.5 rounded-xl p-1
-                 bg-gradient-to-b from-dark-800/80 to-dark-900/80
+      className="relative grid grid-cols-4 gap-0.5 rounded-2xl p-1
+                 bg-dark-900/70
                  border border-white/[0.06]
-                 backdrop-blur-xl
-                 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.04)]"
+                 backdrop-blur-2xl
+                 shadow-[0_4px_32px_-4px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.04)]"
     >
       {tabs.map((tab) => {
         const isActive = tab.id === active;
@@ -423,15 +458,15 @@ function TabBar({
             aria-selected={isActive}
             aria-controls={`panel-${tab.id}`}
             onClick={() => onChange(tab.id)}
-            className="relative flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-lg text-[11px] font-semibold cursor-pointer"
+            className="relative flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-[11px] font-semibold cursor-pointer"
           >
             {isActive && (
               <motion.span
                 layoutId="tabbar-active-pill"
-                className="absolute inset-0 rounded-lg
-                           bg-gradient-to-b from-accent/20 to-accent/[0.06]
-                           border border-accent/35
-                           shadow-[0_0_20px_-4px_rgba(99,102,241,0.25),inset_0_1px_0_rgba(255,255,255,0.06)]"
+                className="absolute inset-0 rounded-xl
+                           bg-gradient-to-b from-accent/25 via-accent/[0.1] to-accent/[0.04]
+                           border border-accent/30
+                           shadow-[0_0_24px_-4px_rgba(99,102,241,0.3),inset_0_1px_0_rgba(255,255,255,0.08)]"
                 transition={SPRING_FLUID}
               />
             )}
@@ -441,10 +476,10 @@ function TabBar({
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
-              <span>{tab.label}</span>
+              <span className="hidden sm:inline">{tab.label}</span>
               {tab.dot && !isActive && (
                 <span
-                  className="absolute -top-0.5 -right-2 w-1.5 h-1.5 rounded-full bg-accent-light shadow-[0_0_6px_rgba(129,140,248,0.7)]"
+                  className="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-accent-light shadow-[0_0_8px_rgba(129,140,248,0.8)]"
                   aria-hidden
                 />
               )}
@@ -499,38 +534,39 @@ function LessonCard({
   onClick: () => void;
   index: number;
 }) {
-  const tierKey = (lesson.tier ?? 'foundations-1') as keyof typeof TIER_COLORS;
-  const tierColor = TIER_COLORS[tierKey];
-
   return (
     <motion.button
-      initial={{ opacity: 0, y: 8 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
-        duration: 0.3,
+        duration: 0.35,
         ease: EASE_CINEMATIC,
-        delay: Math.min(index, 10) * 0.03,
+        delay: Math.min(index, 10) * 0.04,
       }}
       onClick={onClick}
-      whileHover={{ y: -2, scale: 1.008 }}
-      whileTap={{ scale: 0.995 }}
-      style={{ borderLeftColor: tierColor }}
-      className={`group w-full text-left rounded-xl border border-l-[3px] p-4 cursor-pointer transition-shadow duration-200 ${
+      whileHover={{ y: -3, scale: 1.01 }}
+      whileTap={{ scale: 0.99 }}
+      className={`group w-full text-left rounded-2xl border p-4 cursor-pointer transition-all duration-300 relative overflow-hidden ${
         isNext && !completed
-          ? 'border-accent/40 bg-gradient-to-br from-dark-800 to-dark-800/60 hover:border-accent/60 hover:shadow-[0_8px_32px_-8px_rgba(99,102,241,0.2)] shadow-[0_2px_12px_-4px_rgba(99,102,241,0.1)]'
+          ? 'border-accent/40 bg-gradient-to-br from-accent/[0.08] via-dark-800/80 to-dark-800/40 hover:border-accent/60 shadow-[0_4px_20px_-8px_rgba(99,102,241,0.25)] hover:shadow-[0_8px_40px_-8px_rgba(99,102,241,0.35)]'
           : completed
-            ? 'border-border bg-dark-800/40 hover:bg-dark-800/70 hover:border-border-light hover:shadow-[0_4px_16px_-4px_rgba(0,0,0,0.3)]'
-            : 'border-border bg-dark-800/60 hover:bg-dark-800/90 hover:border-border-light hover:shadow-[0_4px_16px_-4px_rgba(0,0,0,0.3)]'
+            ? 'border-white/[0.05] bg-dark-800/30 hover:bg-dark-800/50 hover:border-white/[0.08]'
+            : 'border-white/[0.05] bg-dark-800/50 hover:bg-dark-800/70 hover:border-white/[0.1] hover:shadow-[0_4px_24px_-8px_rgba(0,0,0,0.4)]'
       }`}
     >
-      <div className="flex items-center gap-3">
+      {/* Subtle top highlight on next card */}
+      {isNext && !completed && (
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+      )}
+
+      <div className="flex items-center gap-3.5">
         <div
-          className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 transition-colors duration-200 ${
+          className={`w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 transition-all duration-300 ${
             completed
-              ? 'bg-green/10 border border-green/25'
+              ? 'bg-green/10 border border-green/20 shadow-[0_0_10px_-4px_rgba(34,197,94,0.3)]'
               : isNext
-                ? 'bg-accent/15 border border-accent/30 shadow-[0_0_12px_-4px_rgba(99,102,241,0.3)]'
-                : 'bg-dark-700 border border-border group-hover:border-border-light'
+                ? 'bg-gradient-to-br from-accent/20 to-accent/[0.05] border border-accent/30 shadow-[0_0_16px_-4px_rgba(99,102,241,0.35)]'
+                : 'bg-dark-700/80 border border-white/[0.06] group-hover:border-white/[0.1] group-hover:bg-dark-600/80'
           }`}
         >
           {completed ? (
@@ -549,7 +585,9 @@ function LessonCard({
               {lesson.title}
             </h3>
             {isNext && !completed && (
-              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent-light font-bold uppercase tracking-[0.1em] shrink-0 border border-accent/25">
+              <span className="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-[0.12em] shrink-0
+                               bg-gradient-to-r from-accent/20 to-signal/15 text-accent-light border border-accent/25
+                               shadow-[0_0_8px_-2px_rgba(99,102,241,0.3)]">
                 Next
               </span>
             )}
@@ -562,14 +600,16 @@ function LessonCard({
             {lesson.subtitle}
           </p>
         </div>
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex items-center gap-3 shrink-0">
           {completed && stars !== null ? (
             <div className="flex items-center gap-0.5">
               {[0, 1, 2].map((i) => (
                 <Star
                   key={i}
-                  className={`w-3.5 h-3.5 ${
-                    i < stars ? 'text-warm fill-warm drop-shadow-[0_0_4px_rgba(245,158,11,0.4)]' : 'text-dark-500'
+                  className={`w-3.5 h-3.5 transition-all ${
+                    i < stars
+                      ? 'text-warm fill-warm drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]'
+                      : 'text-dark-500'
                   }`}
                 />
               ))}
@@ -581,12 +621,12 @@ function LessonCard({
             </div>
           )}
           <ArrowRight
-            className={`w-4 h-4 transition-all duration-200 group-hover:translate-x-1 ${
+            className={`w-4 h-4 transition-all duration-300 group-hover:translate-x-1.5 ${
               isNext && !completed
                 ? 'text-accent-light'
                 : completed
-                  ? 'text-text-muted'
-                  : 'text-text-secondary'
+                  ? 'text-text-faint group-hover:text-text-muted'
+                  : 'text-text-muted group-hover:text-text-secondary'
             }`}
           />
         </div>
@@ -614,22 +654,23 @@ function SectionHeader({
 }) {
   const pct = total > 0 ? count / total : 0;
   return (
-    <div className="space-y-2">
+    <div className="space-y-2.5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div
-            className="w-7 h-7 rounded-lg flex items-center justify-center border"
+            className="w-8 h-8 rounded-xl flex items-center justify-center border shadow-sm"
             style={{
-              backgroundColor: accentColor.replace('0.4)', '0.1)'),
-              borderColor: accentColor.replace('0.4)', '0.25)'),
+              backgroundColor: accentColor.replace('0.4)', '0.12)').replace('0.5)', '0.12)'),
+              borderColor: accentColor.replace('0.4)', '0.2)').replace('0.5)', '0.2)'),
+              boxShadow: `0 0 12px -4px ${accentColor}`,
             }}
           >
-            <Icon className="w-3.5 h-3.5" style={{ color: accentColor.replace('0.4)', '1)') }} />
+            <Icon className="w-4 h-4" style={{ color: accentColor.replace('0.4)', '1)').replace('0.5)', '1)') }} />
           </div>
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-text-primary">{label}</h3>
+            <h3 className="text-sm font-bold text-text-primary">{label}</h3>
             <span
-              className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-[0.1em] ${badgeColor}`}
+              className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-[0.12em] ${badgeColor}`}
             >
               {badge}
             </span>
@@ -639,15 +680,16 @@ function SectionHeader({
           {count}/{total}
         </span>
       </div>
-      {/* Section completion bar */}
-      <div className="h-[3px] rounded-full bg-dark-700/80 overflow-hidden">
+      {/* Section completion bar — gradient with glow */}
+      <div className="h-1 rounded-full bg-dark-700/60 overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${pct * 100}%` }}
-          transition={{ duration: 0.7, ease: EASE_CINEMATIC, delay: 0.15 }}
+          transition={{ duration: 0.8, ease: EASE_CINEMATIC, delay: 0.15 }}
           className="h-full rounded-full"
           style={{
-            background: `linear-gradient(90deg, ${accentColor.replace('0.4)', '0.7)')}, ${accentColor.replace('0.4)', '1)')})`,
+            background: `linear-gradient(90deg, ${accentColor.replace('0.4)', '0.6)').replace('0.5)', '0.6)')}, ${accentColor.replace('0.4)', '1)').replace('0.5)', '1)')})`,
+            boxShadow: pct > 0 ? `0 0 8px ${accentColor}` : 'none',
           }}
         />
       </div>
@@ -693,21 +735,27 @@ function LearnTab({
 
       {nextLesson && (
         <motion.button
-          initial={{ opacity: 0, y: 8 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, ease: EASE_CINEMATIC }}
+          transition={{ duration: 0.4, ease: EASE_CINEMATIC }}
           onClick={onStart}
-          className="group w-full flex items-center gap-3 p-4 rounded-xl border border-accent/30 bg-gradient-to-br from-accent/[0.1] via-accent/[0.04] to-transparent hover:from-accent/[0.14] transition-all cursor-pointer text-left overflow-hidden relative"
+          whileHover={{ y: -2, scale: 1.005 }}
+          whileTap={{ scale: 0.995 }}
+          className="group w-full flex items-center gap-4 p-5 rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/[0.1] via-accent/[0.04] to-transparent hover:from-accent/[0.14] transition-all duration-300 cursor-pointer text-left overflow-hidden relative shadow-[0_4px_24px_-8px_rgba(99,102,241,0.2)] hover:shadow-[0_8px_40px_-8px_rgba(99,102,241,0.3)]"
         >
-          <div className="absolute -top-10 -right-10 w-28 h-28 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="relative w-11 h-11 rounded-xl bg-accent/15 border border-accent/25 flex items-center justify-center shrink-0">
-            <ArrowRight className="w-5 h-5 text-accent-light" />
+          {/* Glow orb */}
+          <div className="absolute -top-12 -right-12 w-32 h-32 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+          {/* Top highlight */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+
+          <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-accent/25 to-accent/[0.05] border border-accent/30 flex items-center justify-center shrink-0 shadow-[0_0_16px_-4px_rgba(99,102,241,0.3)]">
+            <ArrowRight className="w-5 h-5 text-accent-light group-hover:translate-x-0.5 transition-transform" />
           </div>
           <div className="relative flex-1 min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-accent-light/80">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent-light/70">
               Continue
             </p>
-            <p className="text-sm font-semibold text-text-primary truncate mt-0.5">
+            <p className="text-sm font-bold text-text-primary truncate mt-0.5">
               {nextLesson.title}
             </p>
             <p className="text-xs text-text-muted truncate">
@@ -1221,34 +1269,41 @@ function CompanyTile({
 
   return (
     <motion.button
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 8, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{
-        duration: 0.3,
+        duration: 0.35,
         ease: EASE_CINEMATIC,
-        delay: 0.04 + Math.min(index, 6) * 0.03,
+        delay: 0.04 + Math.min(index, 6) * 0.04,
       }}
       onClick={onClick}
-      className={`group relative rounded-xl border p-3 text-left transition-all cursor-pointer overflow-hidden ${
+      whileHover={{ y: -2, scale: 1.02 }}
+      whileTap={{ scale: 0.97 }}
+      className={`group relative rounded-2xl border p-3.5 text-left transition-all duration-300 cursor-pointer overflow-hidden ${
         completed
-          ? 'border-green/30 bg-green/[0.05] hover:bg-green/[0.08]'
+          ? 'border-green/25 bg-gradient-to-br from-green/[0.08] to-dark-800/50 hover:from-green/[0.12] shadow-[0_0_16px_-8px_rgba(34,197,94,0.2)]'
           : inProgress
-            ? 'border-accent/30 bg-accent/[0.05] hover:bg-accent/[0.08]'
-            : 'border-border bg-dark-800/50 hover:bg-dark-800 hover:border-border-light'
+            ? 'border-accent/25 bg-gradient-to-br from-accent/[0.08] to-dark-800/50 hover:from-accent/[0.12]'
+            : 'border-white/[0.05] bg-dark-800/40 hover:bg-dark-800/70 hover:border-white/[0.1]'
       }`}
     >
-      <div className="flex items-start gap-2">
+      {/* Top edge highlight */}
+      <div className={`absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent ${
+        completed ? 'via-green/30' : inProgress ? 'via-accent/25' : 'via-white/[0.06]'
+      } to-transparent`} />
+
+      <div className="flex items-start gap-2.5">
         <div
-          className={`w-9 h-9 rounded-lg flex items-center justify-center text-base shrink-0 ${
+          className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 ${
             completed
-              ? 'bg-green/10 border border-green/20'
+              ? 'bg-green/12 border border-green/20 shadow-[0_0_8px_-2px_rgba(34,197,94,0.3)]'
               : inProgress
-                ? 'bg-accent/10 border border-accent/20'
-                : 'bg-dark-700 border border-border'
+                ? 'bg-accent/12 border border-accent/20'
+                : 'bg-dark-700/70 border border-white/[0.06]'
           }`}
         >
           {completed ? (
-            <CheckCircle2 className="w-4 h-4 text-green" />
+            <CheckCircle2 className="w-4.5 h-4.5 text-green" />
           ) : (
             company.emoji
           )}
@@ -1258,7 +1313,7 @@ function CompanyTile({
             <p className="text-[11px] font-bold text-text-primary truncate">
               {company.ticker}
             </p>
-            <span className="text-[9px] text-text-muted">•</span>
+            <span className="text-[9px] text-text-faint">•</span>
             <p className="text-[10px] text-text-muted truncate">
               {company.sector}
             </p>
@@ -1267,14 +1322,16 @@ function CompanyTile({
             {company.name}
           </p>
           {inProgress && (
-            <div className="mt-1.5 flex items-center gap-1.5">
-              <div className="flex-1 h-1 rounded-full bg-dark-700 overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-accent/70"
-                  style={{ width: `${(progressCount / 7) * 100}%` }}
+            <div className="mt-2 flex items-center gap-1.5">
+              <div className="flex-1 h-1.5 rounded-full bg-dark-700/60 overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${(progressCount / 7) * 100}%` }}
+                  transition={{ duration: 0.6, ease: EASE_CINEMATIC }}
+                  className="h-full rounded-full bg-gradient-to-r from-accent/80 to-accent-light/80 shadow-[0_0_6px_rgba(99,102,241,0.4)]"
                 />
               </div>
-              <span className="text-[9px] text-accent-light font-semibold tabular-nums">
+              <span className="text-[9px] text-accent-light font-bold tabular-nums">
                 {progressCount}/7
               </span>
             </div>
@@ -1537,29 +1594,34 @@ function QuestTile({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 8, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{
-        duration: 0.3,
+        duration: 0.35,
         ease: EASE_CINEMATIC,
-        delay: 0.05 + Math.min(index, 6) * 0.03,
+        delay: 0.05 + Math.min(index, 6) * 0.04,
       }}
-      className={`relative rounded-xl border p-3 overflow-hidden ${
+      className={`relative rounded-2xl border p-3.5 overflow-hidden transition-all duration-300 ${
         earned
-          ? 'border-warm/40 bg-gradient-to-br from-warm/[0.14] to-warm/[0.04] shadow-[0_0_14px_rgba(245,158,11,0.1)]'
+          ? 'border-warm/30 bg-gradient-to-br from-warm/[0.12] via-warm/[0.04] to-transparent shadow-[0_0_20px_-6px_rgba(245,158,11,0.2)]'
           : locked
-            ? 'border-border bg-dark-900/40'
-            : 'border-accent/25 bg-gradient-to-br from-accent/[0.08] to-transparent'
+            ? 'border-white/[0.04] bg-dark-900/30'
+            : 'border-accent/20 bg-gradient-to-br from-accent/[0.06] to-transparent'
       }`}
     >
+      {/* Top glow line for earned quests */}
+      {earned && (
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-warm/40 to-transparent" />
+      )}
+
       <div className="flex items-start gap-2.5">
         <div
-          className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+          className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
             earned
-              ? 'bg-warm/20 border border-warm/40'
+              ? 'bg-gradient-to-br from-warm/25 to-warm/[0.05] border border-warm/30 shadow-[0_0_10px_-3px_rgba(245,158,11,0.3)]'
               : locked
-                ? 'bg-dark-800 border border-border'
-                : 'bg-accent/15 border border-accent/30'
+                ? 'bg-dark-800/60 border border-white/[0.05]'
+                : 'bg-accent/12 border border-accent/25'
           }`}
         >
           {locked ? (
@@ -1567,7 +1629,7 @@ function QuestTile({
           ) : (
             <Icon
               className={`w-3.5 h-3.5 ${
-                earned ? 'text-warm' : 'text-accent-light'
+                earned ? 'text-warm drop-shadow-[0_0_4px_rgba(245,158,11,0.5)]' : 'text-accent-light'
               }`}
             />
           )}
@@ -1590,17 +1652,21 @@ function QuestTile({
         </div>
       </div>
 
-      <div className="mt-2 flex items-center gap-2">
-        <div className="flex-1 h-1 rounded-full bg-dark-700 overflow-hidden">
-          <div
+      <div className="mt-2.5 flex items-center gap-2">
+        <div className="flex-1 h-1.5 rounded-full bg-dark-700/50 overflow-hidden">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${progressPct * 100}%` }}
+            transition={{ duration: 0.6, ease: EASE_CINEMATIC, delay: 0.1 }}
             className={`h-full rounded-full ${
-              earned ? 'bg-warm' : 'bg-accent/70'
+              earned
+                ? 'bg-gradient-to-r from-warm/80 to-warm shadow-[0_0_6px_rgba(245,158,11,0.4)]'
+                : 'bg-gradient-to-r from-accent/60 to-accent-light/70'
             }`}
-            style={{ width: `${progressPct * 100}%` }}
           />
         </div>
         <span
-          className={`text-[9px] font-semibold tabular-nums shrink-0 ${
+          className={`text-[9px] font-bold tabular-nums shrink-0 ${
             earned ? 'text-warm' : locked ? 'text-text-faint' : 'text-text-muted'
           }`}
         >
@@ -1621,35 +1687,36 @@ function LevelShowcase({
   levelInfo: ReturnType<typeof getLevelInfo>;
 }) {
   const pct = Math.max(0, Math.min(1, levelInfo.progressPct));
-  const segments = 24;
+  const segments = 20;
   const filledSegments = Math.round(pct * segments);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.45, ease: EASE_CINEMATIC }}
+      transition={{ duration: 0.5, ease: EASE_CINEMATIC }}
     >
-      <GlassPanel tone="accent" aurora scanlines noise={false} className="px-5 py-5">
+      <GlassPanel tone="accent" aurora scanlines noise={false} className="px-6 py-6">
         {/* Header row: level badge + title + XP total */}
-        <div className="flex items-center gap-4">
-          {/* Level badge with pulse ring */}
+        <div className="flex items-center gap-5">
+          {/* Level badge — large, glowing */}
           <div className="relative shrink-0">
             <motion.div
-              initial={{ scale: 0.6, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
+              initial={{ scale: 0.5, opacity: 0, rotate: -10 }}
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
               transition={SPRING_CELEBRATION}
-              className="relative w-[68px] h-[68px] rounded-2xl flex items-center justify-center
-                         bg-gradient-to-br from-accent/25 via-accent/10 to-transparent
+              className="relative w-[72px] h-[72px] rounded-2xl flex items-center justify-center
+                         bg-gradient-to-br from-accent/30 via-accent/15 to-signal/10
                          border border-accent/40
-                         shadow-[0_0_24px_-4px_rgba(99,102,241,0.45),inset_0_1px_0_rgba(255,255,255,0.08)]"
+                         shadow-[0_0_32px_-4px_rgba(99,102,241,0.5),0_0_60px_-8px_rgba(99,102,241,0.2),inset_0_1px_0_rgba(255,255,255,0.1)]"
             >
-              <span className="display-num text-[30px] text-accent-light leading-none">
+              <span className="display-num text-[32px] text-accent-light leading-none drop-shadow-[0_0_8px_rgba(129,140,248,0.4)]">
                 {levelInfo.level}
               </span>
-              <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 px-1.5 py-0.5 rounded-md
-                               bg-dark-900/90 border border-accent/30
-                               text-[8px] font-bold uppercase tracking-[0.18em] text-accent-light">
+              <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-lg
+                               bg-dark-900/95 border border-accent/30
+                               text-[8px] font-bold uppercase tracking-[0.2em] text-accent-light
+                               shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
                 LVL
               </span>
             </motion.div>
@@ -1657,32 +1724,31 @@ function LevelShowcase({
 
           {/* Title + XP total */}
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent-light/80">
+            <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-accent-light/60">
               Rank
             </p>
-            <h3 className="text-lg font-semibold tracking-tight text-text-primary truncate mt-0.5">
+            <h3 className="text-lg font-bold tracking-tight text-text-primary truncate mt-0.5">
               {levelInfo.title}
             </h3>
-            <div className="flex items-baseline gap-1.5 mt-1">
+            <div className="flex items-baseline gap-2 mt-1.5">
               <CountUp
                 value={levelInfo.totalXp}
                 duration={1.1}
                 format={(n) => n.toLocaleString()}
-                className="display-num text-[22px] text-text-primary leading-none"
+                className="display-num text-[24px] text-text-primary leading-none"
               />
-              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent-light/50">
                 XP
               </span>
             </div>
           </div>
         </div>
 
-        {/* Hairline divider */}
-        <div className="hairline my-4" aria-hidden />
+        <div className="hairline my-5" aria-hidden />
 
         {/* Segmented progression gauge */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.18em]">
+        <div className="space-y-2.5">
+          <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.16em]">
             <span className="text-text-muted">
               Progress to Lv <span className="text-text-secondary">{levelInfo.level + 1}</span>
             </span>
@@ -1692,27 +1758,25 @@ function LevelShowcase({
             </span>
           </div>
 
-          {/* Segmented bar */}
-          <div className="relative h-2.5 flex items-stretch gap-[2px]">
+          <div className="relative h-3 flex items-stretch gap-[2px]">
             {Array.from({ length: segments }).map((_, i) => {
               const active = i < filledSegments;
               return (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, scaleY: 0.4 }}
+                  initial={{ opacity: 0, scaleY: 0.3 }}
                   animate={{ opacity: 1, scaleY: 1 }}
-                  transition={{ duration: 0.35, delay: 0.25 + i * 0.015, ease: EASE_CINEMATIC }}
-                  className={`flex-1 rounded-[2px] origin-bottom ${
+                  transition={{ duration: 0.4, delay: 0.2 + i * 0.02, ease: EASE_CINEMATIC }}
+                  className={`flex-1 rounded-[3px] origin-bottom ${
                     active
-                      ? 'bg-gradient-to-t from-accent/90 to-accent-light shadow-[0_0_6px_rgba(129,140,248,0.45)]'
-                      : 'bg-dark-700/80'
+                      ? 'bg-gradient-to-t from-accent via-accent-light to-signal/60 shadow-[0_0_8px_rgba(129,140,248,0.5)]'
+                      : 'bg-dark-700/60'
                   }`}
                 />
               );
             })}
           </div>
 
-          {/* Fine data line */}
           <div className="flex justify-between text-[10px] text-text-faint tabular-nums">
             <span>{Math.round(pct * 100)}% complete</span>
             <span>{levelInfo.xpToNextLevel} XP remaining</span>

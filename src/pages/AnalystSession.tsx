@@ -132,12 +132,13 @@ export default function AnalystSession() {
   }
 
   return (
-    <div className="min-h-screen bg-dark-950">
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-accent/[0.03] rounded-full blur-[120px]" />
+    <div className="min-h-screen bg-dark-950 relative">
+      <div className="scene-mesh" />
+      <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden>
+        <div className="orb orb-1" />
       </div>
 
-      <div className="relative max-w-2xl mx-auto px-4 py-6 space-y-6">
+      <div className="relative z-10 max-w-2xl mx-auto px-4 py-6 space-y-6">
         {/* Back + progress bar (hidden during intro for clean look) */}
         {phase !== 'intro' && (
           <div className="space-y-3">
@@ -149,9 +150,9 @@ export default function AnalystSession() {
               Exit Analysis
             </button>
             <div className="flex items-center gap-3">
-              <div className="flex-1 h-1.5 rounded-full bg-dark-700 overflow-hidden">
+              <div className="flex-1 h-1.5 rounded-full bg-dark-700/60 overflow-hidden">
                 <motion.div
-                  className="h-full rounded-full bg-accent"
+                  className="h-full rounded-full bg-gradient-to-r from-accent to-accent-light shadow-[0_0_6px_rgba(99,102,241,0.4)]"
                   initial={{ width: 0 }}
                   animate={{ width: `${progressPct}%` }}
                   transition={{ duration: 0.4 }}
@@ -169,12 +170,12 @@ export default function AnalystSession() {
                 return (
                   <div
                     key={t.kind}
-                    className={`flex-1 min-w-0 text-[9px] text-center px-1.5 py-1 rounded border transition-colors ${
+                    className={`flex-1 min-w-0 text-[9px] text-center px-1.5 py-1 rounded-lg border transition-all duration-200 ${
                       done
-                        ? 'border-green/30 bg-green/5 text-green'
+                        ? 'border-green/25 bg-green/[0.06] text-green'
                         : current
-                          ? 'border-accent/40 bg-accent/10 text-accent-light font-semibold'
-                          : 'border-border bg-dark-800/50 text-text-muted'
+                          ? 'border-accent/35 bg-accent/[0.08] text-accent-light font-bold shadow-[0_0_8px_-2px_rgba(99,102,241,0.3)]'
+                          : 'border-white/[0.04] bg-dark-800/40 text-text-muted'
                     }`}
                   >
                     {t.shortLabel}

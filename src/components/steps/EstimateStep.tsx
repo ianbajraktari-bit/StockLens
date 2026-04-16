@@ -86,11 +86,12 @@ export default function EstimateStep({ step, onDone }: Props) {
   const proximityPct = submitted ? Math.max(0, Math.min(1, 1 - dist / range)) : 0;
 
   return (
-    <div className="rounded-2xl border border-border bg-dark-800/60 p-6 space-y-5">
+    <div className="rounded-2xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-6 space-y-5 relative overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/25 to-transparent" />
       {/* Header */}
       <div className="flex items-center gap-2">
         <step.topicIcon className="w-3.5 h-3.5 text-accent-light" />
-        <span className="text-[11px] font-semibold text-accent-light uppercase tracking-[0.14em]">
+        <span className="text-[11px] font-bold text-accent-light uppercase tracking-[0.16em]">
           {step.topic}
         </span>
       </div>
@@ -129,7 +130,7 @@ export default function EstimateStep({ step, onDone }: Props) {
           className={`relative rounded-xl border-2 transition-colors overflow-hidden ${
             submitted && verdict
               ? `${VERDICT_MAP[verdict].border} ${VERDICT_MAP[verdict].bg}`
-              : 'border-border bg-dark-900/50 focus-within:border-accent/60 focus-within:shadow-[0_0_16px_-8px_rgba(99,102,241,0.5)]'
+              : 'border-white/[0.06] bg-dark-900/40 backdrop-blur-sm focus-within:border-accent/50 focus-within:shadow-[0_0_24px_-8px_rgba(99,102,241,0.4)]'
           }`}
         >
           <input

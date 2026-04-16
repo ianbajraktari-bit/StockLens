@@ -54,16 +54,17 @@ export default function TapStep({ step, onDone }: Props) {
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-dark-800/60 p-6 space-y-5">
+    <div className="rounded-2xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-6 space-y-5 relative overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber/25 to-transparent" />
       {/* Header */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <step.topicIcon className="w-3.5 h-3.5 text-accent-light" />
-          <span className="text-[11px] font-semibold text-accent-light uppercase tracking-[0.14em]">
+          <span className="text-[11px] font-bold text-accent-light uppercase tracking-[0.16em]">
             {step.topic}
           </span>
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-dark-900/50 border border-white/[0.04]">
           <Flag className="w-3 h-3 text-amber" />
           <span className="display-num text-[11px] font-semibold text-text-muted">
             {foundSignals}
@@ -95,7 +96,7 @@ export default function TapStep({ step, onDone }: Props) {
       <p className="text-sm text-text-secondary leading-relaxed">{step.intro}</p>
 
       {/* Passage */}
-      <div className="rounded-xl border border-border bg-dark-900/50 p-5 leading-loose text-base text-text-primary">
+      <div className="rounded-xl border border-white/[0.05] bg-dark-900/40 backdrop-blur-sm p-5 leading-loose text-base text-text-primary">
         {step.passage.map((seg, i) => {
           if (seg.type === 'text') {
             return <span key={i}>{seg.value}</span>;
