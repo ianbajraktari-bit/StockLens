@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -49,6 +49,7 @@ import { CountUp } from '../components/hud/CountUp';
 import { GlassPanel } from '../components/hud/GlassPanel';
 import { EditorialHero } from '../components/editorial/EditorialHero';
 import { BentoShowcase } from '../components/editorial/BentoShowcase';
+import { Particles } from '../components/fx/Particles';
 import {
   SPRING_CELEBRATION,
   SPRING_FLUID,
@@ -130,6 +131,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-dark-950 relative">
       {/* Ambient scene — mesh gradient + floating orbs */}
       <div className="scene-mesh" aria-hidden />
+      <Particles count={35} />
       <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden>
         <div className="orb orb-1" />
         <div className="orb orb-2" />
@@ -432,8 +434,30 @@ function LessonCard({
   onClick: () => void;
   index: number;
 }) {
+  const tiltRef = useRef<HTMLButtonElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const el = tiltRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const midX = rect.width / 2;
+    const midY = rect.height / 2;
+    const rotateY = ((x - midX) / midX) * 6;
+    const rotateX = ((midY - y) / midY) * 4;
+    el.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02,1.02,1.02)`;
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    const el = tiltRef.current;
+    if (!el) return;
+    el.style.transform = '';
+  }, []);
+
   return (
     <motion.button
+      ref={tiltRef}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
@@ -442,9 +466,10 @@ function LessonCard({
         delay: Math.min(index, 10) * 0.04,
       }}
       onClick={onClick}
-      whileHover={{ y: -3, scale: 1.01 }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       whileTap={{ scale: 0.99 }}
-      className={`group w-full text-left rounded-2xl border p-4 cursor-pointer transition-all duration-300 relative overflow-hidden ${
+      className={`tilt-card glow-on-hover group w-full text-left rounded-2xl border p-4 cursor-pointer transition-all duration-300 relative overflow-hidden ${
         isNext && !completed
           ? 'border-accent/40 bg-gradient-to-br from-accent/[0.08] via-dark-800/80 to-dark-800/40 hover:border-accent/60 shadow-[0_4px_20px_-8px_rgba(99,102,241,0.25)] hover:shadow-[0_8px_40px_-8px_rgba(99,102,241,0.35)]'
           : completed
@@ -623,6 +648,27 @@ function LearnTab({
     ? allLessons.find((l) => l.id === nextId)
     : null;
 
+  const continueTiltRef = useRef<HTMLButtonElement>(null);
+
+  const handleContinueMouseMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const el = continueTiltRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const midX = rect.width / 2;
+    const midY = rect.height / 2;
+    const rotateY = ((x - midX) / midX) * 6;
+    const rotateX = ((midY - y) / midY) * 4;
+    el.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02,1.02,1.02)`;
+  }, []);
+
+  const handleContinueMouseLeave = useCallback(() => {
+    const el = continueTiltRef.current;
+    if (!el) return;
+    el.style.transform = '';
+  }, []);
+
   return (
     <section id="panel-learn" role="tabpanel" className="space-y-6">
       <TabIntro
@@ -633,13 +679,15 @@ function LearnTab({
 
       {nextLesson && (
         <motion.button
+          ref={continueTiltRef}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: EASE_CINEMATIC }}
           onClick={onStart}
-          whileHover={{ y: -2, scale: 1.005 }}
+          onMouseMove={handleContinueMouseMove}
+          onMouseLeave={handleContinueMouseLeave}
           whileTap={{ scale: 0.995 }}
-          className="group w-full flex items-center gap-4 p-5 rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/[0.1] via-accent/[0.04] to-transparent hover:from-accent/[0.14] transition-all duration-300 cursor-pointer text-left overflow-hidden relative shadow-[0_4px_24px_-8px_rgba(99,102,241,0.2)] hover:shadow-[0_8px_40px_-8px_rgba(99,102,241,0.3)]"
+          className="tilt-card glow-on-hover group w-full flex items-center gap-4 p-5 rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/[0.1] via-accent/[0.04] to-transparent hover:from-accent/[0.14] transition-all duration-300 cursor-pointer text-left overflow-hidden relative shadow-[0_4px_24px_-8px_rgba(99,102,241,0.2)] hover:shadow-[0_8px_40px_-8px_rgba(99,102,241,0.3)]"
         >
           {/* Glow orb */}
           <div className="absolute -top-12 -right-12 w-32 h-32 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
