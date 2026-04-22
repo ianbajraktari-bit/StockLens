@@ -10,7 +10,6 @@ import {
   BarChart3,
   Clock,
   BookOpen,
-  Brain,
   Target,
   Zap,
   Star,
@@ -48,6 +47,8 @@ import { getLevelInfo } from '../lib/xp';
 import { getQuestProgress, type QuestStatus } from '../lib/quests';
 import { CountUp } from '../components/hud/CountUp';
 import { GlassPanel } from '../components/hud/GlassPanel';
+import { EditorialHero } from '../components/editorial/EditorialHero';
+import { BentoShowcase } from '../components/editorial/BentoShowcase';
 import {
   SPRING_CELEBRATION,
   SPRING_FLUID,
@@ -314,114 +315,11 @@ function LevelBadgeRing({
 }
 
 function OnboardingHero({ onStart }: { onStart: () => void }) {
-  const props = [
-    {
-      icon: Brain,
-      title: "Think, don't memorize",
-      sub: 'Every interaction forces reasoning.',
-      color: 'text-accent-light',
-      bg: 'from-accent/15 to-accent/[0.02]',
-      border: 'border-accent/20',
-    },
-    {
-      icon: Target,
-      title: 'Real companies',
-      sub: 'Apple, NVIDIA, Costco — real data.',
-      color: 'text-warm',
-      bg: 'from-warm/12 to-warm/[0.02]',
-      border: 'border-warm/20',
-    },
-    {
-      icon: Layers,
-      title: '5 formats',
-      sub: 'Drills, estimates, decisions & more.',
-      color: 'text-green-light',
-      bg: 'from-green/12 to-green/[0.02]',
-      border: 'border-green/20',
-    },
-  ];
-
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: EASE_CINEMATIC, delay: 0.08 }}
-      className="mb-8"
-    >
-      <GlassPanel tone="accent" aurora scanlines className="px-6 pt-8 pb-6">
-        {/* Overline */}
-        <motion.p
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, delay: 0.15 }}
-          className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent-light/70 mb-3"
-        >
-          Welcome to StockLens
-        </motion.p>
-
-        {/* Headline with gradient text */}
-        <motion.h2
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-[1.15]"
-        >
-          Learn to invest
-          <br />
-          <span className="gradient-text-animated">like a real analyst.</span>
-        </motion.h2>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.35 }}
-          className="text-sm text-text-secondary leading-relaxed mt-3 max-w-md"
-        >
-          Interactive lessons that teach reasoning — not memorization.
-          Free, no account required.
-        </motion.p>
-
-        <div className="hairline my-5" aria-hidden />
-
-        {/* Value prop cards */}
-        <div className="grid grid-cols-3 gap-2">
-          {props.map(({ icon: Icon, title, sub, color, bg, border }, i) => (
-            <motion.div
-              key={title}
-              initial={{ opacity: 0, y: 12, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.4, delay: 0.4 + i * 0.08, ease: EASE_CINEMATIC }}
-              className={`rounded-xl border ${border} bg-gradient-to-br ${bg} p-3 space-y-2 backdrop-blur-sm`}
-            >
-              <div className={`w-7 h-7 rounded-lg bg-dark-900/60 border border-white/[0.06] flex items-center justify-center`}>
-                <Icon className={`w-3.5 h-3.5 ${color}`} />
-              </div>
-              <p className="text-[11px] font-bold text-text-primary leading-tight">{title}</p>
-              <p className="text-[10px] text-text-muted leading-snug">{sub}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* CTA button */}
-        <motion.button
-          onClick={onStart}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.65 }}
-          whileHover={{ scale: 1.015, y: -1 }}
-          whileTap={{ scale: 0.97 }}
-          className="btn-glow w-full flex items-center justify-center gap-2.5 px-5 py-4 rounded-xl
-                     bg-gradient-to-r from-accent via-accent to-signal/80
-                     text-white text-sm font-bold cursor-pointer mt-5
-                     shadow-[0_8px_32px_-8px_rgba(99,102,241,0.7),0_0_0_1px_rgba(99,102,241,0.3)]
-                     hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.8),0_0_0_1px_rgba(99,102,241,0.4)]
-                     transition-shadow duration-300"
-        >
-          Start Learning
-          <ArrowRight className="w-4 h-4" />
-        </motion.button>
-      </GlassPanel>
-    </motion.section>
+    <>
+      <EditorialHero onStart={onStart} />
+      <BentoShowcase />
+    </>
   );
 }
 

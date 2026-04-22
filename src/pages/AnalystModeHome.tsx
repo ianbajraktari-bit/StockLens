@@ -125,82 +125,116 @@ export default function AnalystModeHome() {
 
       <div className="relative z-10 max-w-2xl mx-auto px-4 py-6 space-y-6">
         {/* Back */}
-        <button
+        <motion.button
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           onClick={() => navigate('/')}
           className="flex items-center gap-1.5 text-xs text-text-muted hover:text-text-secondary cursor-pointer transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           Back to Home
-        </button>
+        </motion.button>
 
-        {/* Header */}
+        {/* Editorial header */}
+        <section className="relative overflow-hidden py-8 sm:py-12">
+          <div className="editorial-grid-bg" aria-hidden />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-accent/[0.06] rounded-full blur-[100px] pointer-events-none" aria-hidden />
+
+          <div className="relative z-10 text-center space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-accent/20 bg-accent/[0.06]"
+            >
+              <Target className="w-3.5 h-3.5 text-accent-light" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent-light/80">
+                Capstone
+              </span>
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
+              className="text-3xl sm:text-4xl font-black tracking-tighter leading-[0.95] text-text-primary"
+            >
+              Analyst{' '}
+              <span className="editorial-gradient-word">Mode</span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+              className="text-sm text-text-secondary leading-relaxed max-w-md mx-auto"
+            >
+              Pick a company. Walk through 7 steps — Business, Drivers, Moat, Risks,
+              Valuation, Thesis, Verdict. Write your own analysis, then compare against
+              a model answer.
+            </motion.p>
+
+            {/* Completion status */}
+            {(completed.size > 0 || inProgressCount > 0) && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.25 }}
+                className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs"
+              >
+                {completed.size > 0 && (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-green/20 bg-green/[0.06]">
+                    <TrendingUp className="w-3.5 h-3.5 text-green" />
+                    <span className="text-text-secondary font-medium">
+                      {completed.size}/{allCompanies.length} analyzed
+                    </span>
+                  </div>
+                )}
+                {inProgressCount > 0 && (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-warm/20 bg-warm/[0.06]">
+                    <Pencil className="w-3.5 h-3.5 text-warm" />
+                    <span className="text-text-secondary font-medium">
+                      {inProgressCount} in progress
+                    </span>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </div>
+        </section>
+
+        {/* How it works — compact info panel */}
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="space-y-4"
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="rounded-2xl border border-white/[0.06] bg-dark-800/40 backdrop-blur-sm p-4 space-y-2"
         >
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent/20 to-signal/10 border border-accent/25 flex items-center justify-center shadow-[0_0_20px_-4px_rgba(99,102,241,0.3)]">
-              <Target className="w-6 h-6 text-accent-light" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl font-extrabold text-text-primary tracking-tight">Analyst Mode</h1>
-                <span className="text-[9px] px-2 py-0.5 rounded-full bg-gradient-to-r from-accent/15 to-signal/10 text-accent-light font-bold uppercase tracking-[0.12em] border border-accent/20">
-                  Capstone
-                </span>
-              </div>
-              <p className="text-xs text-text-muted">Apply everything you've learned to real companies</p>
-            </div>
+          <div className="flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-accent-light" />
+            <h2 className="text-[11px] font-semibold text-accent-light uppercase tracking-wide">
+              How this works
+            </h2>
           </div>
-
-          <div className="rounded-2xl border border-accent/15 bg-gradient-to-br from-accent/[0.06] to-transparent p-4 space-y-2 backdrop-blur-sm">
-            <div className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-accent-light" />
-              <h2 className="text-[11px] font-semibold text-accent-light uppercase tracking-wide">
-                How this works
-              </h2>
-            </div>
-            <p className="text-xs text-text-primary leading-relaxed">
-              Pick a company. Walk through 7 steps — Business, Drivers, Moat, Risks, Valuation, Thesis, Verdict. Write your own answer for each, then compare against a model analysis. No grading — this is a training ground for your own reasoning. The goal is that when you finish a company in here, you've actually thought through it as an investor would.
-            </p>
-          </div>
-
-          {/* Completion status */}
-          {(completed.size > 0 || inProgressCount > 0) && (
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
-              {completed.size > 0 && (
-                <div className="flex items-center gap-1.5">
-                  <TrendingUp className="w-3.5 h-3.5 text-green" />
-                  <span className="text-text-secondary">
-                    {completed.size} of {allCompanies.length} analyzed
-                  </span>
-                </div>
-              )}
-              {inProgressCount > 0 && (
-                <div className="flex items-center gap-1.5">
-                  <Pencil className="w-3.5 h-3.5 text-warm" />
-                  <span className="text-text-secondary">
-                    {inProgressCount} in progress
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
+          <p className="text-xs text-text-secondary leading-relaxed">
+            No grading — this is a training ground for your own reasoning.
+            The goal: when you finish a company here, you've actually thought
+            through it as an investor would.
+          </p>
         </motion.div>
 
         {/* Company list */}
         <section className="space-y-3">
-          <h2 className="text-xs font-semibold text-text-secondary uppercase tracking-wide">
-            Companies
+          <h2 className="text-[10px] font-bold uppercase tracking-[0.14em] text-text-muted">
+            Choose a Company
           </h2>
           <div className="space-y-2">
             {allCompanies.map((c, i) => renderCompanyCard(c, i))}
           </div>
         </section>
 
-        <div className="text-center py-6 border-t border-border">
+        <div className="text-center py-6 border-t border-white/[0.04]">
           <p className="text-[10px] text-text-faint">
             Analyst Mode — self-assessed reasoning practice. Not financial advice.
           </p>
