@@ -48,6 +48,8 @@ import { getLevelInfo } from '../lib/xp';
 import { getQuestProgress, type QuestStatus } from '../lib/quests';
 import { CountUp } from '../components/hud/CountUp';
 import { GlassPanel } from '../components/hud/GlassPanel';
+import { TickerBar } from '../components/hud/TickerBar';
+import { LivePulse } from '../components/hud/LivePulse';
 import {
   SPRING_CELEBRATION,
   SPRING_FLUID,
@@ -135,6 +137,18 @@ export default function HomePage() {
         <div className="orb orb-3" />
       </div>
 
+      {/* Atmospheric ticker — signature fintech-terminal touch */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.9, delay: 0.3 }}
+        className="relative z-10 border-b border-white/[0.04] bg-dark-950/40 backdrop-blur-md"
+      >
+        <div className="max-w-5xl mx-auto">
+          <TickerBar />
+        </div>
+      </motion.div>
+
       <div className="relative z-10 max-w-2xl mx-auto px-4">
         {/* Header */}
         <motion.header
@@ -168,7 +182,7 @@ export default function HomePage() {
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={SPRING_FLUID}
-                  className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-warm
+                  className={`hidden sm:flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-warm
                     bg-gradient-to-br from-warm/15 to-warm/[0.03]
                     border border-warm/20
                     shadow-[0_0_16px_-4px_rgba(245,158,11,0.2)] ${
@@ -176,9 +190,12 @@ export default function HomePage() {
                       ? 'shadow-[0_0_20px_-2px_rgba(245,158,11,0.35)]'
                       : ''
                   }`}
+                  aria-label={`Day ${streak.current} streak active`}
                 >
+                  <LivePulse tone="warm" />
                   <Flame className={`w-3.5 h-3.5 ${streak.current >= 3 ? 'drop-shadow-[0_0_4px_rgba(245,158,11,0.6)]' : ''}`} />
-                  <span className="tabular-nums">{streak.current}</span>
+                  <span className="data-num">{streak.current}</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-warm/70">Day</span>
                 </motion.div>
               )}
               <LevelBadgeRing
@@ -306,7 +323,7 @@ function LevelBadgeRing({
           transition={{ duration: 0.9, ease: EASE_CINEMATIC, delay: 0.2 }}
         />
       </svg>
-      <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-text-primary tabular-nums">
+      <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-text-primary data-num">
         {level}
       </span>
     </div>
@@ -546,9 +563,15 @@ function LessonCard({
       onClick={onClick}
       whileHover={{ y: -3, scale: 1.01 }}
       whileTap={{ scale: 0.99 }}
-      className={`group w-full text-left rounded-2xl border p-4 cursor-pointer transition-all duration-300 relative overflow-hidden ${
+      onMouseMove={(e) => {
+        const el = e.currentTarget;
+        const rect = el.getBoundingClientRect();
+        el.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+        el.style.setProperty('--my', `${e.clientY - rect.top}px`);
+      }}
+      className={`group w-full text-left rounded-2xl border p-4 cursor-pointer transition-all duration-300 relative overflow-hidden spotlight ${
         isNext && !completed
-          ? 'border-accent/40 bg-gradient-to-br from-accent/[0.08] via-dark-800/80 to-dark-800/40 hover:border-accent/60 shadow-[0_4px_20px_-8px_rgba(99,102,241,0.25)] hover:shadow-[0_8px_40px_-8px_rgba(99,102,241,0.35)]'
+          ? 'spotlight-accent border-accent/40 bg-gradient-to-br from-accent/[0.08] via-dark-800/80 to-dark-800/40 hover:border-accent/60 shadow-[0_4px_20px_-8px_rgba(99,102,241,0.25)] hover:shadow-[0_8px_40px_-8px_rgba(99,102,241,0.35)]'
           : completed
             ? 'border-white/[0.05] bg-dark-800/30 hover:bg-dark-800/50 hover:border-white/[0.08]'
             : 'border-white/[0.05] bg-dark-800/50 hover:bg-dark-800/70 hover:border-white/[0.1] hover:shadow-[0_4px_24px_-8px_rgba(0,0,0,0.4)]'
@@ -1053,7 +1076,7 @@ function PracticeTab({
             : `${reviewPoolSize} questions available in the pool`}
         </span>
         {streak.current > 0 && (
-          <span className="tabular-nums">
+          <span className="data-num">
             Current streak: {streak.current}d
           </span>
         )}
@@ -1088,7 +1111,7 @@ function DojoStat({
       className={`rounded-xl border p-3 ${toneClasses.border} text-center`}
     >
       <div
-        className={`text-lg font-bold tabular-nums leading-none ${toneClasses.value}`}
+        className={`text-lg font-bold data-num leading-none ${toneClasses.value}`}
       >
         {value}
       </div>
@@ -1279,11 +1302,17 @@ function CompanyTile({
       onClick={onClick}
       whileHover={{ y: -2, scale: 1.02 }}
       whileTap={{ scale: 0.97 }}
-      className={`group relative rounded-2xl border p-3.5 text-left transition-all duration-300 cursor-pointer overflow-hidden ${
+      onMouseMove={(e) => {
+        const el = e.currentTarget;
+        const rect = el.getBoundingClientRect();
+        el.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+        el.style.setProperty('--my', `${e.clientY - rect.top}px`);
+      }}
+      className={`group relative rounded-2xl border p-3.5 text-left transition-all duration-300 cursor-pointer overflow-hidden spotlight ${
         completed
           ? 'border-green/25 bg-gradient-to-br from-green/[0.08] to-dark-800/50 hover:from-green/[0.12] shadow-[0_0_16px_-8px_rgba(34,197,94,0.2)]'
           : inProgress
-            ? 'border-accent/25 bg-gradient-to-br from-accent/[0.08] to-dark-800/50 hover:from-accent/[0.12]'
+            ? 'spotlight-accent border-accent/25 bg-gradient-to-br from-accent/[0.08] to-dark-800/50 hover:from-accent/[0.12]'
             : 'border-white/[0.05] bg-dark-800/40 hover:bg-dark-800/70 hover:border-white/[0.1]'
       }`}
     >
@@ -1310,11 +1339,13 @@ function CompanyTile({
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
-            <p className="text-[11px] font-bold text-text-primary truncate">
+            <p className="data-num text-[11px] font-bold text-text-primary truncate">
               {company.ticker}
             </p>
-            <span className="text-[9px] text-text-faint">•</span>
-            <p className="text-[10px] text-text-muted truncate">
+            <span className={`inline-block h-2.5 w-0.5 rounded-[1px] ${
+              completed ? 'candle-accent' : inProgress ? 'bg-accent/60' : 'bg-white/15'
+            }`} aria-hidden />
+            <p className="text-[10px] text-text-muted truncate uppercase tracking-wide">
               {company.sector}
             </p>
           </div>
@@ -1331,7 +1362,7 @@ function CompanyTile({
                   className="h-full rounded-full bg-gradient-to-r from-accent/80 to-accent-light/80 shadow-[0_0_6px_rgba(99,102,241,0.4)]"
                 />
               </div>
-              <span className="text-[9px] text-accent-light font-bold tabular-nums">
+              <span className="data-num text-[9px] text-accent-light font-bold">
                 {progressCount}/7
               </span>
             </div>
@@ -1442,7 +1473,7 @@ function ProgressTab({
           <h3 className="text-xs font-semibold text-text-secondary">
             Skills
           </h3>
-          <span className="text-[10px] text-text-muted ml-auto tabular-nums">
+          <span className="text-[10px] text-text-muted ml-auto data-num">
             {skillsProgress.filter((s) => s.exposure >= s.maxExposure).length}/
             {skillsProgress.length} mastered
           </span>
@@ -1456,7 +1487,7 @@ function ProgressTab({
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-text-secondary">{s.label}</span>
                   <span
-                    className={`text-[10px] font-medium tabular-nums ${
+                    className={`text-[10px] font-medium data-num ${
                       complete ? 'text-green' : 'text-text-muted'
                     }`}
                   >
@@ -1529,7 +1560,7 @@ function ProfileStat({
     >
       <Icon className={`w-3.5 h-3.5 mx-auto ${toneClasses.icon}`} />
       <div
-        className={`text-base font-bold tabular-nums mt-1 leading-none ${toneClasses.text}`}
+        className={`text-base font-bold data-num mt-1 leading-none ${toneClasses.text}`}
       >
         {value}
       </div>
@@ -1567,7 +1598,7 @@ function QuestsPanel({
             Milestones
           </span>
         </div>
-        <span className="text-[10px] text-text-muted font-medium tabular-nums">
+        <span className="text-[10px] text-text-muted font-medium data-num">
           {earned}/{quests.length} earned
         </span>
       </div>
@@ -1666,7 +1697,7 @@ function QuestTile({
           />
         </div>
         <span
-          className={`text-[9px] font-bold tabular-nums shrink-0 ${
+          className={`text-[9px] font-bold data-num shrink-0 ${
             earned ? 'text-warm' : locked ? 'text-text-faint' : 'text-text-muted'
           }`}
         >
@@ -1752,7 +1783,7 @@ function LevelShowcase({
             <span className="text-text-muted">
               Progress to Lv <span className="text-text-secondary">{levelInfo.level + 1}</span>
             </span>
-            <span className="display-num text-text-secondary tabular-nums normal-case tracking-normal text-[11px]">
+            <span className="display-num text-text-secondary data-num normal-case tracking-normal text-[11px]">
               {levelInfo.xpIntoLevel}
               <span className="text-text-faint"> / {levelInfo.xpSpanOfLevel}</span>
             </span>
@@ -1777,7 +1808,7 @@ function LevelShowcase({
             })}
           </div>
 
-          <div className="flex justify-between text-[10px] text-text-faint tabular-nums">
+          <div className="flex justify-between text-[10px] text-text-faint data-num">
             <span>{Math.round(pct * 100)}% complete</span>
             <span>{levelInfo.xpToNextLevel} XP remaining</span>
           </div>

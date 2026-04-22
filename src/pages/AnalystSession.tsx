@@ -158,9 +158,13 @@ export default function AnalystSession() {
                   transition={{ duration: 0.4 }}
                 />
               </div>
-              <span className="text-[10px] font-semibold text-text-secondary">
-                {phase === 'complete' ? totalSteps : stepIndex + 1}/{totalSteps}
-              </span>
+              <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-dark-800/50 border border-white/[0.05]">
+                {phase === 'running' && <span className="live-pulse live-pulse-accent" aria-hidden />}
+                <span className="data-num text-[10px] font-bold text-text-primary">
+                  {phase === 'complete' ? totalSteps : stepIndex + 1}
+                  <span className="text-text-faint">/{totalSteps}</span>
+                </span>
+              </div>
             </div>
             {/* Step strip for orientation */}
             <div className="flex items-center gap-1 overflow-x-auto">
@@ -217,9 +221,11 @@ export default function AnalystSession() {
                       <h1 className="text-xl font-bold text-text-primary tracking-tight">
                         {company.name}
                       </h1>
-                      <span className="text-[11px] font-mono text-text-muted">({company.ticker})</span>
+                      <span className="data-num text-[11px] text-accent-light font-bold px-1.5 py-0.5 rounded border border-accent/20 bg-accent/[0.06]">
+                        {company.ticker}
+                      </span>
                     </div>
-                    <p className="text-[11px] text-text-muted">{company.sector} • {company.dataAsOf}</p>
+                    <p className="text-[11px] text-text-muted uppercase tracking-wide">{company.sector} · <span className="data-num normal-case">{company.dataAsOf}</span></p>
                   </div>
                 </div>
                 <p className="text-sm text-text-secondary leading-relaxed">
@@ -241,7 +247,7 @@ export default function AnalystSession() {
                       <p className="text-[10px] text-text-muted uppercase tracking-wide">
                         {fact.label}
                       </p>
-                      <p className="text-sm font-semibold text-text-primary">{fact.value}</p>
+                      <p className="data-num text-sm font-semibold text-text-primary">{fact.value}</p>
                       <p className="text-[10px] text-text-muted leading-snug">{fact.detail}</p>
                     </div>
                   ))}
@@ -435,7 +441,7 @@ export default function AnalystSession() {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-baseline gap-1.5">
-                      <span className="text-lg font-bold text-accent-light tabular-nums">
+                      <span className="text-lg font-bold text-accent-light data-num">
                         +{xpAwarded} XP
                       </span>
                       <span className="text-[11px] text-text-muted">Analyst Mode</span>
@@ -507,7 +513,7 @@ export default function AnalystSession() {
                             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-warm">
                               Quest unlocked
                             </span>
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-warm/15 text-warm font-semibold tabular-nums">
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-warm/15 text-warm font-semibold data-num">
                               +{quest.xp} XP
                             </span>
                           </div>

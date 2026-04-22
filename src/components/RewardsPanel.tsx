@@ -287,7 +287,7 @@ function TabButton({
       <span className="relative z-10 flex items-center gap-1.5">
         {label}
         {badge != null && (
-          <span className="inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full bg-warm/25 text-warm text-[9px] font-bold tabular-nums">
+          <span className="inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full bg-warm/25 text-warm text-[9px] font-bold data-num">
             {badge}
           </span>
         )}
@@ -370,7 +370,7 @@ function SummaryStrip({
       initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.2 }}
-      className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 px-3 py-1.5 rounded-full bg-dark-900/70 border border-border/60 text-[11px] text-text-secondary tabular-nums"
+      className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 px-3 py-1.5 rounded-full bg-dark-900/70 border border-border/60 text-[11px] text-text-secondary data-num"
     >
       {items.map((item, i) => (
         <span key={item.key} className="flex items-center gap-1">
@@ -415,9 +415,9 @@ function GradeTab({
           <div className="flex items-baseline justify-center gap-2">
             <CountUp
               value={score!.correct}
-              className="text-4xl font-bold text-text-primary tabular-nums"
+              className="text-4xl font-bold text-text-primary data-num"
             />
-            <span className="text-base text-text-muted tabular-nums">/ {score!.total}</span>
+            <span className="text-base text-text-muted data-num">/ {score!.total}</span>
           </div>
           <div className="max-w-sm mx-auto">
             <div className="h-1.5 rounded-full bg-dark-700 overflow-hidden">
@@ -430,7 +430,7 @@ function GradeTab({
                 }`}
               />
             </div>
-            <div className="mt-1.5 text-[10px] text-text-muted tabular-nums text-center">
+            <div className="mt-1.5 text-[10px] text-text-muted data-num text-center">
               {Math.round(ratio * 100)}% accuracy
             </div>
           </div>
@@ -522,13 +522,13 @@ function XpTab({
           XP Earned
         </p>
         <div className="flex items-baseline justify-center gap-1">
-          <span className="text-3xl font-bold text-text-primary tabular-nums">+</span>
+          <span className="text-3xl font-bold text-text-primary data-num">+</span>
           <CountUp
             value={xpAwarded}
-            className="text-4xl font-bold text-text-primary tabular-nums"
+            className="text-4xl font-bold text-text-primary data-num"
           />
         </div>
-        <p className="text-[11px] text-text-muted tabular-nums">
+        <p className="text-[11px] text-text-muted data-num">
           {xpAfter.toLocaleString()} total
         </p>
       </div>
@@ -537,12 +537,12 @@ function XpTab({
       <div className="space-y-2">
         <div className="flex items-center justify-between text-[11px] text-text-muted">
           <span className="flex items-center gap-1.5">
-            <span className="w-6 h-6 rounded-md bg-dark-700 border border-border-light/40 flex items-center justify-center text-[10px] font-bold text-text-secondary tabular-nums">
+            <span className="w-6 h-6 rounded-md bg-dark-700 border border-border-light/40 flex items-center justify-center text-[10px] font-bold text-text-secondary data-num">
               {after.level}
             </span>
             <span className="text-text-secondary font-medium">{titleForLevel(after.level)}</span>
           </span>
-          <span className="tabular-nums">
+          <span className="data-num">
             {after.xpIntoLevel}/{after.xpSpanOfLevel} XP
           </span>
         </div>
@@ -561,7 +561,7 @@ function XpTab({
             className="absolute inset-y-0 w-12 bg-gradient-to-r from-transparent via-white/40 to-transparent blur-sm pointer-events-none"
           />
         </div>
-        <p className="text-[10px] text-text-faint text-center tabular-nums">
+        <p className="text-[10px] text-text-faint text-center data-num">
           {after.xpToNextLevel} to Lv {after.level + 1}
         </p>
       </div>
@@ -587,7 +587,7 @@ function XpTab({
                 <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-warm">
                   Level Up
                 </span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-warm/15 text-warm font-semibold tabular-nums">
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-warm/15 text-warm font-semibold data-num">
                   {levelBefore} → {levelAfter}
                 </span>
               </div>
@@ -638,7 +638,7 @@ function ProgressTab({
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-baseline gap-1.5">
-              <span className="text-base font-bold text-warm tabular-nums">
+              <span className="text-base font-bold text-warm data-num">
                 Day {streakAfter}
               </span>
               <span className="text-[10px] font-semibold text-warm/80 uppercase tracking-[0.14em]">
@@ -688,7 +688,7 @@ function SkillRow({ delta, index }: { delta: SkillDeltaView; index: number }) {
     <div className="space-y-1">
       <div className="flex items-center justify-between">
         <span className="text-xs text-text-primary font-medium">{delta.label}</span>
-        <div className="flex items-center gap-1.5 text-[10px] tabular-nums">
+        <div className="flex items-center gap-1.5 text-[10px] data-num">
           {gained && (
             <motion.span
               initial={{ opacity: 0, scale: 0.6 }}
@@ -756,7 +756,7 @@ function QuestsTab({
                       <p className="text-sm font-semibold text-text-primary truncate">
                         {q.title}
                       </p>
-                      <span className="text-[10px] text-warm font-semibold tabular-nums shrink-0">
+                      <span className="text-[10px] text-warm font-semibold data-num shrink-0">
                         +{q.xp} XP
                       </span>
                     </div>
@@ -802,7 +802,7 @@ function QuestsTab({
                       <p className="text-[12px] font-semibold text-text-primary truncate">
                         {q.quest.title}
                       </p>
-                      <span className="text-[10px] text-text-muted tabular-nums shrink-0">
+                      <span className="text-[10px] text-text-muted data-num shrink-0">
                         {q.current}/{q.target}
                       </span>
                     </div>

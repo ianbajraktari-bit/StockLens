@@ -36,6 +36,8 @@ import {
 import { getStreak } from '../lib/progression';
 import { titleForLevel } from '../lib/xp';
 import { type Quest } from '../lib/quests';
+import { TickerBar } from '../components/hud/TickerBar';
+import { LivePulse } from '../components/hud/LivePulse';
 
 type Phase = 'intro' | 'running' | 'complete';
 
@@ -154,6 +156,11 @@ export default function ReviewSession() {
     return (
       <div className="min-h-screen bg-dark-950 relative">
         <div className="scene-mesh" />
+        <div className="relative z-10 border-b border-white/[0.04] bg-dark-950/40 backdrop-blur-md">
+          <div className="max-w-5xl mx-auto">
+            <TickerBar />
+          </div>
+        </div>
         <div className="relative z-10 max-w-2xl mx-auto px-4 py-8 space-y-6">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -213,7 +220,12 @@ export default function ReviewSession() {
                   sub="questions"
                 />
                 <Stat
-                  icon={<Flame className="w-3.5 h-3.5 text-warm" />}
+                  icon={
+                    <span className="inline-flex items-center gap-1">
+                      <LivePulse tone="warm" />
+                      <Flame className="w-3.5 h-3.5 text-warm" />
+                    </span>
+                  }
                   label="Streak"
                   value={`${getStreak().current}`}
                   sub="day"
@@ -381,7 +393,7 @@ export default function ReviewSession() {
             <div className="rounded-xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-5 space-y-3 mx-auto max-w-xs">
               <div className="flex items-center justify-center gap-3">
                 <Sparkles className="w-4 h-4 text-accent-light" />
-                <p className="text-3xl font-bold text-text-primary tabular-nums">
+                <p className="text-3xl font-bold text-text-primary data-num">
                   {correctTotal}
                   <span className="text-text-muted text-lg">/{maxTotal}</span>
                 </p>
@@ -417,7 +429,7 @@ export default function ReviewSession() {
               </div>
               <div className="flex-1">
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-lg font-bold text-accent-light tabular-nums">
+                  <span className="text-lg font-bold text-accent-light data-num">
                     +{xpAwarded} XP
                   </span>
                   <span className="text-[11px] text-text-muted">Daily practice reward</span>
@@ -487,7 +499,7 @@ export default function ReviewSession() {
                         <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-warm">
                           Quest unlocked
                         </span>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-warm/15 text-warm font-semibold tabular-nums">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-warm/15 text-warm font-semibold data-num">
                           +{quest.xp} XP
                         </span>
                       </div>
@@ -523,7 +535,7 @@ export default function ReviewSession() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline gap-1.5">
-                    <span className="text-lg font-bold text-warm tabular-nums">
+                    <span className="text-lg font-bold text-warm data-num">
                       Day {displayedStreak}
                     </span>
                     <span className="text-xs font-semibold text-warm/80 uppercase tracking-wider">
@@ -614,9 +626,16 @@ export default function ReviewSession() {
               ))}
             </div>
 
-            <div className="flex items-center gap-1 text-xs text-text-muted tabular-nums shrink-0">
+            <div className="flex items-center gap-2 text-xs shrink-0 px-2.5 py-1 rounded-lg bg-dark-800/40 border border-white/[0.04]">
+              <span className="live-pulse live-pulse-accent" aria-hidden />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted">Live</span>
+              <span className="data-num text-text-primary font-bold">
+                {stepIndex + 1}
+                <span className="text-text-faint">/{items.length}</span>
+              </span>
+              <span className="w-px h-3 bg-white/10" aria-hidden />
               <Sparkles className="w-3 h-3 text-accent-light" />
-              {correctTotal}
+              <span className="data-num text-accent-light font-bold">{correctTotal}</span>
             </div>
           </div>
 
@@ -681,7 +700,7 @@ function Stat({
         <span>{label}</span>
       </div>
       <div className="flex items-baseline gap-1">
-        <span className="text-base font-bold text-text-primary tabular-nums">
+        <span className="text-base font-bold text-text-primary data-num">
           {value}
         </span>
         {sub && <span className="text-[10px] text-text-muted">{sub}</span>}
@@ -730,7 +749,7 @@ function ReasonPill({
     >
       {style.label}
       {count !== undefined && (
-        <span className="tabular-nums opacity-80">×{count}</span>
+        <span className="data-num opacity-80">×{count}</span>
       )}
     </span>
   );

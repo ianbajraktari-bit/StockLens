@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { allCompanies, WORKFLOW_STEPS, type CompanyProfile } from '../data/companies';
 import { getCompanyResponseCount, getCompletedAnalyses } from '../lib/progression';
+import { TickerBar } from '../components/hud/TickerBar';
 
 const DIFFICULTY_COLORS = {
   intro: 'text-accent-light bg-accent/10 border-accent/20',
@@ -46,7 +47,19 @@ export default function AnalystModeHome() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 + index * 0.05 }}
         onClick={() => navigate(`/analyst/${c.id}`)}
-        className="group w-full text-left rounded-2xl border border-white/[0.06] bg-dark-800/40 hover:bg-dark-800/70 hover:border-white/[0.1] p-4 transition-all duration-300 cursor-pointer backdrop-blur-sm relative overflow-hidden"
+        onMouseMove={(e) => {
+          const el = e.currentTarget;
+          const rect = el.getBoundingClientRect();
+          el.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+          el.style.setProperty('--my', `${e.clientY - rect.top}px`);
+        }}
+        className={`group w-full text-left rounded-2xl border p-4 transition-all duration-300 cursor-pointer backdrop-blur-sm relative overflow-hidden spotlight ${
+          isComplete
+            ? 'border-green/20 bg-gradient-to-br from-green/[0.06] to-dark-800/50 hover:from-green/[0.1]'
+            : inProgress
+              ? 'spotlight-warm border-warm/20 bg-gradient-to-br from-warm/[0.06] to-dark-800/50 hover:from-warm/[0.1]'
+              : 'spotlight-accent border-white/[0.06] bg-dark-800/40 hover:bg-dark-800/70 hover:border-white/[0.1]'
+        }`}
       >
         <div className="flex items-start gap-3">
           {/* Emoji / logo block */}
@@ -74,12 +87,15 @@ export default function AnalystModeHome() {
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="text-sm font-semibold text-text-primary">{c.name}</h3>
-                  <span className="text-[10px] font-mono text-text-muted">{c.ticker}</span>
+                  <span className={`inline-block h-3 w-0.5 rounded-[1px] ${
+                    isComplete ? 'candle-accent' : inProgress ? 'bg-warm/60' : 'bg-accent/40'
+                  }`} aria-hidden />
+                  <span className="data-num text-[10px] text-text-muted font-bold">{c.ticker}</span>
                   <span className={`text-[9px] px-1.5 py-0.5 rounded-full border font-semibold ${DIFFICULTY_COLORS[c.difficulty]}`}>
                     {DIFFICULTY_LABELS[c.difficulty]}
                   </span>
                 </div>
-                <p className="text-[10px] text-text-muted mt-0.5">{c.sector}</p>
+                <p className="text-[10px] text-text-muted mt-0.5 uppercase tracking-wide">{c.sector}</p>
               </div>
               <ArrowRight className="w-4 h-4 text-text-muted group-hover:text-text-secondary transition-colors shrink-0" />
             </div>
@@ -91,15 +107,15 @@ export default function AnalystModeHome() {
             <div className="flex items-center gap-3 pt-1">
               <div className="flex items-center gap-1 text-[10px] text-text-muted">
                 <Clock className="w-3 h-3" />
-                {c.estimatedMinutes}m
+                <span className="data-num">{c.estimatedMinutes}</span>m
               </div>
-              <div className="text-[10px] text-text-muted">
+              <div className="data-num text-[10px] text-text-muted">
                 {c.dataAsOf}
               </div>
               {inProgress && (
                 <div className="flex items-center gap-1 text-[10px] text-warm font-semibold">
                   <Pencil className="w-3 h-3" />
-                  {responseCount}/{totalSteps} saved
+                  <span className="data-num">{responseCount}/{totalSteps}</span> saved
                 </div>
               )}
               {isComplete && (
@@ -121,6 +137,13 @@ export default function AnalystModeHome() {
       <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden>
         <div className="orb orb-1" />
         <div className="orb orb-2" />
+      </div>
+
+      {/* Atmospheric ticker */}
+      <div className="relative z-10 border-b border-white/[0.04] bg-dark-950/40 backdrop-blur-md">
+        <div className="max-w-5xl mx-auto">
+          <TickerBar />
+        </div>
       </div>
 
       <div className="relative z-10 max-w-2xl mx-auto px-4 py-6 space-y-6">
@@ -174,7 +197,7 @@ export default function AnalystModeHome() {
                 <div className="flex items-center gap-1.5">
                   <TrendingUp className="w-3.5 h-3.5 text-green" />
                   <span className="text-text-secondary">
-                    {completed.size} of {allCompanies.length} analyzed
+                    <span className="data-num font-bold text-text-primary">{completed.size}</span> of <span className="data-num">{allCompanies.length}</span> analyzed
                   </span>
                 </div>
               )}
@@ -182,7 +205,7 @@ export default function AnalystModeHome() {
                 <div className="flex items-center gap-1.5">
                   <Pencil className="w-3.5 h-3.5 text-warm" />
                   <span className="text-text-secondary">
-                    {inProgressCount} in progress
+                    <span className="data-num font-bold text-warm">{inProgressCount}</span> in progress
                   </span>
                 </div>
               )}

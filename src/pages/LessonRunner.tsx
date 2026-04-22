@@ -342,7 +342,7 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
                           className="rounded-lg bg-dark-900/60 border border-border p-3"
                         >
                           <p className="text-[10px] text-text-muted">{fact.label}</p>
-                          <p className="text-sm font-bold text-text-primary mt-0.5 tabular-nums">
+                          <p className="text-sm font-bold text-text-primary mt-0.5 data-num">
                             {fact.value}
                           </p>
                           <p className="text-[10px] text-text-muted mt-1 leading-relaxed">
@@ -438,9 +438,16 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
               ))}
             </div>
 
-            <div className="flex items-center gap-1.5 text-xs text-text-muted tabular-nums shrink-0 px-2 py-1 rounded-lg bg-dark-800/40 border border-white/[0.04]">
+            <div className="flex items-center gap-2 text-xs shrink-0 px-2.5 py-1 rounded-lg bg-dark-800/40 border border-white/[0.04]">
+              <span className="live-pulse live-pulse-accent" aria-hidden />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted">Step</span>
+              <span className="data-num text-text-primary font-bold">
+                {stepIndex + 1}
+                <span className="text-text-faint">/{steps.length}</span>
+              </span>
+              <span className="w-px h-3 bg-white/10" aria-hidden />
               <Sparkles className="w-3 h-3 text-accent-light" />
-              {correctTotal}
+              <span className="data-num text-accent-light font-bold">{correctTotal}</span>
             </div>
           </div>
         </div>
@@ -581,7 +588,7 @@ function CompletionScreen({
           <div className="rounded-2xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-5 space-y-3 mx-auto max-w-xs">
             <div className="flex items-center justify-center gap-3">
               <Sparkles className="w-4 h-4 text-accent-light" />
-              <p className="text-3xl font-extrabold text-text-primary tabular-nums">
+              <p className="text-3xl font-extrabold text-text-primary data-num">
                 {correctTotal}
                 <span className="text-text-muted text-lg font-bold">/{maxTotal}</span>
               </p>
@@ -618,7 +625,7 @@ function CompletionScreen({
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-lg font-bold text-accent-light tabular-nums">
+                  <span className="text-lg font-bold text-accent-light data-num">
                     +{xpAwarded} XP
                   </span>
                   <span className="text-[11px] text-text-muted">
@@ -653,7 +660,7 @@ function CompletionScreen({
                   <span className="text-xs font-bold uppercase tracking-[0.2em] text-warm">
                     Level up!
                   </span>
-                  <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-warm/15 text-warm font-semibold tabular-nums">
+                  <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-warm/15 text-warm font-semibold data-num">
                     Lv {snapshot.levelBefore} → {snapshot.levelAfter}
                   </span>
                 </div>
@@ -696,7 +703,7 @@ function CompletionScreen({
                       <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-warm">
                         Quest unlocked
                       </span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-warm/15 text-warm font-semibold tabular-nums">
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-warm/15 text-warm font-semibold data-num">
                         +{quest.xp} XP
                       </span>
                     </div>
@@ -731,7 +738,7 @@ function CompletionScreen({
               </motion.div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-lg font-bold text-warm tabular-nums">
+                  <span className="text-lg font-bold text-warm data-num">
                     Day {snapshot.streakAfter}
                   </span>
                   <span className="text-xs font-semibold text-warm/80 uppercase tracking-wider">
@@ -909,13 +916,13 @@ function SkillLevelUpRow({ delta, index }: { delta: SkillDelta; index: number })
               initial={{ opacity: 0, scale: 0.6 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ type: 'spring', stiffness: 300, damping: 18, delay: baseDelay + 0.45 }}
-              className="text-[10px] font-bold text-accent-light tabular-nums"
+              className="text-[10px] font-bold text-accent-light data-num"
             >
               +1
             </motion.span>
           )}
           <span
-            className={`text-[10px] font-medium tabular-nums ${
+            className={`text-[10px] font-medium data-num ${
               mastered ? 'text-green' : 'text-text-muted'
             }`}
           >

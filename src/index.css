@@ -50,6 +50,7 @@
 
   /* Fonts */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 }
 
 /* ================================================================== */
@@ -385,6 +386,195 @@ body {
 }
 
 /* ================================================================== */
+/* DATA-TERMINAL NUMERICS                                              */
+/* Monospace + tabular — gives every number a Bloomberg-terminal feel  */
+/* ================================================================== */
+
+.data-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" on, "zero" on;
+  letter-spacing: -0.02em;
+}
+
+/* Ticker tape — direction-aware price/delta accents */
+.tape-up   { color: var(--color-green-light); }
+.tape-down { color: var(--color-red-light); }
+.tape-up   .chip-arrow { transform: translateY(-1px) rotate(0deg); }
+.tape-down .chip-arrow { transform: translateY(1px) rotate(180deg); }
+
+/* ================================================================== */
+/* CURSOR SPOTLIGHT — mouse-reactive radial highlight on cards         */
+/* Component must set --mx / --my from pointer events (px values).     */
+/* ================================================================== */
+
+.spotlight {
+  position: relative;
+  overflow: hidden;
+}
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    600px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(129, 140, 248, 0.09),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.spotlight:hover::before { opacity: 1; }
+
+/* Spotlight intensity variants */
+.spotlight-accent::before {
+  background: radial-gradient(
+    520px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(99, 102, 241, 0.13),
+    transparent 40%
+  );
+}
+.spotlight-warm::before {
+  background: radial-gradient(
+    480px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(245, 158, 11, 0.11),
+    transparent 40%
+  );
+}
+.spotlight-electric::before {
+  background: radial-gradient(
+    520px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(56, 189, 248, 0.12),
+    transparent 40%
+  );
+}
+
+/* ================================================================== */
+/* LIVE PULSE — breathing dot for active/live indicators               */
+/* ================================================================== */
+
+.live-pulse {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-green);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+}
+.live-pulse::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: var(--color-green);
+  opacity: 0.45;
+  animation: live-ring 2s ease-out infinite;
+}
+.live-pulse-warm {
+  background: var(--color-warm);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.55);
+}
+.live-pulse-warm::before { background: var(--color-warm); }
+
+.live-pulse-accent {
+  background: var(--color-accent);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.55);
+}
+.live-pulse-accent::before { background: var(--color-accent); }
+
+/* ================================================================== */
+/* TICKER TAPE — horizontal marquee for atmospheric data strip        */
+/* ================================================================== */
+
+.ticker-viewport {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
+}
+.ticker-track {
+  display: inline-flex;
+  gap: 2.25rem;
+  white-space: nowrap;
+  animation: ticker-scroll 60s linear infinite;
+  will-change: transform;
+}
+
+/* ================================================================== */
+/* DEPTH LIFT — subtle press/hover translation                         */
+/* ================================================================== */
+
+.lift-hover {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lift-hover:hover {
+  transform: translateY(-2px);
+}
+.lift-hover:active {
+  transform: translateY(0);
+  transition-duration: 0.08s;
+}
+
+/* Magnetic press — for primary CTAs */
+.press-magnetic {
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.press-magnetic:active {
+  transform: scale(0.97);
+  transition-duration: 0.06s;
+}
+
+/* ================================================================== */
+/* CANDLE ACCENT — tiny candlestick motif for stock/company cards      */
+/* ================================================================== */
+
+.candle-accent {
+  position: relative;
+  width: 4px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--color-green-light), var(--color-green));
+  box-shadow: 0 0 8px var(--color-green-glow);
+}
+.candle-accent::before,
+.candle-accent::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 1px;
+  background: var(--color-green);
+  transform: translateX(-50%);
+  opacity: 0.7;
+}
+.candle-accent::before { top: -3px;   height: 3px; }
+.candle-accent::after  { bottom: -3px; height: 3px; }
+
+.candle-accent-down {
+  background: linear-gradient(180deg, var(--color-red-light), var(--color-red));
+  box-shadow: 0 0 8px var(--color-red-glow);
+}
+.candle-accent-down::before,
+.candle-accent-down::after { background: var(--color-red); }
+
+/* ================================================================== */
+/* NEW KEYFRAMES                                                       */
+/* ================================================================== */
+
+@keyframes live-ring {
+  0%   { transform: scale(1);   opacity: 0.45; }
+  100% { transform: scale(2.1); opacity: 0; }
+}
+
+@keyframes ticker-scroll {
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+/* ================================================================== */
 /* ACCESSIBILITY                                                       */
 /* ================================================================== */
 
@@ -397,7 +587,11 @@ body {
   .aurora,
   .shimmer,
   .orb-1, .orb-2, .orb-3,
-  .gradient-text-animated {
+  .gradient-text-animated,
+  .ticker-track,
+  .live-pulse::before,
+  .live-pulse-warm::before,
+  .live-pulse-accent::before {
     animation: none;
   }
 }
