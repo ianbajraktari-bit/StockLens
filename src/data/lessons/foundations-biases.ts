@@ -1,308 +1,159 @@
-import { TrendingDown, Scale, Anchor, Compass, Calculator, Zap, Flag } from 'lucide-react';
+import { Brain, TrendingDown, AlertTriangle, Shield, Zap, Search } from 'lucide-react';
 import type { Lesson } from './types';
 
 export const foundationsBiasesLesson: Lesson = {
   id: 'foundations-biases',
   emoji: '🧠',
   title: 'Your Brain vs. Your Portfolio',
-  subtitle: 'Why your instincts are the biggest risk to your returns',
+  subtitle: 'The mental traps that cost investors more than bad stock picks',
   description:
-    "Your brain was built to survive, not invest. In this lesson, you'll feel how loss aversion hijacks your decisions, do the math on why losses hit harder than gains, and diagnose real investor mistakes that cost real money.",
+    'Your biggest investing risk isn\'t picking the wrong stock — it\'s your own brain. Humans evolved to avoid lions, not to make rational decisions about money. This lesson exposes the specific mental traps that cause even smart people to buy high, sell low, and hold losers.',
   estimatedMinutes: 3,
   dataAsOf: '',
   tier: 'foundations-1',
   skills: ['behavioral_biases'],
   keyFacts: [],
   topics: [
-    { label: 'Separating price noise from real information', icon: Zap },
-    { label: 'The math behind why losses feel worse', icon: Calculator },
-    { label: 'Spotting the disposition effect in action', icon: Anchor },
-    { label: 'Building a process that beats instinct', icon: Compass },
+    { label: 'Loss aversion — why losses hurt 2x more', icon: TrendingDown },
+    { label: 'Anchoring — the price you paid doesn\'t matter', icon: Brain },
+    { label: 'Confirmation bias — you only see what you believe', icon: AlertTriangle },
+    { label: 'Building a system to override your instincts', icon: Shield },
   ],
   steps: [
-    // ─────────────────────────────────────────────────────────────────
-    // 1. Drill: signal or noise?
-    // ─────────────────────────────────────────────────────────────────
-    {
-      kind: 'drill',
-      topic: 'Signal or Noise?',
-      topicIcon: Zap,
-      intro:
-        "Your stock dropped. Is this a reason to act — or just noise? Tap fast.",
-      prompts: [
-        {
-          setup: 'Stock dropped 20%. Business unchanged — revenue growing, customers loyal.',
-          left: { label: 'Noise' },
-          right: { label: 'Signal' },
-          correct: 'left',
-          flash: 'Nothing about the business changed. The price moved, not the value.',
-        },
-        {
-          setup: 'Stock dropped 15%. Their biggest customer (40% of revenue) just left.',
-          left: { label: 'Noise' },
-          right: { label: 'Signal' },
-          correct: 'right',
-          flash: 'Losing 40% of revenue is real information. The business got weaker.',
-        },
-        {
-          setup: 'Stock dropped 10%. Headlines say "market crash — investors panic."',
-          left: { label: 'Noise' },
-          right: { label: 'Signal' },
-          correct: 'left',
-          flash: 'The whole market dropped. Your company\'s fundamentals didn\'t change.',
-        },
-        {
-          setup: 'Stock dropped 25%. CEO resigned amid an accounting scandal.',
-          left: { label: 'Noise' },
-          right: { label: 'Signal' },
-          correct: 'right',
-          flash: 'Accounting scandals destroy trust and often reveal hidden problems. Real signal.',
-        },
-        {
-          setup: 'Stock dropped 8%. A competitor launched a similar product.',
-          left: { label: 'Noise' },
-          right: { label: 'Signal' },
-          correct: 'right',
-          flash: 'New competition is real information — it could erode margins and market share.',
-        },
-        {
-          setup: 'Stock dropped 12%. Interest rates rose 0.25%. Business has zero debt.',
-          left: { label: 'Noise' },
-          right: { label: 'Signal' },
-          correct: 'left',
-          flash: 'Rate hikes matter for indebted companies. This business has no debt — the drop is just market mood.',
-        },
-      ],
-      takeaway:
-        'Before reacting to a price drop, ask one question: "Did anything about the business actually change?" If yes, it\'s signal. If no, it\'s noise — and noise is not a reason to act.',
-    },
-
-    // ─────────────────────────────────────────────────────────────────
-    // 2. Estimate: the loss math
-    // ─────────────────────────────────────────────────────────────────
     {
       kind: 'estimate',
-      topic: 'The Drop',
-      topicIcon: Calculator,
-      context:
-        'You invested $10,000 in a well-researched stock. It drops 20%.',
-      question: "What's your position worth now?",
-      answer: 8000,
-      tolerance: 200,
-      unit: '$',
-      hint: '$10,000 × (1 − 0.20)',
-      reveal:
-        '$10,000 × 0.80 = $8,000. You lost $2,000. But here\'s the trap: getting back to $10,000 from $8,000 is harder than it sounds.',
-      takeaway: 'A 20% drop takes you to $8,000. Now comes the part that surprises most people.',
-    },
-
-    // ─────────────────────────────────────────────────────────────────
-    // 3. Estimate: the recovery math
-    // ─────────────────────────────────────────────────────────────────
-    {
-      kind: 'estimate',
-      topic: 'The Recovery Trap',
-      topicIcon: Calculator,
-      context:
-        'Your stock is now worth $8,000 after a 20% drop. To get back to your original $10,000...',
-      question: 'What percentage gain does the stock need?',
-      answer: 25,
-      tolerance: 2,
-      unit: '%',
-      hint: '$2,000 ÷ $8,000',
-      reveal:
-        '$2,000 ÷ $8,000 = 25%. A 20% loss requires a 25% gain just to break even. Losses and gains are not symmetrical — and that asymmetry is exactly why your brain panics during drops.',
-      takeaway: 'Losses and recoveries are asymmetric. A 20% loss needs a 25% gain. A 50% loss needs a 100% gain. This is why your brain treats drops as emergencies.',
-    },
-
-    // ─────────────────────────────────────────────────────────────────
-    // 4. Decide: the 20% drop
-    // ─────────────────────────────────────────────────────────────────
-    {
-      kind: 'decide',
-      topic: 'The 20% Drop',
+      topic: 'The Pain Asymmetry',
       topicIcon: TrendingDown,
       context:
-        "Your stock is down 20%. You feel the urge to sell.\n\nBut: revenue is still growing, customers are still loyal, management hasn't changed. The only thing different is the price.",
-      question: "What's the most disciplined response?",
-      options: [
-        'Sell immediately — stop the bleeding',
-        'Revisit why you bought. If those reasons still hold, the drop is noise',
-        "Wait until it gets back to your purchase price, then sell",
-        "Buy more — it's on sale",
-      ],
-      correctIndex: 1,
-      punchline:
-        "A price drop is a question, not a command. Ask: 'Did anything about the business change?' If the answer is no, the only thing that changed is your feelings — and feelings shouldn't run your portfolio.",
-      wrongNudges: [
-        'Selling to "stop the bleeding" is loss aversion in action. You crystallize the loss without checking if anything real changed.',
-        '',
-        'Your purchase price is a historical accident. The stock doesn\'t know what you paid. Waiting for an arbitrary number is managing your ego, not your money.',
-        "A 20% drop isn't automatically a discount. Sometimes the market is correcting an overvaluation. Buying more without rechecking the thesis is just as reactive as panic-selling.",
-      ],
-      takeaway: "The disciplined investor treats price drops as questions to investigate, not alarms to react to.",
-    },
-
-    // ─────────────────────────────────────────────────────────────────
-    // 5. Tap: the disposition effect in action
-    // ─────────────────────────────────────────────────────────────────
-    {
-      kind: 'tap',
-      topic: 'The Disposition Trap',
-      topicIcon: Flag,
-      intro:
-        'The disposition effect is the tendency to sell winners too early and hold losers too long. An investor is explaining her plan for two stocks. Tap every piece of reasoning driven by her purchase price instead of business fundamentals.',
-      passage: [
-        { type: 'text', value: '"Stock A is at $150, ' },
-        {
-          type: 'chip',
-          value: 'up 50% from what I paid',
-          signal: true,
-          feedback:
-            'Her purchase price is irrelevant to Stock A\'s current value. Anchoring on her entry point, not the business quality.',
-        },
-        { type: 'text', value: '. The company is firing on all cylinders — revenue growing, margins expanding. But ' },
-        {
-          type: 'chip',
-          value: "I want to lock in my profit",
-          signal: true,
-          feedback:
-            'Selling a winning business to "lock in profit" is cutting a flower to preserve it. The business is getting stronger — that\'s a reason to hold, not sell.',
-        },
-        { type: 'text', value: ' before it drops back down.\n\nStock B is at $70, ' },
-        {
-          type: 'chip',
-          value: 'down 30% from what I paid',
-          signal: true,
-          feedback:
-            "Again anchoring on purchase price. The stock's value depends on the business today, not what she paid months ago.",
-        },
-        { type: 'text', value: '. Customers are leaving and the CEO just resigned. But ' },
-        {
-          type: 'chip',
-          value: "I'll hold until it gets back to $100",
-          signal: true,
-          feedback:
-            'Waiting for a broken business to reach an arbitrary price is hope disguised as strategy. The business is deteriorating — $100 is her number, not the stock\'s.',
-        },
-        { type: 'text', value: '. ' },
-        {
-          type: 'chip',
-          value: 'I never sell at a loss',
-          signal: true,
-          feedback:
-            '"Never sell at a loss" sounds disciplined but guarantees you\'ll hold broken businesses forever. Real discipline is selling when the thesis breaks, regardless of gain or loss.',
-        },
-        { type: 'text', value: ' — it\'s my rule."' },
-      ],
-      requiredSignals: 4,
+        'You invest $10,000 in a stock. In the first month, it drops 20%. You now have $8,000. That $2,000 loss feels terrible — you check your phone constantly, lose sleep, consider selling.\n\nLoss aversion is a proven psychological phenomenon: losing money hurts roughly TWICE as much as gaining the same amount feels good.\n\nHere\'s where it gets dangerous:',
+      question: 'Your $10,000 dropped 20% to $8,000. What percentage gain do you need from $8,000 to get back to $10,000?',
+      answer: 25,
+      tolerance: 5,
+      unit: '%',
+      hint: 'You need to gain $2,000 from a base of $8,000 — not $10,000',
       reveal:
-        "Every decision she's making is driven by what she paid, not what the businesses are worth today. She's selling the winner (strong business) and holding the loser (broken business) — the exact opposite of what the fundamentals say to do. This pattern is called the disposition effect.",
-      takeaway:
-        'The disposition effect makes investors sell winners too early and hold losers too long — because the pain of realizing a loss is worse than the pleasure of a gain. Your purchase price should never drive your decision.',
+        '25%. Not 20%. You need $2,000 ÷ $8,000 = 25%. This asymmetry is devastating: a 50% loss requires a 100% gain to recover. A 75% loss requires a 300% gain. This is why risk management matters more than finding the next hot stock — the math of recovery is brutally stacked against you.',
+      takeaway: 'Losses require disproportionately larger gains to recover. A 20% loss needs 25%. A 50% loss needs 100%. Protecting against big losses matters more than chasing big wins.',
     },
 
-    // ─────────────────────────────────────────────────────────────────
-    // 6. Drill: sell or hold?
-    // ─────────────────────────────────────────────────────────────────
-    {
-      kind: 'drill',
-      topic: 'Sell or Hold?',
-      topicIcon: Scale,
-      intro:
-        'For each stock, decide based on the business — not the price you paid. Tap fast.',
-      prompts: [
-        {
-          setup: 'Up 60%. Revenue accelerating, new product launch succeeding.',
-          left: { label: 'Hold' },
-          right: { label: 'Sell' },
-          correct: 'left',
-          flash: 'The business is getting stronger. Selling because it\'s "up a lot" is cutting your flowers.',
-        },
-        {
-          setup: 'Down 40%. Customers leaving, two major lawsuits pending.',
-          left: { label: 'Hold' },
-          right: { label: 'Sell' },
-          correct: 'right',
-          flash: 'The business is deteriorating. Holding because "it\'ll come back" is watering weeds.',
-        },
-        {
-          setup: 'Down 25%. Market crashed broadly. Your company\'s fundamentals unchanged.',
-          left: { label: 'Hold' },
-          right: { label: 'Sell' },
-          correct: 'left',
-          flash: 'The business didn\'t change — the market\'s mood did. This is noise.',
-        },
-        {
-          setup: 'Up 10%. Main competitor just launched a clearly superior product.',
-          left: { label: 'Hold' },
-          right: { label: 'Sell' },
-          correct: 'right',
-          flash: 'A superior competitor is a fundamental change. The gain is irrelevant — the thesis may be broken.',
-        },
-        {
-          setup: 'Down 15%. They just landed their biggest contract ever.',
-          left: { label: 'Hold' },
-          right: { label: 'Sell' },
-          correct: 'left',
-          flash: 'Business got stronger while price dropped. This might be an opportunity, not a problem.',
-        },
-        {
-          setup: 'Up 100%. Revenue flat for 3 years, no new products, insiders selling.',
-          left: { label: 'Hold' },
-          right: { label: 'Sell' },
-          correct: 'right',
-          flash: 'A 100% gain with flat fundamentals and insider selling is a red flag. Price moved up, but value didn\'t.',
-        },
-      ],
-      takeaway:
-        'The decision to sell or hold should come from one question: "Is the business getting stronger or weaker?" Not "Am I up or down?"',
-    },
-
-    // ─────────────────────────────────────────────────────────────────
-    // 7. Decide: process beats instinct
-    // ─────────────────────────────────────────────────────────────────
     {
       kind: 'decide',
-      topic: 'Process Beats Instinct',
-      topicIcon: Compass,
+      topic: 'The Anchoring Trap',
+      topicIcon: Brain,
       context:
-        "The market has dropped 25% in six months. Headlines are dire. Friends are selling.\n\nThree investors respond:\n\n• Investor A sells everything. Plans to buy back \"when things calm down.\"\n• Investor B checks prices every hour to \"react quickly.\"\n• Investor C pulls out a notebook written before the crash: why she owns each stock, what would make her sell, and her plan for a 25% drop.",
-      question: 'Which investor has the best defense against their own brain?',
+        'You bought NVIDIA at $120 per share two years ago. It ran up to $950, and you felt like a genius. Then it dropped to $750.\n\nYour brain is anchored to TWO irrelevant numbers:\n- $120 (your purchase price — "I\'m still up 6x!")\n- $950 (the peak — "I\'ve lost $200 per share")\n\nNeither has ANYTHING to do with what NVIDIA is worth today. The business currently earns $20/share and is growing 40%/year.',
+      question: 'At $750, NVIDIA trades at about 37x earnings with 40% growth. What should drive your decision?',
       options: [
-        'Investor A — selling removes the risk',
-        'Investor B — fast reactions catch opportunities',
-        "Investor C — her decisions were made when she was calm, so panic can't rewrite them",
-        'All three are reasonable in a crash',
+        'Sell — it dropped $200 from the peak, lock in your 6x gain before it drops more',
+        'Hold — you bought at $120, so you\'re still up huge and have nothing to worry about',
+        'Evaluate NVIDIA at today\'s price vs today\'s business — is 37x reasonable for 40% growth?',
+        'Buy more — it dropped $200 from the high so it\'s "on sale"',
       ],
       correctIndex: 2,
       punchline:
-        "Investor C doesn't need better instincts during the crash — she just follows the plan her calm self already made. A simple plan: 'I'm buying because [thesis]. I'll sell if [thesis breaks]. I'll add more if [price drops 20%+ and thesis is intact].' Writing these three sentences before you buy removes emotion from the hardest moments.",
+        'Your purchase price is irrelevant. The peak price is irrelevant. The ONLY question is: "At $750 and 37x earnings, does NVIDIA\'s current business justify this price?" If yes, hold or buy. If no, sell. Your cost basis is a psychological anchor, not an investment tool.',
       wrongNudges: [
-        '"Buy back when things calm down" almost never works. Markets recover before headlines do — by the time it feels safe, the best prices are gone.',
-        'Checking prices hourly activates loss aversion on every glance. The less you check, the less your brain can interfere.',
+        'This is the disposition effect — selling winners to "lock in" gains. If NVIDIA is worth $900 based on fundamentals, selling at $750 is selling a bargain because of a psychological anchor.',
+        'Being "up huge" doesn\'t protect you from future losses. Enron shareholders were "up huge" too — until they weren\'t. Your gain history doesn\'t change the stock\'s future.',
         '',
-        'Having a written plan is measurably better than having no plan. Your calm self is a better decision-maker than your panicked self.',
+        'A stock isn\'t "on sale" just because it dropped. If the earnings report revealed problems, the OLD price was too HIGH. "Cheap" means below intrinsic value, not below yesterday\'s price.',
       ],
-      takeaway:
-        "The best investors aren't the ones with the best instincts — they're the ones whose decisions were already made before the panic hit. Write your plan when you're calm. Follow it when you're not.",
+      takeaway: 'Your purchase price and the stock\'s peak are irrelevant to future value. Only one question matters: "Is this business worth this price TODAY?"',
+    },
+
+    {
+      kind: 'drill',
+      topic: 'Bias or Rational?',
+      topicIcon: Zap,
+      intro: 'For each investor action, decide: is this rational analysis, or a bias-driven mistake? These get tricky.',
+      prompts: [
+        {
+          setup: 'Your stock drops 15%. You check the earnings report — revenue up 20%, margins expanding, guidance raised. You hold.',
+          left: { label: 'Rational', sublabel: 'business is fine' },
+          right: { label: 'Bias', sublabel: 'ignoring the price drop' },
+          correct: 'left',
+          flash: 'Rational. The business improved on every metric. The price drop is noise — maybe a sector rotation or market-wide selloff. When fundamentals improve but the price drops, the stock just got cheaper.',
+        },
+        {
+          setup: 'Your stock is down 40%. The company lost its biggest customer (30% of revenue), margins are shrinking, the CEO resigned. You hold because "it\'ll come back."',
+          left: { label: 'Rational', sublabel: 'patient long-term thinking' },
+          right: { label: 'Bias', sublabel: 'refusing to accept loss' },
+          correct: 'right',
+          flash: 'Loss aversion + sunk cost fallacy. You\'re holding because selling makes the loss feel real. But the business is fundamentally damaged. The price you paid doesn\'t change the future. Selling a broken business isn\'t "giving up" — it\'s reallocating capital.',
+        },
+        {
+          setup: 'You own Tesla. You read 10 analyst reports — 7 bullish, 3 bearish with detailed margin concerns. You dismiss the 3 bearish reports as "not understanding the vision."',
+          left: { label: 'Rational', sublabel: 'majority of analysts agree' },
+          right: { label: 'Bias', sublabel: 'dismissing opposing evidence' },
+          correct: 'right',
+          flash: 'Confirmation bias. You seek evidence that confirms what you believe and dismiss what challenges it. The 3 bearish reports might have the BEST analysis — but your brain filters them out. The strongest investors actively seek the bear case for their holdings.',
+        },
+        {
+          setup: 'A stock you\'ve watched for months drops 25% after a bad earnings report. You buy because "it\'s finally cheap enough."',
+          left: { label: 'Rational', sublabel: 'bought the dip' },
+          right: { label: 'Bias', sublabel: 'anchored to old price' },
+          correct: 'right',
+          flash: 'Anchoring. It\'s not cheap just because it fell 25%. If earnings revealed real problems, the OLD price was too high. "Cheap" means below intrinsic value, not below yesterday\'s price.',
+        },
+        {
+          setup: 'Your friend tripled his money on a crypto token in 3 months. You invest your emergency fund into a similar token because you don\'t want to "miss out."',
+          left: { label: 'Rational', sublabel: 'following proven results' },
+          right: { label: 'Bias', sublabel: 'FOMO and recency bias' },
+          correct: 'right',
+          flash: 'FOMO + recency bias. Your friend\'s past return is an anecdote, not a strategy. Worse, you\'re risking money you can\'t afford to lose. The investors who bought Bitcoin at $69K in 2021 had the same logic.',
+        },
+      ],
+      takeaway: 'The most expensive biases: loss aversion (holding losers), anchoring (using past prices), confirmation bias (ignoring opposing evidence), and FOMO (buying because others profited).',
+    },
+
+    {
+      kind: 'tap',
+      topic: 'Spot the Bias',
+      topicIcon: Search,
+      intro: 'Read this investor\'s journal. Tap the entries where bias — not analysis — is driving the decision.',
+      passage: [
+        { type: 'text', value: 'My Q4 journal: ' },
+        { type: 'chip', value: 'Sold Stock A at +60% to "lock in my profit" — felt good to bank a win', signal: true, feedback: 'Disposition effect. The decision was based on the FEELING of locking in gains, not on whether the business justified selling. If Stock A was still undervalued at +60%, selling was leaving money on the table because of psychology.' },
+        { type: 'text', value: '. ' },
+        { type: 'chip', value: 'Reviewed Stock B\'s earnings — revenue beat, margins expanded, guidance raised. Holding.', signal: false, feedback: 'Rational. The investor checked fundamentals, found improvement on every metric, and decided to hold based on business performance — not emotion.' },
+        { type: 'text', value: '. ' },
+        { type: 'chip', value: 'Still holding Stock C at -55% because "I can\'t sell at this big a loss — I\'ll wait for it to come back"', signal: true, feedback: 'Loss aversion + sunk cost. The 55% loss already happened whether they sell or not. The question isn\'t "will it come back to my price?" but "would I buy this stock at today\'s price?" If no, holding is just denial in slow motion.' },
+        { type: 'text', value: '. ' },
+        { type: 'chip', value: 'Bought Stock D after 3 weeks of research on the company, competitors, and financials', signal: false, feedback: 'Thorough research before buying is disciplined process — the opposite of impulsive, bias-driven behavior.' },
+        { type: 'text', value: '. ' },
+        { type: 'chip', value: 'Added to Stock E because my coworker said he tripled his money on it', signal: true, feedback: 'Social proof + recency bias. Someone else\'s past return is not an investment thesis. This is gambling with extra steps — using an anecdote instead of analysis.' },
+        { type: 'text', value: '. ' },
+        { type: 'chip', value: 'Read a detailed bear case against my biggest holding — their margin concerns were compelling, reduced position 25%', signal: false, feedback: 'Intellectual honesty — actively seeking opposing views and adjusting accordingly. Reducing (not eliminating) shows nuance. This is rare discipline.' },
+      ],
+      requiredSignals: 3,
+      reveal:
+        'Three bias-driven decisions: selling winners for the feeling (disposition effect), holding losers to avoid pain (loss aversion), and buying on someone else\'s results (social proof). Two rational decisions: holding on improving fundamentals, buying after deep research. One rare act of discipline: reducing a position after reading the bear case.',
+      takeaway: 'Keep an investing journal and audit it for bias. Ask: "Did I make this decision based on the business or based on how I feel?" The answer is uncomfortably honest most of the time.',
+    },
+
+    {
+      kind: 'thinking',
+      prompt: 'Think about a decision you made — about anything, not just investing — where emotion was driving the choice instead of rational analysis. What bias was at work? How could you have caught it? Apply that same awareness to investing.',
+      placeholder: 'Describe the decision, what emotion drove it, which bias was at play, and what a rational approach would have looked like...',
+      modelAnswer:
+        'Most people can identify a major decision driven by emotion: staying in a bad job because of sunk cost ("I\'ve already invested 3 years"), not returning a bad purchase because of loss aversion ("I already spent the money"), or following a friend\'s recommendation because of social proof ("everyone\'s doing it"). In investing, these same biases are amplified because money triggers survival instincts. Loss aversion makes a $5,000 loss feel like physical danger — your cortisol spikes, your fight-or-flight activates. The antidote is pre-commitment: write down your thesis BEFORE you buy, with specific conditions that would make you sell. When emotion hits, check the checklist, not your gut. Professional investors don\'t have better emotions — they have better systems for overriding them.',
+      strongReasoningIncludes: [
+        'Identifies a specific decision and names the bias at work',
+        'Connects the personal bias to investing behavior',
+        'Proposes a system or process for overriding emotional decision-making',
+      ],
     },
   ],
   takeaways: [
-    'Losses feel roughly 2x as painful as equivalent gains feel good — this is loss aversion, and it distorts nearly every investing decision unless you watch for it.',
-    "A falling price isn't new information. Before reacting, ask whether anything about the business actually changed.",
-    "Your purchase price is irrelevant to what a stock is worth today. The disposition effect makes investors sell winners early and hold losers too long.",
-    "Your best defense isn't better instincts — it's a process built in calm moments. Write down your reasoning, set sell criteria in advance, and check prices less often.",
-    'You\'ve learned to manage your instincts. Next: what makes some businesses nearly impossible to compete with.',
+    'Loss aversion: losing $2,000 hurts as much as gaining $4,000 feels good. A 50% loss needs 100% to recover — the math is brutally asymmetric.',
+    'Anchoring: your purchase price and the stock\'s peak are irrelevant. Only today\'s business at today\'s price matters.',
+    'Confirmation bias: you naturally seek evidence that confirms your beliefs. The antidote: actively read the bear case for your biggest holdings.',
+    'Build systems: write your thesis before buying, with specific sell conditions. When emotion hits, check the checklist.',
   ],
   completionMessages: {
-    perfect:
-      "You've nailed it. Knowing that your brain is the problem is the first step to solving it. Most investors never learn this — you now have a head start.",
-    great:
-      "Strong instincts about your instincts. You're already ahead of most investors just by knowing how loss aversion works.",
-    good:
-      'Good foundation. Watch for the pull of loss aversion in yourself — the first time you feel it during a real drop, this lesson will click.',
-    low:
-      "Worth revisiting. The hardest part of investing isn't the math — it's keeping your brain from sabotaging your decisions.",
+    perfect: 'Perfect. Recognizing your own biases is the single hardest — and most valuable — skill in investing.',
+    great: 'Strong work. Most investors never examine their psychology. You\'re already ahead by knowing the traps.',
+    good: 'Good awareness. Remember: the goal isn\'t to eliminate emotion — it\'s to build systems that override it.',
+    low: 'Worth revisiting. Behavioral biases cost investors more than bad stock picks. Understanding them is essential.',
   },
 };

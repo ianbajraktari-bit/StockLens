@@ -1,306 +1,165 @@
-import { Repeat, CloudRain, TrendingUp, Landmark, Calculator, Zap, Target } from 'lucide-react';
+import { Repeat, TrendingUp, Landmark, Zap, Target, Search } from 'lucide-react';
 import type { Lesson } from './types';
 
 export const foundationsRecurringLesson: Lesson = {
   id: 'foundations-recurring',
   emoji: '🔄',
   title: 'Money That Comes Back',
-  subtitle: 'Why income you can count on is worth more than income you have to chase',
+  subtitle: 'Why investors pay 10x more for $1 of subscription revenue than $1 of one-time sales',
   description:
-    "Some businesses start every morning at zero — hunting for the next sale. Others wake up knowing most of today's money is already committed. You'll feel the difference through quick drills, live math, and a pitch you'll learn to see right through.",
+    'Netflix collects $33/month from 280 million subscribers — automatically. A car dealership has to convince every customer to buy from scratch. Investors value Netflix at 8x revenue and car dealers at 0.3x. The difference? Predictability. This lesson teaches you why recurring revenue is the most valuable kind of money.',
   estimatedMinutes: 3,
   dataAsOf: '',
   tier: 'foundations-1',
   skills: ['recurring_revenue'],
   keyFacts: [],
   topics: [
-    { label: 'Spotting predictable vs. fragile income', icon: Zap },
-    { label: 'Calculating what stays when growth stops', icon: Calculator },
-    { label: 'Spotting revenue-quality red flags', icon: CloudRain },
-    { label: 'Why investors pay premium prices for recurring revenue', icon: Landmark },
+    { label: 'Recurring vs one-time revenue', icon: Repeat },
+    { label: 'Why predictability commands a premium', icon: TrendingUp },
+    { label: 'Not all "recurring" is equally sticky', icon: Landmark },
+    { label: 'How to spot fake recurring revenue', icon: Target },
   ],
   steps: [
-    // ─────────────────────────────────────────────────────────────────
-    // 1. Drill: which income is more predictable?
-    // ─────────────────────────────────────────────────────────────────
-    {
-      kind: 'drill',
-      topic: 'Income Type Intuition',
-      topicIcon: Zap,
-      intro: 'Tap which business has more predictable income. Go fast — use your gut.',
-      prompts: [
-        {
-          left: { label: 'Gym memberships', sublabel: '$50/month, auto-billed' },
-          right: { label: 'Day passes', sublabel: '$15 per walk-in' },
-          correct: 'left',
-          flash: 'Memberships arrive automatically. Day passes depend on who walks through the door.',
-        },
-        {
-          left: { label: 'Wedding photographer', sublabel: 'one-time bookings' },
-          right: { label: 'Dog-walking service', sublabel: '40 clients, $200/month each' },
-          correct: 'right',
-          flash: 'The photographer starts at $0 every slow month. The dog walker has $8,000 already spoken for.',
-        },
-        {
-          left: { label: 'Streaming service', sublabel: '$12/month × millions' },
-          right: { label: 'Movie theater', sublabel: 'tickets per showing' },
-          correct: 'left',
-          flash: 'Streaming subscribers pay whether they watch or not. Theaters need butts in seats tonight.',
-        },
-        {
-          left: { label: 'Consulting firm', sublabel: 'project-by-project' },
-          right: { label: 'Cloud software', sublabel: 'annual subscriptions' },
-          correct: 'right',
-          flash: 'Consulting revenue resets between projects. SaaS revenue renews on autopilot.',
-        },
-        {
-          left: { label: 'Insurance premiums', sublabel: 'monthly, year-long policies' },
-          right: { label: 'Used car dealer', sublabel: 'one car, one sale' },
-          correct: 'left',
-          flash: 'Insurance collects every month for a year. The car dealer needs a new buyer every time.',
-        },
-        {
-          left: { label: 'Food truck', sublabel: 'cash per customer' },
-          right: { label: 'Meal-prep delivery', sublabel: 'weekly subscription' },
-          correct: 'right',
-          flash: 'Subscriptions compound. Walk-up sales evaporate overnight.',
-        },
-      ],
-      takeaway:
-        'You can already feel it: businesses where money shows up automatically are structurally different from businesses that hunt for every dollar.',
-    },
-
-    // ─────────────────────────────────────────────────────────────────
-    // 2. Estimate: Gym B's floor
-    // ─────────────────────────────────────────────────────────────────
+    // Hook: surprising estimation
     {
       kind: 'estimate',
-      topic: 'The Membership Floor',
-      topicIcon: Calculator,
+      topic: 'The Predictability Premium',
+      topicIcon: TrendingUp,
       context:
-        'Gym B has 1,000 members paying $50/month. Roughly 5% cancel each month. Imagine next month ZERO new members join.',
-      question: "What's Gym B's revenue next month?",
-      answer: 47500,
-      tolerance: 1000,
-      unit: '$',
-      hint: '950 members × $50',
+        'Two companies each generate $1 billion in annual revenue.\n\nCompany A is a subscription SaaS company — customers pay monthly, 95% renew each year, and switching to a competitor takes 6+ months of migration work.\n\nCompany B is a furniture retailer — every sale is a new customer walking through the door. No subscriptions, no contracts, no repeat purchases for 5-10 years.\n\nInvestors value revenue differently based on how PREDICTABLE it is.',
+      question: 'Both earn $1B in revenue. If Company A (subscription) is valued at $10B (10x revenue), roughly what multiple do you think investors pay for Company B (furniture)?',
+      answer: 1,
+      tolerance: 1,
+      unit: 'x',
+      hint: 'How much would you pay for revenue that might not come back vs revenue that almost certainly will?',
       reveal:
-        '950 members × $50 = $47,500. Even with no new sign-ups, Gym B keeps 95% of its revenue — only 5% churn (the percentage of customers who cancel each period). That built-in floor is what makes recurring income so powerful.',
-      takeaway: 'Recurring revenue creates a floor — money that shows up even when growth stops. That 5% monthly loss rate is called churn. Low churn = strong floor. High churn = leaky bucket.',
+        'About 0.5-1.5x revenue. Investors pay 10x for subscription revenue because they can predict next year\'s number with high confidence (95% will renew = ~$950M guaranteed before making a single new sale). The furniture store starts at $0 on January 1st and has to earn every dollar from scratch. Predictability is worth a 7-10x premium.',
+      takeaway: 'Investors pay dramatically more for predictable revenue. A subscription dollar is worth 5-10x more than a one-time-sale dollar — because you can see the future.',
     },
 
-    // ─────────────────────────────────────────────────────────────────
-    // 3. Estimate: Gym A under stress
-    // ─────────────────────────────────────────────────────────────────
-    {
-      kind: 'estimate',
-      topic: 'The Day-Pass Cliff',
-      topicIcon: Calculator,
-      context:
-        "Gym A made $50,000 from day passes last month. It's January — the slowest month. Walk-ins drop 40%.",
-      question: "What's Gym A's January revenue?",
-      answer: 30000,
-      tolerance: 2000,
-      unit: '$',
-      reveal:
-        '$50,000 × 0.60 = $30,000. One bad month and Gym A loses $20,000. Meanwhile Gym B barely budged. That gap is the entire argument for recurring revenue.',
-      takeaway: 'One-time revenue has no floor. When traffic drops, revenue drops dollar for dollar.',
-    },
-
-    // ─────────────────────────────────────────────────────────────────
-    // 4. Decide: the floor test
-    // ─────────────────────────────────────────────────────────────────
+    // Decide with nuance about recurring quality
     {
       kind: 'decide',
-      topic: 'The Floor Test',
-      topicIcon: Repeat,
+      topic: 'Not All Subscriptions Are Equal',
+      topicIcon: Landmark,
       context:
-        'Gym A (day passes): $50K → $30K in one slow month.\nGym B (memberships): $50K → $47.5K in the same month.',
-      question: "A recession hits and new customers dry up for six months. Which gym survives?",
+        'Three real types of "recurring" revenue:\n\nNetflix: $15/month, cancel anytime with one click, ~5% monthly churn\nSalesforce: $25,000/year enterprise contracts, 6-month switching process, ~8% annual churn\nAWS: deeply embedded in the customer\'s code, switching takes 12-18 months of engineering, <1% annual churn\n\nAll three are called "recurring revenue." But they\'re not equally sticky.',
+      question: 'Which type of recurring revenue is most valuable to investors?',
       options: [
-        'Either — same starting revenue',
-        'Gym B — its floor holds while A craters',
-        'Gym A — it can cut prices to attract walk-ins',
-        'Need to know their costs first',
+        'Netflix — largest subscriber base and most well-known brand',
+        'Salesforce — high contract values mean more revenue per customer',
+        'AWS — near-zero churn because switching is nearly impossible',
+        'All recurring revenue is equally valuable since it all renews',
       ],
-      correctIndex: 1,
+      correctIndex: 2,
       punchline:
-        "Gym B's revenue barely moves in a drought. Gym A's collapses. The floor isn't a luxury — it's a survival mechanism.",
+        'AWS revenue is the stickiest because it\'s embedded in customers\' code. Switching from AWS to Google Cloud requires rewriting thousands of lines of code and months of engineering work. This "switching cost" makes revenue almost permanent — which is why cloud infrastructure companies are valued at 10-15x revenue while Netflix trades at 6-8x.',
       wrongNudges: [
-        'Same starting revenue means nothing when the structure of that revenue is completely different.',
+        'Netflix has the most subscribers but the weakest lock-in. One click to cancel. That 5% monthly churn means Netflix loses and must replace ~45% of its subscribers every year. Size doesn\'t equal stickiness.',
+        'Higher contract values are good, but $25K/year contracts still get cancelled. The switching cost is moderate (months, not years). Salesforce is stickier than Netflix but far less sticky than AWS.',
         '',
-        'Cutting prices on one-time sales just shrinks revenue per customer without fixing the fundamental problem: no recurring base.',
-        "Costs matter, but Gym A's revenue drops 40% while B's drops 5%. No cost structure survives a 40% revenue cliff gracefully.",
+        'Churn rates prove they\'re not equal. Netflix: ~45% annual churn. Salesforce: ~8%. AWS: <1%. A dollar of AWS revenue is 40x more durable than a dollar of Netflix revenue.',
       ],
-      takeaway: "In bad times, the business with a recurring base survives. The one that hunts for every dollar doesn't.",
+      takeaway: 'Recurring revenue quality depends on SWITCHING COSTS. The harder it is to leave, the more valuable the revenue. Netflix (one click to cancel) < Salesforce (months to switch) < AWS (rewrite your entire codebase).',
     },
 
-    // ─────────────────────────────────────────────────────────────────
-    // 5. Tap: red flags in a "growth" pitch
-    // ─────────────────────────────────────────────────────────────────
+    // Drill: escalating difficulty
+    {
+      kind: 'drill',
+      topic: 'Recurring or Rebuilding?',
+      topicIcon: Zap,
+      intro: 'For each pair, identify which business has more predictable revenue. These get harder — some "recurring" revenue is less sticky than it looks.',
+      prompts: [
+        {
+          setup: 'A gym with monthly memberships vs. a personal trainer who charges per session',
+          left: { label: 'Gym', sublabel: 'monthly auto-pay' },
+          right: { label: 'Trainer', sublabel: 'pay per session' },
+          correct: 'left',
+          flash: 'Gym memberships auto-renew. Many people pay for months without going. The trainer has to convince each client to book each session. Monthly auto-pay is the simplest form of recurring revenue.',
+        },
+        {
+          setup: 'Adobe Creative Suite ($55/month subscription) vs. a video game studio (sells $60 games)',
+          left: { label: 'Adobe', sublabel: 'monthly subscription' },
+          right: { label: 'Game studio', sublabel: 'one-time purchases' },
+          correct: 'left',
+          flash: 'Adobe converted from one-time purchases to subscriptions in 2013. The stock went from $35 to $500+ because revenue became predictable. Each game launch is a gamble — will players buy it? Adobe doesn\'t have to ask.',
+        },
+        {
+          setup: 'A meal-kit delivery service (weekly box, cancel anytime) vs. a grocery chain (customers shop weekly out of habit)',
+          left: { label: 'Meal kit', sublabel: 'subscription model' },
+          right: { label: 'Grocery', sublabel: 'habitual repeat purchases' },
+          correct: 'right',
+          flash: 'Surprising — meal kits LOOK more recurring (subscriptions!) but have ~70% annual churn. People try them and quit. Grocery stores have deeply habitual customers who\'ve shopped at the same store for decades. Habit-based revenue can be stickier than subscription revenue.',
+        },
+        {
+          setup: 'Spotify (music streaming, $11/month) vs. Apple Music (music streaming, $11/month, deeply integrated into iPhone)',
+          left: { label: 'Spotify', sublabel: 'works on any device' },
+          right: { label: 'Apple Music', sublabel: 'embedded in iOS ecosystem' },
+          correct: 'right',
+          flash: 'Both are subscriptions, but Apple Music is embedded in the iPhone ecosystem — Siri defaults to it, it syncs across all Apple devices, playlists are tied to your Apple ID. Switching from Apple Music to Spotify is easy; switching your ENTIRE Apple ecosystem to use Spotify everywhere is annoying. Ecosystem lock-in adds a layer of stickiness.',
+        },
+        {
+          setup: 'An insurance company (annual policies, legally required for cars/homes) vs. a subscription snack box (monthly treats, cancel anytime)',
+          left: { label: 'Insurance', sublabel: 'legally required, annual' },
+          right: { label: 'Snack box', sublabel: 'monthly subscription' },
+          correct: 'left',
+          flash: 'Insurance is the ultimate recurring revenue — it\'s legally REQUIRED. You can\'t drive without car insurance or get a mortgage without home insurance. Snack boxes are novelty subscriptions with 50%+ annual churn. "Subscription" doesn\'t automatically mean "sticky."',
+        },
+      ],
+      takeaway: 'True stickiness comes from switching costs, habits, ecosystems, or legal requirements — not just having a subscription model. A "subscribe and cancel anytime" business can have worse retention than a non-subscription business with deeply habitual customers.',
+    },
+
+    // Tap: spot fake recurring revenue
     {
       kind: 'tap',
-      topic: 'Revenue Quality Check',
-      topicIcon: CloudRain,
-      intro:
-        "A furniture store owner is pitching you on investing. Tap the phrases that reveal fragile, non-recurring revenue.",
+      topic: 'Real vs. Fake Recurring',
+      topicIcon: Search,
+      intro: 'A startup is pitching investors. They claim "85% recurring revenue." Read their pitch and tap the details that reveal whether this recurring revenue is REAL or FAKE.',
       passage: [
-        { type: 'text', value: '"We did ' },
-        {
-          type: 'chip',
-          value: '$1.2 million in sales',
-          signal: false,
-          feedback: 'Revenue size alone isn\'t a red flag — what matters is how repeatable it is.',
-        },
-        { type: 'text', value: ' last year! ' },
-        {
-          type: 'chip',
-          value: 'Every sale is a new customer',
-          signal: true,
-          feedback:
-            'Zero repeat business. Every dollar of next year\'s revenue has to be re-earned from scratch. This is the definition of non-recurring.',
-        },
-        { type: 'text', value: ' walking in the door. We grew ' },
-        {
-          type: 'chip',
-          value: 'revenue 25%',
-          signal: true,
-          feedback:
-            '25% growth sounds great — but if every sale is one-time, this growth must be entirely rebuilt next year. Fragile.',
-        },
-        { type: 'text', value: ' by running ' },
-        {
-          type: 'chip',
-          value: 'aggressive promotions',
-          signal: true,
-          feedback:
-            'Promotions attract deal-seekers, not loyal customers. This revenue disappears the moment the ad budget gets cut.',
-        },
-        { type: 'text', value: '. We have ' },
-        {
-          type: 'chip',
-          value: 'great online reviews',
-          signal: false,
-          feedback: 'Good reviews are positive — not a red flag on their own.',
-        },
-        { type: 'text', value: '. ' },
-        {
-          type: 'chip',
-          value: 'No customer has ever bought twice',
-          signal: true,
-          feedback:
-            'Zero repeat purchases means zero revenue floor. The business has no compounding base — every year starts from zero.',
-        },
-        { type: 'text', value: ', but our average order is $800 so we don\'t need them to."' },
+        { type: 'text', value: '"SnackBox delivers curated snacks monthly. We have ' },
+        { type: 'chip', value: '85% of revenue is from subscriptions', signal: false, feedback: 'This sounds great on paper — but what matters is whether those subscribers STAY. A subscription that gets cancelled after 2 months isn\'t really "recurring" in any meaningful sense.' },
+        { type: 'text', value: '. Our customers ' },
+        { type: 'chip', value: 'love us — 4.8 stars on the App Store', signal: false, feedback: 'Ratings measure satisfaction at a moment in time, not retention. Plenty of 5-star apps get deleted after a month. What matters is whether people keep paying.' },
+        { type: 'text', value: '. However, ' },
+        { type: 'chip', value: 'average subscription length is 3.2 months', signal: true, feedback: 'THIS is the critical number. If average subscription is only 3.2 months, SnackBox loses ~75% of subscribers every year. That\'s not "recurring revenue" — it\'s a subscription-shaped customer acquisition treadmill.' },
+        { type: 'text', value: '. We acquire customers through Instagram ads at ' },
+        { type: 'chip', value: '$42 cost per subscriber acquired', signal: true, feedback: 'At $42 to acquire a customer who stays 3.2 months paying ~$30/month, SnackBox earns about $96 per customer but spent $42 to get them plus ~$60 in product costs. The unit economics barely work — and they\'re burning marketing spend to fill a leaky bucket.' },
+        { type: 'text', value: '. We\'re ' },
+        { type: 'chip', value: 'growing subscribers 40% year over year', signal: false, feedback: 'Growth is meaningless if retention is poor. If you add 40% but lose 75%, you\'re just running faster on a treadmill. Sustainable growth requires retention first.' },
+        { type: 'text', value: '. Our ' },
+        { type: 'chip', value: 'customer acquisition cost exceeds first-month revenue', signal: true, feedback: 'If it costs more to GET a customer than you earn in their first month, you need them to stay for months just to break even. With 3.2-month average life, most customers barely repay their acquisition cost before churning. This business is a treadmill.' },
+        { type: 'text', value: '."' },
       ],
       requiredSignals: 3,
       reveal:
-        'High revenue, strong growth, big average orders — and every single dollar is one-time. This business has no floor, no compounding, and no protection against a slow quarter.',
-      takeaway:
-        'Revenue that sounds impressive can still be structurally fragile. Always ask: "How much of this would still be here next year if growth stopped?"',
+        'SnackBox\'s "85% recurring revenue" is technically true but practically fake. With 3.2-month average subscriptions, they churn through 75% of their base yearly. High acquisition costs make each customer barely profitable before they leave. Real recurring revenue means customers stay for YEARS, not months. The label "subscription" doesn\'t make revenue recurring — retention does.',
+      takeaway: 'Subscription revenue is only as valuable as its retention. "85% recurring revenue" with 3-month average subscriptions is a treadmill, not a moat. Always ask: how long does the average customer stay?',
     },
 
-    // ─────────────────────────────────────────────────────────────────
-    // 6. Drill: compounding vs. rebuilding
-    // ─────────────────────────────────────────────────────────────────
+    // Thinking step
     {
-      kind: 'drill',
-      topic: 'Compounding vs. Rebuilding',
-      topicIcon: Target,
-      intro:
-        "Each pair shows two businesses with the same revenue. Tap the one whose growth compounds instead of resetting.",
-      prompts: [
-        {
-          setup: 'Both earn $500K/year.',
-          left: { label: 'Meal-prep subscriptions', sublabel: '90% of customers stay' },
-          right: { label: 'Catering company', sublabel: 'each event is one-time' },
-          correct: 'left',
-          flash: 'Subscriptions stack. Catering starts each month from zero.',
-        },
-        {
-          setup: 'Both grew 15% last year.',
-          left: { label: 'Furniture store', sublabel: 'growth from new one-time buyers' },
-          right: { label: 'SaaS platform', sublabel: 'growth from new subscribers on top of 95% renewal' },
-          correct: 'right',
-          flash: 'SaaS adds new revenue on top of retained revenue. Furniture rebuilds from scratch.',
-        },
-        {
-          setup: 'Both serve 1,000 customers.',
-          left: { label: 'Property management', sublabel: 'monthly fees, multi-year contracts' },
-          right: { label: 'Real estate agent', sublabel: 'commission per sale' },
-          correct: 'left',
-          flash: 'Management collects every month. Agents need a new deal to get paid.',
-        },
-        {
-          setup: 'Both earn $10M/year.',
-          left: { label: 'Concert promoter', sublabel: 'ticket sales per event' },
-          right: { label: 'Music streaming', sublabel: '8M subscribers at $10/month' },
-          correct: 'right',
-          flash: 'Streaming revenue renews automatically. Concert revenue evaporates after curtain call.',
-        },
-        {
-          setup: 'Both grew 20% last year.',
-          left: { label: 'Accounting software', sublabel: 'annual licenses, 92% renew' },
-          right: { label: 'Tax prep service', sublabel: 'seasonal, one filing per client' },
-          correct: 'left',
-          flash: 'Software keeps 92% and adds more. Tax prep restarts the sales cycle every spring.',
-        },
-        {
-          setup: 'Both earn $3M/year.',
-          left: { label: 'Car wash chain', sublabel: '$25 per visit' },
-          right: { label: 'Cloud storage', sublabel: '$8/month per user, 96% retention' },
-          correct: 'right',
-          flash: 'Cloud storage compounds. Car washes depend on traffic and weather.',
-        },
+      kind: 'thinking',
+      prompt: 'Netflix charges $15/month and has ~5% monthly churn (loses 5% of subscribers each month but replaces them). Salesforce charges $25,000/year and has ~8% annual churn. Which business has more valuable revenue, and why? Think about the quality of each dollar, not just the total amount.',
+      placeholder: 'Consider how long the average customer stays, how costly each is to replace, and what "predictable" means for each...',
+      modelAnswer:
+        'Salesforce has more valuable revenue, dollar for dollar. With 8% annual churn, the average Salesforce customer stays 12+ years — meaning each $25K contract is really a $300K+ relationship. Netflix loses ~45% of subscribers annually (5% monthly compounds), so the average Netflix member stays roughly 2 years before cancelling — each $15/month subscription is worth about $360 total. But the real difference is replaceability: when Salesforce loses a customer, replacing that $25K contract requires months of enterprise sales effort. When Netflix loses a subscriber, a social media ad might bring them back for $20. This makes Salesforce\'s revenue far more strategically valuable — it\'s durable, high-touch, and deeply embedded in customers\' workflows. Netflix\'s revenue is high-volume but low-friction in both directions: easy to join, easy to leave.',
+      strongReasoningIncludes: [
+        'Compares the actual lifetime value of each customer, not just the monthly/annual price',
+        'Considers how easy or hard it is to REPLACE a lost customer',
+        'Recognizes that low churn (Salesforce 8%/year) creates dramatically different economics than moderate churn (Netflix ~45%/year)',
       ],
-      takeaway:
-        "Recurring businesses build on top of what they've already earned. One-time businesses rebuild from zero every period. Here's why compounding wins: start with 1,000 subscribers at 95% retention, adding 50 new/month. After 12 months you have ~1,600. A one-time business adding the same 50 customers/month with zero retention? Just 50. The gap compounds every single month.",
-    },
-
-    // ─────────────────────────────────────────────────────────────────
-    // 7. Decide: thinking like an investor
-    // ─────────────────────────────────────────────────────────────────
-    {
-      kind: 'decide',
-      topic: 'Thinking Like an Investor',
-      topicIcon: TrendingUp,
-      context:
-        "Two businesses, same price to invest in.\n\nBusiness A: Car wash chain. $3M/year. Each wash is a single transaction — pay $25, drive away. Revenue depends on weather, location, and marketing.\n\nBusiness B: Accounting software. $3M/year. Customers pay $100/month and stay 3+ years. Switching means migrating all financial data. 95% renew annually.",
-      question: 'Which is worth more to an investor?',
-      options: [
-        'Equal — $3M is $3M',
-        "Business B — its revenue is nearly guaranteed to repeat, and switching costs lock customers in",
-        'Business A — simpler business, easier to understand',
-        'Business A — more locations means more growth potential',
-      ],
-      correctIndex: 1,
-      punchline:
-        "Business B's revenue is almost certain to be there next year — and the year after. That certainty is exactly why subscription companies trade at 3-5x the valuation of similar-sized one-time businesses.",
-      wrongNudges: [
-        'Same revenue today hides completely different revenue quality. One is nearly guaranteed; the other resets to zero every day.',
-        '',
-        'Simplicity doesn\'t equal value. Easy to understand, hard to hold onto — that\'s the car wash problem.',
-        'More locations multiplied by fragile revenue is still fragile. Scale doesn\'t fix the structural weakness.',
-      ],
-      takeaway:
-        "Investors don't just buy revenue — they buy revenue quality. Predictable, repeating income with high switching costs commands a premium price.",
     },
   ],
   takeaways: [
-    'Income that shows up automatically — without chasing new customers — is called recurring revenue, and investors value it more highly.',
-    "The real test is what happens when new customers stop showing up. Recurring revenue creates a floor; one-time revenue craters.",
-    'Growth from repeat customers compounds naturally. Growth from one-time sales has to be rebuilt from scratch every year.',
-    'Subscription businesses trade at premium valuations because predictable, repeating income reduces uncertainty — and reducing uncertainty is what investors pay for.',
-    'You know recurring revenue beats one-time. Next: how to look underneath headline numbers and find what actually drives a business.',
+    'Investors pay 5-10x more for recurring revenue than one-time revenue because predictability lets you see the future.',
+    'Not all recurring revenue is equal. AWS (<1% churn, embedded in code) is worth far more per dollar than Netflix (~45% annual churn, one click to cancel).',
+    'The label "subscription" doesn\'t make revenue recurring. Retention does. A 3-month average subscription is a treadmill, not a moat.',
+    'True stickiness comes from switching costs, habits, ecosystems, or legal requirements — not just a "subscribe" button.',
   ],
   completionMessages: {
-    perfect:
-      "You've nailed it. You understand that reliable, repeating income is worth more than income you have to re-earn — that's one of the most important ideas in investing.",
-    great:
-      'Strong instincts. You can already tell the difference between fragile revenue and durable revenue — that skill will serve you in every company you analyze.',
-    good:
-      "Good start. The core idea — recurring income is worth more — will click more deeply as you see it in real companies like Apple and Costco.",
-    low:
-      "Worth another look. This concept shows up everywhere in investing — once it clicks, you'll see it in every business you evaluate.",
+    perfect: 'Perfect. You can now evaluate revenue quality — not just quantity. This puts you ahead of most investors.',
+    great: 'Strong work. Understanding the difference between real recurring revenue and subscription theater is a genuine edge.',
+    good: 'Good foundation. Remember: always ask "how long does the average customer stay?" before trusting a "recurring revenue" claim.',
+    low: 'Worth revisiting. Recurring revenue quality is one of the most important concepts in company analysis.',
   },
 };
