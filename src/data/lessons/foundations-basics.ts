@@ -1,13 +1,13 @@
-import { DollarSign, TrendingUp, PieChart, Lightbulb, Zap, Calculator, Flag } from 'lucide-react';
+import { DollarSign, TrendingUp, PieChart, Lightbulb, Zap, Search } from 'lucide-react';
 import type { Lesson } from './types';
 
 export const foundationsBasicsLesson: Lesson = {
   id: 'foundations-basics',
   emoji: '💰',
   title: 'Follow the Money',
-  subtitle: 'Revenue, costs, profit — and why investors care',
+  subtitle: 'Why a $650 billion company can be worth less than a $390 billion one',
   description:
-    "Before you can evaluate any company, you need to understand the three numbers that define every business: how much money comes in, how much goes out, and what's left. This lesson starts from scratch — no jargon, no assumptions.",
+    'Two companies report their numbers on the same day. One has $650 billion in revenue. The other has $390 billion. Yet investors value the smaller one at 10x more. This lesson explains why — and teaches you the one number that matters more than anything else.',
   estimatedMinutes: 3,
   dataAsOf: '',
   tier: 'foundations-1',
@@ -17,248 +17,150 @@ export const foundationsBasicsLesson: Lesson = {
     { label: 'Revenue — the money that flows in', icon: DollarSign },
     { label: 'Costs — the money that flows out', icon: PieChart },
     { label: 'Profit — what the business actually keeps', icon: TrendingUp },
-    { label: 'What owning a stock really means', icon: Lightbulb },
+    { label: 'Why revenue can be misleading', icon: Lightbulb },
   ],
   steps: [
-    // ─────────────────────────────────────────────────────────────────
-    // 1. Drill: Revenue vs Cost recognition
-    //
-    // Why a drill: beginners genuinely confuse these. The tricky
-    // prompts (refunds, ad revenue) teach real concepts. Every
-    // subsequent lesson assumes instant recognition.
-    // ─────────────────────────────────────────────────────────────────
-    {
-      kind: 'drill',
-      topic: 'Money In vs. Money Out',
-      topicIcon: Zap,
-      intro: 'Every business has money flowing in and money flowing out. Sort each item.',
-      prompts: [
-        {
-          setup: 'A coffee shop receives $400 from customers today.',
-          left: { label: 'Revenue', sublabel: 'money flowing in' },
-          right: { label: 'Cost', sublabel: 'money flowing out' },
-          correct: 'left',
-          flash: 'Revenue is the money customers pay you. It\'s the starting point — but not the finish line.',
-        },
-        {
-          setup: 'The shop pays $3,200/month for rent.',
-          left: { label: 'Revenue' },
-          right: { label: 'Cost', sublabel: 'money flowing out' },
-          correct: 'right',
-          flash: 'Rent is a cost — money leaving the business. Every dollar spent on costs is a dollar that doesn\'t become profit.',
-        },
-        {
-          setup: 'A software company gets $20/month from each of its 5,000 subscribers.',
-          left: { label: 'Revenue', sublabel: '$100,000/month flowing in' },
-          right: { label: 'Cost' },
-          correct: 'left',
-          flash: '5,000 × $20 = $100,000/month in revenue. Revenue counts ALL money flowing in from customers.',
-        },
-        {
-          setup: 'That same company pays 12 engineers a total of $60,000/month.',
-          left: { label: 'Revenue' },
-          right: { label: 'Cost', sublabel: 'money flowing out' },
-          correct: 'right',
-          flash: 'Salaries are costs. For software companies, people are often the single biggest expense — sometimes 50–70% of revenue.',
-        },
-        {
-          setup: 'A customer returns a $200 product for a full refund.',
-          left: { label: 'Revenue', sublabel: 'it was originally a sale' },
-          right: { label: 'Cost', sublabel: 'money leaving the business' },
-          correct: 'right',
-          flash: 'Refunds mean money flowing out. The original sale effectively didn\'t happen. Investors watch return rates closely.',
-        },
-        {
-          setup: 'A website earns $3 every time someone clicks an ad on its page.',
-          left: { label: 'Revenue', sublabel: 'money flowing in' },
-          right: { label: 'Cost' },
-          correct: 'left',
-          flash: 'Ad revenue is still revenue. Not all revenue comes from selling products — some businesses earn money from attention.',
-        },
-      ],
-      takeaway:
-        'Revenue is money in. Costs are money out. Get this wrong and nothing else in investing makes sense.',
-    },
-
-    // ─────────────────────────────────────────────────────────────────
-    // 2. Estimate: Calculate profit
-    //
-    // Why an estimate: the user must do the actual math. Profit =
-    // Revenue − Costs is THE foundational equation.
-    // ─────────────────────────────────────────────────────────────────
+    // Hook: test intuition about real companies
     {
       kind: 'estimate',
-      topic: 'What\'s Left Over',
-      topicIcon: Calculator,
+      topic: 'Gut Check',
+      topicIcon: DollarSign,
       context:
-        'A food truck sells $12,000 worth of tacos in a month. Here are the costs:\n\n• Ingredients: $3,500\n• Truck payment: $1,200\n• Gas & parking fees: $800\n• One employee: $2,500\n\nTotal costs: $8,000.',
-      question: 'What\'s the food truck\'s monthly profit?',
-      answer: 4000,
-      tolerance: 500,
-      unit: '$',
-      hint: 'Revenue ($12,000) minus total costs ($8,000)',
+        'Walmart is the largest company in the world by revenue — over $650 billion per year. That\'s more than the GDP of Sweden. For every dollar that passes through an American cash register, about 10 cents goes to Walmart.\n\nBut here\'s the question investors actually care about:',
+      question: 'Out of every dollar Walmart collects in revenue, how many cents do you think it keeps as profit?',
+      answer: 3,
+      tolerance: 3,
+      unit: '¢',
+      hint: 'Think about how thin grocery and retail margins are',
       reveal:
-        '$12,000 − $8,000 = $4,000. That\'s profit — the money left over after every cost is paid. This is what the owner actually takes home. When investors evaluate a business, this number matters more than revenue — because you can\'t spend revenue, only profit.',
-      takeaway: 'Profit = Revenue − Costs. This is the number that actually matters. Revenue is how big the business looks. Profit is how healthy it is.',
+        'About 2-3 cents. Walmart\'s net profit margin is roughly 2.4%. On $650 billion in revenue, they keep about $15.5 billion. That sounds huge — until you realize Apple keeps $97 billion on just $390 billion in revenue (25 cents per dollar). Revenue is vanity. Profit is sanity.',
+      takeaway: 'The amount of revenue a business generates tells you almost nothing about how good the business is. What matters is how much it KEEPS.',
     },
 
-    // ─────────────────────────────────────────────────────────────────
-    // 3. Decide: Revenue vs profit — which matters?
-    //
-    // Why a decide: this corrects the #1 beginner mistake (big
-    // revenue = good business). Requires actual judgment.
-    // ─────────────────────────────────────────────────────────────────
+    // Decide: the core insight with real data
     {
       kind: 'decide',
-      topic: 'The Trap Beginners Fall Into',
-      topicIcon: Flag,
+      topic: 'The $650B Trap',
+      topicIcon: TrendingUp,
       context:
-        'Two businesses filed their annual numbers:\n\nBusiness A (local law firm): Revenue $800K, Costs $400K, Profit $400K\nBusiness B (trendy restaurant): Revenue $2.5M, Costs $2.4M, Profit $100K\n\nYou can buy 10% of either business.',
-      question: '10% of A gets you $40,000/year. 10% of B gets you $10,000/year. Which do you pick?',
+        'Here are real numbers (simplified):\n\nWalmart: $650B revenue → $15.5B profit (keeps 2.4¢ per dollar)\nApple: $390B revenue → $97B profit (keeps 25¢ per dollar)\n\nWalmart has 67% MORE revenue than Apple. Apple has 6x MORE profit than Walmart.\n\nInvestors value Apple at $3.4 trillion. They value Walmart at $680 billion — roughly 5x less.',
+      question: 'Why do investors value Apple at 5x more than Walmart despite Walmart having far more revenue?',
       options: [
-        'Business B — $2.5M in revenue means it\'s the bigger, better business',
-        'Business A — 10% of $400K profit ($40K/year) beats 10% of $100K profit ($10K/year)',
-        'Business B — restaurants have more growth potential than law firms',
-        'Can\'t decide without more information',
+        'Apple is a tech company and tech always gets higher valuations',
+        'Apple keeps 25¢ of every dollar vs Walmart\'s 2.4¢ — investors buy profit, not revenue',
+        'Apple has better marketing and a cooler brand',
+        'Walmart is declining while Apple is growing',
       ],
       correctIndex: 1,
       punchline:
-        'Revenue is vanity, profit is sanity. Business B does 3x the revenue but you\'d take home 4x less. When you own a piece of a business, you own a piece of the profit — not the revenue.',
+        'Investors don\'t buy revenue. They buy profit. Apple generates $97B of profit that belongs to shareholders. Walmart generates $15.5B. If you own 0.001% of each, your Apple stake earns you $970,000/year. Your Walmart stake earns $155,000. The market values each dollar of profit, not each dollar of revenue.',
       wrongNudges: [
-        'Revenue measures how much flows through the business — not how much stays. $2.5M in revenue with $100K in profit means 96 cents of every dollar goes right back out the door.',
+        'Being "tech" doesn\'t automatically mean higher valuations. Plenty of tech companies are valued lower than retailers. The difference is profitability — Apple keeps 25x more per revenue dollar.',
         '',
-        'Growth potential is worth considering, but a restaurant spending $2.4M to earn $2.5M has almost no room for error. One bad month wipes out the entire year\'s profit.',
-        'You have enough information. Revenue and profit tell you exactly what each ownership stake is worth per year. When the numbers are this clear, hesitating is just avoiding the decision.',
+        'Brand matters, but not because of "cool factor." Apple\'s brand lets them charge premium prices, which creates higher margins, which creates more profit. The brand serves the profit — it\'s not separate from it.',
+        'Walmart isn\'t declining — it grew 6% last year. Both companies are growing. The difference is that Apple\'s growth is far more profitable per dollar.',
       ],
-      takeaway: 'Beginners look at revenue. Investors look at profit. A business that earns millions but keeps almost nothing is worse than one that earns less but keeps a lot.',
+      takeaway: 'Revenue tells you how big a business is. Profit tells you how good it is. Investors pay for profit — that\'s why a $390B revenue company can be worth 5x more than a $650B one.',
     },
 
-    // ─────────────────────────────────────────────────────────────────
-    // 4. Estimate: What one share of stock represents
-    //
-    // Why an estimate: this is THE bridge between "business" and
-    // "stock." Introduces earnings per share without using jargon.
-    // ─────────────────────────────────────────────────────────────────
+    // Drill: escalating from obvious to genuinely tricky
     {
-      kind: 'estimate',
-      topic: 'What Owning a Stock Means',
-      topicIcon: Calculator,
-      context:
-        'A company called FreshJuice Inc. makes $10 million in profit per year. The company is split into 1,000,000 equal shares. Each share represents an identical piece of the business — and an identical piece of the profit.\n\nWhen you buy one share of stock, you\'re buying a claim on your piece of that profit.',
-      question: 'How much annual profit does one share represent?',
-      answer: 10,
-      tolerance: 1,
-      unit: '$',
-      hint: '$10,000,000 ÷ 1,000,000 shares',
-      reveal:
-        '$10,000,000 ÷ 1,000,000 = $10 per share. On Wall Street, this is called "earnings per share" (EPS). When someone says a stock "earns $10 per share," they mean the business generates $10 of annual profit for every share that exists. This is the number that connects a business to its stock price.',
-      takeaway: 'A stock is a piece of a business\'s profit. Earnings per share (EPS) tells you how much profit each share generates. This connects everything: business → profit → your ownership.',
+      kind: 'drill',
+      topic: 'Revenue vs. Profit Traps',
+      topicIcon: Zap,
+      intro: 'Test your instincts. Which business would you rather own a piece of? These get harder.',
+      prompts: [
+        {
+          setup: 'Business A: $1M revenue, $500K profit. Business B: $5M revenue, $100K profit.',
+          left: { label: 'A', sublabel: '$500K profit on $1M' },
+          right: { label: 'B', sublabel: '$100K profit on $5M' },
+          correct: 'left',
+          flash: 'A keeps 50 cents per dollar. B keeps 2 cents. You own the profit, not the revenue. A\'s owners take home 5x more.',
+        },
+        {
+          setup: 'Business A: $200M revenue, $40M profit, growing 5%/year. Business B: $50M revenue, $20M profit, growing 25%/year.',
+          left: { label: 'A', sublabel: 'bigger and profitable' },
+          right: { label: 'B', sublabel: 'smaller but growing fast' },
+          correct: 'right',
+          flash: 'B is half the profit today but growing 5x faster. In 3 years, B\'s profit catches A. In 5 years, B surpasses it. Growth rate matters as much as current size.',
+        },
+        {
+          setup: 'Business A: $100M revenue, $30M profit. Business B: $100M revenue, -$10M loss, but revenue doubled this year.',
+          left: { label: 'A', sublabel: 'profitable and stable' },
+          right: { label: 'B', sublabel: 'losing money but exploding growth' },
+          correct: 'left',
+          flash: 'Tricky. Doubling revenue is exciting — but B is LOSING $10M. Growth without a path to profit is just burning cash faster. Amazon was an exception, not the rule.',
+        },
+        {
+          setup: 'Business A: $500M revenue, $150M profit, but profit has declined 3 years in a row. Business B: $200M revenue, $30M profit, but profit has grown 40%/year for 3 years.',
+          left: { label: 'A', sublabel: 'much more profitable today' },
+          right: { label: 'B', sublabel: 'less profitable but accelerating' },
+          correct: 'right',
+          flash: 'A has more profit but the trend is down — something is going wrong. B is smaller but accelerating. Investors value the direction of profit as much as the level. A declining business with high profit is often a trap.',
+        },
+        {
+          setup: 'Business A: $1B revenue, $200M profit, in a stable boring industry. Business B: $1B revenue, $200M profit, in a hyped industry with lots of competition entering.',
+          left: { label: 'A', sublabel: 'boring but defensible' },
+          right: { label: 'B', sublabel: 'exciting but competitive' },
+          correct: 'left',
+          flash: 'Same profit, different futures. B\'s profit is under threat — new competitors will pressure prices and margins. A\'s boring stability means that $200M is more likely to still be there in 5 years. Durability of profit matters.',
+        },
+      ],
+      takeaway: 'Profit level, profit growth, and profit durability all matter. A business with less profit today but better trajectory and less competition is often worth more than a bigger, declining one.',
     },
 
-    // ─────────────────────────────────────────────────────────────────
-    // 5. Tap: Reading a business description like an investor
-    //
-    // Why a tap: teaches the user to filter signal from noise. This
-    // is the skill they'll use in every company lesson that follows.
-    // ─────────────────────────────────────────────────────────────────
+    // Tap: find which numbers actually matter (NOT "find red flags")
     {
       kind: 'tap',
-      topic: 'Signal vs. Noise',
-      topicIcon: Flag,
-      intro: 'Here\'s a pitch for FreshJuice Inc. Tap the details that actually tell you about profitability.',
+      topic: 'What Investors Actually Read',
+      topicIcon: Search,
+      intro: 'A company just released its quarterly results. Some numbers tell the real story. Others are distractions. Tap the numbers that actually matter to an investor.',
       passage: [
-        { type: 'text', value: '"FreshJuice has ' },
-        {
-          type: 'chip',
-          value: '50 locations across the country',
-          signal: false,
-          feedback: 'Location count tells you about scale — but 50 unprofitable locations are worse than 10 profitable ones. This doesn\'t tell you about profit.',
-        },
+        { type: 'text', value: 'TechFlow Q3 Results: ' },
+        { type: 'chip', value: 'Revenue: $480M, up 22% year-over-year', signal: true, feedback: 'Revenue growth rate matters — it tells you if the business is expanding. 22% is strong for a company this size.' },
         { type: 'text', value: '. ' },
-        {
-          type: 'chip',
-          value: 'Revenue grew 25% last year to $30 million',
-          signal: true,
-          feedback: 'Revenue growth matters — it tells you the business is getting bigger. But remember: revenue alone isn\'t enough. You need to know how much of it becomes profit.',
-        },
-        { type: 'text', value: '. The CEO was ' },
-        {
-          type: 'chip',
-          value: 'featured on a popular podcast last month',
-          signal: false,
-          feedback: 'PR is nice but tells you nothing about the financials. Don\'t confuse visibility with profitability.',
-        },
-        { type: 'text', value: '. Ingredients cost $8M, rent is $6M, and staff costs $9M — ' },
-        {
-          type: 'chip',
-          value: 'total costs are $23 million on $30M revenue',
-          signal: true,
-          feedback: 'Cost structure is critical. $23M in costs on $30M revenue means only $7M in profit — a 23% profit margin. Understanding where the money goes is essential.',
-        },
-        { type: 'text', value: '. The company just ' },
-        {
-          type: 'chip',
-          value: 'redesigned its logo with a famous agency',
-          signal: false,
-          feedback: 'A logo has zero connection to profitability. Don\'t be distracted by surface polish.',
-        },
+        { type: 'chip', value: 'Company featured in 3 major tech publications', signal: false, feedback: 'Media coverage is PR, not financial performance. A business can be in every magazine and still lose money.' },
         { type: 'text', value: '. ' },
-        {
-          type: 'chip',
-          value: 'Profit was $7 million — up from $5 million the year before',
-          signal: true,
-          feedback: 'Profit AND profit growth. This is the headline number. $7M this year vs $5M last year = 40% profit growth. The business is keeping more money over time.',
-        },
-        { type: 'text', value: '."' },
+        { type: 'chip', value: 'Operating profit: $96M (20% margin), up from $72M (18% margin) last year', signal: true, feedback: 'This is gold — profit is growing FASTER than revenue (33% vs 22%), which means margins are expanding. The business is becoming more efficient as it grows.' },
+        { type: 'text', value: '. ' },
+        { type: 'chip', value: 'CEO named to Fortune\'s "40 Under 40" list', signal: false, feedback: 'CEO awards tell you nothing about the business. Some of the worst-performing companies had award-winning CEOs.' },
+        { type: 'text', value: '. ' },
+        { type: 'chip', value: 'Hired 500 new employees this quarter', signal: false, feedback: 'Hiring more people isn\'t inherently good or bad. What matters is whether those hires generate more profit than they cost. Headcount alone is noise.' },
+        { type: 'text', value: '. ' },
+        { type: 'chip', value: 'Earnings per share: $1.92, beating analyst expectations of $1.78', signal: true, feedback: 'EPS beating expectations is one of the strongest signals. It means the company is doing BETTER than the market already assumed — which is what makes stock prices move up.' },
+        { type: 'text', value: '. ' },
+        { type: 'chip', value: 'Opened a new office in downtown Manhattan', signal: false, feedback: 'An office address is image, not substance. Some of the most profitable companies in the world operate from unremarkable buildings.' },
       ],
       requiredSignals: 3,
       reveal:
-        'Three things matter to an investor: revenue growth (is the business getting bigger?), cost structure (where does the money go?), and profit trajectory (is more money staying each year?). The podcast, the logo, the location count — noise.',
-      takeaway: 'Investors read business descriptions like a filter. Revenue, costs, and profit are signal. Everything else is noise until proven otherwise.',
+        'Three numbers told the real story: revenue growth (22%), profit margin expansion (18% → 20%), and EPS beating expectations ($1.92 vs $1.78). The media features, CEO awards, hiring, and office moves? Pure noise. Train yourself to scan for revenue, profit, and EPS — and ignore everything else.',
+      takeaway: 'Revenue growth, profit margins, and earnings per share are signal. Media coverage, headcount, and office locations are noise. Real investors read the numbers, not the press releases.',
     },
 
-    // ─────────────────────────────────────────────────────────────────
-    // 6. Decide: The foundational investor question
-    //
-    // Why a decide: this is the synthesis. Cements the one question
-    // that every subsequent lesson builds on.
-    // ─────────────────────────────────────────────────────────────────
+    // Thinking step: force synthesis
     {
-      kind: 'decide',
-      topic: 'The Investor\'s First Question',
-      topicIcon: Lightbulb,
-      context:
-        'You now know that revenue is money in, costs are money out, profit is what\'s left, and a stock gives you a piece of that profit. Before you can evaluate any stock — Apple, NVIDIA, a tiny startup — there\'s one question you have to answer first.',
-      question: 'What\'s the first question an investor asks about any business?',
-      options: [
-        'Is the stock price going up or down?',
-        'How does this business make money — and how much does it keep?',
-        'Is this company well-known and popular?',
-        'How fast is revenue growing?',
+      kind: 'thinking',
+      prompt: 'You discover two companies in the same industry. Company A has 3x more revenue but Company B has 2x more profit. A friend says "A is clearly the bigger, better company." In 2-3 sentences, explain why they might be wrong.',
+      placeholder: 'Think about what revenue tells you vs what profit tells you, and which one you actually own as a shareholder...',
+      modelAnswer:
+        'Revenue measures how much money flows THROUGH a business, but profit measures how much STAYS. If Company A has 3x the revenue but half the profit, it means A is spending almost everything it earns — either on costs, operations, or inefficiency. As a shareholder, you own a share of the profit, not the revenue. Company B\'s owners take home twice as much per share despite the smaller topline. It\'s like comparing two restaurants: one serves 3x more customers but barely breaks even, while the other serves fewer customers but keeps a healthy margin on each meal. Size isn\'t strength — profitability is.',
+      strongReasoningIncludes: [
+        'Explains that shareholders own profit, not revenue',
+        'Identifies that high revenue with low profit means high costs or inefficiency',
+        'Uses a concrete comparison or example to illustrate the point',
       ],
-      correctIndex: 1,
-      punchline:
-        'Price charts, brand recognition, and even revenue growth are secondary. If you don\'t understand how the business makes money and how much it keeps as profit, you\'re guessing — not investing.',
-      wrongNudges: [
-        'Stock prices move every second. Without understanding the business underneath, a rising price could be a bubble and a falling price could be a bargain. Price alone tells you nothing.',
-        '',
-        'Plenty of famous companies lose money. Plenty of obscure ones are extremely profitable. Fame and profitability are unrelated.',
-        'Revenue growth matters — but a company can grow revenue 50% and still lose money. Growth without profit is just burning cash faster. Start with profit, then ask about growth.',
-      ],
-      takeaway: 'Every lesson that follows builds on this: understand the business first. How does money come in? Where does it go? What\'s left? Start here — always.',
     },
   ],
   takeaways: [
-    'Revenue is money flowing in from customers. It\'s the starting point, not the finish line.',
-    'Profit = Revenue − Costs. This is the number investors care about most — not revenue.',
-    'A stock is a piece of a business\'s profit. Earnings per share (EPS) tells you how much profit each share generates.',
-    'When reading about any business, filter for signal: revenue, costs, profit. Everything else is noise until proven otherwise.',
-    'You\'ve learned that profit matters more than revenue. Next: why some businesses keep 40\u00A2 per dollar while others keep just 2\u00A2.',
+    'Revenue is money flowing in. Profit is what stays after all costs. Investors buy profit, not revenue.',
+    'Walmart has $650B in revenue but keeps 2.4¢ per dollar. Apple has $390B but keeps 25¢. That\'s why Apple is worth 5x more.',
+    'Profit growth and profit durability matter as much as profit level. A shrinking $200M profit is worth less than a growing $50M one.',
+    'When reading about any company, scan for three things: revenue growth, profit margins, and earnings per share. Ignore everything else.',
   ],
   completionMessages: {
-    perfect: 'Flawless. You\'ve learned the language that every other lesson is built on.',
-    great: 'Strong start. Revenue, costs, profit — you\'ve got the foundation.',
-    good: 'Good foundation. These three concepts — revenue, costs, profit — will come up in every lesson that follows.',
-    low: 'Keep going. Understanding revenue vs. profit is the single most important concept in investing — revisit this one.',
+    perfect: 'Perfect. You now see what most people miss — revenue is vanity, profit is sanity.',
+    great: 'Strong foundation. You understand the difference between how big a business looks and how good it actually is.',
+    good: 'Good start. The core concept — profit matters more than revenue — will show up in every lesson from here.',
+    low: 'Worth revisiting. This is THE foundational concept: investors care about profit, not revenue. Everything else builds on this.',
   },
 };

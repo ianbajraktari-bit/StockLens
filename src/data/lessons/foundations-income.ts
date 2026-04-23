@@ -1,259 +1,164 @@
-import { Layers, TrendingUp, Search, Lightbulb, Zap, Calculator, Flag } from 'lucide-react';
+import { Layers, TrendingUp, Search, Lightbulb, Zap } from 'lucide-react';
 import type { Lesson } from './types';
 
 export const foundationsIncomeLesson: Lesson = {
   id: 'foundations-income',
   emoji: '📊',
   title: 'Reading the Scoreboard',
-  subtitle: 'Gross profit, operating profit, net income — the three layers',
+  subtitle: 'How an 80% margin company can barely make money',
   description:
-    "When NVIDIA reports \"73% gross margin\" or Costco reports \"3.7% operating margin,\" they're talking about different layers of the same scoreboard. This lesson teaches you to read an income statement — the financial report that shows how revenue turns into profit, one layer at a time.",
+    'An income statement has three layers of profit — and each tells a completely different story. A company can look amazing at layer one and terrible at layer three. This lesson teaches you to read all three layers so you never get fooled by a headline number.',
   estimatedMinutes: 3,
   dataAsOf: '',
   tier: 'foundations-1',
   skills: ['margins'],
   keyFacts: [],
   topics: [
-    { label: 'The three layers of profit every investor reads', icon: Layers },
-    { label: 'Why gross margin and operating margin tell different stories', icon: Search },
-    { label: 'How to spot where a business leaks money', icon: TrendingUp },
-    { label: 'Reading a real income statement like an investor', icon: Lightbulb },
+    { label: 'The three layers of an income statement', icon: Layers },
+    { label: 'Gross profit — what the product earns', icon: TrendingUp },
+    { label: 'Operating profit — what the business earns', icon: Search },
+    { label: 'Why each layer answers a different question', icon: Lightbulb },
   ],
   steps: [
-    // ─────────────────────────────────────────────────────────────────
-    // 1. Drill: sorting costs into the right layer
-    //
-    // Why a drill: investors must instantly distinguish direct costs
-    // (making the product) from operating costs (running the company).
-    // This distinction powers every margin comparison.
-    // ─────────────────────────────────────────────────────────────────
+    // Hook: counterintuitive estimate
+    {
+      kind: 'estimate',
+      topic: 'The Headline Trap',
+      topicIcon: Layers,
+      context:
+        'CloudCo is a SaaS company. Their product costs almost nothing to deliver — it\'s software running on servers. Their "gross margin" (revenue minus the direct cost of delivering the product) is an incredible 82%.\n\nBut CloudCo spends aggressively on sales teams, marketing, R&D, and executive compensation. After ALL expenses, not just product costs:',
+      question: 'If CloudCo has 82% gross margin, what do you think its net profit margin actually is after all expenses?',
+      answer: 5,
+      tolerance: 8,
+      unit: '%',
+      hint: 'Think about how much SaaS companies spend on sales, marketing, and engineering',
+      reveal:
+        'About 3-8% for most SaaS companies CloudCo\'s size. That 82% gross margin means the PRODUCT is profitable. But the BUSINESS spends almost everything on sales reps, marketing campaigns, and engineering teams. The gap between 82% gross and 5% net is where investors get fooled — and where the real story lives.',
+      takeaway: 'A headline margin number can be incredibly misleading. The gap between gross margin and net margin tells you how efficiently a company converts its product advantage into actual profit.',
+    },
+
+    // Drill: classify costs into layers
     {
       kind: 'drill',
-      topic: 'Two Kinds of Costs',
+      topic: 'Where the Money Goes',
       topicIcon: Zap,
-      intro: 'Every cost falls into one of two buckets. Sort each one.',
+      intro: 'An income statement splits costs into two categories: "cost of goods sold" (COGS — the direct cost of making/delivering the product) and "operating expenses" (everything else — salaries, marketing, rent, R&D). Sort each cost.',
       prompts: [
         {
-          setup: 'A phone manufacturer pays $220 for the chips, screen, and battery in each phone.',
-          left: { label: 'Cost of goods sold', sublabel: 'making the product' },
-          right: { label: 'Operating expense', sublabel: 'running the company' },
+          setup: 'A sneaker company pays $22 per pair for materials and factory labor.',
+          left: { label: 'COGS', sublabel: 'direct product cost' },
+          right: { label: 'Operating expense', sublabel: 'running the business' },
           correct: 'left',
-          flash: 'Each phone needs its own chips and screen — costs rise with every unit sold. These variable, per-unit costs are "cost of goods sold" (COGS).',
+          flash: 'Materials and manufacturing are directly tied to each unit sold. No sneakers made = no cost. This is COGS — it scales with volume.',
         },
         {
-          setup: 'The same company spends $5M/year on TV advertising.',
-          left: { label: 'Cost of goods sold' },
-          right: { label: 'Operating expense', sublabel: 'running the company' },
+          setup: 'The same company spends $200M/year on TV ads and Instagram campaigns.',
+          left: { label: 'COGS' },
+          right: { label: 'Operating expense', sublabel: 'running the business' },
           correct: 'right',
-          flash: 'Advertising doesn\'t make the phone — it sells it. That\'s an operating expense. It exists whether you make 1 phone or 1 million.',
+          flash: 'Marketing isn\'t tied to producing the product — it\'s about selling it. Whether they make 1 million pairs or 10 million, the ad budget is a business decision, not a production cost.',
         },
         {
-          setup: 'A bakery pays $2 for flour, eggs, and butter per cake.',
-          left: { label: 'Cost of goods sold', sublabel: 'making the product' },
+          setup: 'Netflix pays $17B/year for content (movies, shows, licensing).',
+          left: { label: 'COGS', sublabel: 'cost of delivering the service' },
           right: { label: 'Operating expense' },
           correct: 'left',
-          flash: 'Every cake needs flour — costs scale directly with production. That\'s a variable cost, and variable costs are the heart of COGS.',
+          flash: 'Content IS Netflix\'s product. Without shows, there\'s nothing to stream. Content costs are COGS — this is why Netflix\'s gross margin (65%) is much lower than a typical software company (80%+).',
         },
         {
-          setup: 'A software company pays $40M/year for its 200 engineers.',
-          left: { label: 'Cost of goods sold' },
-          right: { label: 'Operating expense', sublabel: 'running the company' },
+          setup: 'A pharmaceutical company spends $4B/year on R&D to develop new drugs.',
+          left: { label: 'COGS' },
+          right: { label: 'Operating expense', sublabel: 'future investment' },
           correct: 'right',
-          flash: 'Engineers cost the same whether the app has 100 or 10 million users — that\'s a fixed cost. Ingredients cost more with every loaf — that\'s a variable cost. COGS is mostly variable; operating expenses are mostly fixed.',
+          flash: 'R&D develops FUTURE products, not current ones. The drugs being sold today were developed years ago. R&D is an operating expense — it\'s an investment in the pipeline, not a cost of today\'s production.',
         },
         {
-          setup: 'A streaming service pays $500M/year in licensing fees to show movies.',
-          left: { label: 'Cost of goods sold', sublabel: 'delivering the product' },
+          setup: 'AWS (Amazon\'s cloud service) pays billions for servers, data centers, and electricity to run customer workloads.',
+          left: { label: 'COGS', sublabel: 'direct delivery cost' },
           right: { label: 'Operating expense' },
           correct: 'left',
-          flash: 'Content is the product. Without it, there\'s nothing to stream. Licensing is a direct cost of delivering the service — COGS.',
-        },
-        {
-          setup: 'A retailer pays $3M/year for the CEO\'s salary and corporate headquarters.',
-          left: { label: 'Cost of goods sold' },
-          right: { label: 'Operating expense', sublabel: 'running the company' },
-          correct: 'right',
-          flash: 'The CEO doesn\'t make the products. HQ doesn\'t ship boxes. These are overhead — operating expenses that exist regardless of sales volume.',
+          flash: 'The servers and electricity directly power the service customers pay for. More customers = more servers needed. This is COGS for cloud computing — and it\'s why cloud margins (~30%) are lower than pure software margins (~70%).',
         },
       ],
-      takeaway:
-        'COGS is mostly variable costs that scale with each unit sold. Operating expenses are mostly fixed costs that stay flat as revenue grows. This distinction matters because businesses with mostly fixed costs (software) scale beautifully — revenue grows while costs barely budge. Businesses with mostly variable costs (manufacturing) grow revenue and costs in lockstep.',
+      takeaway: 'COGS = what it costs to make/deliver the product. Operating expenses = what it costs to run the business (sales, marketing, R&D, admin). The gap between them reveals where money disappears.',
     },
 
-    // ─────────────────────────────────────────────────────────────────
-    // 2. Estimate: calculate gross profit
-    //
-    // Why an estimate: gross profit is the first layer. User must
-    // do the subtraction to internalize Revenue − COGS = Gross Profit.
-    // ─────────────────────────────────────────────────────────────────
-    {
-      kind: 'estimate',
-      topic: 'Layer 1: Gross Profit',
-      topicIcon: Calculator,
-      context:
-        'A sneaker company reports:\n\n• Revenue: $500M (total sales)\n• Cost of goods sold: $200M (materials, factory labor, shipping)\n\nGross Profit = Revenue − COGS. This tells you how much money is left after making the product — before any salaries, marketing, or rent.',
-      question: 'What\'s the gross profit?',
-      answer: 300,
-      tolerance: 25,
-      unit: '$M',
-      hint: '$500M − $200M',
-      reveal:
-        '$500M − $200M = $300M gross profit. That\'s a 60% gross margin ($300M ÷ $500M). This number tells you how efficiently the company makes its product. A software company might have 80% gross margin (code costs almost nothing to copy). A grocery store might have 25% (food is expensive to source). When investors compare NVIDIA\'s 73% gross margin to Intel\'s 40%, this is the layer they\'re looking at.',
-      takeaway: 'Gross profit = Revenue − Cost of Goods Sold. It measures how efficiently the company makes its product. Higher is better — but it\'s only the first layer.',
-    },
-
-    // ─────────────────────────────────────────────────────────────────
-    // 3. Estimate: calculate operating profit
-    //
-    // Why an estimate: operating profit is the critical second layer.
-    // This is the number Costco's "3.7% operating margin" refers to.
-    // ─────────────────────────────────────────────────────────────────
-    {
-      kind: 'estimate',
-      topic: 'Layer 2: Operating Profit',
-      topicIcon: Calculator,
-      context:
-        'Same sneaker company:\n\n• Gross profit: $300M\n• Marketing & sales: $80M\n• R&D (design, innovation): $40M\n• Corporate overhead (HQ, executives): $30M\n• Total operating expenses: $150M\n\nOperating Profit = Gross Profit − Operating Expenses. This tells you how much the business earns from its actual operations — after every cost of running the company.',
-      question: 'What\'s the operating profit?',
-      answer: 150,
-      tolerance: 15,
-      unit: '$M',
-      hint: '$300M − $150M',
-      reveal:
-        '$300M − $150M = $150M operating profit. That\'s a 30% operating margin ($150M ÷ $500M revenue). This is the number that shows whether the company can run profitably — not just make products cheaply. When Costco reports a \"3.7% operating margin,\" they mean only $3.70 of every $100 in revenue survives to this layer. When Apple reports ~30%, it means $30 of every $100 survives. Same layer, wildly different stories.',
-      takeaway: 'Operating profit = Gross Profit − Operating Expenses. It measures whether the business itself is profitable. This is the layer investors use to compare companies across industries.',
-    },
-
-    // ─────────────────────────────────────────────────────────────────
-    // 4. Decide: which layer tells the real story?
-    //
-    // Why a decide: the user needs to understand that different
-    // layers answer different questions. This isn't trivia — it's
-    // the judgment call that makes company analysis work.
-    // ─────────────────────────────────────────────────────────────────
+    // Walk through the three layers with one company
     {
       kind: 'decide',
-      topic: 'Which Layer Matters Most',
-      topicIcon: Search,
+      topic: 'Layer by Layer',
+      topicIcon: Layers,
       context:
-        'Two companies in the same industry:\n\nCompany A: 70% gross margin, 10% operating margin\nCompany B: 45% gross margin, 25% operating margin\n\nCompany A makes its product cheaply but spends massively on sales, R&D, and overhead. Company B\'s product costs more to make but the company runs lean.',
-      question: 'Which company is in a stronger position to generate profit for investors?',
+        'Here\'s CloudCo\'s simplified income statement:\n\nRevenue: $200M\n— COGS: $36M (servers, infrastructure)\n= Gross Profit: $164M (82% gross margin) ← Layer 1\n\n— Sales & Marketing: $80M\n— R&D (engineering): $55M\n— Admin & overhead: $20M\n= Operating Profit: $9M (4.5% operating margin) ← Layer 2\n\nThe product is amazing (82% gross margin). But the business is barely profitable (4.5% operating margin).',
+      question: 'CloudCo\'s gross margin is 82% but operating margin is only 4.5%. What does this 77.5-point gap tell an investor?',
       options: [
-        'Company A — 70% gross margin shows a superior product with pricing power',
-        'Company B — 25% operating margin means more profit actually reaches investors, regardless of gross margin',
-        'They\'re equal — high gross margin and high operating margin are the same thing',
-        'Can\'t tell without seeing revenue growth',
+        'CloudCo is a bad business — 4.5% operating margin is terrible',
+        'CloudCo has a great product but is spending almost all its profit on sales, marketing, and R&D to grow',
+        'CloudCo\'s costs are out of control and the company is failing',
+        'The 82% number is misleading and shouldn\'t be trusted',
       ],
       correctIndex: 1,
       punchline:
-        'Gross margin shows product economics. Operating margin shows business economics. A company that makes products cheaply but burns the savings on overhead isn\'t actually more profitable. Operating margin is closer to what investors actually receive.',
+        'The 82% gross margin proves the PRODUCT is excellent — it costs very little to deliver. The 4.5% operating margin shows the COMPANY is choosing to spend aggressively on growth. This is a strategy, not a failure — but it\'s the investor\'s job to decide whether that spending will eventually produce profits or is just burning cash.',
       wrongNudges: [
-        'A 70% gross margin is impressive — but if 60 of those 70 cents get eaten by operating costs, only 10 cents reaches investors. Product advantage doesn\'t help if the company can\'t run efficiently.',
+        'A 4.5% operating margin at a young SaaS company isn\'t necessarily bad — it might be because they\'re investing heavily to grow. The question is whether that spending pays off later. Many great companies had thin operating margins in their growth phase.',
         '',
-        'They measure different things. You can have a great gross margin and terrible operating margin (overspending on overhead) or vice versa. They are not interchangeable.',
-        'Revenue growth matters, but a fast-growing company at 10% operating margin will generate less profit than a slower-growing one at 25%. Growth without operating leverage often just creates bigger losses.',
+        'Spending a lot doesn\'t mean costs are "out of control." If the $80M in sales is acquiring customers who stay for years and pay $200M in revenue, the spending might be brilliant. You need to understand WHAT the money buys.',
+        'The 82% IS real — it accurately measures the product economics. But it\'s only one layer. Investors who stop at gross margin miss the full picture.',
       ],
-      takeaway: 'Gross margin measures the product. Operating margin measures the business. Investors care about both, but operating margin is closer to what actually reaches your pocket.',
+      takeaway: 'Gross margin tells you about the PRODUCT. Operating margin tells you about the BUSINESS. A huge gap between them means the company is spending aggressively — which is either growth investing or waste.',
     },
 
-    // ─────────────────────────────────────────────────────────────────
-    // 5. Tap: read a simplified income statement
-    //
-    // Why a tap: this is the first time the user sees numbers laid
-    // out like a real financial report. Tapping the important lines
-    // teaches them to extract signal from the format.
-    // ─────────────────────────────────────────────────────────────────
+    // Tap: read a real income statement and find what matters
     {
       kind: 'tap',
-      topic: 'Reading the Real Thing',
-      topicIcon: Flag,
-      intro: 'Here\'s a simplified income statement. Tap the lines that reveal the most about this business\'s health.',
+      topic: 'Reading Between the Lines',
+      topicIcon: Search,
+      intro: 'Here\'s a simplified annual report for a company called MedTech Inc. Tap the numbers that tell the REAL story about this business\'s health.',
       passage: [
-        { type: 'text', value: 'CloudCo Inc. — Annual Income Statement\n\n' },
-        {
-          type: 'chip',
-          value: 'Revenue: $400M',
-          signal: false,
-          feedback: 'Revenue is the starting point, but it doesn\'t tell you about profitability. $400M in revenue with $400M in costs = zero profit.',
-        },
-        { type: 'text', value: '\nCost of goods sold: $80M\n' },
-        {
-          type: 'chip',
-          value: 'Gross profit: $320M (80% margin)',
-          signal: true,
-          feedback: '80% gross margin is excellent — typical of software companies. It costs very little to deliver the product. This signals strong product economics.',
-        },
-        { type: 'text', value: '\n\nOperating expenses:\n  Sales & marketing: $160M\n  R&D: $100M\n  General & admin: $40M\n' },
-        {
-          type: 'chip',
-          value: 'Total operating expenses: $300M',
-          signal: true,
-          feedback: '$300M in operating expenses on $320M gross profit — the company is spending almost everything it makes. Only $20M survives to operating profit. The 80% gross margin is being eaten alive by spending.',
-        },
-        { type: 'text', value: '\n' },
-        {
-          type: 'chip',
-          value: 'Operating profit: $20M (5% margin)',
-          signal: true,
-          feedback: 'Here\'s the real story: 80% gross margin collapses to 5% operating margin. CloudCo makes its product cheaply but spends aggressively to grow. An investor needs to decide if that spending will pay off or if the company is burning through its gross profit advantage.',
-        },
-        { type: 'text', value: '\n\nInterest & taxes: $8M\n' },
-        {
-          type: 'chip',
-          value: 'Net income: $12M (3% margin)',
-          signal: false,
-          feedback: 'Net income is the bottom line — what\'s left after everything including taxes and interest. Important, but operating profit already told you the business story. Net income adds financial structure (debt, tax strategy) which is less about the core business.',
-        },
-        { type: 'text', value: '' },
+        { type: 'text', value: 'MedTech Inc Annual Results: ' },
+        { type: 'chip', value: 'Revenue $1.2B, up 8% YoY', signal: false, feedback: 'Revenue growth is decent but not the story here. 8% for a medical device company is average. Keep digging.' },
+        { type: 'text', value: '. ' },
+        { type: 'chip', value: 'Gross margin improved from 71% to 74%', signal: true, feedback: 'Gross margin EXPANDING 3 points means MedTech is either raising prices or reducing production costs. This is real business improvement — the product is becoming more profitable.' },
+        { type: 'text', value: '. ' },
+        { type: 'chip', value: 'Company won "Most Innovative Medical Device" award', signal: false, feedback: 'Awards don\'t show up on income statements. Innovation matters only when it shows up in revenue or margins.' },
+        { type: 'text', value: '. ' },
+        { type: 'chip', value: 'Sales & marketing spending jumped 35% to $280M', signal: true, feedback: 'Sales spending growing 4x faster than revenue (35% vs 8%) is a red flag. They\'re spending dramatically more to grow only slightly. This is getting more expensive — not more efficient.' },
+        { type: 'text', value: '. ' },
+        { type: 'chip', value: 'Operating margin fell from 18% to 12%', signal: true, feedback: 'HERE is the real story. Gross margins improved (good) but operating margins FELL (bad). The gap grew because spending on sales outpaced revenue growth. The product is better but the business is less efficient.' },
+        { type: 'text', value: '. ' },
+        { type: 'chip', value: 'Headcount grew 22% to 8,500 employees', signal: false, feedback: 'Hiring alone is neutral — it depends on what those people produce. The operating margin decline suggests these hires haven\'t yet generated proportional revenue.' },
       ],
       requiredSignals: 3,
       reveal:
-        'The income statement tells a story in layers: CloudCo has excellent product economics (80% gross margin) but spends aggressively ($300M in opex), leaving just 5% operating margin. High operating expenses aren\'t always bad — $100M in R&D might be building next year\'s product, and $160M in sales might be acquiring customers who stick for a decade. The investor question is whether the spending generates returns or just burns cash.',
-      takeaway: 'An income statement is a funnel. Revenue goes in the top, costs peel off at each layer, and profit comes out the bottom. Each layer tells you something different about the business.',
+        'The real story: MedTech\'s product economics improved (gross margin up 3 points) but was MORE than offset by aggressive spending (sales costs up 35%). The result: operating margin collapsed from 18% to 12%. Gross margin improving while operating margin declines = a company spending faster than it\'s earning. This is the exact pattern you need to spot.',
+      takeaway: 'When gross margins expand but operating margins contract, the company is spending its product advantage away. Watch the gap between the two layers — it tells you whether growth investment is working.',
     },
 
-    // ─────────────────────────────────────────────────────────────────
-    // 6. Decide: diagnosing a real margin profile
-    //
-    // Why a decide: applies everything to a realistic scenario. Forces
-    // the user to use all three layers to form a judgment.
-    // ─────────────────────────────────────────────────────────────────
+    // Thinking step
     {
-      kind: 'decide',
-      topic: 'The Diagnosis',
-      topicIcon: Lightbulb,
-      context:
-        'You\'re looking at two real businesses:\n\nBusiness X: 25% gross margin, 4% operating margin, growing 7%/year\nBusiness Y: 75% gross margin, 35% operating margin, growing 12%/year\n\nBusiness X sells physical goods. Business Y sells software.',
-      question: 'What\'s the most important conclusion from these numbers?',
-      options: [
-        'Business Y is better because software always beats physical goods',
-        'Business X is more stable because physical products have reliable demand',
-        'Business Y keeps $35 of every $100 in revenue as operating profit vs $4 for Business X — that margin gap compounds massively over time',
-        'They can\'t be compared because they\'re in different industries',
+      kind: 'thinking',
+      prompt: 'You\'re comparing two companies. Company A: 80% gross margin, 8% operating margin. Company B: 45% gross margin, 25% operating margin. Which would you rather invest in, and why? Consider what each company\'s numbers tell you about their product, their spending discipline, and their future.',
+      placeholder: 'Think about what the gap between gross and operating margin reveals about each company\'s strategy and efficiency...',
+      modelAnswer:
+        'I\'d lean toward Company B. While A has a better product (80% gross margin means it costs almost nothing to deliver), the company is spending 72 cents of every dollar on sales, marketing, R&D, and overhead — leaving shareholders only 8 cents. That massive gap suggests either the product is hard to sell (needs expensive sales teams), the company is in an intense growth phase (spending to acquire customers), or management is undisciplined with expenses. Company B has a less impressive product margin (45%), but it runs a tight ship — converting 25% to operating profit. That spending discipline suggests the business is mature, efficient, and generating real cash for shareholders. The risk: if Company A\'s spending eventually pays off and it reaches 30% operating margins, its stock could 5x. But that\'s a bet on the future, not today\'s reality.',
+      strongReasoningIncludes: [
+        'Analyzes what the gap between gross and operating margin reveals about each company',
+        'Considers the trade-off between growth investing (A) and profitability discipline (B)',
+        'Acknowledges uncertainty — neither answer is obviously "right"',
       ],
-      correctIndex: 2,
-      punchline:
-        'At $100M revenue each, Business Y generates $35M in operating profit vs $4M for Business X. Give them both 10 years of growth and the gap is enormous. Margins are the multiplier that turns revenue into wealth — and now you can read them.',
-      wrongNudges: [
-        'Software doesn\'t automatically win. A poorly run software company at 75% gross margin and -10% operating margin is worse than a well-run retailer. The margins tell the story, not the industry label.',
-        'Reliability matters, but 4% operating margin means almost no room for error. One bad quarter and Business X is unprofitable. Business Y at 35% can absorb shocks.',
-        '',
-        'Different industries have different typical margins, but operating profit is universal. $35 of real profit per $100 of revenue beats $4 in any industry. The comparison is not only valid — it\'s essential.',
-      ],
-      takeaway: 'The income statement\'s three layers — gross, operating, net — tell you how efficiently a business converts revenue into profit. Now when you see "73% gross margin" or "3.7% operating margin," you know exactly what layer they\'re talking about and why it matters.',
     },
   ],
   takeaways: [
-    'Cost of goods sold (COGS) = making the product. Operating expenses = running the company. Different buckets, different profit layers.',
-    'Gross profit = Revenue − COGS. It measures product efficiency. Operating profit = Gross Profit − Operating Expenses. It measures business efficiency.',
-    'A high gross margin that collapses at the operating level means the company makes products cheaply but spends the savings on overhead.',
-    'The income statement is a funnel: revenue in, costs peel off layer by layer, profit out. Each layer answers a different investor question.',
-    'You can read a scoreboard. Next: why income that shows up automatically is worth more than income you have to chase.',
+    'An income statement has three profit layers: gross profit (product economics), operating profit (business economics), and net profit (after taxes and interest).',
+    'A company can have 80% gross margins and still barely make money. The gap between gross and operating margin is where the real story lives.',
+    'Gross margin expanding + operating margin contracting = the company is spending its product advantage away. This is the most common trap in SaaS investing.',
+    'Each layer answers a different question: Gross → "Is the product profitable?" Operating → "Is the business profitable?" Net → "What do shareholders actually get?"',
   ],
   completionMessages: {
-    perfect: 'Flawless. You can now read the scoreboard every public company publishes — and know exactly what each line means.',
-    great: 'Strong work. Gross margin, operating margin, net income — you can now read the three layers investors care about most.',
-    good: 'Good foundation. These three profit layers will come up in every company analysis. The more you see them, the sharper the pattern gets.',
-    low: 'Worth revisiting. The income statement is the most important financial document in investing — this lesson is worth nailing.',
+    perfect: 'Perfect. You can now read an income statement and see what most people miss — the story between the layers.',
+    great: 'Strong work. Understanding the gap between gross and operating margin puts you ahead of most retail investors.',
+    good: 'Good foundation. Remember: don\'t stop at gross margin. The operating margin tells you whether the business is actually making money.',
+    low: 'Worth revisiting. The three layers of profit are fundamental to analyzing any company — they show up in every earnings report.',
   },
 };
