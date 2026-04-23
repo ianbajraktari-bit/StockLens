@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Flag, X, Lightbulb, Sparkles } from 'lucide-react';
 import type { TapStep as TapStepType } from '../../data/lessons/types';
@@ -9,20 +9,71 @@ import {
   SPRING_TACTILE,
   SPRING_FLUID,
 } from '../../lib/motion';
+import { ScreenFlash } from '../../components/fx/ScreenFlash';
+import { ConfettiBurst } from '../../components/fx/ConfettiBurst';
 
 interface Props {
   step: TapStepType;
   onDone: (score: { correct: number; total: number }) => void;
 }
 
+/** A single flying dot that animates from a chip to the signal counter. */
+function FlyingDot({
+  from,
+  to,
+  onComplete,
+}: {
+  from: { x: number; y: number };
+  to: { x: number; y: number };
+  onComplete: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ x: from.x, y: from.y, scale: 1, opacity: 1 }}
+      animate={{ x: to.x, y: to.y, scale: 0.5, opacity: 0.6 }}
+      transition={{ duration: 0.45, ease: EASE_CINEMATIC }}
+      onAnimationComplete={onComplete}
+      className="fixed w-2.5 h-2.5 rounded-full bg-amber z-50 pointer-events-none shadow-[0_0_10px_rgba(245,158,11,0.7)]"
+      aria-hidden
+    />
+  );
+}
+
 export default function TapStep({ step, onDone }: Props) {
   const [tapped, setTapped] = useState<Record<number, 'right' | 'wrong'>>({});
-  const [lastTap, setLastTap] = useState<{ index: number; feedback: string; right: boolean } | null>(null);
+  const [lastTap, setLastTap] = useState<{
+    index: number;
+    feedback: string;
+    right: boolean;
+  } | null>(null);
   const [submitted, setSubmitted] = useState(false);
+
+  // Screen flash state
+  const [flashTone, setFlashTone] = useState<'green' | 'red'>('green');
+  const [flashKey, setFlashKey] = useState(0);
+  const [showFlash, setShowFlash] = useState(false);
+
+  // Flying dot state
+  const [flyingDots, setFlyingDots] = useState<
+    { id: number; from: { x: number; y: number }; to: { x: number; y: number } }[]
+  >([]);
+  const flyingIdRef = useRef(0);
+
+  // Refs for flying dot positions
+  const counterRef = useRef<HTMLDivElement>(null);
+  const chipRefs = useRef<Record<number, HTMLButtonElement | null>>({});
+
+  // Confetti state
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  // Chip animation triggers
+  const [chipAnimations, setChipAnimations] = useState<
+    Record<number, 'bounce' | 'shake'>
+  >({});
 
   const totalSignals = step.passage.reduce(
     (acc, seg) => acc + (seg.type === 'chip' && seg.signal ? 1 : 0),
-    0
+    0,
   );
   const foundSignals = Object.entries(tapped).filter(([i, v]) => {
     const seg = step.passage[Number(i)];
@@ -31,7 +82,29 @@ export default function TapStep({ step, onDone }: Props) {
   const wrongTaps = Object.values(tapped).filter((v) => v === 'wrong').length;
 
   const canFinish = foundSignals >= step.requiredSignals;
-  const progressPct = step.requiredSignals > 0 ? foundSignals / step.requiredSignals : 0;
+  const progressPct =
+    step.requiredSignals > 0 ? foundSignals / step.requiredSignals : 0;
+
+  const spawnFlyingDot = useCallback((chipIndex: number) => {
+    const chipEl = chipRefs.current[chipIndex];
+    const counterEl = counterRef.current;
+    if (!chipEl || !counterEl) return;
+
+    const chipRect = chipEl.getBoundingClientRect();
+    const counterRect = counterEl.getBoundingClientRect();
+
+    const from = {
+      x: chipRect.left + chipRect.width / 2 - 5,
+      y: chipRect.top + chipRect.height / 2 - 5,
+    };
+    const to = {
+      x: counterRect.left + counterRect.width / 2 - 5,
+      y: counterRect.top + counterRect.height / 2 - 5,
+    };
+
+    const id = flyingIdRef.current++;
+    setFlyingDots((prev) => [...prev, { id, from, to }]);
+  }, []);
 
   function handleChipTap(index: number) {
     if (submitted || tapped[index]) return;
@@ -40,10 +113,42 @@ export default function TapStep({ step, onDone }: Props) {
     const right = seg.signal;
     setTapped((prev) => ({ ...prev, [index]: right ? 'right' : 'wrong' }));
     setLastTap({ index, feedback: seg.feedback, right });
+
+    // Trigger chip animation
+    setChipAnimations((prev) => ({
+      ...prev,
+      [index]: right ? 'bounce' : 'shake',
+    }));
+
+    // Screen flash
+    setFlashTone(right ? 'green' : 'red');
+    setShowFlash(false);
+    // Force re-mount by incrementing key
+    setFlashKey((k) => k + 1);
+    // Use rAF to ensure the false state is flushed before setting true
+    requestAnimationFrame(() => {
+      setShowFlash(true);
+      // Auto-hide after the animation duration
+      setTimeout(() => setShowFlash(false), 550);
+    });
+
+    // Flying dot for correct signals
+    if (right) {
+      // Small delay so the bounce starts first
+      setTimeout(() => spawnFlyingDot(index), 120);
+    }
+  }
+
+  function handleFlyingDotComplete(id: number) {
+    setFlyingDots((prev) => prev.filter((d) => d.id !== id));
   }
 
   function handleFinish() {
     setSubmitted(true);
+    // Confetti if perfect (all signals, no wrong taps)
+    if (foundSignals >= totalSignals && wrongTaps === 0) {
+      setShowConfetti(true);
+    }
   }
 
   function handleContinue() {
@@ -56,6 +161,23 @@ export default function TapStep({ step, onDone }: Props) {
   return (
     <div className="rounded-2xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-6 space-y-5 relative overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber/25 to-transparent" />
+
+      {/* Screen flash effect */}
+      <ScreenFlash key={flashKey} show={showFlash} tone={flashTone} />
+
+      {/* Confetti on perfect completion */}
+      <ConfettiBurst show={showConfetti} />
+
+      {/* Flying dots */}
+      {flyingDots.map((dot) => (
+        <FlyingDot
+          key={dot.id}
+          from={dot.from}
+          to={dot.to}
+          onComplete={() => handleFlyingDotComplete(dot.id)}
+        />
+      ))}
+
       {/* Header */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
@@ -64,7 +186,10 @@ export default function TapStep({ step, onDone }: Props) {
             {step.topic}
           </span>
         </div>
-        <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-dark-900/50 border border-white/[0.04]">
+        <div
+          ref={counterRef}
+          className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-dark-900/50 border border-white/[0.04]"
+        >
           <Flag className="w-3 h-3 text-amber" />
           <span className="display-num text-[11px] font-semibold text-text-muted">
             {foundSignals}
@@ -81,10 +206,12 @@ export default function TapStep({ step, onDone }: Props) {
             <motion.div
               key={i}
               animate={lit ? { scaleY: [1, 1.4, 1] } : undefined}
-              transition={lit ? { duration: 0.25, ease: EASE_CINEMATIC } : undefined}
+              transition={
+                lit ? { duration: 0.25, ease: EASE_CINEMATIC } : undefined
+              }
               className={`flex-1 rounded-[2px] transition-colors duration-300 ${
                 lit
-                  ? 'bg-amber shadow-[0_0_6px_rgba(245,158,11,0.5)]'
+                  ? 'bg-amber shadow-[0_0_6px_rgba(245,158,11,0.5)] progress-glow'
                   : 'bg-dark-700'
               }`}
             />
@@ -93,10 +220,18 @@ export default function TapStep({ step, onDone }: Props) {
       </div>
 
       {/* Intro */}
-      <p className="text-sm text-text-secondary leading-relaxed">{step.intro}</p>
+      <p className="text-sm text-text-secondary leading-relaxed">
+        {step.intro}
+      </p>
 
-      {/* Passage */}
-      <div className="rounded-xl border border-white/[0.05] bg-dark-900/40 backdrop-blur-sm p-5 leading-loose text-base text-text-primary">
+      {/* Passage — warm reading-focused style */}
+      <div
+        className="rounded-xl border border-white/[0.05] bg-dark-900/40 backdrop-blur-sm p-5 leading-loose text-base text-text-primary"
+        style={{
+          boxShadow:
+            'inset 0 0 40px rgba(245, 158, 11, 0.03), inset 0 0 80px rgba(245, 158, 11, 0.015)',
+        }}
+      >
         {step.passage.map((seg, i) => {
           if (seg.type === 'text') {
             return <span key={i}>{seg.value}</span>;
@@ -105,25 +240,54 @@ export default function TapStep({ step, onDone }: Props) {
           const isUntapped = !state;
           const wasRight = state === 'right';
           const wasWrong = state === 'wrong';
+          const animKind = chipAnimations[i];
+
+          // Build the animation target based on tap result
+          const animateProps =
+            animKind === 'bounce'
+              ? { y: [0, -8, 0] }
+              : animKind === 'shake'
+                ? { x: [0, -4, 4, -2, 0] }
+                : undefined;
+
+          // Glow style for correct taps
+          const glowStyle: React.CSSProperties =
+            wasRight
+              ? {
+                  boxShadow:
+                    '0 2px 8px -3px rgba(245, 158, 11, 0.3), 0 0 12px rgba(245, 158, 11, 0.15)',
+                }
+              : wasWrong
+                ? {
+                    boxShadow: '0 0 8px rgba(239, 68, 68, 0.15)',
+                  }
+                : {};
+
           return (
             <motion.button
               key={i}
+              ref={(el) => {
+                chipRefs.current[i] = el;
+              }}
               onClick={() => handleChipTap(i)}
               disabled={submitted || !!state}
               aria-label={`${isUntapped ? 'Tap to check: ' : wasRight ? 'Flagged: ' : 'Not a flag: '}${seg.value}`}
               whileHover={isUntapped ? { y: -1, scale: 1.03 } : undefined}
               whileTap={isUntapped ? { scale: 0.96 } : undefined}
-              animate={wasWrong ? { x: [0, -3, 3, -1.5, 1.5, 0] } : undefined}
+              animate={animateProps}
               transition={
-                wasWrong
-                  ? { duration: 0.3, ease: EASE_CINEMATIC }
-                  : SPRING_FLUID
+                animKind === 'bounce'
+                  ? { ...SPRING_TACTILE, stiffness: 500 }
+                  : animKind === 'shake'
+                    ? { duration: 0.3, ease: EASE_CINEMATIC }
+                    : SPRING_FLUID
               }
+              style={glowStyle}
               className={`inline px-2.5 py-1 mx-0.5 rounded-lg font-medium transition-all duration-200 ${
                 isUntapped
                   ? 'bg-dark-700/80 text-text-primary border-b-2 border-dotted border-accent/50 hover:bg-accent/[0.12] hover:border-accent hover:shadow-[0_2px_12px_-4px_rgba(99,102,241,0.3)] cursor-pointer'
                   : wasRight
-                    ? 'bg-amber/15 text-amber border-b-2 border-amber shadow-[0_2px_8px_-3px_rgba(245,158,11,0.3)]'
+                    ? 'bg-amber/15 text-amber border-b-2 border-amber'
                     : 'bg-dark-600/60 text-text-muted border-b-2 border-dark-500 line-through'
               }`}
             >
@@ -171,7 +335,9 @@ export default function TapStep({ step, onDone }: Props) {
             ) : (
               <X className="w-4 h-4 text-text-muted shrink-0 mt-0.5" />
             )}
-            <p className="text-sm text-text-secondary leading-relaxed">{lastTap.feedback}</p>
+            <p className="text-sm text-text-secondary leading-relaxed">
+              {lastTap.feedback}
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -221,7 +387,9 @@ export default function TapStep({ step, onDone }: Props) {
               className="rounded-xl border border-warm/15 bg-gradient-to-br from-warm/[0.06] to-transparent p-4 flex items-start gap-2.5"
             >
               <Lightbulb className="w-4 h-4 text-warm shrink-0 mt-0.5" />
-              <p className="text-sm text-text-secondary leading-relaxed">{step.takeaway}</p>
+              <p className="text-sm text-text-secondary leading-relaxed">
+                {step.takeaway}
+              </p>
             </motion.div>
             <motion.button
               onClick={handleContinue}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -10,7 +10,6 @@ import {
   BarChart3,
   Clock,
   BookOpen,
-  Brain,
   Target,
   Zap,
   Star,
@@ -48,6 +47,9 @@ import { getLevelInfo } from '../lib/xp';
 import { getQuestProgress, type QuestStatus } from '../lib/quests';
 import { CountUp } from '../components/hud/CountUp';
 import { GlassPanel } from '../components/hud/GlassPanel';
+import { EditorialHero } from '../components/editorial/EditorialHero';
+import { BentoShowcase } from '../components/editorial/BentoShowcase';
+import { Particles } from '../components/fx/Particles';
 import {
   SPRING_CELEBRATION,
   SPRING_FLUID,
@@ -129,6 +131,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-dark-950 relative">
       {/* Ambient scene — mesh gradient + floating orbs */}
       <div className="scene-mesh" aria-hidden />
+      <Particles count={35} />
       <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden>
         <div className="orb orb-1" />
         <div className="orb orb-2" />
@@ -314,114 +317,11 @@ function LevelBadgeRing({
 }
 
 function OnboardingHero({ onStart }: { onStart: () => void }) {
-  const props = [
-    {
-      icon: Brain,
-      title: "Think, don't memorize",
-      sub: 'Every interaction forces reasoning.',
-      color: 'text-accent-light',
-      bg: 'from-accent/15 to-accent/[0.02]',
-      border: 'border-accent/20',
-    },
-    {
-      icon: Target,
-      title: 'Real companies',
-      sub: 'Apple, NVIDIA, Costco — real data.',
-      color: 'text-warm',
-      bg: 'from-warm/12 to-warm/[0.02]',
-      border: 'border-warm/20',
-    },
-    {
-      icon: Layers,
-      title: '5 formats',
-      sub: 'Drills, estimates, decisions & more.',
-      color: 'text-green-light',
-      bg: 'from-green/12 to-green/[0.02]',
-      border: 'border-green/20',
-    },
-  ];
-
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: EASE_CINEMATIC, delay: 0.08 }}
-      className="mb-8"
-    >
-      <GlassPanel tone="accent" aurora scanlines className="px-6 pt-8 pb-6">
-        {/* Overline */}
-        <motion.p
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, delay: 0.15 }}
-          className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent-light/70 mb-3"
-        >
-          Welcome to StockLens
-        </motion.p>
-
-        {/* Headline with gradient text */}
-        <motion.h2
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-[1.15]"
-        >
-          Learn to invest
-          <br />
-          <span className="gradient-text-animated">like a real analyst.</span>
-        </motion.h2>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.35 }}
-          className="text-sm text-text-secondary leading-relaxed mt-3 max-w-md"
-        >
-          Interactive lessons that teach reasoning — not memorization.
-          Free, no account required.
-        </motion.p>
-
-        <div className="hairline my-5" aria-hidden />
-
-        {/* Value prop cards */}
-        <div className="grid grid-cols-3 gap-2">
-          {props.map(({ icon: Icon, title, sub, color, bg, border }, i) => (
-            <motion.div
-              key={title}
-              initial={{ opacity: 0, y: 12, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.4, delay: 0.4 + i * 0.08, ease: EASE_CINEMATIC }}
-              className={`rounded-xl border ${border} bg-gradient-to-br ${bg} p-3 space-y-2 backdrop-blur-sm`}
-            >
-              <div className={`w-7 h-7 rounded-lg bg-dark-900/60 border border-white/[0.06] flex items-center justify-center`}>
-                <Icon className={`w-3.5 h-3.5 ${color}`} />
-              </div>
-              <p className="text-[11px] font-bold text-text-primary leading-tight">{title}</p>
-              <p className="text-[10px] text-text-muted leading-snug">{sub}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* CTA button */}
-        <motion.button
-          onClick={onStart}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.65 }}
-          whileHover={{ scale: 1.015, y: -1 }}
-          whileTap={{ scale: 0.97 }}
-          className="btn-glow w-full flex items-center justify-center gap-2.5 px-5 py-4 rounded-xl
-                     bg-gradient-to-r from-accent via-accent to-signal/80
-                     text-white text-sm font-bold cursor-pointer mt-5
-                     shadow-[0_8px_32px_-8px_rgba(99,102,241,0.7),0_0_0_1px_rgba(99,102,241,0.3)]
-                     hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.8),0_0_0_1px_rgba(99,102,241,0.4)]
-                     transition-shadow duration-300"
-        >
-          Start Learning
-          <ArrowRight className="w-4 h-4" />
-        </motion.button>
-      </GlassPanel>
-    </motion.section>
+    <>
+      <EditorialHero onStart={onStart} />
+      <BentoShowcase />
+    </>
   );
 }
 
@@ -534,8 +434,30 @@ function LessonCard({
   onClick: () => void;
   index: number;
 }) {
+  const tiltRef = useRef<HTMLButtonElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const el = tiltRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const midX = rect.width / 2;
+    const midY = rect.height / 2;
+    const rotateY = ((x - midX) / midX) * 6;
+    const rotateX = ((midY - y) / midY) * 4;
+    el.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02,1.02,1.02)`;
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    const el = tiltRef.current;
+    if (!el) return;
+    el.style.transform = '';
+  }, []);
+
   return (
     <motion.button
+      ref={tiltRef}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
@@ -544,9 +466,10 @@ function LessonCard({
         delay: Math.min(index, 10) * 0.04,
       }}
       onClick={onClick}
-      whileHover={{ y: -3, scale: 1.01 }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       whileTap={{ scale: 0.99 }}
-      className={`group w-full text-left rounded-2xl border p-4 cursor-pointer transition-all duration-300 relative overflow-hidden ${
+      className={`tilt-card glow-on-hover group w-full text-left rounded-2xl border p-4 cursor-pointer transition-all duration-300 relative overflow-hidden ${
         isNext && !completed
           ? 'border-accent/40 bg-gradient-to-br from-accent/[0.08] via-dark-800/80 to-dark-800/40 hover:border-accent/60 shadow-[0_4px_20px_-8px_rgba(99,102,241,0.25)] hover:shadow-[0_8px_40px_-8px_rgba(99,102,241,0.35)]'
           : completed
@@ -725,6 +648,27 @@ function LearnTab({
     ? allLessons.find((l) => l.id === nextId)
     : null;
 
+  const continueTiltRef = useRef<HTMLButtonElement>(null);
+
+  const handleContinueMouseMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const el = continueTiltRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const midX = rect.width / 2;
+    const midY = rect.height / 2;
+    const rotateY = ((x - midX) / midX) * 6;
+    const rotateX = ((midY - y) / midY) * 4;
+    el.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02,1.02,1.02)`;
+  }, []);
+
+  const handleContinueMouseLeave = useCallback(() => {
+    const el = continueTiltRef.current;
+    if (!el) return;
+    el.style.transform = '';
+  }, []);
+
   return (
     <section id="panel-learn" role="tabpanel" className="space-y-6">
       <TabIntro
@@ -735,13 +679,15 @@ function LearnTab({
 
       {nextLesson && (
         <motion.button
+          ref={continueTiltRef}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: EASE_CINEMATIC }}
           onClick={onStart}
-          whileHover={{ y: -2, scale: 1.005 }}
+          onMouseMove={handleContinueMouseMove}
+          onMouseLeave={handleContinueMouseLeave}
           whileTap={{ scale: 0.995 }}
-          className="group w-full flex items-center gap-4 p-5 rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/[0.1] via-accent/[0.04] to-transparent hover:from-accent/[0.14] transition-all duration-300 cursor-pointer text-left overflow-hidden relative shadow-[0_4px_24px_-8px_rgba(99,102,241,0.2)] hover:shadow-[0_8px_40px_-8px_rgba(99,102,241,0.3)]"
+          className="tilt-card glow-on-hover group w-full flex items-center gap-4 p-5 rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/[0.1] via-accent/[0.04] to-transparent hover:from-accent/[0.14] transition-all duration-300 cursor-pointer text-left overflow-hidden relative shadow-[0_4px_24px_-8px_rgba(99,102,241,0.2)] hover:shadow-[0_8px_40px_-8px_rgba(99,102,241,0.3)]"
         >
           {/* Glow orb */}
           <div className="absolute -top-12 -right-12 w-32 h-32 bg-accent/10 rounded-full blur-3xl pointer-events-none" />

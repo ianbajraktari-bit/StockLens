@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -33,6 +33,8 @@ import {
   getStreak,
   getSkillLabel,
 } from '../lib/progression';
+import { Particles } from '../components/fx/Particles';
+import { ConfettiBurst } from '../components/fx/ConfettiBurst';
 import { getLevelInfo, getTotalXp, titleForLevel } from '../lib/xp';
 import { getEarnedQuestSet, getQuestById, type Quest } from '../lib/quests';
 
@@ -173,6 +175,7 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
       <div className="min-h-screen bg-dark-950 relative overflow-hidden">
         {/* Ambient scene */}
         <div className="scene-mesh" />
+        <Particles count={25} />
         <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden>
           <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full blur-[100px] ${
             isCompany ? 'bg-warm/[0.06]' : 'bg-accent/[0.06]'
@@ -365,7 +368,7 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
             onClick={() => setPhase('running')}
             whileHover={{ scale: 1.015, y: -1 }}
             whileTap={{ scale: 0.97 }}
-            className={`btn-glow w-full py-4 rounded-2xl font-bold text-sm cursor-pointer flex items-center justify-center gap-2.5 text-white transition-shadow duration-300 ${
+            className={`btn-glow press-squish w-full py-4 rounded-2xl font-bold text-sm cursor-pointer flex items-center justify-center gap-2.5 text-white transition-shadow duration-300 ${
               isCompany
                 ? 'bg-gradient-to-r from-warm via-warm to-amber shadow-[0_8px_32px_-8px_rgba(245,158,11,0.5),0_0_0_1px_rgba(245,158,11,0.25)] hover:shadow-[0_12px_40px_-8px_rgba(245,158,11,0.6)]'
                 : 'bg-gradient-to-r from-accent via-accent to-signal/80 shadow-[0_8px_32px_-8px_rgba(99,102,241,0.6),0_0_0_1px_rgba(99,102,241,0.25)] hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.7)]'
@@ -404,6 +407,7 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
   return (
     <div className="min-h-screen bg-dark-950 relative">
       <div className="scene-mesh" />
+      <Particles count={20} />
       <div className="relative z-10 max-w-2xl mx-auto px-4 py-6 space-y-5">
         {/* Header + Progress */}
         <div className="space-y-3">
@@ -427,7 +431,7 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
                       i < stepIndex
                         ? 'bg-accent shadow-[0_0_4px_rgba(99,102,241,0.4)]'
                         : i === stepIndex
-                          ? 'bg-accent-light shadow-[0_0_6px_rgba(129,140,248,0.5)]'
+                          ? 'bg-accent-light shadow-[0_0_6px_rgba(129,140,248,0.5)] progress-glow'
                           : ''
                     }`}
                     initial={false}
@@ -520,6 +524,7 @@ function CompletionScreen({
     <div className="relative min-h-screen bg-dark-950 flex items-center justify-center p-4 overflow-hidden">
       {/* Ambient glow */}
       <div className="scene-mesh" />
+      <Particles count={isPerfect ? 40 : 20} />
       <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden>
         <div className={`absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full blur-[120px] ${
           isPerfect ? 'bg-warm/[0.08]' : 'bg-accent/[0.06]'
@@ -527,7 +532,7 @@ function CompletionScreen({
       </div>
 
       {/* Confetti overlay for perfect scores */}
-      {isPerfect && <Confetti />}
+      <ConfettiBurst show={isPerfect} />
 
       <motion.div
         initial={{ opacity: 0, scale: 0.93, y: 20 }}
@@ -578,7 +583,7 @@ function CompletionScreen({
           </div>
 
           {/* Score */}
-          <div className="rounded-2xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-5 space-y-3 mx-auto max-w-xs">
+          <div className="rounded-2xl border border-white/[0.06] bg-dark-800/50 backdrop-blur-sm p-5 space-y-3 mx-auto max-w-xs tilt-card glow-on-hover">
             <div className="flex items-center justify-center gap-3">
               <Sparkles className="w-4 h-4 text-accent-light" />
               <p className="text-3xl font-extrabold text-text-primary tabular-nums">
@@ -848,14 +853,14 @@ function CompletionScreen({
         <div className="flex gap-2.5">
           <button
             onClick={onHome}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border border-white/[0.06] bg-dark-800/40 hover:bg-dark-800/70 hover:border-white/[0.1] text-text-secondary text-xs font-semibold transition-all cursor-pointer backdrop-blur-sm"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border border-white/[0.06] bg-dark-800/40 hover:bg-dark-800/70 hover:border-white/[0.1] text-text-secondary text-xs font-semibold transition-all cursor-pointer backdrop-blur-sm press-squish glow-on-hover"
           >
             <Home className="w-3.5 h-3.5" />
             Home
           </button>
           <button
             onClick={onRestart}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border border-white/[0.06] bg-dark-800/40 hover:bg-dark-800/70 hover:border-white/[0.1] text-text-muted text-xs font-semibold transition-all cursor-pointer backdrop-blur-sm"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border border-white/[0.06] bg-dark-800/40 hover:bg-dark-800/70 hover:border-white/[0.1] text-text-muted text-xs font-semibold transition-all cursor-pointer backdrop-blur-sm press-squish glow-on-hover"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Try Again
@@ -951,76 +956,6 @@ function SkillLevelUpRow({ delta, index }: { delta: SkillDelta; index: number })
           />
         )}
       </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// Confetti — lightweight framer-motion piece-shower for perfect scores
-// ─────────────────────────────────────────────────────────────────────
-
-const CONFETTI_COLORS = [
-  '#6366f1', // accent
-  '#818cf8', // accent-light
-  '#22c55e', // green
-  '#f59e0b', // warm
-  '#f1f5f9', // text-primary
-];
-
-function Confetti() {
-  // Respect prefers-reduced-motion — render nothing if the user has opted out
-  const reducedMotion = useMemo(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return false;
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  }, []);
-
-  const pieces = useMemo(() => {
-    const count = 28;
-    return Array.from({ length: count }).map((_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      delay: Math.random() * 0.35,
-      duration: 1.8 + Math.random() * 1.4,
-      size: 6 + Math.random() * 6,
-      color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
-      rotateEnd: (Math.random() - 0.5) * 720,
-      drift: (Math.random() - 0.5) * 80,
-    }));
-  }, []);
-
-  if (reducedMotion) return null;
-
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 overflow-hidden z-0"
-    >
-      {pieces.map((p) => (
-        <motion.span
-          key={p.id}
-          initial={{ y: -40, x: 0, opacity: 0, rotate: 0 }}
-          animate={{
-            y: ['-10%', '110%'],
-            x: [0, p.drift],
-            opacity: [0, 1, 1, 0],
-            rotate: [0, p.rotateEnd],
-          }}
-          transition={{
-            duration: p.duration,
-            delay: p.delay,
-            ease: 'easeIn',
-            times: [0, 0.1, 0.85, 1],
-          }}
-          style={{
-            left: `${p.left}%`,
-            width: p.size,
-            height: p.size * 0.4,
-            backgroundColor: p.color,
-            borderRadius: 2,
-          }}
-          className="absolute top-0 block"
-        />
-      ))}
     </div>
   );
 }
