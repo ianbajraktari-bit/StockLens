@@ -1,13 +1,13 @@
-import { Building2, TrendingUp, Users, Lightbulb, Zap, Calculator } from 'lucide-react';
+import { Building2, TrendingUp, Users, Lightbulb, Zap, Search } from 'lucide-react';
 import type { Lesson } from './types';
 
 export const foundationsMarketLesson: Lesson = {
   id: 'foundations-market',
   emoji: '📈',
   title: 'What Is the Stock Market?',
-  subtitle: 'Stocks, shares, and why prices move — from zero',
+  subtitle: 'What you\'re actually buying — and why most people get it wrong',
   description:
-    "Before you learn about revenue or profit, you need to understand what you're actually buying when you buy a stock. This lesson starts at the very beginning: what the stock market is, what a share represents, why prices change, and how the whole system works. No prior knowledge required.",
+    'Most people think stocks are just numbers on a screen that go up and down. They\'re not. This lesson rewires how you think about the stock market — from what ownership actually means to why a stock can drop 20% on great news.',
   estimatedMinutes: 3,
   dataAsOf: '',
   tier: 'foundations-1',
@@ -20,195 +20,149 @@ export const foundationsMarketLesson: Lesson = {
     { label: 'The difference between investing and gambling', icon: Lightbulb },
   ],
   steps: [
-    // ─────────────────────────────────────────────────────────────────
-    // 1. Decide: What does owning a stock actually mean?
-    //
-    // Why a decide first: the biggest misconception beginners have is
-    // that stocks are abstract ticker symbols on a screen. This
-    // reframes a stock as owning a piece of a real business.
-    // ─────────────────────────────────────────────────────────────────
+    // Hook with a real estimation that exposes ignorance
+    {
+      kind: 'estimate',
+      topic: 'Reality Check',
+      topicIcon: TrendingUp,
+      context:
+        'Before we get into theory, let\'s test your instincts. The S&P 500 is an index that tracks the 500 largest US companies — Apple, Google, Amazon, JPMorgan, and hundreds more. It\'s the most common benchmark for "how the stock market is doing."',
+      question: 'Over the last 100 years, the S&P 500 has returned roughly what percent per year on average?',
+      answer: 10,
+      tolerance: 4,
+      unit: '%',
+      hint: 'Think about what you\'ve heard — is the market more like a savings account or a rocket ship?',
+      reveal:
+        'About 10% per year, on average. That means $10,000 invested in 1925 would be worth over $85 million today. Not because of luck or timing — because businesses generate real profits, and those profits compound. This is the single most important number in investing, and most people have never heard it.',
+      takeaway: 'The stock market has returned ~10%/year for a century — not because of speculation, but because real businesses earn real profits that compound over time.',
+    },
+
+    // Reframe what ownership means
     {
       kind: 'decide',
       topic: 'What You\'re Actually Buying',
       topicIcon: Building2,
       context:
-        'Your neighbor Maria owns a pizza shop. It\'s doing well — making real money, serving real customers. One day she offers to sell you a small piece of the business. If you buy in, you\'d own a fraction of everything: a share of the ovens, the brand, the recipes, and — most importantly — a share of the profits.\n\nNow imagine Maria\'s pizza shop is listed on the stock market. Instead of buying "a piece of Maria\'s shop" directly from her, you buy it through an exchange. That piece is called a share.',
-      question: 'When you buy a share of stock, what are you actually buying?',
+        'In January 2023, you could buy one share of Apple for about $130. Apple had roughly 15.8 billion shares outstanding. That means each share represented 1/15,800,000,000th of the company — its cash ($50B+), its brand, its patents, its stores, and its future profits.\n\nSome people saw AAPL going from $130 to $230 and thought "wow, the stock went up." But here\'s what actually happened: Apple earned $97 billion in profit that year. That profit belongs to shareholders — including you, if you owned even one share.',
+      question: 'What\'s the most useful way to think about a share of stock?',
       options: [
-        'A ticket that goes up or down in price — like a lottery ticket with better odds',
-        'A small ownership stake in a real business — its assets, earnings, and future',
-        'A loan to the company that they\'ll pay back with interest',
-        'A membership that lets you use the company\'s products for free',
+        'A bet on whether the price will go up or down next week',
+        'A tiny ownership stake in a real business — its assets, profits, and future',
+        'A contract that guarantees you\'ll make money if you hold long enough',
+        'A number on a screen that moves based on what traders are feeling',
       ],
       correctIndex: 1,
       punchline:
-        'A share of stock is a piece of a real business. When you buy one share of Apple, you literally own a tiny fraction of every Apple Store, every iPhone patent, and every dollar of profit. It\'s not a lottery ticket — it\'s ownership.',
+        'A share is literally a piece of a business. When Apple earns $6.13 per share in profit, that\'s YOUR $6.13 if you own one share. It\'s not a bet, not a guarantee, not a feeling. It\'s ownership — and ownership is what makes the stock market fundamentally different from a casino.',
       wrongNudges: [
-        'A lottery ticket\'s value is random. A stock\'s value is tied to a real business that earns real money. Prices move, but not randomly — they track what the business is actually worth.',
+        'This is how day traders think, and 80% of them lose money. Short-term price movements are noise. The signal is what the business actually earns.',
         '',
-        'That\'s a bond, not a stock. Bonds are loans. Stocks are ownership. Bondholders get fixed interest payments; stockholders own a piece of the profits, which can grow — or shrink.',
-        'Owning Apple stock doesn\'t get you free iPhones. It gets you something better — a claim on the profits from everyone else buying iPhones.',
+        'Nothing in investing is guaranteed. Apple could have a terrible year. What ownership gives you is a claim on profits — but only if the business keeps earning them.',
+        'Prices do move on emotion short-term. But over years, they track earnings almost perfectly. The "number on a screen" is anchored to a real business underneath.',
       ],
-      takeaway: 'A stock is not a ticker symbol or a line on a chart. It\'s a piece of a real business. Every time you buy a share, you become a part-owner of that company.',
+      takeaway: 'Every share represents ownership of a real business. The stock price bounces around daily, but over years it follows earnings. Own the business, not the ticker.',
     },
 
-    // ─────────────────────────────────────────────────────────────────
-    // 2. Drill: Quick classification — how stocks work
-    //
-    // Why a drill: beginners need to build rapid recognition of the
-    // basic mechanics: what shares are, what exchanges do, what
-    // brokers do, and when markets are open.
-    // ─────────────────────────────────────────────────────────────────
+    // Drill that escalates from easy to genuinely tricky
     {
       kind: 'drill',
-      topic: 'How the System Works',
+      topic: 'Investor vs. Gambler',
       topicIcon: Zap,
-      intro: 'Stocks involve a few key players and concepts. Sort each statement: is it true or false?',
+      intro: 'Can you tell the difference between an investing decision and a gambling decision? These start easy and get harder.',
       prompts: [
         {
-          setup: 'A company splits itself into 1,000,000 equal shares. Each share represents an identical piece of ownership.',
-          left: { label: 'True', sublabel: 'that\'s how shares work' },
-          right: { label: 'False', sublabel: 'shares don\'t work that way' },
+          setup: 'Person A buys an index fund that holds 500 companies and plans to hold for 20 years. Person B puts $5,000 on a single spin of roulette.',
+          left: { label: 'A is investing', sublabel: 'diversified, long-term' },
+          right: { label: 'B is investing', sublabel: 'risking real money' },
           correct: 'left',
-          flash: 'Shares are equal slices of ownership. If a company has 1,000,000 shares and you own 1,000, you own 0.1% of the business — and 0.1% of the profits.',
+          flash: 'Easy one. A owns 500 real businesses. B is betting on chance. Risk isn\'t what makes something gambling — it\'s whether the expected value is positive or negative.',
         },
         {
-          setup: 'A stock exchange is a place where buyers and sellers meet to trade shares — like a farmers\' market, but for ownership stakes in companies.',
-          left: { label: 'True', sublabel: 'exchanges connect buyers and sellers' },
-          right: { label: 'False' },
+          setup: 'Person A reads Apple\'s financial reports, believes the stock is undervalued, and buys shares. Person B buys Apple because their coworker said "it\'s going to the moon."',
+          left: { label: 'A is investing', sublabel: 'researched the business' },
+          right: { label: 'Both are investing', sublabel: 'both bought the same stock' },
           correct: 'left',
-          flash: 'The NYSE and Nasdaq are stock exchanges. They don\'t own the stocks — they provide the marketplace where millions of buyers and sellers find each other.',
+          flash: 'Same stock, totally different decisions. A made an informed judgment about the business. B is gambling on someone else\'s hype. The quality of your reasoning matters, not just the outcome.',
         },
         {
-          setup: 'A broker is a company you hire to buy and sell stocks on your behalf. You can\'t walk into the NYSE and buy shares yourself.',
-          left: { label: 'True', sublabel: 'brokers handle the transactions' },
-          right: { label: 'False' },
-          correct: 'left',
-          flash: 'Fidelity, Schwab, Robinhood — these are all brokers. They execute your trades on the exchange. Think of them as your middleman to the stock market.',
-        },
-        {
-          setup: 'You can buy and sell stocks 24 hours a day, 7 days a week, any time you want.',
-          left: { label: 'True' },
-          right: { label: 'False', sublabel: 'markets have hours' },
+          setup: 'A tech stock drops 30% after a bad earnings report. Person A sells immediately "before it drops more." Person B reads the report, decides the core business is fine, and buys more shares.',
+          left: { label: 'A made the better call', sublabel: 'cut losses quickly' },
+          right: { label: 'B made the better call', sublabel: 'bought the fear' },
           correct: 'right',
-          flash: 'US stock markets are open Monday–Friday, 9:30 AM to 4:00 PM Eastern. Outside those hours, the market is closed. Some brokers offer limited after-hours trading, but most volume happens during market hours.',
+          flash: 'A reacted to price. B analyzed the business. Some of Warren Buffett\'s best investments came from buying great companies during panics. Price drops are information, not commands.',
         },
         {
-          setup: 'When a company first sells shares to the public, it\'s called an IPO (Initial Public Offering). Before that, the company is "private" — ordinary people can\'t buy shares.',
-          left: { label: 'True', sublabel: 'IPO = going public' },
-          right: { label: 'False' },
-          correct: 'left',
-          flash: 'An IPO is when a private company sells shares to the public for the first time. Before the IPO, only founders, employees, and private investors owned shares. After it, anyone with a brokerage account can buy in.',
-        },
-        {
-          setup: 'If you own one share of a company and the company makes a bad decision, you could be personally sued and lose your house.',
-          left: { label: 'True' },
-          right: { label: 'False', sublabel: 'your risk is limited' },
+          setup: 'Person A puts their entire savings into a single biotech stock because the drug in clinical trials "could be worth 100x." Person B puts 5% of their portfolio into the same stock after researching the drug\'s potential.',
+          left: { label: 'A is smarter', sublabel: 'will make 100x if it works' },
+          right: { label: 'B is smarter', sublabel: 'controlled the risk' },
           correct: 'right',
-          flash: 'Stockholders have "limited liability." The most you can lose is what you paid for the shares. You can\'t be sued for the company\'s debts or mistakes. This is one of the key features that makes stock ownership possible.',
+          flash: 'The drug might work. But "might" is doing a lot of work in A\'s plan. Position sizing is the difference between a calculated bet and a life-changing mistake. B can be right AND survive being wrong.',
+        },
+        {
+          setup: 'Person A buys a stock at $50, it rises to $80, and they sell because "I want to lock in my profit." The company\'s earnings are still growing 25% per year. Person B holds.',
+          left: { label: 'A was right to sell', sublabel: 'a 60% gain is great' },
+          right: { label: 'B was right to hold', sublabel: 'the business is still growing' },
+          correct: 'right',
+          flash: 'This is the "disposition effect" — one of the most expensive mistakes in investing. Selling a winning business because the price went up is like leaving a job because you got a raise. The price going up isn\'t a reason to sell if the business is still getting better.',
         },
       ],
-      takeaway: 'Shares are equal pieces of ownership. Exchanges connect buyers and sellers. Brokers execute your trades. Markets have set hours. And your risk is limited to what you invest — nothing more.',
+      takeaway: 'Investing is owning businesses based on analysis. Gambling is betting on price movements based on hope. The line isn\'t always obvious — but the quality of your reasoning is what separates them.',
     },
 
-    // ─────────────────────────────────────────────────────────────────
-    // 3. Estimate: Make ownership concrete with math
-    //
-    // Why an estimate: abstract "ownership" becomes real when you
-    // calculate your actual dollar share of profits. This is the
-    // moment the concept clicks.
-    // ─────────────────────────────────────────────────────────────────
+    // Tap step: find what actually moves a stock price (NOT "find red flags")
     {
-      kind: 'estimate',
-      topic: 'Your Slice of the Pie',
-      topicIcon: Calculator,
-      context:
-        'Let\'s say Maria\'s pizza shop goes public. The company is split into 10,000 total shares. You buy 100 of them. That means you own 100 ÷ 10,000 = 1% of the business.\n\nThis year, the pizza shop earns $500,000 in profit after paying all expenses — rent, ingredients, employees, taxes, everything.',
-      question: 'You own 1% of the company. How much of that $500,000 profit is "yours"?',
-      answer: 5000,
-      tolerance: 500,
-      unit: '$',
-      hint: '1% of $500,000',
+      kind: 'tap',
+      topic: 'What Actually Moves Prices',
+      topicIcon: Search,
+      intro: 'Here\'s a news day for a fictional company called CloudCo. Some of these events will actually move the stock price. Others are noise. Tap the ones that would genuinely change what investors think about the business.',
+      passage: [
+        { type: 'text', value: 'CloudCo daily news roundup: ' },
+        { type: 'chip', value: 'CEO posts vacation photo on Instagram', signal: false, feedback: 'Unless the CEO is doing something scandalous, their personal life is noise. Markets don\'t care about beach selfies.' },
+        { type: 'text', value: ' · ' },
+        { type: 'chip', value: 'Largest customer (30% of revenue) announces they\'re switching to a competitor', signal: true, feedback: 'This is a direct threat to 30% of revenue. Losing your biggest customer is one of the most impactful things that can happen to a business.' },
+        { type: 'text', value: ' · ' },
+        { type: 'chip', value: 'A famous investor mentions CloudCo in a podcast', signal: false, feedback: 'Celebrity endorsements create temporary buzz, not lasting value. The business hasn\'t changed — just the amount of attention on it.' },
+        { type: 'text', value: ' · ' },
+        { type: 'chip', value: 'Quarterly earnings beat expectations by 15%', signal: true, feedback: 'Earnings beating expectations means the business is doing better than the market thought. This is new information that reprices the stock.' },
+        { type: 'text', value: ' · ' },
+        { type: 'chip', value: 'Stock price dropped 3% on a day when the whole market dropped 3%', signal: false, feedback: 'When everything drops together, it tells you nothing about CloudCo specifically. This is market-wide noise, not company-specific signal.' },
+        { type: 'text', value: ' · ' },
+        { type: 'chip', value: 'CloudCo\'s patent for core technology gets invalidated by a court', signal: true, feedback: 'A patent is part of the moat. Losing it means competitors can copy the technology — this structurally changes the competitive landscape.' },
+        { type: 'text', value: ' · ' },
+        { type: 'chip', value: 'An analyst sets a price target 10% higher', signal: false, feedback: 'Analyst price targets are opinions, not facts. They\'re often wrong and frequently follow the stock price rather than leading it.' },
+        { type: 'text', value: ' · ' },
+        { type: 'chip', value: 'CFO unexpectedly resigns and company delays its annual report', signal: true, feedback: 'A CFO leaving suddenly + delayed financial reporting is a red flag combination. It suggests something might be wrong with the numbers — this is how accounting scandals often start.' },
+      ],
+      requiredSignals: 4,
       reveal:
-        '1% × $500,000 = $5,000. That\'s your share of the profit. You own 100 shares, and each one represents $50 of annual profit ($500,000 ÷ 10,000 shares). On Wall Street, this "$50 per share" number is called "earnings per share" or EPS. It\'s one of the most important numbers in investing — and you just calculated it.',
-      takeaway: 'Ownership isn\'t abstract. If you own 1% of a company, you own 1% of the profits. Earnings per share (EPS) tells you how much profit each share represents — it\'s the bridge between "business" and "stock."',
+        'The events that actually change a stock\'s value are the ones that change the BUSINESS — losing a major customer, beating earnings, losing a patent, or a CFO suddenly leaving. Celebrity mentions, analyst opinions, and market-wide moves are noise. Train yourself to ask: "Does this change the business, or just the attention on it?"',
+      takeaway: 'Stock prices should move on business fundamentals — earnings, competitive position, management integrity. Everything else is noise. The hardest skill in investing is telling the difference.',
     },
 
-    // ─────────────────────────────────────────────────────────────────
-    // 4. Decide: Why do stock prices change?
-    //
-    // Why a decide: this is the hardest concept for beginners —
-    // prices reflect expectations about the future, not just today's
-    // reality. This connects directly to the expectations lesson.
-    // ─────────────────────────────────────────────────────────────────
+    // Thinking step — force synthesis
     {
-      kind: 'decide',
-      topic: 'Why Prices Move',
-      topicIcon: TrendingUp,
-      context:
-        'Maria\'s pizza shop is earning $500,000/year in profit. The stock trades at $100 per share. Then two things happen:\n\n1. A food blogger with 2 million followers posts a glowing review. Suddenly, the line is out the door.\n2. Maria announces she\'s opening 3 new locations next year.\n\nThe business hasn\'t earned a single extra dollar yet. But investors see this news and think: "This shop is about to make a lot more money." So they rush to buy shares. With more people wanting to buy than sell, the price gets bid up — from $100 to $140.',
-      question: 'Why did the stock price rise before the profits actually increased?',
-      options: [
-        'The stock market is irrational — prices move randomly and don\'t reflect reality',
-        'The blogger\'s review made the company "famous," and famous companies have higher stock prices',
-        'Investors expected higher future profits, so more people rushed to buy than sell — and buying pressure pushed the price up',
-        'The number of shares decreased, so each remaining share is worth more automatically',
+      kind: 'thinking',
+      prompt: 'A friend tells you: "I don\'t invest because the stock market is just gambling for rich people." Based on what you\'ve learned, what would you say to them? Be specific — use at least one fact or concept from this lesson.',
+      placeholder: 'Think about what stocks actually represent, the historical returns, and the difference between investing and gambling...',
+      modelAnswer:
+        'I\'d tell them that buying a stock isn\'t placing a bet — it\'s buying a tiny piece of a real business. When you buy an S&P 500 index fund, you own a sliver of 500 companies that employ millions of people, serve billions of customers, and collectively earn hundreds of billions in profit every year. Over the last century, that ownership has returned about 10% per year on average. That\'s not a casino — casinos are designed so you lose. Businesses are designed to generate profit. The stock market just lets you own a piece of them. The "gambling" criticism usually comes from people who\'ve only seen short-term price swings on TV. But zooming out, the market tracks business earnings almost perfectly. The risk is real — businesses can fail — but the expected value is positive, which is the exact opposite of gambling.',
+      strongReasoningIncludes: [
+        'Distinguishes between owning a business (positive expected value) and gambling (negative expected value)',
+        'References a specific fact — like the 10% historical return or what a share actually represents',
+        'Acknowledges risk while explaining why risk doesn\'t equal gambling',
       ],
-      correctIndex: 2,
-      punchline:
-        'Prices move through a chain reaction: new information changes expectations, expectations drive buy and sell decisions, and the balance of buyers vs. sellers sets the price. More buyers than sellers? Price rises. More sellers than buyers? Price falls. Every price movement is the result of people acting on what they believe the future holds.',
-      wrongNudges: [
-        'Markets aren\'t perfectly rational, but they\'re not random either. The price rose for a specific reason: investors read the news, expected higher profits, and placed buy orders. More buyers than sellers pushed the price up. That\'s the market working, not failing.',
-        '',
-        'Fame alone doesn\'t move prices — the flow of buy and sell orders does. The review matters because it changed profit expectations, which caused investors to buy. If the review went viral but nobody actually visited, no one would rush to buy shares, and the price wouldn\'t move.',
-        'The number of shares didn\'t change. Share count only changes through specific corporate actions like stock splits or buybacks. What changed here is how many people wanted to buy vs. sell — driven by new expectations about future profits.',
-      ],
-      takeaway: 'Stock prices move when new information changes expectations, causing more people to buy or sell. The price is set by the balance of buyers and sellers — and that balance shifts every time the outlook for the business changes.',
-    },
-
-    // ─────────────────────────────────────────────────────────────────
-    // 5. Decide: Is the stock market just gambling?
-    //
-    // Why a decide: this is the most common objection beginners have,
-    // and clearing it up is essential before they continue learning.
-    // The right answer distinguishes investing from speculation.
-    // ─────────────────────────────────────────────────────────────────
-    {
-      kind: 'decide',
-      topic: 'Investing vs. Gambling',
-      topicIcon: Lightbulb,
-      context:
-        'A friend says: "The stock market is basically gambling. You put money in, prices go up or down, and you either win or lose. It\'s just a casino with better marketing."\n\nMillions of people believe this. It\'s one of the biggest reasons people avoid investing entirely. But is it accurate?',
-      question: 'What\'s the most accurate response?',
-      options: [
-        'Stocks are risky because prices are unpredictable — so yes, it\'s a form of gambling',
-        'It depends on whether you do research first — informed stock picks aren\'t gambling, but uninformed ones are',
-        'It\'s gambling if you buy randomly, but investing if you understand the business. Gambling has negative expected value; owning good businesses has positive expected value over time',
-        'It\'s not gambling because the stock market is regulated and protected by the government',
-      ],
-      correctIndex: 2,
-      punchline:
-        'At a casino, the odds are rigged against you — the house always wins over time. In the stock market, you\'re buying real businesses that create real value. The S&P 500 has returned ~10% per year for a century — because the businesses inside it keep earning profits. The market isn\'t a casino. It\'s an ownership marketplace.',
-      wrongNudges: [
-        'Risk and gambling aren\'t the same thing. Crossing the street is risky, but it\'s not gambling. Stocks are volatile in the short term, but they represent real businesses earning real profits. A casino chip represents nothing — that\'s the key difference.',
-        '',
-        'Research helps, but that\'s not the core distinction. Even without research, buying a broad index fund isn\'t gambling — because you own hundreds of real businesses designed to earn profits. The difference is about expected value: casinos are structured so the house wins; businesses are structured to create value.',
-        'Regulation doesn\'t make something "not gambling" — casinos are regulated too. The real difference is what you own. A casino chip is a bet on chance. A stock is ownership of a real business that generates profits. The structure of the game matters, not who oversees it.',
-      ],
-      takeaway: 'Gambling is betting on chance. Investing is buying ownership in businesses that create value. The key difference: casinos are designed so you lose over time; businesses are designed to earn profits over time.',
     },
   ],
   takeaways: [
-    'A stock is a piece of a real business. When you buy a share, you become a part-owner — with a claim on real profits, not just a line on a chart.',
-    'Shares are equal slices of ownership. Exchanges are marketplaces. Brokers execute your trades. Your risk is limited to what you invest.',
-    'Stock prices reflect expectations about the future. When investors believe profits will grow, they bid the price up today — before the growth actually happens.',
-    'Investing is not gambling. Gambling has negative expected value; owning real businesses that earn real profits has positive expected value over time.',
-    'Now that you know what stocks are, the next question is: how does a business actually make money — and how much does it keep?',
+    'A stock is ownership of a real business — its assets, profits, and future. Not a ticker symbol, not a lottery ticket.',
+    'The stock market has returned ~10%/year for 100 years because real businesses earn real profits that compound.',
+    'Prices move when new information changes what investors expect the business will earn. Good reasoning separates investing from gambling.',
+    'Signal vs noise: only care about events that change the business itself — earnings, customers, competition, management. Ignore celebrity mentions, analyst targets, and market-wide swings.',
   ],
   completionMessages: {
-    perfect: 'Flawless. You now understand what most people never bother to learn — what you\'re actually buying when you buy a stock.',
-    great: 'Strong start. You\'ve got the foundation: stocks are ownership, prices reflect expectations, and investing is not a coin flip.',
-    good: 'Good foundation. These are the building blocks for everything that follows — understanding what stocks are and why prices move.',
-    low: 'Worth revisiting. Everything in investing builds on these basics — what a stock is, how ownership works, and why prices change.',
+    perfect: 'Perfect. You now understand what stocks actually are — which puts you ahead of most people who own them.',
+    great: 'Strong start. You\'ve got the core insight: stocks are businesses, not bets.',
+    good: 'Solid foundation. The key concept — stocks are ownership, not gambling — will underpin everything else you learn.',
+    low: 'Worth revisiting. Everything in investing builds on this: what a stock is, why prices move, and why it\'s not gambling.',
   },
 };
