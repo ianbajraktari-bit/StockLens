@@ -6,15 +6,30 @@
 - **Repository:** `ianbajraktari-bit/StockLens` on GitHub
 - **Production deployment:** Vercel (auto-deploys from `main`)
 - **Lesson count:** 38 lessons (28 foundations + 10 company deep dives) + Analyst Mode (16 seeded companies across every major sector)
-- **Architecture:** Step-based (`steps: LessonStep[]` with `kind: 'drill' | 'estimate' | 'decide' | 'tap' | 'thinking'`)
+- **Step kinds:** `drill | estimate | decide | tap | thinking | compare`
+- **Research Journal:** the connective spine — every memo, reflection, and note the user produces lands in `lib/journal.ts` (localStorage-backed, auto-imports legacy analyst responses)
+- **Product status:** mid-pivot from "curriculum-as-main-loop" to "Hub + Apprenticeship." See **Product Roadmap** section. Phase 1 (Journal foundation) shipped; Phase 2 (Simulator) is next.
 
 > **IMPORTANT:** Before making changes, run `git fetch origin main` and verify your local `main` matches remote. The codebase uses the step-based architecture (NOT the old `questions: QuizQuestion[]` format). If you see `QuizQuestion` anywhere, you are on a stale branch.
 
 ## What This Project Is
 
-StockLens is a Duolingo-style app that teaches people how to think like investors. Not memorize facts — **think**. The app teaches users to form opinions on companies, weigh risks against valuations, and make investment decisions using real reasoning.
+StockLens is a **hub for becoming an investor** — not a Duolingo-style quiz app dressed in stock vocabulary. The North Star: a beginner with no prior knowledge can use this app to become someone who can pick up any public company's 10-K, work through a reasoned analysis, and form a defensible investment opinion.
 
-The core design principle: **every interaction should force the user to think, not just read.**
+The product runs on an **apprenticeship model**, not a curriculum model. Lessons are a *resource* the user consults; the *main loop* is doing the work — analyzing companies, writing memos, holding theses through changing data, and tracking your own track record over time. We are explicitly not Duolingo for stocks. The Duolingo mechanic (drill-and-recall via SRS) maps well to memorization domains like languages and badly to judgment-under-uncertainty domains like investing. Duolingo themselves figured this out — Duolingo Math and Music both struggled for the same reason.
+
+The core design principle: **every interaction should force the user to think, not just read.** The corollary, post-pivot: **every interaction should also produce a written artifact the user owns.** Writing is how skill compounds.
+
+## The Four Layers of Investing Skill
+
+This is the anchor. Every product decision should be asked: *which layer does this build?* If the answer is "none," cut it.
+
+1. **Vocabulary** (~100 terms — margin, P/E, moat, recurring revenue, etc.). Small, mostly memorizable. *This* is where Duolingo-style mechanics work. Drills, flashcards, definitions. Foundations Phase 1 lives here.
+2. **Mental models** (~30 patterns — how moats work, how cycles work, how cash differs from earnings, how operating leverage cuts both ways). Memorize-able conceptually, only useful in context. Foundations Phase 2 + company deep dives target this layer.
+3. **Judgment under uncertainty** — given an ambiguous real situation, form a defensible view at a defensible price. *This is the actual skill.* Cannot be drilled. Built by repeated exposure to ambiguous decisions where smart people disagree. Analyst Mode + the new `compare` step (open-call mode) + the Simulator (Phase 2) target this layer.
+4. **Emotional discipline** — hold conviction through a 30% drawdown, change your mind when facts change without flipping with sentiment, sit on cash when nothing is attractive. The thing that actually determines long-term outcomes. *No app currently teaches this.* The Simulator (Phase 2) is the only mechanic that builds it — because the user must commit before knowing outcomes.
+
+When evaluating a feature: layers 1-2 are *table stakes*; layers 3-4 are the *moat*. Most investing edu apps stop at layer 2 and call it a day. We don't.
 
 ## Tech Stack
 
@@ -36,17 +51,21 @@ src/
 ├── index.css                        # Tailwind @theme (dark mode, custom colors)
 ├── components/
 │   ├── ErrorBoundary.tsx            # React class error boundary with recovery UI
+│   ├── LessonReflectionCard.tsx     # Optional structured-prompt card on lesson completion → journal entry
 │   └── steps/
 │       ├── DrillStep.tsx            # Binary choice drill (left/right taps)
 │       ├── EstimateStep.tsx         # Numeric estimation with tolerance
 │       ├── TapStep.tsx              # Signal-finding in text passages
 │       ├── DecideStep.tsx           # Multiple choice with punchline reveal
+│       ├── CompareStep.tsx          # Side-by-side candidate comparison (decisive + open-call)
 │       └── ThinkingStepComponent.tsx # Free-response synthesis
 ├── pages/
-│   ├── HomePage.tsx                 # Lesson grid, progress tracking, skills display
-│   └── LessonRunner.tsx             # Intro → steps → completion state machine
+│   ├── HomePage.tsx                 # Lesson grid, progress tracking, skills display, Journal entry point
+│   ├── LessonRunner.tsx             # Intro → steps → completion (reflection card included)
+│   └── JournalPage.tsx              # Research Journal feed: stats, composer, filters, search, entries
 ├── lib/
-│   └── progression.ts              # localStorage: completion, scores, skills tracking
+│   ├── progression.ts              # localStorage: completion, scores, skills tracking
+│   └── journal.ts                   # Research Journal: entry types, CRUD, lazy import, stats
 └── data/
     └── lessons/
         ├── types.ts                 # LessonStep union, Lesson, Skill, LessonTier
@@ -96,6 +115,7 @@ Each lesson contains a `steps: LessonStep[]` array. Steps are a discriminated un
 | `'tap'` | `TapStep` | Find signals in a text passage |
 | `'decide'` | `DecideStep` | Multiple choice with punchline reveal |
 | `'thinking'` | `ThinkingStepComponent` | Free-response synthesis (no grading) |
+| `'compare'` | `CompareStep` | Side-by-side candidate cards (real companies) with structured metrics; supports decisive *and* open-call modes (see below) |
 
 Each step component receives its typed data and an `onDone(score)` callback. The `LessonRunner` advances through steps sequentially, accumulating scores.
 
@@ -210,7 +230,38 @@ interface ThinkingStepNew {
   strongReasoningIncludes: string[];
 }
 
-type LessonStep = DrillStep | EstimateStep | TapStep | DecideStep | ThinkingStepNew;
+// Side-by-side candidate comparison
+interface CompareCandidate {
+  name: string;
+  ticker?: string;
+  tag?: string;                      // e.g., "Wholesale flywheel"
+  metrics: { label: string; value: string; note?: string }[];
+}
+
+interface CompareStep {
+  kind: 'compare';
+  topic: string;
+  topicIcon: LucideIcon;
+  context: string;
+  candidates: CompareCandidate[];   // 2-3 real companies
+  question: string;
+  options: string[];
+  /** If set, this option is the strongest answer. If undefined, the
+   *  question is genuinely open — every submission scores 1/1 and the
+   *  educational value is in the per-option `analyses[i]`. */
+  bestIndex?: number;
+  analyses: string[];               // per-option targeted feedback
+  punchline: string;
+  takeaway: string;
+}
+
+type LessonStep =
+  | DrillStep
+  | EstimateStep
+  | TapStep
+  | DecideStep
+  | ThinkingStepNew
+  | CompareStep;
 ```
 
 ### Lesson
@@ -305,6 +356,21 @@ interface Lesson {
 - 3 criteria for "what strong reasoning includes"
 - No AI grading — self-comparison only
 - Typically the final step in company lessons
+
+### CompareStep — Side-by-Side Candidate Comparison
+
+**Purpose:** Force the user to weigh structured data across 2-3 real companies side-by-side. Closer to actual investing than any other step kind. **The open-call mode is the deliberate centerpiece of the new pedagogy** — it's how we teach layer 3 (judgment under genuine ambiguity).
+
+**Two modes:**
+- **Decisive** (`bestIndex` set) — one option is the strongest answer; picking it scores 1, others score 0. Use when the data clearly favors one candidate but the user must reason through *why* (e.g., recession resilience favors the highest-margin business — but the user has to see that).
+- **Open call** (`bestIndex` undefined) — the question is genuinely ambiguous. Every submission scores 1/1. The educational value is entirely in `analyses[i]`, which gives targeted feedback on whichever path the user chose. Use this for "smart people disagree" prompts. The amber **"Open call"** chip is rendered to set expectation that there's no green-check moment — only trade-offs.
+
+**Design rules:**
+- 2-3 candidates max — more than 3 won't fit on mobile
+- Each candidate has 3-5 metric rows (`label / value / optional note`). Use real numbers. Cite the year ("FY 2024") in the lesson context, not the metric.
+- `analyses` length must equal `options` length. Each is 2-4 sentences explaining the trade-off this pick captures (or misses) — never "you got it wrong."
+- Use open-call mode liberally. The whole product critique that drove the redesign was that decisive multiple-choice with obvious right answers ≠ teaching judgment.
+- Good for: head-to-head business comparisons, recession/scenario tests, "which would you hold for the next 5 years," capital allocation framing.
 
 ## Content Quality Standards
 
@@ -451,39 +517,16 @@ Apply concepts to real public companies using real data.
 - Final step should be a `thinking` step (investment judgment prompt)
 - ~3-5 minutes each
 
-## Curriculum — 26 Lessons
+## Curriculum
 
-### Foundations Phase 1 (7 lessons)
-1. 📈 What Is the Stock Market?
-2. 💰 Follow the Money
-3. 💡 What a Business Keeps (margins)
-4. 📊 Reading the Scoreboard (income statements)
-5. 🔄 Money That Comes Back (recurring revenue)
-6. 🔍 What Actually Drives a Business (key drivers)
-7. 🧠 Your Brain vs. Your Portfolio (behavioral biases)
+> **The authoritative list lives in `src/data/lessons/index.ts`.** Don't duplicate it here — the doc rots immediately. Read the source.
 
-### Foundations Phase 2 (11 lessons)
-8. 🏰 What Keeps Winners Winning (moats)
-9. ⚖️ What Is a Stock Worth? (valuation)
-10. 🎯 The Expectations Game
-11. 💸 Cash vs. Profit (cash flow)
-12. 🎲 Risk Is Not a Feeling
-13. 🏦 Debt: Fuel or Fire?
-14. ⚖️ Growth vs. Value
-15. 💰 Where the Profits Go (returns)
-16. 🧩 Building a Portfolio
-17. 📋 Reading an Earnings Report
-18. 🚪 When to Sell
+Current shape (Q1 2026):
+- **Foundations Phase 1** (~7 lessons) — vocabulary: market, basics, margins, income, recurring, drivers, biases
+- **Foundations Phase 2** (~21 lessons) — concepts + practical literacy: moats, valuation, expectations, cashflow, risk, debt, growth-value, returns, dividends, portfolio, earnings, selling, index-funds, ten-k, macro, history, sectors, statements, options, bonds, taxes
+- **Company Deep Dives** (~10 lessons) — Apple, NVIDIA, Costco, Amazon, Microsoft, Tesla, Google, Netflix, Meta, Berkshire
 
-### Company Deep Dives (8 lessons)
-19. 🍎 Apple
-20. 🟢 NVIDIA
-21. 🏪 Costco
-22. 📦 Amazon
-23. 🪟 Microsoft
-24. ⚡ Tesla
-25. 🔍 Google
-26. 🎬 Netflix
+Margins (`foundations-margins`) is the **reference implementation of the new scenario-driven format** — connected through-line, real companies, `compare` step in both decisive and open-call modes, structured ambiguity. Future lesson rewrites should match its shape.
 
 ## Design Constraints
 
@@ -717,57 +760,160 @@ Completion screens (`LessonRunner`, `ReviewSession`, `AnalystSession`) capture t
 - Seasonal / rotating quest pool layered on top of the permanent catalog
 - Leaderboard (requires backend — out of scope while we remain localStorage-only)
 
+## Research Journal — The Connective Spine
+
+The journal is the **single source of truth for the user's writing**. Every meaningful piece of writing produced anywhere in the app — Analyst Mode memos, post-lesson reflections, free-form notes, and (future) simulator trade rationales and thesis statements — lands in one chronological feed the user owns. This is the foundation of the apprenticeship model: skill compounds through writing, and the journal is where that writing lives forever.
+
+### Files
+
+- `src/lib/journal.ts` — entry types, localStorage layer, CRUD, search, stats, lazy backfill
+- `src/pages/JournalPage.tsx` — the feed: stats grid, quick-note composer, type-filter chips, search, inline-expanding entry cards with deep links back to the originating lesson/analysis
+- `src/components/LessonReflectionCard.tsx` — optional structured-prompt card on lesson-completion screens (40-char minimum); idempotent per lesson
+- Integration: `src/lib/progression.ts` (saveAnalystResponse mirrors into journal), `src/pages/HomePage.tsx` (header entry point with live entry count), `src/App.tsx` (route at `/journal`)
+
+### Entry types
+
+```typescript
+type JournalEntryType =
+  | 'analyst_memo'       // anchored to (companyId, stepKind), upsert
+  | 'lesson_reflection'  // anchored to lessonId, upsert
+  | 'note'               // free-form, append-only
+  | 'trade_rationale'    // FUTURE — Phase 2 simulator
+  | 'thesis';            // FUTURE — buy/sell/hold thesis being tracked
+```
+
+**Anchored entries** (memos, reflections) use deterministic ids (`analyst:{companyId}:{stepKind}`, `reflection:{lessonId}`) and upsert — one entry per context, latest text wins, original `createdAt` preserved across edits. **Append-only entries** (notes) get fresh ids each time so the user keeps a chronological record of evolving thinking.
+
+### Storage
+
+- `stocklens-journal-entries` — `JournalEntry[]`
+- `stocklens-journal-imported` — boolean flag; idempotent backfill of existing analyst responses runs once per browser via `importLegacyAnalystResponses()`. Called lazily on every read through `ensureImported()`.
+
+### Public API
+
+Reads always run `ensureImported()` first so callers don't have to think about the backfill:
+- `getAllEntries()` — newest first by `createdAt`
+- `getEntryById(id)`, `getEntriesByType(type)`, `getEntriesForCompany(companyId)`, `getEntriesForLesson(lessonId)`, `searchEntries(query)`
+- `getJournalStats()` — total + per-type counts + companies covered + lessons reflected + last-entry timestamp
+
+Writes:
+- `upsertAnalystMemo({ companyId, stepKind, text, submittedAt? })` — called from `saveAnalystResponse`
+- `upsertLessonReflection({ lessonId, text })` — called from the reflection card
+- `createNote({ text, title?, tags?, companyId?, lessonId? })` — append-only
+- `updateEntry(id, patch)`, `deleteEntry(id)` — for notes; UI hides delete on anchored entries
+
+### Reflection prompt — design intent
+
+The card uses a *structured* prompt, not a blank "what did you take away?" textarea. Current prompt: *"One judgment call from this lesson you want to remember the next time you analyze a real company."* This is deliberate — blank prompts produce one-word fluff; structured prompts produce real thinking. 40-character minimum is just enough to filter "yes" / "got it" without being punitive.
+
+### Future
+
+- Diff view between earlier and current versions of an anchored entry (track how the user's thinking evolved)
+- Tags + saved searches
+- Surfacing "you wrote this 60 days ago — anything changed?" prompts (past-self accountability)
+- Export a single company's full journal as a shareable analysis card
+- Phase 2: `trade_rationale` entries created automatically when the user makes a simulator trade
+- Phase 3: LLM "manager" reads the user's recent journal entries to provide personalized pushback
+
 ## Product Roadmap
 
-StockLens is evolving from a content engine into a complete "teaching machine" — beginner → intelligent investor. Tracked priorities:
+StockLens is mid-pivot from "great curriculum app" to "full hub for becoming an investor." The new shape has three intertwined surfaces — **Desk** (home base), **Floor** (simulator), **Library** (lessons + companies + tools as a resource) — all hanging off the **Research Journal** spine. The roadmap is organized in **four phases**, each shippable on its own.
 
-### Tier 1 — Differentiators (the moat)
-- [x] **Analyst Mode v1** — 7-step workflow, 4 seeded companies (Visa, Starbucks, Adobe, Disney)
-- [x] **Analyst Mode v2** — expanded to 10 companies (added: Walmart, Home Depot, Chipotle, Salesforce, Shopify, Spotify)
-- [x] **Analyst Mode v3** — save user responses to localStorage, review-past-answers card on intro, resume at first unanswered step, in-progress state on picker
-- [x] **Analyst Mode v4** — expanded to 16 companies across every major sector (added: JPMorgan, UnitedHealth, Eli Lilly, TSMC, ExxonMobil, Coca-Cola). Now covers banking, healthcare, pharma, semis, energy, staples, retail, SaaS, e-commerce, restaurants, and media.
-- [ ] **Analyst Mode v5** — track response revisions over time (first-pass vs. current diff view); export a company analysis as a shareable card
+> **North Star:** a user who works through this app for ~6 months can pick up any public company's 10-K, write a reasoned investment memo, hold a thesis through changing data, and articulate which biases they personally fall into. **That's the difference between education and skill.**
 
-### Tier 2 — Retention
-- [x] **Daily Practice v1** — deterministic 5-question mix pulled from completed lessons; one session per day; feeds the streak (`/review/daily`)
-- [x] **Review v2 — spaced repetition scheduling** — Leitner-box per-item tracking (`src/lib/spacedRepetition.ts`), priority-scored selection (wrong > due > new > upcoming), missed items auto-carry to box 0 and surface next day; UI shows per-item reason tags and session-level mastery/flagged counts
-- [ ] **Weak-area surfacing** — highlight skills with low mastery and route practice toward them
-- [ ] **Practice heatmap / calendar view** — visualize daily completion history and streak shape over time
+### Phase 1 — Journal foundation + IA refactor (in progress)
 
-### Tier 3 — Critical curriculum gaps
-- [x] Index Funds & ETFs (foundations-index-funds)
-- [x] Reading a 10-K (foundations-ten-k)
-- [x] **Options basics** — calls, puts, hedging cost, covered-call tradeoffs, tools-vs-gambling framework (foundations-options)
-- [x] **Bonds and fixed income** — coupon/principal/maturity, duration, credit risk, role in portfolio (foundations-bonds)
-- [x] **Taxes for investors** — short vs. long-term gains, account hierarchy, tax-loss harvesting, tax drag compounding (foundations-taxes)
-- [ ] **Recession/downturn playbook** — how to think about portfolio decisions during drawdowns
+The connective spine. Everything hangs off this.
 
-### Tier 4 — Engagement layer
-- [x] **XP + levels** — cumulative XP ledger (`src/lib/xp.ts`) with closed-form level curve `25·L·(L+1)`, 8-band title ladder (Novice → Market Wizard), award helpers for lessons/analyst/practice/quests, and level-up celebrations on every completion screen
-- [x] **Quests / milestone badges** — 17-quest catalog (`src/lib/quests.ts`) across lessons / analyst / habit / skills categories, idempotent evaluation, home-page panel with earned/in-progress/locked states, reward cards on completion screens
-- [ ] **Diagnostic onboarding** — 5-question placement quiz to suggest a starting point
-- [ ] **Learning path narrative** — explicitly recommended order with contextual "why this next"
+- [x] **Research Journal v1** — `lib/journal.ts`, typed entries (memo / reflection / note + future trade_rationale / thesis), CRUD + search + stats, lazy idempotent backfill of legacy analyst responses, `/journal` page with feed + composer + filters, deep links back to source lesson/analysis
+- [x] **Lesson reflection card** — structured-prompt card on lesson completion screens, 40-char minimum, idempotent per lesson, edits land back in the journal
+- [x] **Header journal entry point** — live entry count, accent-toned pill in HomePage header
+- [x] **Compare step kind** — `CompareStep` with decisive + open-call modes; redesigned `foundations-margins` as a connected scenario lesson using it
+- [ ] **Information-architecture refactor** — rename home → `Desk`, reorganize routes into `/library/lessons/:id`, `/library/companies/:id`, `/library/practice`, `/floor` (placeholder), `/journal`. Old routes redirect.
+- [ ] **Desk redesign** — replace the tab-bar HomePage with a "morning open" view: Today panel (streak, due reviews, in-progress work), Recent Journal feed, Continue prompts, quick-action buttons
+- [ ] **Library hub** — browseable shelves (Lessons / Companies / Tools / Failure Cases), contextual surfacing from Desk and Floor
+- [ ] **Apply scenario template to remaining Phase 1 lessons** — at minimum: Recurring Revenue, Moats, Drivers should adopt the new connected-scenario format that Margins now uses
 
-### Tier 5 — Polish + scale
-- [ ] Mobile PWA polish, offline support
-- [ ] Social proof / shareable analysis cards (with care — no financial advice)
-- [ ] Creator-submitted company profiles (community curation with review)
-- [ ] Integration with a free markets API for live P/E and price (big decision — requires backend)
+### Phase 2 — Simulator MVP (the heart)
 
-The North Star: a user who completes all lessons + all Analyst Mode companies can pick up any public company's 10-K, work through a reasoned analysis in 30 minutes, and form a defensible investment opinion. **That's the difference between education and skill.**
+This is what makes the app *startup-level different*. No other investing app builds layer 4 (emotional discipline) because no other app forces the user to commit before knowing outcomes.
+
+- [ ] **Fictional fund** — $100K starting capital, 5-10 watchlist companies (reuse Analyst Mode profiles)
+- [ ] **Time advancement** — one in-app "week" per real day, or manual advance; market state (prices, news) progresses on a curated narrative
+- [ ] **Curated event narratives** — for each watchlist company, a sequence of plausible quarterly events (earnings prints, competitive shifts, macro shocks, management changes). Static + designed, not LLM-generated, so events are pedagogically sharp.
+- [ ] **Forced trade rationale** — every buy/sell/hold decision requires a written memo before submission; auto-creates a `trade_rationale` journal entry
+- [ ] **Track-record dashboard** — running portfolio P/L, decision-by-decision accuracy, "predictions you made vs. what happened"
+- [ ] **Adversarial pairing** — every bull thesis the user writes requires writing the bear thesis before submission
+
+### Phase 3 — LLM Manager + content scale
+
+The seriousness lever. Conversational pushback from an Anthropic-API-powered "manager" turns lazy memos into a visibly-failing user experience — which is what forces the engagement we can't trust users to bring on their own. **Requires real billing.**
+
+- [ ] **LLM Manager** — when user submits a memo or trade rationale, an Anthropic-API-powered analyst challenges their reasoning conversationally ("Your thesis says the moat holds, but the renewal rate just dropped 5 points. Defend that."). User defends or revises. Targets layer 3 directly.
+- [ ] **Bias profile** — over time, the manager builds a model of the user's recurring biases ("you tend to fall for narrative-driven stocks; you sell winners too early") and surfaces it
+- [ ] **Failure case studies** — 30+ — Enron, Lehman, Sears, WeWork, GE, Pets.com, etc. Wins teach less than losses. New library shelf.
+- [ ] **Content scale** — push toward 80-120 lessons total and 50+ company profiles. Volume creates the pattern-recognition substrate that skilled investors actually rely on.
+- [ ] **Past-self surfacing** — "you wrote this 60 days ago — has anything changed?" prompts on aging journal entries
+
+### Phase 4 — Real data, social, time machine
+
+- [ ] **Real historical price feeds** — simulator can use real S&P data; portfolios reflect actual market moves (requires backend)
+- [ ] **Time Machine mode** — show user a real company's 2015 10-K, have them write a thesis, then show what actually happened 2015→now. Hindsight calibration done right.
+- [ ] **Mobile PWA polish, offline support**
+- [ ] **Shareable analysis cards** — with care — no financial advice
+- [ ] **Leaderboard / community** — ranked on analysis quality, not portfolio P/L
+- [ ] **Diagnostic onboarding** — 5-question placement quiz to suggest a starting point (could ship earlier if it accelerates Phase 1)
+- [ ] **Practice heatmap / calendar view** — visualize daily completion history and streak shape
+
+### Pre-pivot work (already shipped — preserved here for reference)
+
+These were the Tier-1-through-5 priorities before the pivot. They all shipped and remain part of the foundation. Most slot under Phase 1 (Library content) or are subsumed by Phase 2/3 ambitions.
+
+- **Analyst Mode v1-v4** — 7-step workflow, 16 seeded companies across every major sector (banking, healthcare, pharma, semis, energy, staples, retail, SaaS, e-commerce, restaurants, media). Save responses, resume at first unanswered step. Becomes the analysis template inside the Phase 2 Simulator.
+- **Daily Practice + spaced repetition** — Leitner-box per-item tracking, priority-scored selection, deterministic 5-question daily mix from completed lessons. Streak-feeding. Stays as a Library tool, surfaced from the Desk.
+- **XP + Levels + Quests** — closed-form level curve `25·L·(L+1)`, 8-band title ladder (Novice → Market Wizard), 17-quest catalog. Extend to simulator actions in Phase 2; reward outcomes (predictions correct, theses held) not just output.
+- **Critical curriculum gaps filled** — Index Funds, 10-K reading, Options, Bonds, Taxes (all under Foundations Phase 2 in `data/lessons/`).
+- **Lesson rewrites** — first 4 + remaining Phase 1 + Moats lessons rewritten with real companies and harder judgment calls. Margins additionally upgraded to scenario-driven format using `compare`.
+
+## Pedagogical Principles
+
+These are durable design rules. They apply across every step kind, every page, every feature. When in doubt, return here.
+
+1. **Structured prompts beat blank textboxes.** A blank "what did you take away?" prompt produces one-word fluff. A targeted prompt — *"One judgment call from this lesson you want to remember the next time you analyze a real company"* — produces real thinking. We control the prompt; we control the floor on user effort.
+
+2. **Reward outcomes, not output.** XP for *writing* is farmable and incentivizes quantity over quality. XP for *predictions that came true*, *theses that held up*, *biases the user identified in themselves* — that's outcome-based and farms the user toward truth. Phase 2/3 reward design must follow this.
+
+3. **Adversarial pairing forces seriousness.** Every bull thesis requires writing the bear thesis before submission. Every recommendation requires articulating what would change your mind. This is uncomfortable; the discomfort is the point. Buffett does this. Munger does this. Most retail investors don't. Forcing it is the value.
+
+4. **Open ambiguity is the centerpiece, not the exception.** Real investing rarely has a clean answer. Multiple-choice with obvious right answers (the original product flaw) trains the user to look for the trick — not to weigh trade-offs. The `compare` step's open-call mode and the Phase 2 Simulator's forced-decision-without-knowing-the-outcome are the mechanics that build layer 3 (judgment) and layer 4 (emotional discipline).
+
+5. **Volume is the moat for pattern recognition.** Skilled investors know hundreds of businesses. The current 16 Analyst Mode companies aren't enough — Phase 3 pushes to 50+. You only learn what a "Sears situation" or a "See's Candy moment" looks like by seeing many of them.
+
+6. **Failures teach more than wins.** Every winning company can teach 2 lessons; every spectacular failure can teach 10. Phase 3 failure-case shelf is non-negotiable.
+
+7. **Writing is how skill compounds.** Every meaningful interaction in the app should produce a written artifact the user owns. This is why the journal is the spine, not a side feature.
+
+8. **Some users will never lock in. That's fine.** Optimize the product to be excellent for the 20% who will, not mediocre for everyone. Stop designing for the user who's trying to fake it — they're not the user.
+
+9. **Feedback teaches, not grades.** Wrong-answer explanations are mini-lessons, not dismissals. Per-option `analyses[i]` in compare steps and `wrongNudges[i]` in decide steps exist for this — fill them in with real reasoning, not "incorrect, the right answer is X."
+
+10. **Use specific, real examples.** Toy bakeries are forbidden. Real companies (Microsoft, Costco, Visa, Hermès, Kroger) with real numbers and real ambiguity make every concept concrete. Foundations lessons can use simplified scenarios but the businesses must be recognizable and the numbers credible.
 
 ## What Makes This Project Different
 
-Most investing education is either:
-1. **Textbook-style** — walls of text, no interaction, no retention
-2. **Quiz-style** — trivia questions testing memorization
-3. **Simulation-style** — fake trading with no conceptual foundation
+Most investing education falls into one of four buckets:
+1. **Textbook-style** — walls of text, no interaction, no retention.
+2. **Quiz-style** — trivia testing memorization (this is where the original StockLens lived; we left).
+3. **Drill-style** (Duolingo for stocks) — vocabulary repetition. Doesn't generalize to judgment domains. Duolingo Math and Music struggled here for the same reason.
+4. **Simulation-style** — fake trading with no conceptual foundation. Builds gambling instincts, not investing skill.
 
-StockLens is different because:
-- **It teaches thinking patterns**, not facts. Every step requires reasoning.
-- **5 distinct interaction types** — drills, estimates, signal-finding, decisions, free-response — keep users engaged
-- **It builds progressively** — Phase 1 vocabulary → Phase 2 concepts → Company application
-- **Feedback teaches, not grades** — wrong answer explanations are mini-lessons, not dismissals
-- **Scores and skills tracking** — star ratings, skill exposure bars, and progression create motivation
+StockLens is **none of these.** The model we're building is **apprenticeship + writing + skin-in-the-game simulation**, all hanging off a single research journal the user owns. Specifically:
 
-The goal is that after completing all lessons, a user can pick up any company's financials and form a reasoned opinion — not because they memorized what to think, but because they learned how to think.
+- **Lessons are a resource, not the main loop.** They live in the Library and get consulted just-in-time when the user needs a concept. The main loop is doing the work — analyzing companies, writing memos, holding theses through changing data.
+- **Six step kinds, not five** — and the new one (`compare`, especially in open-call mode) is the centerpiece. We deliberately built a mechanic that *cannot* have a single right answer because that's what real investing looks like.
+- **The Research Journal is the spine.** Every memo, reflection, and (future) trade rationale lands in one place. The user's own writing — over months — is the durable artifact.
+- **The Simulator (Phase 2) is what no one else builds.** Real time pressure, curated events, forced trade memos, track records that compound. This is the mechanic that targets layer 4 (emotional discipline) — which is what actually determines long-term investing outcomes.
+- **The LLM Manager (Phase 3) is the seriousness lever.** Conversational pushback that makes lazy memos visibly fail, surfaces personal biases over time, and gives the user the apprenticeship experience that great investors historically only got via mentors.
+- **Feedback teaches, not grades.** Per-option analyses, wrong-answer mini-lessons, model-comparison synthesis — never a bare "you got it wrong."
+
+The goal is not "completes all lessons." The goal is **someone who has written 30+ company memos, lived through 6 months of simulated market cycles, can articulate which biases they personally fall into, and can pick up any 10-K and form a reasoned opinion.** That's an investor — not a quiz-taker.

@@ -21,10 +21,16 @@ const DAILY_PRACTICE_KEY = 'stocklens-daily-practice';
 /** Number of graded steps pulled into a daily practice session. */
 export const DAILY_PRACTICE_SIZE = 5;
 
-/** Step kinds that can be auto-graded (drill/estimate/tap/decide). */
-type GradableStepKind = 'drill' | 'estimate' | 'tap' | 'decide';
+/** Step kinds that can be auto-graded (drill/estimate/tap/decide/compare). */
+type GradableStepKind = 'drill' | 'estimate' | 'tap' | 'decide' | 'compare';
 
-const GRADABLE_KINDS: readonly GradableStepKind[] = ['drill', 'estimate', 'tap', 'decide'];
+const GRADABLE_KINDS: readonly GradableStepKind[] = [
+  'drill',
+  'estimate',
+  'tap',
+  'decide',
+  'compare',
+];
 
 function isGradable(step: LessonStep): step is LessonStep & { kind: GradableStepKind } {
   return (GRADABLE_KINDS as readonly string[]).includes(step.kind);

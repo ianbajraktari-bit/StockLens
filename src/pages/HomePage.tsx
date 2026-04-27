@@ -24,6 +24,7 @@ import {
   Layers,
   Sparkles,
   ChevronRight,
+  NotebookPen,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { allLessons, type Lesson } from '../data/lessons';
@@ -46,6 +47,7 @@ import {
 import { getReviewStats } from '../lib/spacedRepetition';
 import { getLevelInfo } from '../lib/xp';
 import { getQuestProgress, type QuestStatus } from '../lib/quests';
+import { getJournalStats } from '../lib/journal';
 import { CountUp } from '../components/hud/CountUp';
 import { GlassPanel } from '../components/hud/GlassPanel';
 import { TickerBar } from '../components/hud/TickerBar';
@@ -100,6 +102,7 @@ export default function HomePage() {
   const levelInfo = getLevelInfo();
   const questProgress = getQuestProgress();
   const questsEarned = questProgress.filter((q) => q.earned).length;
+  const journalStats = getJournalStats();
 
   const [activeTab, setActiveTab] = useState<TabId>(() =>
     getInitialTab(Boolean(nextId)),
@@ -177,6 +180,25 @@ export default function HomePage() {
 
           {hasAnyProgress && (
             <div className="flex items-center gap-2.5">
+              <motion.button
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={SPRING_FLUID}
+                onClick={() => navigate('/journal')}
+                whileHover={{ y: -1, scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-accent-light
+                  bg-gradient-to-br from-accent/12 to-accent/[0.03]
+                  border border-accent/25 cursor-pointer
+                  shadow-[0_0_14px_-4px_rgba(99,102,241,0.25)] hover:border-accent/45 transition-colors"
+                aria-label={`Open journal — ${journalStats.total} ${journalStats.total === 1 ? 'entry' : 'entries'}`}
+              >
+                <NotebookPen className="w-3.5 h-3.5" />
+                <span className="data-num">{journalStats.total}</span>
+                <span className="hidden sm:inline text-[9px] font-bold uppercase tracking-widest text-accent-light/70">
+                  Journal
+                </span>
+              </motion.button>
               {streak.current > 0 && (
                 <motion.div
                   initial={{ scale: 0.8, opacity: 0 }}
@@ -210,6 +232,14 @@ export default function HomePage() {
         {!hasAnyProgress && (
           <OnboardingHero onStart={handleStart} />
         )}
+
+        {/* Hub mode strip — introduces the new Library / Floor / Journal shape */}
+        <ModeStrip
+          journalCount={journalStats.total}
+          onLibrary={() => navigate('/library')}
+          onFloor={() => navigate('/floor')}
+          onJournal={() => navigate('/journal')}
+        />
 
         {/* Sticky tab bar */}
         <div className="sticky top-0 z-20 -mx-4 px-4 py-2.5 bg-dark-950/60 backdrop-blur-2xl border-b border-white/[0.04]">
@@ -327,6 +357,124 @@ function LevelBadgeRing({
         {level}
       </span>
     </div>
+  );
+}
+
+function ModeStrip({
+  journalCount,
+  onLibrary,
+  onFloor,
+  onJournal,
+}: {
+  journalCount: number;
+  onLibrary: () => void;
+  onFloor: () => void;
+  onJournal: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: EASE_CINEMATIC, delay: 0.1 }}
+      className="grid grid-cols-3 gap-2 mb-3"
+      role="navigation"
+      aria-label="App modes"
+    >
+      <ModeTile
+        icon={Layers}
+        label="Library"
+        sub="Lessons · companies · tools"
+        tone="accent"
+        onClick={onLibrary}
+      />
+      <ModeTile
+        icon={TrendingUp}
+        label="Floor"
+        sub="Simulator · Phase 2"
+        tone="warm"
+        locked
+        onClick={onFloor}
+      />
+      <ModeTile
+        icon={Brain}
+        label="Journal"
+        sub={journalCount === 0 ? 'Start writing' : `${journalCount} ${journalCount === 1 ? 'entry' : 'entries'}`}
+        tone="signal"
+        onClick={onJournal}
+      />
+    </motion.div>
+  );
+}
+
+function ModeTile({
+  icon: Icon,
+  label,
+  sub,
+  tone,
+  locked,
+  onClick,
+}: {
+  icon: LucideIcon;
+  label: string;
+  sub: string;
+  tone: 'accent' | 'warm' | 'signal';
+  locked?: boolean;
+  onClick: () => void;
+}) {
+  const palette =
+    tone === 'accent'
+      ? {
+          border: 'border-accent/25',
+          bg: 'from-accent/[0.08] via-dark-800/60 to-dark-800/40',
+          iconWrap: 'bg-accent/15 border-accent/30',
+          iconColor: 'text-accent-light',
+          labelColor: 'text-text-primary',
+        }
+      : tone === 'warm'
+        ? {
+            border: 'border-warm/25',
+            bg: 'from-warm/[0.08] via-dark-800/60 to-dark-800/40',
+            iconWrap: 'bg-warm/15 border-warm/30',
+            iconColor: 'text-warm',
+            labelColor: 'text-text-primary',
+          }
+        : {
+            border: 'border-signal/25',
+            bg: 'from-signal/[0.08] via-dark-800/60 to-dark-800/40',
+            iconWrap: 'bg-signal/15 border-signal/30',
+            iconColor: 'text-accent-light',
+            labelColor: 'text-text-primary',
+          };
+
+  return (
+    <motion.button
+      onClick={onClick}
+      whileHover={{ y: -2, scale: 1.01 }}
+      whileTap={{ scale: 0.98 }}
+      transition={SPRING_FLUID}
+      className={`relative rounded-2xl border ${palette.border} bg-gradient-to-br ${palette.bg} backdrop-blur-sm p-3 text-left cursor-pointer overflow-hidden hover:shadow-[0_8px_24px_-10px_rgba(99,102,241,0.25)] transition-shadow`}
+    >
+      <div className="flex items-start gap-2.5">
+        <div
+          className={`w-8 h-8 rounded-xl border flex items-center justify-center shrink-0 ${palette.iconWrap}`}
+        >
+          <Icon className={`w-4 h-4 ${palette.iconColor}`} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5">
+            <p className={`text-xs font-bold leading-tight ${palette.labelColor}`}>
+              {label}
+            </p>
+            {locked && (
+              <Lock className="w-2.5 h-2.5 text-warm/80" />
+            )}
+          </div>
+          <p className="text-[10px] text-text-muted mt-0.5 leading-snug truncate">
+            {sub}
+          </p>
+        </div>
+      </div>
+    </motion.button>
   );
 }
 
