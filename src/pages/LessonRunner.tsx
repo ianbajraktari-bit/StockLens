@@ -26,6 +26,7 @@ import EstimateStep from '../components/steps/EstimateStep';
 import TapStep from '../components/steps/TapStep';
 import DecideStep from '../components/steps/DecideStep';
 import ThinkingStepComponent from '../components/steps/ThinkingStepComponent';
+import CompareStep from '../components/steps/CompareStep';
 import { type Lesson, type Skill, getLessonById } from '../data/lessons';
 import {
   getNextLessonId,
@@ -475,6 +476,9 @@ export default function LessonRunner({ lesson, onBack, onComplete }: Props) {
             )}
             {currentStep?.kind === 'thinking' && (
               <ThinkingStepComponent step={currentStep} onDone={handleStepDone} />
+            )}
+            {currentStep?.kind === 'compare' && (
+              <CompareStep step={currentStep} onDone={handleStepDone} />
             )}
           </motion.div>
         </AnimatePresence>

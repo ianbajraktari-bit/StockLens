@@ -1,163 +1,304 @@
-import { Scale, ShieldCheck, TrendingUp, Target, Zap, Search } from 'lucide-react';
+import {
+  Scale,
+  ShieldCheck,
+  Wallet,
+  Search,
+  Crosshair,
+  HelpCircle,
+} from 'lucide-react';
 import type { Lesson } from './types';
 
+/**
+ * Scenario lesson — through-line: your friend has $50,000 to put in one stock.
+ * Three real candidates: Microsoft, Costco, Kroger. Each step builds on the
+ * last: calibrate margins → recession test → membership paradox → 3-years-later
+ * ambiguous re-pick → red flags in a bull pitch → synthesis.
+ */
 export const foundationsMarginsLesson: Lesson = {
   id: 'foundations-margins',
   emoji: '💡',
   title: 'What a Business Keeps',
-  subtitle: 'Why Microsoft keeps 68¢ per dollar and Costco keeps 3¢ — and both are brilliant',
+  subtitle:
+    'Your friend has $50,000 and three stocks to choose from. Help them think it through.',
   description:
-    'Margin — the percentage of revenue a business keeps as profit — is the single best number for understanding business quality. But here\'s the twist: a higher margin isn\'t always better. This lesson teaches you when 3% is genius and when 60% is fragile.',
-  estimatedMinutes: 3,
+    'Margin — the cents of profit a business keeps from each dollar of revenue — is the most-cited shorthand for business quality. But that shorthand misleads more often than it helps. This lesson hands you one investment decision and walks it through three real companies (Microsoft, Costco, Kroger), and asks you to actually pick.',
+  estimatedMinutes: 4,
   dataAsOf: '',
   tier: 'foundations-1',
   skills: ['margins'],
   keyFacts: [],
   topics: [
-    { label: 'What margins are and why they matter', icon: Scale },
-    { label: 'Why higher isn\'t always better', icon: ShieldCheck },
-    { label: 'Which businesses survive a crisis', icon: TrendingUp },
-    { label: 'Real company margin comparisons', icon: Target },
+    { label: 'Calibrating real-world margins', icon: Scale },
+    { label: 'How margin acts as recession insurance', icon: ShieldCheck },
+    { label: 'When low margins are the strategy', icon: Wallet },
+    { label: 'Holding a thesis when the data shifts', icon: Crosshair },
   ],
   steps: [
-    // Hook with a surprising estimation
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 1 — Calibrate. Anchor the user before the side-by-side hits.
+    // ─────────────────────────────────────────────────────────────────────
     {
       kind: 'estimate',
-      topic: 'Margin Intuition',
+      topic: 'Setting the Stage',
       topicIcon: Scale,
       context:
-        'A "profit margin" is the percentage of every revenue dollar a business keeps as profit. If a company has $100M in revenue and $25M in profit, its margin is 25%.\n\nGrocery stores are one of the most common businesses in America. Kroger, Albertsons, Whole Foods — collectively they sell hundreds of billions in food every year.',
-      question: 'What profit margin do you think a typical grocery store operates at?',
-      answer: 3,
-      tolerance: 3,
+        'Your friend has $50,000 saved up and one rule: it has to go into one of three stocks. The candidates: Microsoft (MSFT), Costco (COST), Kroger (KR).\n\nBefore you compare them, calibrate one number — Microsoft\'s net margin. Net margin is the cents of profit a company keeps out of every dollar of revenue. Microsoft is the most profitable of the three. Make a guess.',
+      question: 'What net margin does Microsoft run? (FY 2024, ~$245B revenue)',
+      answer: 36,
+      tolerance: 8,
       unit: '%',
-      hint: 'Think about how competitive grocery pricing is',
+      hint: 'Software has near-zero cost to deliver each additional copy.',
       reveal:
-        'About 1.5–3%. For every $100 in groceries you buy, the store keeps roughly $2-3 as profit. The rest goes to suppliers, rent, employees, electricity, spoilage, and theft. Grocery is a brutal business — massive revenue, razor-thin margins. Now compare that to Microsoft at 36% net margin — it keeps $36 out of every $100. Same concept, wildly different businesses.',
-      takeaway: 'Margins vary enormously by industry. Grocery stores keep ~2-3%. Software companies keep ~25-35%. This difference tells you almost everything about business quality.',
+        'About 36%. Microsoft kept ~$88B out of every $245B in revenue. That\'s extraordinary — most businesses don\'t get within shouting distance. Software has almost no variable cost (no factories, no shipping, no inventory), so once Azure or Office is built, each new customer is mostly profit.',
+      takeaway:
+        'A "good" margin depends on the industry, but >30% is rarefied air. Most of the world lives in single digits.',
     },
 
-    // Decide with genuine nuance
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 2 — Compare (decisive). Recession resilience side-by-side.
+    // ─────────────────────────────────────────────────────────────────────
+    {
+      kind: 'compare',
+      topic: 'The Recession Test',
+      topicIcon: ShieldCheck,
+      context:
+        'Now look at all three side-by-side. A recession hits next year and revenue drops 10% across the board. To keep this clean, assume costs are sticky in the short term — you can\'t fire engineers or close stores overnight. So a revenue dollar lost is mostly a profit dollar lost.\n\nWho still walks away with healthy profit?',
+      candidates: [
+        {
+          name: 'Microsoft',
+          ticker: 'MSFT',
+          tag: 'Software + cloud',
+          metrics: [
+            { label: 'Revenue', value: '$245B' },
+            { label: 'Net margin', value: '36%' },
+            { label: 'Profit', value: '$88B' },
+            { label: 'After 10% rev drop', value: '~$63B', note: 'still ~29% margin' },
+          ],
+        },
+        {
+          name: 'Costco',
+          ticker: 'COST',
+          tag: 'Wholesale membership',
+          metrics: [
+            { label: 'Revenue', value: '$254B' },
+            { label: 'Net margin', value: '2.9%' },
+            { label: 'Profit', value: '$7.4B' },
+            { label: 'After 10% rev drop', value: '~breakeven', note: 'cushion gone' },
+          ],
+        },
+        {
+          name: 'Kroger',
+          ticker: 'KR',
+          tag: 'Traditional grocery',
+          metrics: [
+            { label: 'Revenue', value: '$147B' },
+            { label: 'Net margin', value: '1.5%' },
+            { label: 'Profit', value: '$2.2B' },
+            { label: 'After 10% rev drop', value: 'red ink', note: 'flips to a loss' },
+          ],
+        },
+      ],
+      question: 'Whose profit holds up best in this scenario?',
+      options: [
+        'Microsoft — its 36% margin gives it the most room to absorb the shock',
+        'Costco — its sheer revenue scale means it has the most cash coming in',
+        'Kroger — groceries are recession-proof since people still need to eat',
+      ],
+      bestIndex: 0,
+      analyses: [
+        'Right read. The 36% margin is essentially a shock absorber. Even with a 10% revenue hit, Microsoft is still printing ~$63B in profit at a ~29% margin — better than most companies do in a boom. This is what people mean when they call high margins "defensive."',
+        'Revenue scale is a trap when margins are razor-thin. Costco brings in MORE revenue than Microsoft, but a 10% drop on a 2.9% margin business wipes out the entire profit cushion. Big topline, fragile bottom line.',
+        'Half right — grocery demand IS recession-resilient. But that\'s a revenue argument, not a margin argument. Even if Kroger\'s revenue only drops 5%, its 1.5% margin has zero room to absorb cost shocks (energy, wages, supply chain). Defensive demand + defensive margins are different things.',
+      ],
+      punchline:
+        'Margin is recession insurance. A 36% margin can swallow a 10% revenue shock and still be one of the best businesses in the world. A 1.5% margin can\'t absorb anything.',
+      takeaway:
+        'Higher margins don\'t just mean "more profitable" — they mean "more durable." The cushion matters most exactly when things get hard.',
+    },
+
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 3 — Decide. The Costco paradox. Now Microsoft looks obvious...
+    // ─────────────────────────────────────────────────────────────────────
     {
       kind: 'decide',
       topic: 'The Margin Paradox',
-      topicIcon: ShieldCheck,
+      topicIcon: Wallet,
       context:
-        'Two real companies:\n\nMicrosoft: $245B revenue, $88B profit → 36% net margin\nCostco: $254B revenue, $6.7B profit → 2.6% net margin\n\nMicrosoft keeps 36 cents of every dollar. Costco keeps less than 3 cents. Both are considered extraordinary businesses. Both have made investors rich for decades.',
-      question: 'How can Costco be a great business at 2.6% margin when Microsoft has 36%?',
+        'So Microsoft is the obvious pick, right? Highest margin, most resilient, biggest cushion.\n\nExcept Costco at 2.9% margin returned ~650% over the last 15 years — better than the S&P, better than most "high quality" software stocks. Warren Buffett\'s partner Charlie Munger called it one of the best businesses in the world. Costco didn\'t accidentally end up at 2.9%. They got there ON PURPOSE — and have refused to raise margins for 40+ years.\n\nWhat does the headline 2.9% margin miss?',
+      question: 'Why is Costco\'s thin margin actually the source of its strength?',
       options: [
-        'Costco isn\'t actually a great business — Microsoft is just better in every way',
-        'Costco\'s low margin is its strategy: near-cost pricing drives 93% membership renewal, and memberships ARE the profit',
-        'Costco will eventually raise margins to be more like Microsoft',
-        'Low margins don\'t matter if revenue is high enough',
+        'It\'s not — Microsoft really is just better, and Costco\'s returns are luck',
+        'Costco intentionally sells products near cost so members feel they\'re getting incredible deals — and the real product (the membership, at near-100% margin) renews 93% of the time',
+        'Costco will eventually raise margins once they hit critical mass',
+        'Margins don\'t matter once revenue is large enough',
       ],
       correctIndex: 1,
       punchline:
-        'Costco\'s "low margin" is a feature, not a bug. They deliberately sell products near cost so members feel they\'re getting incredible deals — which makes them renew year after year (93% renewal rate). The real profit comes from $4.8B in membership fees, which cost almost nothing to collect. The entire product business is a customer acquisition machine for the membership business.',
+        'Costco runs two businesses stapled together: a near-cost wholesale operation (the bait) and a membership business (the hook). The wholesale business is a customer-acquisition machine for the high-margin membership. The 2.9% headline hides a ~100% margin product underneath.',
       wrongNudges: [
-        'Costco\'s stock has returned 650% over 15 years. Its business model is intentionally different from Microsoft\'s — comparing them on margin alone misses the point.',
+        'Costco has compounded for 40+ years — that\'s not luck. The 2.9% margin is misdirection: the real economics are in the $4.8B in membership fees, which cost almost nothing to collect.',
         '',
-        'Costco has deliberately kept margins low for 40+ years. Raising prices would break the value proposition that drives membership renewals. The low margin IS the strategy.',
-        'It\'s not just about "high enough revenue." $254B in revenue at 2.6% margin is fragile if costs rise. What makes Costco special is that its REAL product (membership) has near-100% margins.',
+        'Costco has had multiple chances to raise margins and has refused every time. CEOs have been explicit: they\'d rather lose margin than lose member trust. Raising prices would break the value perception that drives 93% renewal.',
+        'Revenue is the wrong frame. Visa, with FAR less revenue than Costco, has a 55% margin and a more durable business. The question is what KIND of dollar you\'re bringing in — Costco\'s membership dollars are some of the best dollars in retail.',
       ],
-      takeaway: 'Margin tells you how a business makes money, not whether it\'s good. Costco at 2.6% is brilliant because low margins are the strategy. A struggling retailer at 2.6% is dying. Context is everything.',
+      takeaway:
+        'When you see a thin margin, ask: is this margin the strategy, or the symptom? Costco at 2.9% is a strategy. A struggling retailer at 2.9% is a death spiral.',
     },
 
-    // Drill: escalating difficulty, real-world trade-offs
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 4 — Compare (OPEN call). 3 years later, real ambiguity.
+    // The user's prior framing gets stress-tested.
+    // ─────────────────────────────────────────────────────────────────────
     {
-      kind: 'drill',
-      topic: 'Margin Matchups',
-      topicIcon: Zap,
-      intro: 'For each pair, pick the business with higher profit margins. These get tricky — high margins aren\'t always where you expect.',
-      prompts: [
+      kind: 'compare',
+      topic: 'Three Years Later',
+      topicIcon: HelpCircle,
+      context:
+        'Skip ahead three years. Your friend held one of the three. The world shifted. Same three companies, fresh data — the picture isn\'t obvious anymore.\n\nThis one is genuinely hard. Smart investors disagree. Pick the one you\'d hold for the NEXT five years and we\'ll walk through the trade-offs.',
+      candidates: [
         {
-          setup: 'A software company that sells downloadable apps vs. a restaurant chain',
-          left: { label: 'Software', sublabel: 'digital product, no physical costs' },
-          right: { label: 'Restaurant', sublabel: 'food, rent, staff, waste' },
-          correct: 'left',
-          flash: 'Software margins are typically 25-40%. Restaurant margins are 3-9%. Once software is built, each additional copy costs almost nothing. Each additional meal costs ingredients, labor, and energy.',
+          name: 'Microsoft',
+          ticker: 'MSFT',
+          tag: 'AI tailwind',
+          metrics: [
+            { label: 'Net margin', value: '36%' },
+            { label: 'Revenue growth', value: '+14%' },
+            { label: 'AI products', value: 'ramping fast' },
+            { label: 'Valuation', value: '~32x earnings', note: 'priced for perfection' },
+          ],
         },
         {
-          setup: 'Coca-Cola (sells syrup to bottlers) vs. Walmart (sells everything to everyone)',
-          left: { label: 'Coca-Cola', sublabel: 'sells concentrated syrup' },
-          right: { label: 'Walmart', sublabel: 'massive retail scale' },
-          correct: 'left',
-          flash: 'Coca-Cola\'s net margin is ~23%. Walmart\'s is ~2.4%. Coke sells syrup (cheap to make, sold at huge markup) to bottlers who handle the expensive part — manufacturing, shipping, refrigeration. Brilliant business model.',
+          name: 'Costco',
+          ticker: 'COST',
+          tag: 'Renewal slipping',
+          metrics: [
+            { label: 'Net margin', value: '2.9%' },
+            { label: 'Revenue growth', value: '+4%', note: 'down from +7%' },
+            { label: 'Renewal rate', value: '88%', note: 'down from 93%' },
+            { label: 'Valuation', value: '~50x earnings', note: 'priced higher than MSFT' },
+          ],
         },
         {
-          setup: 'Visa (payment network) vs. JPMorgan Chase (the bank that issues Visa cards)',
-          left: { label: 'Visa', sublabel: 'processes the transaction' },
-          right: { label: 'JPMorgan', sublabel: 'lends the money' },
-          correct: 'left',
-          flash: 'Visa\'s net margin is ~55%. JPMorgan\'s is ~30%. Visa doesn\'t lend money or take credit risk — it just processes the transaction and takes a tiny cut. JPMorgan lends real money and sometimes doesn\'t get it back. Less risk = higher margins.',
-        },
-        {
-          setup: 'Hermès (luxury handbags, $10,000+) vs. Nike (athletic shoes, $80-200)',
-          left: { label: 'Hermès', sublabel: 'ultra-luxury, limited supply' },
-          right: { label: 'Nike', sublabel: 'mass-market athletic brand' },
-          correct: 'left',
-          flash: 'Hermès net margin: ~30%. Nike: ~11%. Hermès sells scarcity — a Birkin bag has a waitlist. When you can charge $10,000 for a handbag and people BEG to buy it, margins are extraordinary. Nike has to spend billions on marketing and compete on price.',
-        },
-        {
-          setup: 'A cloud storage company (growing 50%/year, burning cash) vs. a profitable insurance company (growing 5%/year, 15% margin)',
-          left: { label: 'Cloud company', sublabel: 'high growth, negative margin' },
-          right: { label: 'Insurance company', sublabel: 'low growth, solid margin' },
-          correct: 'right',
-          flash: 'Trick question. Negative margins mean NO profit — every dollar in is a dollar (plus more) out. The cloud company is betting that growth will eventually produce margins. Maybe. But the insurance company is making real money today. Growth without margins is a promise, not a result.',
+          name: 'Kroger',
+          ticker: 'KR',
+          tag: 'Just merged',
+          metrics: [
+            { label: 'Net margin', value: '1.5%' },
+            { label: 'Revenue growth', value: '+5%' },
+            { label: 'Market share', value: '~30%', note: 'after Albertsons merger' },
+            { label: 'Valuation', value: '~14x earnings', note: 'cheap on paper' },
+          ],
         },
       ],
-      takeaway: 'Business model determines margins. Networks (Visa) and luxury (Hermès) have the highest. Retail and restaurants have the lowest. But negative margins — burning cash for growth — is the biggest risk of all.',
+      question: 'Which would YOU hold for the next 5 years?',
+      options: [
+        'Microsoft — pay up for the AI tailwind and cushion',
+        'Costco — bet the slip is temporary and the moat holds',
+        'Kroger — take the cheap valuation and let the merger compound',
+      ],
+      // No bestIndex — this is open. Each path gets its own targeted analysis.
+      analyses: [
+        'Defensible — and the consensus pick. The 36% margin is still the cushion, AI is a real growth tailwind, and the existing cloud business is sticky enough that even a recession barely dents it. The risk is the price tag: at ~32x earnings, the market already assumes AI delivers. If AI revenue underperforms expectations, the stock can fall 20%+ even if the business is fine. You\'re buying a great business at a price that doesn\'t leave room for disappointment.',
+        'Contrarian, but not crazy. The headline (renewal dropping from 93% to 88%) is a real warning — that 5-point move means the membership flywheel is bleeding. But Costco still has 60M+ members, the brand still works, and management has a 40-year track record of defending the model. The bull case is "this is a temporary blip, the moat holds." The bear case is "this is the start of Walmart Plus and Amazon Prime eating the wholesale model." Reasonable people disagree. The 50x P/E means if the bear case is right, the stock gets cut in half.',
+        'The deep-value pick. 14x earnings is genuinely cheap, the merger gives Kroger ~30% market share which is real pricing power, and groceries are recession-resistant. The bear case is brutal though: 1.5% margins mean almost zero cushion if Walmart cuts prices, plus the merger creates integration risk. You\'d be betting that a low-margin business with a stable franchise, bought cheaply, beats two higher-quality businesses bought at full price. Sometimes that bet wins. Often it doesn\'t.',
+      ],
+      punchline:
+        'Real investing rarely has a clean answer. Every choice here is defensible — and every choice has a way to fail. The job isn\'t finding the "right" stock. It\'s holding a thesis you can defend when the data shifts under you.',
+      takeaway:
+        'When a question has no clean answer, don\'t reach for one. Pick the trade-off you\'re willing to live with — and write down what would prove you wrong.',
     },
 
-    // Tap: find which business survives a crisis
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 5 — Tap. Bull pitch with red flags. Builds on Step 4's data.
+    // ─────────────────────────────────────────────────────────────────────
     {
       kind: 'tap',
-      topic: 'The Recession Test',
+      topic: 'Reading the Pitch',
       topicIcon: Search,
-      intro: 'A recession hits and every company\'s revenue drops 15%. Below are six businesses with their pre-recession margins. Tap the ones that SURVIVE the revenue drop without going into the red.',
+      intro:
+        'A friend at work sends you this Costco bull-case pitch they wrote. They\'re trying to get you excited. Tap the lines that should make you MORE worried, not less. (Three of them, hidden among real strengths.)',
       passage: [
-        { type: 'chip', value: 'Software company: 35% margin', signal: true, feedback: 'A 15% revenue drop on 35% margins still leaves ~20% margin. This business survives easily — software has almost no variable costs, so margins compress but don\'t disappear.' },
-        { type: 'text', value: ' · ' },
-        { type: 'chip', value: 'Grocery chain: 2% margin', signal: false, feedback: 'A 15% revenue drop wipes out a 2% margin instantly. This business goes into the red. Razor-thin margins have zero room for error — one bad quarter and you\'re losing money.' },
-        { type: 'text', value: ' · ' },
-        { type: 'chip', value: 'Payment network: 55% margin', signal: true, feedback: 'Even with 15% less transaction volume, a 55% margin business stays very profitable. This is why investors pay premium prices for high-margin companies — they survive anything.' },
-        { type: 'text', value: ' · ' },
-        { type: 'chip', value: 'Restaurant chain: 6% margin', signal: false, feedback: 'A 15% revenue drop (fewer diners) with fixed costs like rent and staff pushes this below zero. Restaurants are among the first businesses to fail in recessions because margins are too thin to absorb shocks.' },
-        { type: 'text', value: ' · ' },
-        { type: 'chip', value: 'Luxury brand: 30% margin', signal: true, feedback: 'Even luxury takes a hit in recessions, but a 30% margin can absorb a 15% revenue decline and still profit. Luxury customers are also less price-sensitive, so revenue might not drop as much.' },
-        { type: 'text', value: ' · ' },
-        { type: 'chip', value: 'Airline: 5% margin', signal: false, feedback: 'Airlines have massive fixed costs (planes, fuel contracts, staff) and tiny margins. A 15% revenue drop is catastrophic — this is why airlines frequently go bankrupt in recessions.' },
+        {
+          type: 'text',
+          value: 'Costco is the highest-quality retailer on Earth. ',
+        },
+        {
+          type: 'chip',
+          value: '60M+ members renew at 88%',
+          signal: true,
+          feedback:
+            'They\'re framing 88% as a strength — and historically it would be. But last lesson you saw the renewal rate has slipped from 93%. A 5-point drop in renewal is the membership flywheel slowing down. The pitch is dressing up bad news as good news.',
+        },
+        { type: 'text', value: '. ' },
+        {
+          type: 'chip',
+          value: 'Membership fees produce ~$4.8B at near-100% margin',
+          signal: false,
+          feedback:
+            'Real strength. This is exactly why Costco\'s thin product margin is misleading — the membership is the product, and it prints money.',
+        },
+        { type: 'text', value: '. ' },
+        {
+          type: 'chip',
+          value: 'Trading at 50x earnings — premium quality deserves a premium price',
+          signal: true,
+          feedback:
+            '50x earnings is a HUGE assumption baked in. Microsoft trades at 32x WITH a 36% margin and AI growth. If the membership flywheel slows, Costco doesn\'t deserve a higher multiple than Microsoft. The "premium for quality" framing assumes the quality is intact — that\'s the very thing in question.',
+        },
+        { type: 'text', value: '. ' },
+        {
+          type: 'chip',
+          value: 'Walmart Plus is a "different demographic" so it doesn\'t threaten Costco',
+          signal: true,
+          feedback:
+            'This is the kind of comfortable assumption that gets investors hurt. Walmart Plus has 100M+ members. Amazon Prime has 200M+. Both are pushing into bulk and household goods. Telling yourself the threat doesn\'t apply because of "demographics" is exactly the bias that makes you miss disruption when it\'s happening.',
+        },
+        { type: 'text', value: '. ' },
+        {
+          type: 'chip',
+          value: '40-year history of consistent execution',
+          signal: false,
+          feedback:
+            'Real strength. Track record is one of the best signals in investing — but track record alone doesn\'t guarantee the next decade. Use it as evidence, not proof.',
+        },
       ],
       requiredSignals: 3,
       reveal:
-        'The 35%, 55%, and 30% margin businesses survive. The 2%, 6%, and 5% margin businesses likely go red. This is why margins matter beyond just "profitability" — they\'re a survival metric. High-margin businesses can weather storms. Low-margin businesses need everything to go right just to break even.',
-      takeaway: 'Margins aren\'t just about profitability — they\'re about survival. A company with 35% margins can survive a recession. A company with 3% margins might not survive a bad quarter.',
+        'Three red flags spun as strengths: the 88% renewal (down 5 points), the 50x valuation (assumes quality is intact), and the dismissive Walmart framing. Real strengths: $4.8B in membership fees and the 40-year track record. A good pitch can be true and still misleading — the question is what it doesn\'t emphasize.',
+      takeaway:
+        'When you read a bull case, ask: what fact is being framed as a strength that\'s actually a warning? Pitches optimize for excitement, not balance.',
     },
 
-    // Thinking: synthesis
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 6 — Synthesis. Free response.
+    // ─────────────────────────────────────────────────────────────────────
     {
       kind: 'thinking',
-      prompt: 'Your friend is comparing two stocks. Company A has 45% profit margins. Company B has 5% margins. Your friend says "A is obviously the better investment." In 2-3 sentences, explain why they might be wrong — and when a 5% margin company could be a better investment.',
-      placeholder: 'Think about Costco vs Microsoft — when are low margins a strategy vs a weakness? What else matters besides margin level?',
+      prompt:
+        'Your friend reads this lesson, looks at all three companies, and says: "I\'m just going to buy Microsoft. 36% margin. Done." In 2-3 sentences, give them your strongest pushback — using what you saw across these steps.',
+      placeholder:
+        'Think about: what does a 36% margin protect against AND not protect against? What did Costco\'s 2.9% reveal? What was the role of the price tag in step 4?',
       modelAnswer:
-        'Margins alone don\'t determine investment quality. A 5% margin company could be a better investment if its margins are expanding (going from 3% to 5% to 8%), if its business model intentionally uses low margins to drive customer loyalty (like Costco\'s membership model), or if it\'s growing revenue so fast that even a thin margin produces enormous profit. Meanwhile, a 45% margin company could be a bad investment if those margins are SHRINKING — perhaps competition is forcing price cuts, or their technology advantage is eroding. The direction and sustainability of margins matters more than the level. And context is everything: 5% is amazing for a grocery chain but terrible for a software company.',
+        'A 36% margin is real protection against operational shocks — Microsoft survives a recession that would cripple Kroger — but margin alone doesn\'t protect against the price you pay. At 32x earnings, Microsoft is priced like AI is going to deliver; if it underdelivers, you can lose 20%+ on a great business. And the "high margin = quality" rule misled you on Costco — its 2.9% headline hid the membership engine running at near-100%. The right question isn\'t "which company has the best margin?" — it\'s "what risk am I underwriting at this price, and what would prove me wrong?"',
       strongReasoningIncludes: [
-        'Explains that margin direction (expanding vs shrinking) matters more than the absolute level',
-        'Gives a concrete example of when low margins are a deliberate strategy, not a weakness',
-        'Mentions that the "right" margin depends on the industry or business model',
+        'Acknowledges that high margin is real protection (don\'t pretend Microsoft\'s 36% is meaningless)',
+        'Identifies that price/valuation matters separately from business quality',
+        'References at least one nuance from earlier in the lesson — the Costco paradox, the recession asymmetry, or the Step 4 trade-off',
       ],
     },
   ],
   takeaways: [
-    'Profit margin = profit ÷ revenue. It tells you how many cents a business keeps from every dollar. Grocery stores keep ~2-3¢. Software companies keep 25-35¢.',
-    'Higher margins aren\'t always better. Costco\'s 2.6% margin is a strategy — low prices drive 93% membership renewal. A struggling retailer at 2.6% is dying.',
-    'Margins are a survival metric. A 35% margin business survives a recession. A 3% margin business might not survive a bad quarter.',
-    'Margin direction matters more than margin level. A company going from 5% to 15% is improving. One going from 40% to 25% is deteriorating.',
+    'Net margin = cents of profit kept per dollar of revenue. Microsoft 36%, Costco 2.9%, Kroger 1.5% — same dollar, vastly different keep rates.',
+    'High margin is recession insurance. A 36% margin survives shocks that wipe out a 1.5% business. The cushion matters most exactly when things get hard.',
+    'A thin margin can be the strategy, not the symptom. Costco runs cheap on purpose — the real product is the membership at near-100% margin, hidden under the headline.',
+    'Margin is one input, not a verdict. Two great companies can both be wrong investments at the wrong price — and a defensible thesis includes what would prove you wrong.',
   ],
   completionMessages: {
-    perfect: 'Perfect. You now understand margins at a level most individual investors never reach — not just the number, but the context.',
-    great: 'Strong work. You can see that margins aren\'t just math — they\'re the difference between businesses that survive and those that don\'t.',
-    good: 'Good grasp of the basics. Remember: margin level matters, but direction and context matter more.',
-    low: 'Worth revisiting. Margins are one of the most important concepts in investing — they show up in every company analysis.',
+    perfect:
+      'Sharp work. You moved past "high margin = good business" into the actual decision: who survives, what does the headline hide, and what trade-off are you underwriting at this price.',
+    great:
+      'Strong run. You can see margin as a multi-layered signal — cushion, strategy, and warning — instead of a single number.',
+    good: 'Solid grounding. Hold onto the through-line: same three companies, three different views depending on which lens you applied.',
+    low: 'Worth re-running. The point of this lesson isn\'t the three companies — it\'s the habit of asking "what does this margin tell me, and what does it miss?"',
   },
 };
