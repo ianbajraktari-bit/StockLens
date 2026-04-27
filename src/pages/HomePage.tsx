@@ -24,6 +24,7 @@ import {
   Layers,
   Sparkles,
   ChevronRight,
+  NotebookPen,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { allLessons, type Lesson } from '../data/lessons';
@@ -46,6 +47,7 @@ import {
 import { getReviewStats } from '../lib/spacedRepetition';
 import { getLevelInfo } from '../lib/xp';
 import { getQuestProgress, type QuestStatus } from '../lib/quests';
+import { getJournalStats } from '../lib/journal';
 import { CountUp } from '../components/hud/CountUp';
 import { GlassPanel } from '../components/hud/GlassPanel';
 import { TickerBar } from '../components/hud/TickerBar';
@@ -100,6 +102,7 @@ export default function HomePage() {
   const levelInfo = getLevelInfo();
   const questProgress = getQuestProgress();
   const questsEarned = questProgress.filter((q) => q.earned).length;
+  const journalStats = getJournalStats();
 
   const [activeTab, setActiveTab] = useState<TabId>(() =>
     getInitialTab(Boolean(nextId)),
@@ -177,6 +180,25 @@ export default function HomePage() {
 
           {hasAnyProgress && (
             <div className="flex items-center gap-2.5">
+              <motion.button
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={SPRING_FLUID}
+                onClick={() => navigate('/journal')}
+                whileHover={{ y: -1, scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-accent-light
+                  bg-gradient-to-br from-accent/12 to-accent/[0.03]
+                  border border-accent/25 cursor-pointer
+                  shadow-[0_0_14px_-4px_rgba(99,102,241,0.25)] hover:border-accent/45 transition-colors"
+                aria-label={`Open journal — ${journalStats.total} ${journalStats.total === 1 ? 'entry' : 'entries'}`}
+              >
+                <NotebookPen className="w-3.5 h-3.5" />
+                <span className="data-num">{journalStats.total}</span>
+                <span className="hidden sm:inline text-[9px] font-bold uppercase tracking-widest text-accent-light/70">
+                  Journal
+                </span>
+              </motion.button>
               {streak.current > 0 && (
                 <motion.div
                   initial={{ scale: 0.8, opacity: 0 }}

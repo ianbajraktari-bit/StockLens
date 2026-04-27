@@ -1,6 +1,7 @@
 import { allLessons } from '../data/lessons';
 import type { Skill } from '../data/lessons';
 import { allCompanies } from '../data/companies';
+import type { AnalystStepKind } from '../data/companies/types';
 import {
   awardAnalystComplete,
   awardAnalystStep,
@@ -8,6 +9,7 @@ import {
   type XpAwardResult,
 } from './xp';
 import { evaluateQuests, type EarnedQuest } from './quests';
+import { upsertAnalystMemo } from './journal';
 
 const COMPLETED_KEY = 'stocklens-completed';
 const SKILLS_KEY = 'stocklens-skills';
@@ -326,9 +328,18 @@ export function saveAnalystResponse(
   const all = getAllResponsesMap();
   const company = { ...(all[companyId] ?? {}) };
   const wasFirstSubmission = !(stepKind in company);
-  company[stepKind] = { text, submittedAt: new Date().toISOString() };
+  const submittedAt = new Date().toISOString();
+  company[stepKind] = { text, submittedAt };
   all[companyId] = company;
   localStorage.setItem(RESPONSES_KEY, JSON.stringify(all));
+
+  // Mirror into the journal so every memo lives in the user's research log.
+  upsertAnalystMemo({
+    companyId,
+    stepKind: stepKind as AnalystStepKind,
+    text,
+    submittedAt,
+  });
 
   if (wasFirstSubmission) {
     const companyName = allCompanies.find((c) => c.id === companyId)?.name ?? 'Company';
