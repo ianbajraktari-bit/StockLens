@@ -6,15 +6,19 @@
 - **Repository:** `ianbajraktari-bit/StockLens` on GitHub
 - **Production deployment:** Vercel (auto-deploys from `main`)
 - **Lesson count:** 38 lessons (28 foundations + 10 company deep dives) + Analyst Mode (16 seeded companies across every major sector)
-- **Architecture:** Step-based (`steps: LessonStep[]` with `kind: 'drill' | 'estimate' | 'decide' | 'tap' | 'thinking'`)
+- **Step kinds:** `drill | estimate | decide | tap | thinking | compare`
+- **Research Journal:** the connective spine — every memo, reflection, and note the user produces lands in `lib/journal.ts` (localStorage-backed, auto-imports legacy analyst responses)
+- **Product status:** mid-pivot from "curriculum-as-main-loop" to "Hub + Apprenticeship." See **Phase Status** below and full detail in [docs/roadmap.md](docs/roadmap.md).
 
 > **IMPORTANT:** Before making changes, run `git fetch origin main` and verify your local `main` matches remote. The codebase uses the step-based architecture (NOT the old `questions: QuizQuestion[]` format). If you see `QuizQuestion` anywhere, you are on a stale branch.
 
+## Phase Status
+
+Phase 1 (Hub + Apprenticeship pivot) is in progress. Shipped on main: Research Journal v1 (`/journal`), lesson reflection card, header journal entry point, the `compare` step kind in decisive + open-call modes, Library hub, Floor placeholder, and the Hub mode strip on HomePage. Remaining for Phase 1: the Desk redesign of HomePage and applying the connected-scenario template to Recurring Revenue / Moats / Drivers. Phase 2 (Simulator MVP) is next.
+
 ## What This Project Is
 
-StockLens is a Duolingo-style app that teaches people how to think like investors. Not memorize facts — **think**. The app teaches users to form opinions on companies, weigh risks against valuations, and make investment decisions using real reasoning.
-
-The core design principle: **every interaction should force the user to think, not just read.**
+StockLens is a **hub for becoming an investor** — not a Duolingo-style quiz app dressed in stock vocabulary. The North Star: a beginner with no prior knowledge can use this app to become someone who can pick up any public company's 10-K, work through a reasoned analysis, and form a defensible investment opinion. The product runs on an **apprenticeship model**, not a curriculum model — lessons are a *resource* the user consults; the *main loop* is doing the work. The core design principle: **every interaction should force the user to think and produce a written artifact the user owns.** See [docs/pedagogy.md](docs/pedagogy.md) for the four layers of investing skill, content quality standards, and the 10 pedagogical principles that drive every product decision.
 
 ## Tech Stack
 
@@ -36,58 +40,37 @@ src/
 ├── index.css                        # Tailwind @theme (dark mode, custom colors)
 ├── components/
 │   ├── ErrorBoundary.tsx            # React class error boundary with recovery UI
-│   └── steps/
-│       ├── DrillStep.tsx            # Binary choice drill (left/right taps)
-│       ├── EstimateStep.tsx         # Numeric estimation with tolerance
-│       ├── TapStep.tsx              # Signal-finding in text passages
-│       ├── DecideStep.tsx           # Multiple choice with punchline reveal
-│       └── ThinkingStepComponent.tsx # Free-response synthesis
+│   ├── LessonReflectionCard.tsx     # Optional structured-prompt card on lesson completion → journal entry
+│   ├── steps/                       # 6 step components (drill, estimate, tap, decide, thinking, compare)
+│   └── analyst/AnalystStepComponent.tsx  # Free-response step UI for Analyst Mode
 ├── pages/
-│   ├── HomePage.tsx                 # Lesson grid, progress tracking, skills display
-│   └── LessonRunner.tsx             # Intro → steps → completion state machine
+│   ├── HomePage.tsx                 # Lesson grid, progress tracking, skills display, Journal entry point
+│   ├── LessonRunner.tsx             # Intro → steps → completion (reflection card included)
+│   ├── JournalPage.tsx              # Research Journal feed: stats, composer, filters, search, entries
+│   ├── AnalystModeHome.tsx          # Company picker (lists all seeded companies)
+│   ├── AnalystSession.tsx           # Workflow runner: intro → 7 steps → complete
+│   ├── ReviewSession.tsx            # Daily Practice runner
+│   ├── LibraryPage.tsx, FloorPage.tsx  # Library hub + Floor (Phase 2) placeholder
 ├── lib/
-│   └── progression.ts              # localStorage: completion, scores, skills tracking
+│   ├── progression.ts               # localStorage: completion, scores, skills tracking
+│   ├── journal.ts                   # Research Journal: entry types, CRUD, lazy import, stats
+│   ├── spacedRepetition.ts          # Per-item Leitner-box state, priority scoring
+│   ├── review.ts                    # Daily practice pool collection + selection + storage
+│   ├── xp.ts                        # XP ledger, level curve, titles, award helpers
+│   └── quests.ts                    # Quest catalog, evaluation, earned-set persistence
 └── data/
-    └── lessons/
-        ├── types.ts                 # LessonStep union, Lesson, Skill, LessonTier
-        ├── index.ts                 # Barrel exports, allLessons array, getLessonById
-        ├── foundations-market.ts    # "What Is the Stock Market?"
-        ├── foundations-basics.ts    # "Follow the Money"
-        ├── foundations-margins.ts   # "What a Business Keeps"
-        ├── foundations-income.ts    # "Reading the Scoreboard"
-        ├── foundations-recurring.ts # "Money That Comes Back"
-        ├── foundations-drivers.ts   # "What Actually Drives a Business"
-        ├── foundations-biases.ts    # "Your Brain vs. Your Portfolio"
-        ├── foundations-moats.ts     # "What Keeps Winners Winning"
-        ├── foundations-valuation.ts # "What Is a Stock Worth?"
-        ├── foundations-expectations.ts # "The Expectations Game"
-        ├── foundations-cashflow.ts  # "Cash vs. Profit"
-        ├── foundations-risk.ts      # "Risk Is Not a Feeling"
-        ├── foundations-debt.ts      # "Debt: Fuel or Fire?"
-        ├── foundations-growth-value.ts # "Growth vs. Value"
-        ├── foundations-returns.ts   # "Where the Profits Go"
-        ├── foundations-portfolio.ts # "Building a Portfolio"
-        ├── foundations-earnings.ts  # "Reading an Earnings Report"
-        ├── foundations-selling.ts   # "When to Sell"
-        ├── apple.ts                # Apple company lesson
-        ├── nvidia.ts               # NVIDIA company lesson
-        ├── costco.ts               # Costco company lesson
-        ├── amazon.ts               # Amazon company lesson
-        ├── microsoft.ts            # Microsoft company lesson
-        ├── tesla.ts                # Tesla company lesson
-        ├── google.ts               # Google company lesson
-        └── netflix.ts              # Netflix company lesson
+    ├── lessons/
+    │   ├── types.ts                 # LessonStep union, Lesson, Skill, LessonTier
+    │   ├── index.ts                 # Barrel exports, allLessons array, getLessonById
+    │   ├── foundations-*.ts         # 28 foundations lessons (Phase 1 + Phase 2)
+    │   └── {company}.ts             # 10 company deep-dive lessons
+    └── companies/
+        ├── types.ts                 # CompanyProfile, AnalystStepKind, WORKFLOW_STEPS
+        ├── index.ts                 # allCompanies, getCompanyById
+        └── {company}.ts             # 16 seeded company profiles for Analyst Mode
 ```
 
-## Architecture — How It Works
-
-### Data-Driven Lessons
-
-All lesson content lives in typed data objects. The UI is generic — `LessonRunner` renders any lesson from its `steps` array. To create a new lesson, you only create a new data file and add it to `index.ts`. No UI changes needed.
-
-### Step-Based Architecture
-
-Each lesson contains a `steps: LessonStep[]` array. Steps are a discriminated union on `kind`:
+## Step Kinds (quick reference)
 
 | Kind | Component | Purpose |
 |------|-----------|---------|
@@ -96,331 +79,9 @@ Each lesson contains a `steps: LessonStep[]` array. Steps are a discriminated un
 | `'tap'` | `TapStep` | Find signals in a text passage |
 | `'decide'` | `DecideStep` | Multiple choice with punchline reveal |
 | `'thinking'` | `ThinkingStepComponent` | Free-response synthesis (no grading) |
+| `'compare'` | `CompareStep` | Side-by-side candidate cards (real companies); decisive + open-call modes |
 
-Each step component receives its typed data and an `onDone(score)` callback. The `LessonRunner` advances through steps sequentially, accumulating scores.
-
-### Phase State Machine (LessonRunner.tsx)
-
-```
-intro → running (step 0 → step 1 → ... → step N) → complete
-```
-
-Phases:
-- **intro**: Lesson overview, key facts, topics, tier badge, "Start Lesson" button
-- **running**: Renders current step component. Progress bar + score counter at top. Each step calls `onDone` to advance.
-- **complete**: Score with star rating (0-3), completion message, takeaways, next lesson / redo / home buttons. Fires `onComplete` to persist in localStorage.
-
-### Routing (App.tsx)
-
-- `GET /` → `HomePage`
-- `GET /lesson/:id` → `LessonRunner` (via `getLessonById`)
-- `ScrollToTop` resets scroll on navigation
-- `ErrorBoundary` wraps everything for crash recovery
-
-### Home Page (HomePage.tsx)
-
-- Hero section with 3 value prop cards
-- Foundations split into Phase 1 ("Core Financial Vocabulary") and Phase 2 ("Investing Concepts")
-- Company Deep Dives section
-- Per-lesson star display on completed cards
-- Skills progress bars showing exposure across skill categories
-- Visual states: completed (green check + stars), up next (accent border), locked
-
-### Progression System (lib/progression.ts)
-
-- **Completion**: `Set<string>` of lesson IDs in localStorage
-- **Scores**: Per-lesson best score (`correct/total`) with 0-3 star ratings
-- **Skills**: Exposure count per skill category, incremented on lesson completion
-- Stars: 100% = 3 stars, 75%+ = 2 stars, 50%+ = 1 star, <50% = 0 stars
-
-## Type System
-
-### LessonStep (discriminated union)
-
-```typescript
-// Binary choice drill
-interface DrillStep {
-  kind: 'drill';
-  topic: string;
-  topicIcon: LucideIcon;
-  intro: string;
-  prompts: DrillPrompt[];           // Array of binary choices
-  takeaway: string;
-}
-
-interface DrillPrompt {
-  setup?: string;                    // Optional shared setup line
-  left: { label: string; sublabel?: string };
-  right: { label: string; sublabel?: string };
-  correct: 'left' | 'right';
-  flash: string;                     // Short feedback after tap
-}
-
-// Numeric estimation
-interface EstimateStep {
-  kind: 'estimate';
-  topic: string;
-  topicIcon: LucideIcon;
-  context: string;
-  question: string;
-  answer: number;                    // Correct numeric answer
-  tolerance: number;                 // Acceptable distance from answer
-  unit?: string;                     // Display unit (%, $, x, etc.)
-  hint?: string;                     // Tiny hint above input
-  reveal: string;
-  takeaway: string;
-}
-
-// Signal-finding in text
-interface TapStep {
-  kind: 'tap';
-  topic: string;
-  topicIcon: LucideIcon;
-  intro: string;
-  passage: TapSegment[];            // Mixed text and tappable chips
-  requiredSignals: number;
-  reveal: string;
-  takeaway: string;
-}
-
-type TapSegment =
-  | { type: 'text'; value: string }
-  | { type: 'chip'; value: string; signal: boolean; feedback: string };
-
-// Multiple choice with reveal
-interface DecideStep {
-  kind: 'decide';
-  topic: string;
-  topicIcon: LucideIcon;
-  context?: string;
-  question: string;
-  options: string[];                 // 2-4 short options
-  correctIndex: number;
-  punchline: string;                 // 1-2 sentence key insight
-  wrongNudges?: string[];            // Optional per-wrong-option feedback
-  takeaway: string;
-}
-
-// Free-response synthesis (no grading)
-interface ThinkingStepNew {
-  kind: 'thinking';
-  prompt: string;
-  placeholder: string;
-  modelAnswer: string;
-  strongReasoningIncludes: string[];
-}
-
-type LessonStep = DrillStep | EstimateStep | TapStep | DecideStep | ThinkingStepNew;
-```
-
-### Lesson
-
-```typescript
-type LessonTier = 'foundations-1' | 'foundations-2' | 'company';
-
-type Skill =
-  | 'margins'
-  | 'recurring_revenue'
-  | 'business_drivers'
-  | 'behavioral_biases'
-  | 'moats'
-  | 'valuation'
-  | 'risk';
-
-interface Lesson {
-  id: string;
-  emoji: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  estimatedMinutes: number;
-  dataAsOf: string;                  // 'Q1 2025' for company, '' for foundations
-  keyFacts: { label: string; value: string; detail: string }[];
-  topics: { label: string; icon: LucideIcon }[];
-  storyArc?: string[];
-  steps: LessonStep[];              // The interactive content
-  takeaways: string[];
-  completionMessages: { perfect: string; great: string; good: string; low: string };
-  tier?: LessonTier;
-  skills?: Skill[];
-}
-```
-
-## Step Design Patterns
-
-### DrillStep — Rapid Binary Choices
-
-**Purpose:** Build quick pattern recognition. User taps left or right, gets instant feedback.
-
-**Design rules:**
-- Each prompt has exactly 2 choices (left/right)
-- `flash` gives immediate 1-sentence feedback after each tap
-- Manual "Next" button between prompts (no auto-advance)
-- Score shown at end with takeaway
-- Good for: comparing two approaches, identifying better/worse options
-
-### EstimateStep — Numeric Intuition
-
-**Purpose:** Force the user to commit to a number before seeing the answer. Builds calibration.
-
-**Design rules:**
-- Single numeric input with optional unit display
-- `tolerance` defines acceptable range (e.g., answer=35, tolerance=10 accepts 25-45)
-- `hint` shown as small text above input (optional)
-- Reveal shows how close they were
-- Good for: margins, growth rates, valuations, ratios
-
-### TapStep — Signal Finding in Text
-
-**Purpose:** Train the user to spot red flags, key signals, or important phrases in context.
-
-**Design rules:**
-- `passage` mixes plain text with tappable chips
-- Chips are either signals (`signal: true`) or distractors (`signal: false`)
-- Each chip has per-tap `feedback` explaining why it is/isn't a signal
-- Correctly found signals show in amber with flag icon
-- Wrong taps show muted gray with X icon
-- Must find `requiredSignals` to unlock Done button
-- Good for: reading financial statements, spotting biases, identifying risks
-
-### DecideStep — Multiple Choice with Insight
-
-**Purpose:** Classic question format but with a punchline reveal that delivers the core insight.
-
-**Design rules:**
-- 2-4 options, one correct
-- `punchline` is the 1-2 sentence key insight revealed after answering
-- `wrongNudges` optionally explains why each wrong answer is tempting
-- Radio-style selection with submit button
-- Good for: judgment calls, applying frameworks, decision-making
-
-### ThinkingStep — Free-Response Synthesis
-
-**Purpose:** Synthesize everything learned into a written opinion. Forces integration.
-
-**Design rules:**
-- One open-ended prompt asking for a judgment call
-- Minimum 10 characters to submit
-- Model answer shown after submission (not before)
-- 3 criteria for "what strong reasoning includes"
-- No AI grading — self-comparison only
-- Typically the final step in company lessons
-
-## Content Quality Standards
-
-### Questions Should Teach Reasoning, Not Trivia
-
-BAD: "What percentage of Apple's revenue comes from Services?"
-GOOD: "As an investor, which aspect of this revenue mix should concern you most?"
-
-BAD: "What is Apple's P/E ratio?"
-GOOD: "At 30x earnings with 8% growth, what is the most thoughtful investor reaction?"
-
-### Every Wrong Answer Should Be Plausibly Tempting
-
-Each wrong option should represent a real cognitive trap:
-- **Surface-level thinking**: counts segments without tracing dependencies
-- **Emotional reasoning**: conflates business quality with stock quality
-- **Anchoring on one number**: ignores context and quality premiums
-
-### Feedback Should Teach, Not Dismiss
-
-BAD: "This is wrong because Services matters more."
-GOOD: "Total revenue isn't what drives valuation — profit quality is. A dollar of recurring, high-margin Services revenue is worth more to investors than a dollar of one-time hardware revenue."
-
-### Context Should Be Concrete, Not Abstract
-
-BAD: "Consider a company with multiple revenue streams."
-GOOD: "Two neighborhood restaurants both grew revenue 20% this year — from $500,000 to $600,000."
-
-Use specific numbers, names, and scenarios. Foundations lessons use relatable businesses (restaurants, tutoring, snack boxes). Company lessons use real data.
-
-## Creating a New Lesson
-
-### Step 1: Create the data file
-
-Create `src/data/lessons/{id}.ts`. Follow this template:
-
-```typescript
-import { IconA, IconB, IconC, IconD } from 'lucide-react';
-import type { Lesson } from './types';
-
-export const myLesson: Lesson = {
-  id: 'my-lesson-id',
-  emoji: '📊',
-  title: 'Lesson Title',
-  subtitle: 'Short tagline',
-  description: '2-3 sentences explaining what the user will learn.',
-  estimatedMinutes: 2,
-  dataAsOf: '',              // 'Q1 2025' for company lessons, '' for foundations
-  keyFacts: [],              // Empty for foundations, 3-4 items for company lessons
-  topics: [
-    { label: 'Topic 1', icon: IconA },
-    { label: 'Topic 2', icon: IconB },
-    { label: 'Topic 3', icon: IconC },
-    { label: 'Topic 4', icon: IconD },
-  ],
-  tier: 'foundations-1',     // 'foundations-1' | 'foundations-2' | 'company'
-  skills: ['margins'],       // Which skills this lesson develops
-  steps: [
-    {
-      kind: 'drill',
-      topic: 'Topic Name',
-      topicIcon: IconA,
-      intro: 'Setup text explaining the drill.',
-      prompts: [
-        {
-          setup: 'Optional context for this specific prompt.',
-          left: { label: 'Option A', sublabel: 'Brief detail' },
-          right: { label: 'Option B', sublabel: 'Brief detail' },
-          correct: 'left',
-          flash: 'Why A is the better choice — 1 sentence.',
-        },
-      ],
-      takeaway: 'Key learning from this drill.',
-    },
-    {
-      kind: 'decide',
-      topic: 'Topic Name',
-      topicIcon: IconB,
-      context: 'Setup text with specific numbers and scenarios...',
-      question: 'Question that requires reasoning, not recall?',
-      options: ['Option A', 'Option B', 'Option C', 'Option D'],
-      correctIndex: 0,
-      punchline: '1-2 sentence key insight.',
-      wrongNudges: ['', 'Why B is weaker.', 'Why C is weaker.', 'Why D is weaker.'],
-      takeaway: 'One sentence the user should remember.',
-    },
-    // ... mix of drill, estimate, tap, decide, thinking steps
-  ],
-  takeaways: ['Takeaway 1', 'Takeaway 2', 'Takeaway 3', 'Takeaway 4'],
-  completionMessages: {
-    perfect: 'Message for 100%.',
-    great: 'Message for 75%+.',
-    good: 'Message for 50%+.',
-    low: 'Message for <50%.',
-  },
-};
-```
-
-### Step 2: Register in index.ts
-
-Add export to `src/data/lessons/index.ts`:
-
-```typescript
-export { myLesson } from './my-lesson';
-```
-
-Add to the `allLessons` array in the correct position:
-- Foundations Phase 1 lessons first
-- Foundations Phase 2 lessons second
-- Company lessons last
-
-### Step 3: Verify
-
-- Run `npx tsc -b --force` (must pass with zero errors — stricter than `--noEmit`)
-- Run `npx vite build` (must succeed)
-- Lesson appears automatically in the picker
+Full type definitions, per-kind design rules, and the lesson-creation template live in [docs/architecture.md](docs/architecture.md).
 
 ## Lesson Categories
 
@@ -450,40 +111,6 @@ Apply concepts to real public companies using real data.
 - **dataAsOf** set to latest quarter
 - Final step should be a `thinking` step (investment judgment prompt)
 - ~3-5 minutes each
-
-## Curriculum — 26 Lessons
-
-### Foundations Phase 1 (7 lessons)
-1. 📈 What Is the Stock Market?
-2. 💰 Follow the Money
-3. 💡 What a Business Keeps (margins)
-4. 📊 Reading the Scoreboard (income statements)
-5. 🔄 Money That Comes Back (recurring revenue)
-6. 🔍 What Actually Drives a Business (key drivers)
-7. 🧠 Your Brain vs. Your Portfolio (behavioral biases)
-
-### Foundations Phase 2 (11 lessons)
-8. 🏰 What Keeps Winners Winning (moats)
-9. ⚖️ What Is a Stock Worth? (valuation)
-10. 🎯 The Expectations Game
-11. 💸 Cash vs. Profit (cash flow)
-12. 🎲 Risk Is Not a Feeling
-13. 🏦 Debt: Fuel or Fire?
-14. ⚖️ Growth vs. Value
-15. 💰 Where the Profits Go (returns)
-16. 🧩 Building a Portfolio
-17. 📋 Reading an Earnings Report
-18. 🚪 When to Sell
-
-### Company Deep Dives (8 lessons)
-19. 🍎 Apple
-20. 🟢 NVIDIA
-21. 🏪 Costco
-22. 📦 Amazon
-23. 🪟 Microsoft
-24. ⚡ Tesla
-25. 🔍 Google
-26. 🎬 Netflix
 
 ## Design Constraints
 
@@ -520,254 +147,10 @@ npx vite build            # Production build
 npm run dev               # Dev server
 ```
 
-## Analyst Mode — The Capstone Feature
+## Deeper Detail
 
-Analyst Mode is the "apply what you learned" layer. After a user works through the curriculum, Analyst Mode lets them pick a company NOT in the curriculum and walk through a structured 7-step analysis workflow. It's the bridge between *knowledge* (foundations lessons) and *skill* (forming actual investment opinions).
+This file is intentionally short — orientation only. For depth:
 
-### File Layout
-
-```
-src/
-├── data/
-│   └── companies/
-│       ├── types.ts              # CompanyProfile, AnalystStepKind, WorkflowStepTemplate, WORKFLOW_STEPS
-│       ├── index.ts              # allCompanies, getCompanyById, barrel exports
-│       ├── visa.ts               # Visa (V) — network effect moat
-│       ├── starbucks.ts          # Starbucks (SBUX) — brand + saturation
-│       ├── cocacola.ts           # Coca-Cola (KO) — consumer staples dividend compounder
-│       ├── walmart.ts            # Walmart (WMT) — scale + retail re-rating
-│       ├── homedepot.ts          # Home Depot (HD) — housing cycle + duopoly
-│       ├── chipotle.ts           # Chipotle (CMG) — restaurant unit economics
-│       ├── jpmorgan.ts           # JPMorgan Chase (JPM) — banking, cyclical, TBTF
-│       ├── unitedhealth.ts       # UnitedHealth (UNH) — insurance + Optum vertical integration
-│       ├── exxon.ts              # ExxonMobil (XOM) — integrated oil & gas, capital discipline
-│       ├── adobe.ts              # Adobe (ADBE) — SaaS moat + AI risk
-│       ├── salesforce.ts         # Salesforce (CRM) — enterprise SaaS + growth deceleration
-│       ├── shopify.ts            # Shopify (SHOP) — e-com platform + GMV sensitivity
-│       ├── disney.ts             # Disney (DIS) — sum-of-parts, streaming transition
-│       ├── spotify.ts            # Spotify (SPOT) — label leverage, structural margin cap
-│       ├── lilly.ts              # Eli Lilly (LLY) — pharma hypergrowth, GLP-1 bet
-│       └── tsmc.ts               # TSMC (TSM) — semis monopoly, Taiwan geopolitical risk
-├── pages/
-│   ├── AnalystModeHome.tsx       # Company picker (lists all seeded companies)
-│   └── AnalystSession.tsx        # Workflow runner: intro → 7 steps → complete
-└── components/
-    └── analyst/
-        └── AnalystStepComponent.tsx  # Free-response step UI; reveals model answer after submit
-```
-
-### The Workflow (WORKFLOW_STEPS)
-
-Every company uses the same 7 steps in the same order. Each company supplies its own `modelAnswer` and `strongReasoningIncludes` for each step.
-
-1. **Business** — "What does this company actually do and how does it make money?"
-2. **Drivers** — "What 2-3 factors most drive revenue?"
-3. **Moat** — "Durable competitive advantage? What type?"
-4. **Risks** — "What 2-3 things could structurally hurt this business?"
-5. **Valuation** — "Priced as growth, value, or turnaround?"
-6. **Thesis** — "Make the strongest bull OR bear case."
-7. **Verdict** — "Buy, pass, or need info? What would change your mind?"
-
-Shared prompts live in `WORKFLOW_STEPS` (data/companies/types.ts). Company-specific content lives in each company's `workflow: Record<AnalystStepKind, AnalystStepContent>`.
-
-### Adding a New Company
-
-1. Create `src/data/companies/{id}.ts` following the `CompanyProfile` shape. You need:
-   - id, ticker, name, emoji, sector, oneLiner, description
-   - `dataAsOf` (e.g. 'Q4 2024'), `difficulty` ('intro' | 'standard' | 'advanced'), `estimatedMinutes`
-   - `keyFacts`: 4-6 real data points the user reasons from
-   - `workflow`: a Record with all 7 `AnalystStepKind` entries filled in
-2. Register in `src/data/companies/index.ts` — add the import, the named export, and append to `allCompanies`.
-3. Order in `allCompanies` is by difficulty (intro first). The picker displays them in array order.
-
-### Quality Bar for Model Analyses
-
-The `modelAnswer` is the single biggest thing that makes Analyst Mode educational. It should:
-
-- Be 4-8 sentences of actual reasoning — not a fact dump. Show HOW to think, not just what to think.
-- Reference specific numbers/drivers from the `keyFacts` when relevant.
-- Present both sides when the real answer is uncertain (classic example: "could be X or Y depending on whether Z").
-- End with something falsifiable — a specific number, trigger, or event that would change the conclusion.
-
-The `strongReasoningIncludes` is 3 criteria the user self-checks against. They should be:
-
-- Observable (the user can actually tell whether they covered it)
-- Not prescriptive about WHICH answer (the user can disagree with the model)
-- Focused on the reasoning structure, not the specific conclusion
-
-### Progression Tracking
-
-Two separate localStorage structures track Analyst Mode progress:
-
-- **`stocklens-analyses-completed`** — `Set<companyId>` of companies the user fully walked through. Completion increments the daily streak via `updateStreak()`.
-- **`stocklens-analyst-responses`** — `Record<companyId, Record<stepKind, { text, submittedAt }>>`. Each free-response is saved as soon as the user submits that step. This lets the user resume, review, revise, and compare their own past reasoning.
-
-The picker (`AnalystModeHome`) surfaces three states per company: unstarted, in-progress (N of 7 steps saved), and analyzed. The session (`AnalystSession`) detects prior responses on mount, shows a "Prior Work" review card in the intro phase, and resumes at the first unanswered step. Users can also "Start Fresh" to wipe responses for a company via `clearCompanyResponses`.
-
-Future: diff-view comparing a user's first pass vs. current responses (track multiple revisions over time, not just last-saved).
-
-## Daily Practice — The Retention Loop
-
-Daily Practice is the "come back tomorrow" feature. Once a user has completed at least one lesson, a pool of gradable steps (drill, estimate, tap, decide — all except `thinking`) becomes available for review. Each day, the app selects 5 of those steps deterministically (seeded by the date), runs them as a sequential session, and records the result.
-
-### Files
-
-- `src/lib/spacedRepetition.ts` — per-item Leitner-box state, priority scoring, aggregate stats
-- `src/lib/review.ts` — pool collection, scheduled selection, daily-result storage, public API
-- `src/pages/ReviewSession.tsx` — intro → running → complete flow; reuses the same step components as `LessonRunner`
-- Entry card on `HomePage.tsx`, route `/review/daily` in `App.tsx`
-
-### Selection (Leitner spaced repetition)
-
-Each review item (`itemId = lessonId:stepIndex`) lives in a Leitner box 0-5. Box intervals are `[1, 2, 4, 8, 16, 30]` days. On a perfect step (`correct === total`), the item moves up one box. On any miss, it resets to box 0 (due tomorrow) — which is how missed-question carryover is implemented.
-
-`getScheduledDailyPractice()` walks the pool of gradable steps from completed lessons, computes a priority per item, sorts descending, and slices `DAILY_PRACTICE_SIZE` (5). Priority tiers:
-
-- **`wrong`** (1000 + days since): item was missed most recently — highest priority
-- **`due`** (400 + days overdue × 20): last-seen + box interval has elapsed
-- **`new`** (500): item has no stat yet — lands between wrong and due
-- **`upcoming`** (max(0, 100 - days until due × 5)): not yet due, low-priority refresher
-
-Deterministic seeded jitter breaks ties reproducibly within a day. Stats are only mutated at session completion, so mid-day reopens see the same selection.
-
-Each selected item carries its `reason` (`wrong | due | new | upcoming`) into the UI as a colored pill — users can see why each question surfaced and get an aggregate "today's mix" summary on the intro screen.
-
-### Storage
-
-- `stocklens-review-item-stats` — `Record<itemId, { box, lastSeen, timesSeen, timesCorrect, lastCorrect }>` — per-item SR state, updated after each step in a session
-- `stocklens-daily-practice` — `Record<YYYY-MM-DD, { correct, total, completedAt }>` — session-level daily result; `saveDailyPracticeResult` also calls `updateStreak()`, so daily practice alone maintains a streak
-
-### Empty-pool handling
-
-If `getReviewPoolSize()` is 0, the home-page card doesn't render, and direct navigation to `/review/daily` shows a "no material yet" screen that routes the user to the lesson picker.
-
-### Future
-
-- Weak-area surfacing (route practice toward low-mastery skill tags)
-- Heatmap / streak calendar visualization
-- Multiple practice sessions per day once the pool is large enough
-- Per-item history view (how many times you've seen X, current box, last miss)
-
-## XP + Levels + Quests — The Progression Spine
-
-Every action in the app — finishing a lesson, submitting an analyst step, completing daily practice — feeds one shared progression ledger. XP is the currency, Level is the headline, Quests are the milestones. This is what pulls lessons, Analyst Mode, and the retention loop into a single motivational arc.
-
-### Files
-
-- `src/lib/xp.ts` — ledger, level curve, titles, award helpers
-- `src/lib/quests.ts` — catalog, evaluation, earned-set persistence
-- Integrations: `src/lib/progression.ts`, `src/lib/review.ts`, `src/pages/HomePage.tsx`, `src/pages/LessonRunner.tsx`, `src/pages/ReviewSession.tsx`, `src/pages/AnalystSession.tsx`
-
-### Level curve
-
-Closed-form quadratic: `XP_required(L) = 25 * L * (L + 1)`. Level L→L+1 costs `50 * (L + 1)` XP, so gaps widen smoothly. Inversion: `L = floor((-1 + sqrt(1 + xp/6.25)) / 2)`. `getLevelInfo(xp)` returns `{ level, title, xpIntoLevel, xpForNextLevel, progressPct, totalXp }` for any XP total.
-
-### Title ladder
-
-8 bands keyed off level: Novice (L0) → Apprentice (L3) → Analyst (L6) → Portfolio Strategist (L10) → Principal (L15) → Senior Portfolio Manager (L22) → Chief Investment Officer (L32) → Market Wizard (L45+).
-
-### XP sources (gated to prevent farming)
-
-- **Lesson completion** — `awardLessonCompletion({ correct, total, firstCompletion })`. First-time award: `50 + 10*correct`; replay: 40% of that ceiling.
-- **Analyst step submission** — `awardAnalystStep()` — 15 XP, first-submission only.
-- **Analyst full completion** — `awardAnalystComplete()` — 100 XP bonus, first completion only.
-- **Daily practice** — `awardDailyPractice(correct, total)` — `20 + 5*correct`, once per day (gated by presence in daily-results map).
-- **Quest unlock** — `awardQuestXp(title, amount)` — the quest's own `xp` value.
-
-All writes go through `awardXp()`, which appends to a ring-buffered event ledger (`stocklens-xp-events`, max 50 entries) and returns `{ awarded, totalXp, leveledUp, currentLevel, levelsGained }` so UI can celebrate level-ups.
-
-### Quest catalog (17 quests)
-
-Categories: `lessons | analyst | habit | skills`. Each quest has a `check: () => { current, target }` — the universal shape lets the evaluator iterate uniformly. Notable quests: `first-light`, `phase-1-complete`, `phase-2-complete`, `deep-diver` (5 company lessons), `completionist` (all lessons), `perfect-mind` (5 3-stars), `flawless` (15 3-stars), `first-analysis`, `analyst` (5 companies), `wall-street-ready` (all companies), `habit-formed` (7-day streak), `disciplined` (30-day streak), `practice-maker` (5 daily practices), `sharpened` (20), `well-rounded` (3 mastered skills), `all-skills`, `grand-slam` (everything).
-
-`evaluateQuests()` is idempotent — it runs after any progress event, compares the newly-completed set against `stocklens-quests-earned`, fires XP for the delta, and persists the new earned set. Safe to call anywhere.
-
-### Integration pattern
-
-Return signatures were widened (not replaced) so existing callers keep working:
-
-- `markCompleted(id, score)` → `LessonCompletionReward { xp, quests, firstCompletion }`
-- `markAnalysisComplete(id)` → `AnalysisCompletionReward { xp, quests, firstCompletion }`
-- `saveAnalystResponse(...)` → `XpAwardResult | null` (first-submission only)
-- `saveDailyPracticeResult(correct, total)` → `DailyPracticeReward { result, xp, quests, firstCompletionToday }`
-
-Completion screens (`LessonRunner`, `ReviewSession`, `AnalystSession`) capture these rewards and render three reward blocks:
-
-1. **XP earned** — accent-gradient card with Zap icon and `+X XP`
-2. **Level up** — warm-gradient callout with animated chevron and new title
-3. **Quest unlocked** — one card per newly-earned quest, with icon, title, description, and XP chip
-
-### Home-page surface
-
-- Level badge in header ring (shows current level number instead of completion %)
-- Prominent level + XP card: title, total XP, progress bar to next level, quest count
-- Quests panel: 17 tiles in three states
-  - **Earned**: warm fill + trophy icon + XP chip
-  - **In progress**: accent border + current/target progress bar
-  - **Locked**: muted + Lock icon
-
-### Circular import note
-
-`progression.ts` and `quests.ts` cross-import each other. This is safe because all cross-module references happen inside function bodies (not during module initialization). Keep it that way — do not hoist imported identifiers into module-level constants in either file.
-
-### Future
-
-- Daily XP budget / anti-grind cap if replay XP becomes abusable
-- Quest progress toasts (notify mid-lesson when a quest ticks toward target)
-- Seasonal / rotating quest pool layered on top of the permanent catalog
-- Leaderboard (requires backend — out of scope while we remain localStorage-only)
-
-## Product Roadmap
-
-StockLens is evolving from a content engine into a complete "teaching machine" — beginner → intelligent investor. Tracked priorities:
-
-### Tier 1 — Differentiators (the moat)
-- [x] **Analyst Mode v1** — 7-step workflow, 4 seeded companies (Visa, Starbucks, Adobe, Disney)
-- [x] **Analyst Mode v2** — expanded to 10 companies (added: Walmart, Home Depot, Chipotle, Salesforce, Shopify, Spotify)
-- [x] **Analyst Mode v3** — save user responses to localStorage, review-past-answers card on intro, resume at first unanswered step, in-progress state on picker
-- [x] **Analyst Mode v4** — expanded to 16 companies across every major sector (added: JPMorgan, UnitedHealth, Eli Lilly, TSMC, ExxonMobil, Coca-Cola). Now covers banking, healthcare, pharma, semis, energy, staples, retail, SaaS, e-commerce, restaurants, and media.
-- [ ] **Analyst Mode v5** — track response revisions over time (first-pass vs. current diff view); export a company analysis as a shareable card
-
-### Tier 2 — Retention
-- [x] **Daily Practice v1** — deterministic 5-question mix pulled from completed lessons; one session per day; feeds the streak (`/review/daily`)
-- [x] **Review v2 — spaced repetition scheduling** — Leitner-box per-item tracking (`src/lib/spacedRepetition.ts`), priority-scored selection (wrong > due > new > upcoming), missed items auto-carry to box 0 and surface next day; UI shows per-item reason tags and session-level mastery/flagged counts
-- [ ] **Weak-area surfacing** — highlight skills with low mastery and route practice toward them
-- [ ] **Practice heatmap / calendar view** — visualize daily completion history and streak shape over time
-
-### Tier 3 — Critical curriculum gaps
-- [x] Index Funds & ETFs (foundations-index-funds)
-- [x] Reading a 10-K (foundations-ten-k)
-- [x] **Options basics** — calls, puts, hedging cost, covered-call tradeoffs, tools-vs-gambling framework (foundations-options)
-- [x] **Bonds and fixed income** — coupon/principal/maturity, duration, credit risk, role in portfolio (foundations-bonds)
-- [x] **Taxes for investors** — short vs. long-term gains, account hierarchy, tax-loss harvesting, tax drag compounding (foundations-taxes)
-- [ ] **Recession/downturn playbook** — how to think about portfolio decisions during drawdowns
-
-### Tier 4 — Engagement layer
-- [x] **XP + levels** — cumulative XP ledger (`src/lib/xp.ts`) with closed-form level curve `25·L·(L+1)`, 8-band title ladder (Novice → Market Wizard), award helpers for lessons/analyst/practice/quests, and level-up celebrations on every completion screen
-- [x] **Quests / milestone badges** — 17-quest catalog (`src/lib/quests.ts`) across lessons / analyst / habit / skills categories, idempotent evaluation, home-page panel with earned/in-progress/locked states, reward cards on completion screens
-- [ ] **Diagnostic onboarding** — 5-question placement quiz to suggest a starting point
-- [ ] **Learning path narrative** — explicitly recommended order with contextual "why this next"
-
-### Tier 5 — Polish + scale
-- [ ] Mobile PWA polish, offline support
-- [ ] Social proof / shareable analysis cards (with care — no financial advice)
-- [ ] Creator-submitted company profiles (community curation with review)
-- [ ] Integration with a free markets API for live P/E and price (big decision — requires backend)
-
-The North Star: a user who completes all lessons + all Analyst Mode companies can pick up any public company's 10-K, work through a reasoned analysis in 30 minutes, and form a defensible investment opinion. **That's the difference between education and skill.**
-
-## What Makes This Project Different
-
-Most investing education is either:
-1. **Textbook-style** — walls of text, no interaction, no retention
-2. **Quiz-style** — trivia questions testing memorization
-3. **Simulation-style** — fake trading with no conceptual foundation
-
-StockLens is different because:
-- **It teaches thinking patterns**, not facts. Every step requires reasoning.
-- **5 distinct interaction types** — drills, estimates, signal-finding, decisions, free-response — keep users engaged
-- **It builds progressively** — Phase 1 vocabulary → Phase 2 concepts → Company application
-- **Feedback teaches, not grades** — wrong answer explanations are mini-lessons, not dismissals
-- **Scores and skills tracking** — star ratings, skill exposure bars, and progression create motivation
-
-The goal is that after completing all lessons, a user can pick up any company's financials and form a reasoned opinion — not because they memorized what to think, but because they learned how to think.
+- **[docs/architecture.md](docs/architecture.md)** — full Architecture (data-driven lessons, phase state machine, routing, progression), full Type System with all 6 step interfaces, per-kind Step Design Patterns, the Creating-a-New-Lesson template, Curriculum source of truth, and the internals of Analyst Mode, Daily Practice, XP + Levels + Quests, and the Research Journal.
+- **[docs/pedagogy.md](docs/pedagogy.md)** — the Four Layers of Investing Skill (the anchor for every product decision), Content Quality Standards (good vs. bad questions/feedback/context), the 10 Pedagogical Principles, and What Makes This Project Different.
+- **[docs/roadmap.md](docs/roadmap.md)** — North Star, Phase 1-4 in detail, and the pre-pivot work shipped.

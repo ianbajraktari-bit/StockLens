@@ -91,7 +91,54 @@ export interface ThinkingStepNew {
   strongReasoningIncludes: string[];
 }
 
-export type LessonStep = DrillStep | EstimateStep | TapStep | DecideStep | ThinkingStepNew;
+/** A single candidate (usually a real company) inside a CompareStep. */
+export interface CompareCandidate {
+  name: string;
+  /** Optional ticker symbol — rendered as a small chip on the card. */
+  ticker?: string;
+  /** Short characterization line under the name, e.g. "Wholesale flywheel". */
+  tag?: string;
+  /** 3-5 structured metric rows — the data the user reasons from. */
+  metrics: { label: string; value: string; note?: string }[];
+}
+
+/**
+ * Side-by-side comparison of 2-3 real candidates with a question that
+ * forces the user to weigh structured data against each other.
+ *
+ * Two modes:
+ * - **Decisive** (`bestIndex` set) — one option is the strongest answer;
+ *   picking it scores 1, others score 0.
+ * - **Open** (`bestIndex` undefined) — the question is genuinely ambiguous;
+ *   any submission scores 1. The educational value is in `analyses[i]`,
+ *   which gives targeted feedback on whichever path the user chose. Use
+ *   this for "smart people disagree" prompts.
+ */
+export interface CompareStep {
+  kind: 'compare';
+  topic: string;
+  topicIcon: LucideIcon;
+  /** Setup paragraph(s). Split on '\n\n' for paragraphs. */
+  context: string;
+  candidates: CompareCandidate[];
+  question: string;
+  options: string[];
+  /** If set, this index is the "stronger" pick. If undefined, the question is open and any answer scores 1. */
+  bestIndex?: number;
+  /** Per-option analysis, length must match options.length. 2-4 sentences explaining the trade-off this pick captures (or misses). */
+  analyses: string[];
+  /** Synthesis line shown below the per-option analysis. */
+  punchline: string;
+  takeaway: string;
+}
+
+export type LessonStep =
+  | DrillStep
+  | EstimateStep
+  | TapStep
+  | DecideStep
+  | ThinkingStepNew
+  | CompareStep;
 
 // =====================================================================
 // Shared lesson metadata

@@ -20,6 +20,7 @@ import DrillStep from '../components/steps/DrillStep';
 import EstimateStep from '../components/steps/EstimateStep';
 import TapStep from '../components/steps/TapStep';
 import DecideStep from '../components/steps/DecideStep';
+import CompareStep from '../components/steps/CompareStep';
 import {
   getScheduledDailyPractice,
   getReviewPoolSize,
@@ -670,6 +671,9 @@ export default function ReviewSession() {
             )}
             {current?.step.kind === 'decide' && (
               <DecideStep step={current.step} onDone={handleStepDone} />
+            )}
+            {current?.step.kind === 'compare' && (
+              <CompareStep step={current.step} onDone={handleStepDone} />
             )}
           </motion.div>
         </AnimatePresence>
