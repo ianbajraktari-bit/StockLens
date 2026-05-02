@@ -1,165 +1,312 @@
-import { Repeat, TrendingUp, Landmark, Zap, Target, Search } from 'lucide-react';
+import {
+  Repeat,
+  ShieldCheck,
+  Wallet,
+  Search,
+  Crosshair,
+  HelpCircle,
+} from 'lucide-react';
 import type { Lesson } from './types';
 
+/**
+ * Scenario lesson — through-line: your sister wants the most "predictable"
+ * stock to hold. Three real candidates: Adobe, Netflix, Microsoft. Each step
+ * builds on the last: calibrate Adobe's pivot → predictability test → the
+ * cancel-anytime paradox → 3-years-later ambiguous re-pick → red flags in a
+ * Peloton bull pitch → synthesis.
+ */
 export const foundationsRecurringLesson: Lesson = {
   id: 'foundations-recurring',
   emoji: '🔄',
   title: 'Money That Comes Back',
-  subtitle: 'Why investors pay 10x more for $1 of subscription revenue than $1 of one-time sales',
+  subtitle:
+    'Your sister wants the most predictable stock she can find. Help her pick.',
   description:
-    'Netflix collects $33/month from 280 million subscribers — automatically. A car dealership has to convince every customer to buy from scratch. Investors value Netflix at 8x revenue and car dealers at 0.3x. The difference? Predictability. This lesson teaches you why recurring revenue is the most valuable kind of money.',
-  estimatedMinutes: 3,
+    'A dollar of revenue isn\'t a dollar of revenue. The market pays radically different prices for the same $1 depending on whether it\'s likely to come back next year. This lesson hands you one decision and walks it through three real subscription businesses (Adobe, Netflix, Microsoft), and asks you to actually pick.',
+  estimatedMinutes: 4,
   dataAsOf: '',
   tier: 'foundations-1',
   skills: ['recurring_revenue'],
   keyFacts: [],
   topics: [
-    { label: 'Recurring vs one-time revenue', icon: Repeat },
-    { label: 'Why predictability commands a premium', icon: TrendingUp },
-    { label: 'Not all "recurring" is equally sticky', icon: Landmark },
-    { label: 'How to spot fake recurring revenue', icon: Target },
+    { label: 'Why predictability commands a premium', icon: Repeat },
+    { label: 'Switching costs as the durability test', icon: ShieldCheck },
+    { label: 'When a "subscription" is actually a treadmill', icon: Wallet },
+    { label: 'Holding a thesis when retention shifts', icon: Crosshair },
   ],
   steps: [
-    // Hook: surprising estimation
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 1 — Calibrate. Adobe's 2013 subscription pivot anchors the user.
+    // ─────────────────────────────────────────────────────────────────────
     {
       kind: 'estimate',
-      topic: 'The Predictability Premium',
-      topicIcon: TrendingUp,
+      topic: 'Setting the Stage',
+      topicIcon: Repeat,
       context:
-        'Two companies each generate $1 billion in annual revenue.\n\nCompany A is a subscription SaaS company — customers pay monthly, 95% renew each year, and switching to a competitor takes 6+ months of migration work.\n\nCompany B is a furniture retailer — every sale is a new customer walking through the door. No subscriptions, no contracts, no repeat purchases for 5-10 years.\n\nInvestors value revenue differently based on how PREDICTABLE it is.',
-      question: 'Both earn $1B in revenue. If Company A (subscription) is valued at $10B (10x revenue), roughly what multiple do you think investors pay for Company B (furniture)?',
-      answer: 1,
-      tolerance: 1,
-      unit: 'x',
-      hint: 'How much would you pay for revenue that might not come back vs revenue that almost certainly will?',
+        'Your sister has $50,000 and one rule: it has to go into the most "predictable" business she can find. The candidates: Adobe (ADBE), Netflix (NFLX), Microsoft (MSFT). All three earn most of their money from subscriptions.\n\nBefore you compare them, calibrate one number. In 2013, Adobe stopped selling Photoshop as a $2,500 box you owned forever and switched it to a $50/month subscription. Wall Street panicked — the headline revenue dropped because subscriptions trickle in instead of landing all at once. Then something happened to the stock.',
+      question: 'Roughly how much did Adobe stock return in the 10 years AFTER the 2013 subscription pivot?',
+      answer: 900,
+      tolerance: 300,
+      unit: '%',
+      hint: 'A boring software company became one of the best-performing stocks of the 2010s. Investors realized something the headline missed.',
       reveal:
-        'About 0.5-1.5x revenue. Investors pay 10x for subscription revenue because they can predict next year\'s number with high confidence (95% will renew = ~$950M guaranteed before making a single new sale). The furniture store starts at $0 on January 1st and has to earn every dollar from scratch. Predictability is worth a 7-10x premium.',
-      takeaway: 'Investors pay dramatically more for predictable revenue. A subscription dollar is worth 5-10x more than a one-time-sale dollar — because you can see the future.',
+        'About 900%. Adobe went from ~$45 in 2013 to ~$450 by 2023. Why? Because subscription revenue is worth more than one-time revenue — even when the subscription dollars are smaller. The market figured out that a $50/month subscription that lasts 5 years ($3,000) is worth FAR more than a $2,500 one-time sale, because the future is now visible.',
+      takeaway:
+        'Investors don\'t just pay for revenue — they pay for PREDICTABLE revenue. Adobe\'s 2013 pivot is the textbook case: same product, smaller individual checks, much higher stock price.',
     },
 
-    // Decide with nuance about recurring quality
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 2 — Compare (decisive). The predictability test side-by-side.
+    // ─────────────────────────────────────────────────────────────────────
+    {
+      kind: 'compare',
+      topic: 'The Predictability Test',
+      topicIcon: ShieldCheck,
+      context:
+        'Now look at all three side-by-side. Imagine each loses 5% of its revenue to a tough year — recession, competition, whatever. The question is what happens NEXT year. Does the lost revenue come back automatically because customers are locked in, or does it have to be re-earned from scratch?\n\nAll three are "subscription" businesses. They are not equally sticky.',
+      candidates: [
+        {
+          name: 'Microsoft',
+          ticker: 'MSFT',
+          tag: 'Office 365 + Azure',
+          metrics: [
+            { label: 'Annual churn', value: '<5%', note: 'enterprise contracts' },
+            { label: 'Switching cost', value: '12-18 months', note: 'rebuild workflows' },
+            { label: 'Avg customer life', value: '20+ years' },
+            { label: 'Price increases', value: 'Accepted', note: '+$3/seat passes through' },
+          ],
+        },
+        {
+          name: 'Adobe',
+          ticker: 'ADBE',
+          tag: 'Creative Cloud',
+          metrics: [
+            { label: 'Annual churn', value: '~10%', note: 'mostly individuals' },
+            { label: 'Switching cost', value: 'Months', note: 'learn new tools, redo files' },
+            { label: 'Avg customer life', value: '~10 years' },
+            { label: 'Price increases', value: 'Mostly accepted', note: 'some user pushback' },
+          ],
+        },
+        {
+          name: 'Netflix',
+          ticker: 'NFLX',
+          tag: 'Consumer streaming',
+          metrics: [
+            { label: 'Annual churn', value: '~25%', note: 'one-click cancel' },
+            { label: 'Switching cost', value: '0 minutes', note: 'open Disney+ instead' },
+            { label: 'Avg customer life', value: '~4 years' },
+            { label: 'Price increases', value: 'Resisted', note: 'subs leave on hikes' },
+          ],
+        },
+      ],
+      question: 'Whose revenue is most likely to STILL be there a year from now?',
+      options: [
+        'Microsoft — switching off Office and Azure means rebuilding how the company works',
+        'Adobe — Creative Cloud is sticky once you\'ve learned the keyboard shortcuts',
+        'Netflix — 280M subscribers is the biggest base, so the most revenue carries forward',
+      ],
+      bestIndex: 0,
+      analyses: [
+        'Right read. Microsoft\'s revenue isn\'t sticky because customers love it — it\'s sticky because LEAVING is brutal. Office files, Teams meetings, Azure infrastructure, Active Directory identities. A 12-18 month migration project is a project a CFO almost never approves. That\'s why Microsoft can raise prices and barely lose anyone.',
+        'Half right. Adobe IS stickier than Netflix — designers don\'t casually switch tools mid-project. But Adobe\'s lock-in is months, not years, and a non-trivial slice of its base is individual creators who churn when budgets tighten. Sticky-ish, not bulletproof.',
+        'Subscriber count is a trap. Netflix has the most subscribers but the loosest lock-in — you can cancel during the credits of the show you\'re watching. ~25% annual churn means Netflix has to RE-EARN about a quarter of its base every year. Big number, fragile number.',
+      ],
+      punchline:
+        'Predictability comes from switching costs, not subscription buttons. Microsoft\'s revenue carries forward because leaving is months of pain. Netflix\'s revenue is a constant re-earning of attention.',
+      takeaway:
+        'When you see "recurring revenue," ask one question: how painful is it to leave? Three months of pain → predictable. Three minutes → not really.',
+    },
+
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 3 — Decide. The Netflix paradox. So Microsoft is obviously best...
+    // ─────────────────────────────────────────────────────────────────────
     {
       kind: 'decide',
-      topic: 'Not All Subscriptions Are Equal',
-      topicIcon: Landmark,
+      topic: 'The Cancel-Anytime Paradox',
+      topicIcon: Wallet,
       context:
-        'Three real types of "recurring" revenue:\n\nNetflix: $15/month, cancel anytime with one click, ~5% monthly churn\nSalesforce: $25,000/year enterprise contracts, 6-month switching process, ~8% annual churn\nAWS: deeply embedded in the customer\'s code, switching takes 12-18 months of engineering, <1% annual churn\n\nAll three are called "recurring revenue." But they\'re not equally sticky.',
-      question: 'Which type of recurring revenue is most valuable to investors?',
+        'So Microsoft is the obvious winner, right? Lowest churn, biggest switching cost, longest customer life.\n\nExcept Netflix at ~25% churn returned ~6,000% over the last 15 years — better than Microsoft and most "high quality" enterprise stocks. They\'ve raised prices repeatedly, customers leave for a month and come back when the next show drops, and the revenue line keeps going up.\n\nNetflix didn\'t accidentally end up with cancel-anytime billing. They picked it on purpose. What does the high-churn headline miss?',
+      question: 'Why is Netflix\'s "easy to cancel" model not the weakness it looks like?',
       options: [
-        'Netflix — largest subscriber base and most well-known brand',
-        'Salesforce — high contract values mean more revenue per customer',
-        'AWS — near-zero churn because switching is nearly impossible',
-        'All recurring revenue is equally valuable since it all renews',
+        'It\'s not — Microsoft really is just better, and Netflix\'s returns are luck',
+        'Netflix subscribers don\'t really stay — they cycle in and out around hit shows. Each individual is high-churn, but the overall base keeps rising because new content pulls cancellers back. The library is the moat, not the contract.',
+        'Netflix will eventually move to annual contracts once it hits scale',
+        'Churn doesn\'t matter once the subscriber base is large enough',
       ],
-      correctIndex: 2,
+      correctIndex: 1,
       punchline:
-        'AWS revenue is the stickiest because it\'s embedded in customers\' code. Switching from AWS to Google Cloud requires rewriting thousands of lines of code and months of engineering work. This "switching cost" makes revenue almost permanent — which is why cloud infrastructure companies are valued at 10-15x revenue while Netflix trades at 6-8x.',
+        'Netflix runs a content flywheel, not a contract flywheel. Cancel-anytime keeps the funnel low-friction; the $17B/year content budget keeps pulling people back in. The "moat" isn\'t the subscription — it\'s the library of shows that doesn\'t exist anywhere else.',
       wrongNudges: [
-        'Netflix has the most subscribers but the weakest lock-in. One click to cancel. That 5% monthly churn means Netflix loses and must replace ~45% of its subscribers every year. Size doesn\'t equal stickiness.',
-        'Higher contract values are good, but $25K/year contracts still get cancelled. The switching cost is moderate (months, not years). Salesforce is stickier than Netflix but far less sticky than AWS.',
+        'Netflix has compounded for 15+ years through every major subscriber drop and "Netflix is dying" cycle. That\'s not luck. The cancel-anytime billing is a deliberate feature: low friction in means high friction in absolute subscribers, even if individuals churn.',
         '',
-        'Churn rates prove they\'re not equal. Netflix: ~45% annual churn. Salesforce: ~8%. AWS: <1%. A dollar of AWS revenue is 40x more durable than a dollar of Netflix revenue.',
+        'Netflix has had years of leverage and kept the cancel-anytime model. Reed Hastings was explicit: lock-in destroys customer trust and inflates the headline number while hiding actual product quality. They\'d rather lose subs to a bad month than fake retention with annual prepay.',
+        'Sub count without retention can mask a leaky bucket. Quibi had hundreds of millions in subs and disappeared in 6 months. The question is what KIND of dollar — Netflix\'s dollars are renewable because the next hit show is coming.',
       ],
-      takeaway: 'Recurring revenue quality depends on SWITCHING COSTS. The harder it is to leave, the more valuable the revenue. Netflix (one click to cancel) < Salesforce (months to switch) < AWS (rewrite your entire codebase).',
+      takeaway:
+        'High churn can be a strategy if the engine that brings customers back is stronger than the door that lets them leave. Netflix\'s churn is a feature; Peloton\'s is a death spiral. Same number, completely different stories.',
     },
 
-    // Drill: escalating difficulty
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 4 — Compare (OPEN call). 3 years later, real ambiguity.
+    // ─────────────────────────────────────────────────────────────────────
     {
-      kind: 'drill',
-      topic: 'Recurring or Rebuilding?',
-      topicIcon: Zap,
-      intro: 'For each pair, identify which business has more predictable revenue. These get harder — some "recurring" revenue is less sticky than it looks.',
-      prompts: [
+      kind: 'compare',
+      topic: 'Three Years Later',
+      topicIcon: HelpCircle,
+      context:
+        'Skip ahead three years. Your sister held one of the three. The world shifted. Same companies, fresh data — the picture isn\'t obvious anymore.\n\nThis one is genuinely hard. Smart investors disagree. Pick the one you\'d hold for the NEXT five years and we\'ll walk through the trade-offs.',
+      candidates: [
         {
-          setup: 'A gym with monthly memberships vs. a personal trainer who charges per session',
-          left: { label: 'Gym', sublabel: 'monthly auto-pay' },
-          right: { label: 'Trainer', sublabel: 'pay per session' },
-          correct: 'left',
-          flash: 'Gym memberships auto-renew. Many people pay for months without going. The trainer has to convince each client to book each session. Monthly auto-pay is the simplest form of recurring revenue.',
+          name: 'Microsoft',
+          ticker: 'MSFT',
+          tag: 'AI bundling',
+          metrics: [
+            { label: 'Annual churn', value: '<5%' },
+            { label: 'Copilot attach', value: '~40%', note: 'AI bundled into Office' },
+            { label: 'Revenue growth', value: '+14%' },
+            { label: 'Valuation', value: '~32x earnings', note: 'priced for perfection' },
+          ],
         },
         {
-          setup: 'Adobe Creative Suite ($55/month subscription) vs. a video game studio (sells $60 games)',
-          left: { label: 'Adobe', sublabel: 'monthly subscription' },
-          right: { label: 'Game studio', sublabel: 'one-time purchases' },
-          correct: 'left',
-          flash: 'Adobe converted from one-time purchases to subscriptions in 2013. The stock went from $35 to $500+ because revenue became predictable. Each game launch is a gamble — will players buy it? Adobe doesn\'t have to ask.',
+          name: 'Adobe',
+          ticker: 'ADBE',
+          tag: 'AI threat',
+          metrics: [
+            { label: 'Annual churn', value: '~12%', note: 'up from ~10%' },
+            { label: 'Revenue growth', value: '+9%', note: 'down from +13%' },
+            { label: 'AI competition', value: 'Heavy', note: 'Midjourney, Canva AI' },
+            { label: 'Valuation', value: '~22x earnings', note: 'compressed on fears' },
+          ],
         },
         {
-          setup: 'A meal-kit delivery service (weekly box, cancel anytime) vs. a grocery chain (customers shop weekly out of habit)',
-          left: { label: 'Meal kit', sublabel: 'subscription model' },
-          right: { label: 'Grocery', sublabel: 'habitual repeat purchases' },
-          correct: 'right',
-          flash: 'Surprising — meal kits LOOK more recurring (subscriptions!) but have ~70% annual churn. People try them and quit. Grocery stores have deeply habitual customers who\'ve shopped at the same store for decades. Habit-based revenue can be stickier than subscription revenue.',
-        },
-        {
-          setup: 'Spotify (music streaming, $11/month) vs. Apple Music (music streaming, $11/month, deeply integrated into iPhone)',
-          left: { label: 'Spotify', sublabel: 'works on any device' },
-          right: { label: 'Apple Music', sublabel: 'embedded in iOS ecosystem' },
-          correct: 'right',
-          flash: 'Both are subscriptions, but Apple Music is embedded in the iPhone ecosystem — Siri defaults to it, it syncs across all Apple devices, playlists are tied to your Apple ID. Switching from Apple Music to Spotify is easy; switching your ENTIRE Apple ecosystem to use Spotify everywhere is annoying. Ecosystem lock-in adds a layer of stickiness.',
-        },
-        {
-          setup: 'An insurance company (annual policies, legally required for cars/homes) vs. a subscription snack box (monthly treats, cancel anytime)',
-          left: { label: 'Insurance', sublabel: 'legally required, annual' },
-          right: { label: 'Snack box', sublabel: 'monthly subscription' },
-          correct: 'left',
-          flash: 'Insurance is the ultimate recurring revenue — it\'s legally REQUIRED. You can\'t drive without car insurance or get a mortgage without home insurance. Snack boxes are novelty subscriptions with 50%+ annual churn. "Subscription" doesn\'t automatically mean "sticky."',
+          name: 'Netflix',
+          ticker: 'NFLX',
+          tag: 'Ad tier hitting',
+          metrics: [
+            { label: 'Annual churn', value: '~22%', note: 'down slightly' },
+            { label: 'Subscribers', value: '290M', note: 'still growing' },
+            { label: 'Ad-tier ARPU', value: '+30% YoY', note: 'new revenue stream' },
+            { label: 'Valuation', value: '~38x earnings', note: 'priced like a winner' },
+          ],
         },
       ],
-      takeaway: 'True stickiness comes from switching costs, habits, ecosystems, or legal requirements — not just having a subscription model. A "subscribe and cancel anytime" business can have worse retention than a non-subscription business with deeply habitual customers.',
+      question: 'Which would YOU hold for the next 5 years?',
+      options: [
+        'Microsoft — pay up for the AI bundle and the lowest churn on the board',
+        'Adobe — bet the AI fear is overdone and the switching cost holds',
+        'Netflix — bet the ad tier and content flywheel keep compounding',
+      ],
+      // No bestIndex — this is open. Each path gets its own targeted analysis.
+      analyses: [
+        'Defensible — and the consensus pick. Sub-5% churn is still the industry benchmark, Copilot is bundling AI revenue at 40% attach without losing customers, and the enterprise lock-in barely flinched through the 2023 cost-cutting cycle. The risk is the price: at ~32x earnings, the market already assumes Copilot delivers. If AI revenue underperforms or the ROI numbers come out lukewarm, the stock can fall 20%+ even if the business is fine. You\'re paying for certainty — make sure you actually have it.',
+        'Contrarian, but not crazy. The headline (churn drifting from 10% to 12%, growth slowing) is real, and AI image tools are a genuine threat for the long tail of casual creators. But Adobe is still the standard for professional design, switching costs hold for the agency and enterprise base, and at 22x earnings the market is already pricing in disappointment. Bull case: this is a fear-driven re-rating in a still-great business. Bear case: AI is the start of "Adobe is the next Kodak." Both are defensible.',
+        'The bet on continued reinvention. The ad tier is real — 30% ARPU growth on a new product is not luck, and the cancel-anytime model just absorbed a price hike with subs still growing. The bear case is brutal though: at 38x earnings, Netflix is priced like the winner already. Disney+ + HBO + Amazon + YouTube are all spending tens of billions on content. If the content flywheel slows, the price cut can be sharp. You\'re betting management\'s next decade is as good as the last.',
+      ],
+      punchline:
+        'Three subscription businesses, three completely different bets. None is wrong — they just price different risks. The job isn\'t finding the "right" stock. It\'s holding a thesis you can defend when retention or growth shifts under you.',
+      takeaway:
+        'When a question has no clean answer, don\'t reach for one. Pick the trade-off you\'re willing to live with — and write down what would prove you wrong.',
     },
 
-    // Tap: spot fake recurring revenue
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 5 — Tap. Peloton bull pitch with red flags. Real-company stakes.
+    // ─────────────────────────────────────────────────────────────────────
     {
       kind: 'tap',
-      topic: 'Real vs. Fake Recurring',
+      topic: 'Reading the Pitch',
       topicIcon: Search,
-      intro: 'A startup is pitching investors. They claim "85% recurring revenue." Read their pitch and tap the details that reveal whether this recurring revenue is REAL or FAKE.',
+      intro:
+        'Pretend it\'s 2021. A friend forwards you a Peloton bull-case pitch. The framing leans hard on "subscription business." Tap the lines that should make you MORE worried, not less. (Three of them, hidden among real strengths.)',
       passage: [
-        { type: 'text', value: '"SnackBox delivers curated snacks monthly. We have ' },
-        { type: 'chip', value: '85% of revenue is from subscriptions', signal: false, feedback: 'This sounds great on paper — but what matters is whether those subscribers STAY. A subscription that gets cancelled after 2 months isn\'t really "recurring" in any meaningful sense.' },
-        { type: 'text', value: '. Our customers ' },
-        { type: 'chip', value: 'love us — 4.8 stars on the App Store', signal: false, feedback: 'Ratings measure satisfaction at a moment in time, not retention. Plenty of 5-star apps get deleted after a month. What matters is whether people keep paying.' },
-        { type: 'text', value: '. However, ' },
-        { type: 'chip', value: 'average subscription length is 3.2 months', signal: true, feedback: 'THIS is the critical number. If average subscription is only 3.2 months, SnackBox loses ~75% of subscribers every year. That\'s not "recurring revenue" — it\'s a subscription-shaped customer acquisition treadmill.' },
-        { type: 'text', value: '. We acquire customers through Instagram ads at ' },
-        { type: 'chip', value: '$42 cost per subscriber acquired', signal: true, feedback: 'At $42 to acquire a customer who stays 3.2 months paying ~$30/month, SnackBox earns about $96 per customer but spent $42 to get them plus ~$60 in product costs. The unit economics barely work — and they\'re burning marketing spend to fill a leaky bucket.' },
-        { type: 'text', value: '. We\'re ' },
-        { type: 'chip', value: 'growing subscribers 40% year over year', signal: false, feedback: 'Growth is meaningless if retention is poor. If you add 40% but lose 75%, you\'re just running faster on a treadmill. Sustainable growth requires retention first.' },
-        { type: 'text', value: '. Our ' },
-        { type: 'chip', value: 'customer acquisition cost exceeds first-month revenue', signal: true, feedback: 'If it costs more to GET a customer than you earn in their first month, you need them to stay for months just to break even. With 3.2-month average life, most customers barely repay their acquisition cost before churning. This business is a treadmill.' },
-        { type: 'text', value: '."' },
+        {
+          type: 'text',
+          value: 'Peloton is the next great recurring-revenue compounder. ',
+        },
+        {
+          type: 'chip',
+          value: '2.3M Connected Fitness subscribers paying $39/month',
+          signal: false,
+          feedback:
+            'Real strength — at the time. A 2M+ paying base is genuinely meaningful, and the $39/month price is real cash. The problem isn\'t the size of the base. It\'s what\'s under it.',
+        },
+        { type: 'text', value: '. ' },
+        {
+          type: 'chip',
+          value: '$2,500 hardware purchase locks customers in',
+          signal: true,
+          feedback:
+            'They\'re framing the hardware cost as a moat. It isn\'t. Once a customer owns the bike, the hardware is sunk cost — it doesn\'t make them stay, it just makes leaving feel wasteful. Real switching costs make you LOSE something you still use; sunk costs are just regret. Peloton confused one for the other.',
+        },
+        { type: 'text', value: '. ' },
+        {
+          type: 'chip',
+          value: 'Live and on-demand classes from elite instructors',
+          signal: false,
+          feedback:
+            'Real strength. The content library and instructor brand are genuine product differentiation — Peloton out-executed the entire fitness industry on this for years. The product worked. That\'s not the question.',
+        },
+        { type: 'text', value: '. ' },
+        {
+          type: 'chip',
+          value: 'Net subscriber growth +130% year-over-year',
+          signal: true,
+          feedback:
+            'Headline growth during a pandemic is the easiest growth in the world. The right question isn\'t "how fast did they add subs in 2020" — it\'s "what happens when gyms reopen?" Pulling forward demand from 5 years of normal sales does not equal recurring revenue.',
+        },
+        { type: 'text', value: '. ' },
+        {
+          type: 'chip',
+          value: 'Bull case: revenue grows 5x as the bike count compounds and subscription revenue dominates',
+          signal: true,
+          feedback:
+            'The 5x assumes the same churn and the same household demand. Both broke. Peloton\'s monthly churn nearly tripled post-2021, and the addressable market for $2,500 home bikes was much smaller than the pandemic-distorted curve suggested. "Recurring revenue dominates" only works if the recurring part actually recurs.',
+        },
+        { type: 'text', value: '. ' },
+        {
+          type: 'chip',
+          value: 'Trades at a premium to legacy fitness because the model is structurally better',
+          signal: false,
+          feedback:
+            'Defensible at the time — the unit economics on paper looked far better than gym chains. The error wasn\'t the framework. The error was assuming the inputs (churn, household demand, pricing power) would hold when the world reopened.',
+        },
       ],
       requiredSignals: 3,
       reveal:
-        'SnackBox\'s "85% recurring revenue" is technically true but practically fake. With 3.2-month average subscriptions, they churn through 75% of their base yearly. High acquisition costs make each customer barely profitable before they leave. Real recurring revenue means customers stay for YEARS, not months. The label "subscription" doesn\'t make revenue recurring — retention does.',
-      takeaway: 'Subscription revenue is only as valuable as its retention. "85% recurring revenue" with 3-month average subscriptions is a treadmill, not a moat. Always ask: how long does the average customer stay?',
+        'Three red flags spun as strengths: the $2,500 hardware "lock-in" (sunk cost, not switching cost), the +130% pandemic growth (pulled-forward demand, not durable demand), and the "5x revenue" extrapolation (assumes churn stays low). Real strengths existed too — the subscriber base, the content library — but the pitch papered over the things that broke. Peloton stock fell ~95% from its 2021 peak.',
+      takeaway:
+        'When a pitch leans on "recurring revenue," your job is to pressure-test the recurring part. Sunk costs aren\'t switching costs. Pandemic growth isn\'t structural growth. And projections that extrapolate the best year forever are how investors get hurt.',
     },
 
-    // Thinking step
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 6 — Synthesis. Free response.
+    // ─────────────────────────────────────────────────────────────────────
     {
       kind: 'thinking',
-      prompt: 'Netflix charges $15/month and has ~5% monthly churn (loses 5% of subscribers each month but replaces them). Salesforce charges $25,000/year and has ~8% annual churn. Which business has more valuable revenue, and why? Think about the quality of each dollar, not just the total amount.',
-      placeholder: 'Consider how long the average customer stays, how costly each is to replace, and what "predictable" means for each...',
+      prompt:
+        'Your sister reads this lesson, looks at all three companies, and says: "I\'m just buying Microsoft. Lowest churn. Done." In 2-3 sentences, give her your strongest pushback — using what you saw across these steps.',
+      placeholder:
+        'Think about: what does <5% churn protect against AND not protect against? What did Netflix\'s 25% churn reveal? What was the role of the price tag in step 4?',
       modelAnswer:
-        'Salesforce has more valuable revenue, dollar for dollar. With 8% annual churn, the average Salesforce customer stays 12+ years — meaning each $25K contract is really a $300K+ relationship. Netflix loses ~45% of subscribers annually (5% monthly compounds), so the average Netflix member stays roughly 2 years before cancelling — each $15/month subscription is worth about $360 total. But the real difference is replaceability: when Salesforce loses a customer, replacing that $25K contract requires months of enterprise sales effort. When Netflix loses a subscriber, a social media ad might bring them back for $20. This makes Salesforce\'s revenue far more strategically valuable — it\'s durable, high-touch, and deeply embedded in customers\' workflows. Netflix\'s revenue is high-volume but low-friction in both directions: easy to join, easy to leave.',
+        'A <5% churn rate is real protection — Microsoft survives competitive pressure that would crush Netflix or Adobe — but low churn doesn\'t protect against the price you pay. At 32x earnings, Microsoft is priced like Copilot is going to deliver; if AI ROI disappoints, you can lose 20%+ on a great business. And the "low churn = better" rule misled you on Netflix — its 25% headline hid a content flywheel that pulled customers back faster than the door let them out. The right question isn\'t "which company has the lowest churn?" — it\'s "what risk am I underwriting at this price, and what would prove me wrong?"',
       strongReasoningIncludes: [
-        'Compares the actual lifetime value of each customer, not just the monthly/annual price',
-        'Considers how easy or hard it is to REPLACE a lost customer',
-        'Recognizes that low churn (Salesforce 8%/year) creates dramatically different economics than moderate churn (Netflix ~45%/year)',
+        'Acknowledges that low churn is real protection (don\'t pretend Microsoft\'s <5% churn is meaningless)',
+        'Identifies that price/valuation matters separately from business quality',
+        'References at least one nuance from earlier in the lesson — the Netflix flywheel paradox, the Peloton sunk-cost trap, or the Step 4 trade-off',
       ],
     },
   ],
   takeaways: [
-    'Investors pay 5-10x more for recurring revenue than one-time revenue because predictability lets you see the future.',
-    'Not all recurring revenue is equal. AWS (<1% churn, embedded in code) is worth far more per dollar than Netflix (~45% annual churn, one click to cancel).',
-    'The label "subscription" doesn\'t make revenue recurring. Retention does. A 3-month average subscription is a treadmill, not a moat.',
-    'True stickiness comes from switching costs, habits, ecosystems, or legal requirements — not just a "subscribe" button.',
+    'Investors don\'t pay for revenue — they pay for predictable revenue. Adobe\'s 2013 pivot to subscriptions: same product, same customers, ~10x stock.',
+    'Predictability comes from switching costs, not the word "subscription." Microsoft\'s lock-in is months of pain. Netflix\'s is one click.',
+    'High churn can be a strategy. Netflix loses customers to the door but pulls them back through the library. The question is which engine — the door or the content — is stronger.',
+    'Sunk costs aren\'t switching costs. Peloton\'s $2,500 bike made leaving feel wasteful; it didn\'t make staying valuable. The distinction is the entire investment thesis.',
   ],
   completionMessages: {
-    perfect: 'Perfect. You can now evaluate revenue quality — not just quantity. This puts you ahead of most investors.',
-    great: 'Strong work. Understanding the difference between real recurring revenue and subscription theater is a genuine edge.',
-    good: 'Good foundation. Remember: always ask "how long does the average customer stay?" before trusting a "recurring revenue" claim.',
-    low: 'Worth revisiting. Recurring revenue quality is one of the most important concepts in company analysis.',
+    perfect:
+      'Sharp work. You moved past "subscription = good" into the actual decision: how sticky is the lock-in, what does the headline hide, and what trade-off are you underwriting at this price.',
+    great:
+      'Strong run. You can see recurring revenue as a multi-layered signal — switching cost, retention quality, and warning — instead of a single number.',
+    good: 'Solid grounding. Hold onto the through-line: same three subscription businesses, three different views depending on which lens you applied.',
+    low: 'Worth re-running. The point isn\'t the three companies — it\'s the habit of asking "what makes this revenue come back, and what could break that engine?"',
   },
 };
