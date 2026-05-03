@@ -14,7 +14,7 @@
 
 ## Phase Status
 
-Phase 1 (Hub + Apprenticeship pivot) is in progress. Shipped on main: Research Journal v1 (`/journal`), lesson reflection card, header journal entry point, the `compare` step kind in decisive + open-call modes, Library hub, Floor placeholder, and the Hub mode strip on HomePage. Remaining for Phase 1: the Desk redesign of HomePage and applying the connected-scenario template to Recurring Revenue / Moats / Drivers. Phase 2 (Simulator MVP) is next.
+Phase 1 (Hub + Apprenticeship pivot) is in progress. Shipped on main: Research Journal v1 (`/journal`), lesson reflection card, header journal entry point, the `compare` step kind in decisive + open-call modes, Library hub, Floor placeholder, and the Hub mode strip on HomePage. Remaining for Phase 1: the Desk redesign of HomePage and bringing Recurring Revenue / Moats / Drivers up to the new lesson-design bar (each lesson is designed for what it's teaching — see [Lesson Shape](docs/architecture.md#lesson-shape-designed-not-templated)). Phase 2 (Simulator MVP) is next.
 
 ## What This Project Is
 
