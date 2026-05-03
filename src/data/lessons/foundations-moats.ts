@@ -37,16 +37,16 @@ export const foundationsMoatsLesson: Lesson = {
       topic: '1999 — Where the Cash Came From',
       topicIcon: Castle,
       context:
-        'It\'s 1999. You own shares in Blockbuster (BBI). The company runs ~7,000 video-rental stores, brings in around $4.5B in revenue, and is the obvious king of home entertainment.\n\nMost of the moat narrative is about the stores: 7,000 locations no competitor can match. But that\'s not where the cash mostly comes from.\n\nGuess one number — the share of Blockbuster\'s revenue that comes from a single source: late fees.',
+        'It\'s 1999. You own shares in Blockbuster (BBI). The company runs ~7,000 video-rental stores, brings in around $4.5B in revenue, and is the obvious king of home entertainment.\n\nThe story everyone tells about the moat is the store count. The income statement tells a different story. Guess one number: the share of Blockbuster\'s revenue that comes from late fees.',
       question: 'Roughly what % of Blockbuster\'s revenue came from late fees?',
       answer: 15,
       tolerance: 5,
       unit: '%',
       hint: 'Around $800M a year out of ~$5B in revenue.',
       reveal:
-        'About 15% — roughly $800M a year. The story you\'d tell about Blockbuster\'s moat is "7,000 stores." The story the income statement tells is "we charge customers a penalty for being late, and that penalty is one of our biggest profit centers." This matters because the next thing you\'re about to learn is that someone is building a business model whose entire pitch is "no late fees."',
+        'About 15% — roughly $800M a year. The fact most discussions of Blockbuster skip past: one of its biggest profit centers was the penalty it charged customers for being late. Worth holding in your head as you read the next step.',
       takeaway:
-        'A moat is only as durable as its most profitable revenue line. If a competitor can attack THAT line specifically, the rest of the business goes with it.',
+        'A company\'s moat is usually less interesting than its most profitable line. The 7,000 stores were the moat people talked about. The late fees were what funded them.',
     },
 
     // ─────────────────────────────────────────────────────────────────────
@@ -67,14 +67,14 @@ export const foundationsMoatsLesson: Lesson = {
       ],
       correctIndex: 1,
       punchline:
-        'In hindsight, $50M was the cheapest insurance policy in business history. The reason it was cheap is exactly the reason it was easy to dismiss: Netflix at 300K subscribers really did look like a niche. The right read in 2000 wasn\'t "Netflix will win" — it was "this model attacks the late-fee revenue, and we own that line."',
+        '$50M to own the company that was building a no-late-fee subscription product, when 15% of your revenue is late fees. The right read in 2000 wasn\'t "Netflix will win." It was: this is aimed straight at the line we make the most money on, and the option to control it is cheap.',
       wrongNudges: [
-        'This was the consensus call at the time, and it\'s defensible — Netflix in 2000 was small, unprofitable, and the DVD-by-mail thesis was unproven. The reason it aged badly isn\'t "Antioco missed the future." It\'s "he failed to ask which of his revenue lines a no-late-fee subscription model was specifically built to kill."',
+        'This was the consensus call at the time, and it\'s defensible. Netflix in 2000 was small, unprofitable, and the DVD-by-mail thesis was unproven. What aged badly isn\'t the dismissal of Hastings — it\'s that nobody at Blockbuster mapped Netflix\'s pitch onto Blockbuster\'s P&L and noticed which line it was aimed at.',
         '',
-        'This is the elegant answer in hindsight, and Blockbuster eventually did try a version of it — five years later, when Netflix had 4M+ subscribers. Building optionality only counts if you actually fund and prioritize it. "We started a project" is not insurance.',
+        'A reasonable answer, and Blockbuster eventually attempted a version of it five years later, when Netflix had 4M subscribers. The catch: optional in-house projects that aren\'t funded and prioritized rarely catch a competitor that\'s already compounding.',
       ],
       takeaway:
-        'When a competitor\'s pitch is built around eliminating one of your specific revenue lines, that\'s a directed attack — not a generic threat. Cheap insurance against directed attacks tends to look stupid until it doesn\'t.',
+        'A competitor that\'s built specifically to attack one of your revenue lines is a different kind of threat than a generic competitor. The hedge against the first kind tends to look like a waste of money right up until you wish you had it.',
     },
 
     // ─────────────────────────────────────────────────────────────────────
@@ -94,7 +94,7 @@ export const foundationsMoatsLesson: Lesson = {
           value: 'opened roughly 200 net new stores worldwide',
           signal: true,
           feedback:
-            'This is the signal hidden as a strength. New stores cost money — leases, fit-outs, staff. Capital is flowing into more of the asset class Netflix is starting to attack. It\'s not "growth" — it\'s doubling down on a model whose most profitable line is under threat.',
+            'New stores cost real money: leases, fit-outs, staff. Three years into Netflix existing, capital is still flowing into more of the same asset class Netflix\'s product is built to bypass. The headline reads as growth, but the substance is doubling down on the wrong inventory.',
         },
         { type: 'text', value: '. ' },
         {
@@ -102,7 +102,7 @@ export const foundationsMoatsLesson: Lesson = {
           value: 'Late fees still produced roughly $800M annually — about 15% of revenue',
           signal: true,
           feedback:
-            'Three years after Hastings\' offer, the line Netflix\'s entire pitch was built to kill is still your single biggest profit lever. That\'s not stability — that\'s an unhedged exposure to a competitor whose marketing literally says "no late fees."',
+            'Three years after Hastings\' offer, late fees are still Blockbuster\'s biggest profit lever, and Blockbuster has done nothing to reduce its exposure to them. The competitor whose marketing literally says "no late fees" now has 1.5M subscribers.',
         },
         { type: 'text', value: '. ' },
         {
@@ -110,7 +110,7 @@ export const foundationsMoatsLesson: Lesson = {
           value: 'Brand awareness in the US remained near-universal',
           signal: false,
           feedback:
-            'Comforting and irrelevant. Blockbuster\'s moat was never the brand — it was the 7,000 stores that no competitor could replicate. Netflix doesn\'t need brand parity; it needs a customer to choose mail-order one Friday night. Brand awareness doesn\'t protect against that choice.',
+            'True, but it doesn\'t answer the moat question. Blockbuster\'s moat was the store count, not the brand. A customer who recognizes the Blockbuster name can still pick the red envelope on a Friday night — recognition doesn\'t prevent that choice.',
         },
         { type: 'text', value: '. Meanwhile, ' },
         {
@@ -118,7 +118,7 @@ export const foundationsMoatsLesson: Lesson = {
           value: 'Netflix subscribers grew from under 1M to over 1.5M during the year',
           signal: true,
           feedback:
-            'Subs roughly doubled in two years — 600K to 1.5M+. That\'s no longer the noisy curve of a niche product. It\'s a compounder, and you can extend the line. At this growth rate, Netflix passes 5M in 2-3 years and starts showing up in your same-store rental numbers.',
+            'Subscribers roughly doubled in two years (600K to 1.5M). At this rate Netflix passes 5M inside 2-3 years, which is when Blockbuster\'s same-store rental numbers start to feel it. The slope of the curve is the news, not the absolute number.',
         },
         { type: 'text', value: '. Industry observers noted that ' },
         {
@@ -126,7 +126,7 @@ export const foundationsMoatsLesson: Lesson = {
           value: 'physical video stores still accounted for the vast majority of rental revenue',
           signal: false,
           feedback:
-            'True, and exactly the kind of backward-looking number that gets investors hurt. The point of moat analysis is what the market looks like in 5 years, not what it looked like in the last 12 months. "Still" is not a thesis.',
+            'True today, and probably true next year. The question moat analysis is supposed to answer is what the market looks like in five years. "Currently dominates" doesn\'t answer that question.',
         },
         { type: 'text', value: '. The company also reported ' },
         {
@@ -134,15 +134,15 @@ export const foundationsMoatsLesson: Lesson = {
           value: 'same-store rental revenue declined for the second straight year',
           signal: true,
           feedback:
-            'This is the cleanest tell. Same-store revenue strips out the new openings — it asks "is the existing footprint healthier or weaker?" Two straight years of decline means the existing customer base is rolling over. The headline revenue is being held up by store count, not demand.',
+            'Same-store revenue strips out new openings, so it isolates whether the existing footprint is healthier or weaker than it was a year ago. Two straight down years means the customer base Blockbuster already had is rolling over. The headline revenue still grew, but only because the company kept opening stores.',
         },
         { type: 'text', value: '.' },
       ],
       requiredSignals: 3,
       reveal:
-        'Four real signals: capital still flowing into new stores, $800M in late fees still unhedged, Netflix compounding from 600K toward 5M, same-store revenue rolling over for two straight years. Two distractors: brand awareness (never the moat) and "physical still dominates" (a backward-looking comfort). The data to call this in 2003 was all in the public filings. The hard part wasn\'t finding it — it was acting on it while the headline number was still a record.',
+        'Four signals worth tapping: capital still flowing into new stores, $800M in late fees still unhedged, Netflix compounding from 600K toward 5M, and same-store revenue rolling over for two straight years. Two reassuring facts that don\'t actually answer the moat question: brand awareness (never the moat) and "physical still dominates" (a snapshot, not a forecast). The data was all in the public filings. The hard part was acting on it while the headline number was still a record.',
       takeaway:
-        'A moat erodes from the inside before it shows up in the headline. Same-store metrics, mix of new vs. existing, and the share of revenue exposed to a competitor\'s specific pitch all break first. By the time the headline revenue rolls over, the call you needed to make was 18 months ago.',
+        'The headline revenue line is a lagging indicator of moat health. Same-store metrics, the new-vs-existing mix, and the revenue line exposed to a specific competitor\'s pitch all weaken earlier. By the time the headline rolls over, you\'re reacting to something that started 18 months ago.',
     },
 
     // ─────────────────────────────────────────────────────────────────────
@@ -163,14 +163,14 @@ export const foundationsMoatsLesson: Lesson = {
       ],
       correctIndex: 2,
       punchline:
-        'All three options have a real argument. The strongest read is option 3: the diagnosis was correct (late fees were a competitive liability), but by January 2005 the model was already lost — Netflix had passed 4M subscribers and was compounding. The painful version of this for an investor: a late, correct decision still spends real money and still loses. Icahn\'s objection (option 2) is short-term but not crazy. The optimistic read (option 1) was Antioco\'s — and he was fired for it within two years.',
+        'All three options have a real defender, which is part of the point. Option 3 ages the best: the diagnosis was correct (late fees were a competitive wound), but by 2005 Netflix had passed 4M subscribers and the customer who was going to switch had largely already switched. Option 1 was Antioco\'s view and he lost his job over it. Option 2 was Icahn\'s and earned him a board seat. Both can be reasonable and still leave you holding a stock that goes to zero.',
       wrongNudges: [
-        'Defensible diagnosis — late fees were a real competitive wound. The reason this isn\'t the strongest read is timing. The same move in 2001 would have been a moat defense. In 2005, with Netflix at 4M+ subscribers and same-store revenue rolling over, it was a cost without a corresponding benefit.',
-        'This was Icahn\'s read and the market\'s short-term reaction. It rewards the cash and ignores why the cash was leaking — the late-fee line was a structural weakness Netflix\'s model targeted directly. Defending the cash without addressing the leak is how you end up bankrupt in five years with a healthy interim P&L.',
+        'The diagnosis is right. Late fees were a real competitive wound. The same move in 2001 would have been a serious moat defense; in 2005 Netflix had 4M subscribers and same-store revenue had already been declining for years, so the move arrived after most of the damage was done.',
+        'This was Icahn\'s read, and the market mostly agreed in the short term. The catch is that the cash being defended was leaking specifically because of the no-late-fees competitor. You can hold the cash for a year or two and still lose to the structural problem.',
         '',
       ],
       takeaway:
-        'Watch how late "fixing it" comes. When a CEO finally takes the right action three years after the signal was visible, the action itself is rarely the buy signal — it\'s often the confirmation that the moat already broke.',
+        'A CEO finally taking the obviously-correct action three years after the signal was visible tells you more about the moat than about the CEO. By the time it shows up as a press release, most of what you needed to act on already happened.',
     },
 
     // ─────────────────────────────────────────────────────────────────────
@@ -184,28 +184,28 @@ export const foundationsMoatsLesson: Lesson = {
       placeholder:
         'Pick a year. Name the specific signal — the late fees line, Netflix\'s sub curve, same-store revenue, Antioco\'s firing. Be honest: would you really have acted on that, or are you picking the year hindsight makes obvious?',
       modelAnswer:
-        'I would have sold in 2003 — not because I had a crystal ball, but because the same-store revenue line had been declining for two straight years while Netflix subscribers had compounded from 600K to over 1.5M. The combination is what makes this readable in real time: the existing footprint was rolling over (demand-side weakness) AT THE SAME TIME a directly-competing model was passing the inflection from "niche" to "compounder." Either signal alone is noise; together they\'re a moat-erosion thesis. The honest part: 2000 is the year hindsight loves, but Hastings-at-300K-subs would have looked like a punt to me in real time. 2005 (the late-fee reversal) is too late — the move itself was already an admission the moat was gone, and at that point you\'re selling into a market that has noticed. The lesson isn\'t "would you have been smart enough to sell early" — it\'s "what specific combination of signals would make you act before the headline number breaks?" For me that\'s same-store rolling over plus a directly-competing model compounding past 1M users.',
+        'I would have sold in 2003. By then same-store rental revenue had been declining for two years and Netflix subscribers had gone from 600K to over 1.5M. Each of those signals alone is noise; together they describe a footprint that\'s rolling over at the same time a competitor is passing the inflection from niche to scaled. To be honest about hindsight: 2000 is the year that looks obvious now, but Hastings showing up with 300K subs would have read as a punt to me in real time. 2005 is too late, since the late-fee reversal was already management admitting the model had lost. So 2003 is where the data crossed the line from "concerning" to "the thesis I bought has changed."',
       strongReasoningIncludes: [
-        'Picks a specific year and names the actual signal that would have triggered the sell — not "I would have seen Netflix coming"',
-        'Acknowledges what was knowable at that moment vs. what only looks obvious in hindsight',
-        'Distinguishes between leading signals (same-store, Netflix sub curve, late-fee exposure) and lagging signals (the late-fee reversal, the CEO firing, the bankruptcy filing)',
+        'Picks a specific year and names the actual signal that would have triggered the sell, rather than "I would have seen Netflix coming"',
+        'Acknowledges what was knowable at the moment vs. what only looks obvious now',
+        'Distinguishes between leading signals (same-store, Netflix sub curve, late-fee exposure) and lagging ones (the late-fee reversal, CEO turnover, bankruptcy)',
       ],
     },
   ],
   takeaways: [
-    'A moat is only as durable as its most profitable revenue line. Blockbuster\'s moat was 7,000 stores — but the cash came from late fees, and Netflix attacked the cash directly.',
-    'Cheap insurance against a directed competitive attack tends to look stupid right up until it doesn\'t. The Netflix offer at $50M was the cheapest hedge in business history.',
-    'A moat erodes from the inside before the headline breaks. Same-store revenue, mix of new vs. existing, and revenue exposed to a specific competitor\'s pitch all roll over first.',
-    'When management finally takes the obviously-correct action three years after the signal was visible, it\'s usually the confirmation that the moat already broke — not the moment to buy in.',
+    'Blockbuster\'s moat was the 7,000 stores. The cash that funded those stores came from late fees, and Netflix\'s product was specifically built to bypass that line.',
+    'A $50M offer to acquire the company aimed at your most profitable revenue line is unusually cheap optionality. Whether you take it depends on whether anyone at the firm has mapped the competitor\'s pitch onto your P&L.',
+    'Headline revenue is a lagging indicator. Same-store metrics, the new-vs-existing store mix, and the share of revenue exposed to one competitor\'s specific product all roll over earlier.',
+    'When a CEO finally takes the obviously-correct action years after the signal was visible, the move itself is usually a confirmation that the moat broke, not a fresh reason to buy.',
   ],
   completionMessages: {
     perfect:
-      'Sharp work. You can read a moat the way it actually breaks — through the most profitable revenue line, with same-store metrics rolling first, while the headline still looks fine.',
+      'Sharp work. You can read moat erosion through the line items that move first, instead of waiting for the headline revenue to break.',
     great:
-      'Strong run. You can see that moat erosion is readable in real time if you know which lines to watch — and that the obvious "fix it" moves usually arrive too late.',
+      'Good run. You can see how moat erosion is readable in real time, and how the obvious management responses tend to arrive after the customer has already made up their mind.',
     good:
-      'Solid grounding. Hold onto the through-line: the moat was never the 7,000 stores. It was the late-fee line that funded them — and it had a directly-targeted attacker the whole time.',
+      'Decent foundation. The point worth keeping: the moat people described was the store count, but the cash came from a different line, and it was the cash line that got attacked.',
     low:
-      'Worth re-running. The point of this lesson isn\'t Blockbuster — it\'s the habit of asking "which of my revenue lines is a competitor specifically built to kill?" before the headline number breaks.',
+      'Worth re-running. The lesson isn\'t Blockbuster specifically. It\'s the habit of asking which of your revenue lines a competitor\'s product was actually built to bypass.',
   },
 };

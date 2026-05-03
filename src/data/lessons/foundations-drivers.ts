@@ -46,14 +46,14 @@ export const foundationsDriversLesson: Lesson = {
       ],
       correctIndex: 2,
       punchline:
-        'Comp sales is a product, not a measurement. It\'s (transactions per store) × (average ticket per transaction). A -4% comp could be -10% traffic offset by +6% ticket, or -1% traffic with -3% ticket, or any combination in between. The headline is the OUTPUT. The drivers are inside.',
+        'Comp sales is the product of two underlying numbers: (transactions per store) × (average ticket per transaction). A -4% comp could be -10% traffic offset by +6% ticket, or -1% traffic with -3% ticket, or anywhere in between. The headline tells you the result. It doesn\'t tell you which of the two levers moved.',
       wrongNudges: [
-        'A common read — and possibly correct — but you\'re jumping ahead of the data. Traffic is one of the two levers under comp sales. To get to "fewer people are coming" you have to look at the transaction count, which the headline doesn\'t give you.',
-        'Also possible — and possibly correct. Lower spend per visit shows up as ticket decline. But the headline alone doesn\'t tell you whether ticket moved at all.',
+        'It might turn out to be true once you look at the split, but the headline alone doesn\'t support it. To know whether fewer customers came in, you need the transaction count, which is reported separately.',
+        'It might also turn out to be true. Lower spend per visit shows up as ticket decline. But again, the headline doesn\'t tell you whether ticket moved at all.',
         '',
       ],
       takeaway:
-        'Same-store sales is a composite number. It tells you the result; it does not tell you which lever moved. The investor\'s first move on any comp print: ask for the split.',
+        'Same-store sales is a composite. It tells you what landed; it doesn\'t tell you which of the two levers underneath it moved. So before you form a view on a comp print, ask for the split.',
     },
 
     // ─────────────────────────────────────────────────────────────────────
@@ -72,9 +72,9 @@ export const foundationsDriversLesson: Lesson = {
       unit: '%',
       hint: 'For small numbers: comp ≈ traffic + ticket. Solve for traffic.',
       reveal:
-        'About -7%. That\'s the actual reported number for North America: transactions per store down ~7%, average ticket up ~4%, comp landing at ~-3%. The headline (-3%, or -4% globally) understates what\'s actually moving — a 7% drop in customer visits, partially masked by customers spending more per visit (mostly from price increases). The "demand" picture is roughly twice as bad as the headline suggests.',
+        'About -7%, which is what Starbucks actually reported for North America: transactions per store down ~7%, average ticket up ~4%, and comp landing at -3%. So the underlying customer-visit decline was about twice the size of the comp number, with most of the offset coming from price increases. The headline made the quarter look bad. The split made it look worse.',
       takeaway:
-        'When ticket is up and comp is still down, traffic is doing all the damage — and then some. Ticket is hiding part of the loss. Always ask: how big would the comp decline have been WITHOUT the price increase?',
+        'If ticket is up and comp is still down, the entire comp decline (and then some) is coming from traffic. The useful question to ask in that case: what would the comp have been without the price increases?',
     },
 
     // ─────────────────────────────────────────────────────────────────────
@@ -86,7 +86,7 @@ export const foundationsDriversLesson: Lesson = {
       topic: 'Traffic or Ticket?',
       topicIcon: ArrowDownUp,
       intro:
-        'For each scenario below, decide which lever should worry you MORE as an investor — traffic (number of customer visits) or ticket (average spend per visit). The point is to build the reflex: traffic and ticket are NOT interchangeable signals.',
+        'Four short scenarios. For each one, decide which lever (traffic or ticket) you would weight more as an investor and why. The point is to internalize that they\'re not interchangeable signals.',
       prompts: [
         {
           setup:
@@ -95,7 +95,7 @@ export const foundationsDriversLesson: Lesson = {
           right: { label: 'Ticket +5%', sublabel: 'price hike, same customers' },
           correct: 'left',
           flash:
-            'Traffic-led growth is a demand signal — more humans are choosing to come in. Ticket-led growth is a pricing signal — same humans, asked to pay more. Traffic is the harder, more durable one.',
+            'Same +5% on the surface, very different underneath. The traffic version means more people are choosing to walk in. The ticket version means the same people are paying a higher price. Traffic-led growth is harder to manufacture and tends to be more durable.',
         },
         {
           setup:
@@ -104,7 +104,7 @@ export const foundationsDriversLesson: Lesson = {
           right: { label: 'Split B', sublabel: 'traffic +2%, ticket -4%' },
           correct: 'left',
           flash:
-            'Same -2% headline, very different underneath. Split A is bleeding customers and using price to mask it — that math runs out when you can\'t hike again. Split B still has people walking in; they\'re just trading down. Trade-down is reversible. Customers leaving is much harder to win back.',
+            'Both prints land at -2%, but they describe different businesses. In Split A, customers are leaving and price increases are masking the loss; once you can\'t raise again, the comp gets uglier. In Split B, customers are still showing up; they\'re just buying smaller orders, which a promotion or new menu can usually pull back.',
         },
         {
           setup:
@@ -113,7 +113,7 @@ export const foundationsDriversLesson: Lesson = {
           right: { label: 'Bearish read', sublabel: 'pricing power is gone' },
           correct: 'left',
           flash:
-            'Genuinely defensible either way, but the bullish read tends to win on this one. The customers ARE coming back — that\'s a real demand signal. Ticket softness from promotions can be unwound. Traffic that disappears often doesn\'t come back. Demand is the harder lever to fix.',
+            'Both reads are defensible, and which one you weight depends on what you think is causing the ticket softness. The bullish version: customers are coming back, and the lower ticket reflects promotions you can pull back later. The bearish version: customers are coming back only because of those promotions, in which case the demand picks up but the unit economics don\'t. The traffic recovery is the more interesting fact, but it\'s not unambiguous good news.',
         },
         {
           setup:
@@ -122,11 +122,11 @@ export const foundationsDriversLesson: Lesson = {
           right: { label: 'Analyst is right to push', sublabel: 'price held, but did people show up?' },
           correct: 'right',
           flash:
-            'When a CEO talks about ticket and not transactions, that\'s usually because transactions are the worse number. "We held ticket" is doing a lot of work in that sentence. The right follow-up is always: what did traffic do, and what would the comp have looked like without the price increases?',
+            'When management leads with ticket and walks past transactions, transactions are usually the worse number. The follow-up the analyst is reaching for: what did traffic do, and where would the comp have landed without the price increases?',
         },
       ],
       takeaway:
-        'Traffic = demand. Ticket = pricing and mix. A comp sales number that looks fine because of price hikes is a different business than the same comp delivered by more customers walking in. Pricing power runs out; demand compounds.',
+        'Traffic and ticket measure different things. Traffic measures whether people are choosing to come in; ticket measures what they spend once they do. A comp held up by price increases is a different story than the same comp delivered by more visits, even if the printed number is identical.',
     },
 
     // ─────────────────────────────────────────────────────────────────────
@@ -146,14 +146,14 @@ export const foundationsDriversLesson: Lesson = {
       ],
       correctIndex: 1,
       punchline:
-        'This is a traffic story, not a ticket story. North America transactions per store fell ~7%; ticket actually went UP 4%. The comp would have been roughly -7% without the price increases. The market\'s 16% reaction was less about "Starbucks is shrinking 4%" and more about "Starbucks is losing visits at 7%, and the price lever propping up the headline is almost spent."',
+        'It\'s the demand read. North America transactions per store were down ~7% while ticket was up 4%, so without the price increases the comp would have been roughly -7%. That\'s the part the market reacted to: the headline was -4%, but underneath it was a 7% drop in visits and a price lever that has limited room left to run.',
       wrongNudges: [
-        'Ticket actually went UP 4% in North America, not down. That\'s the trick of this print — the surface-level "weakness" is actually masked by pricing strength. The damage is in the lever the press release talks about least.',
+        'Ticket actually went up 4% in North America, not down. The price lever was working in this quarter; the question is what was happening underneath it.',
         '',
-        'Possible at the margins, but the bigger signal is in the transaction count, not the basket composition. When transactions are down 7%, you\'re losing CUSTOMER VISITS, not just trading down within the same basket.',
+        'Possible at the margins, but the bigger movement is in transactions per store, not in basket composition. A 7% transaction decline is fewer customer visits, not the same customer choosing a smaller drink.',
       ],
       takeaway:
-        'Two prints with the same -4% comp can mean opposite things. The market reaction is rarely to the headline — it\'s to the lever underneath the headline that the company didn\'t lead with.',
+        'Two comp prints can land at the same number and tell opposite stories. The market\'s reaction usually tracks the lever underneath the headline, especially the lever the company didn\'t lead with in the press release.',
     },
 
     // ─────────────────────────────────────────────────────────────────────
@@ -166,28 +166,28 @@ export const foundationsDriversLesson: Lesson = {
       placeholder:
         'What did the print actually show? What did management talk around? What\'s the one thing that, if answered, would tell you whether this is a one-quarter occasional-visitor problem or a structural demand break?',
       modelAnswer:
-        'Across North America, transactions per store were down 7% while ticket was up 4% — meaning the -3% comp masked a much larger drop in actual customer visits, with the price lever doing most of the propping. My question: of that -7% transaction decline, how much was driven by occasional customers (lower visit frequency from existing members) versus active Rewards members leaving the program entirely? The reason this matters: the first is a marketing problem you can fix with offers; the second is a structural break in your most loyal demand cohort, and it changes the multiple I should be paying. I\'d also want a sense of how much further you believe ticket can go — because if pricing is tapped out and traffic stays at -7%, next quarter\'s headline comp is very different.',
+        'In North America, transactions per store were down 7% while ticket was up 4%, so the -3% comp is masking a much bigger drop in customer visits, with most of the offset coming from price. My question: of that 7-point transaction decline, how much was occasional customers visiting less often versus active Rewards members dropping out of the program entirely? The reason it matters: lower frequency from existing customers is something a marketing campaign can usually pull back, but Rewards attrition is a change in the most loyal cohort and it changes how I think about the multiple. I\'d also want a sense of how much further you believe ticket can go from here, because if traffic stays around -7% and the price lever is close to tapped out, next quarter\'s comp looks meaningfully worse.',
       strongReasoningIncludes: [
-        'Names the actual split (transactions vs. ticket) in the question — doesn\'t just ask about "weakness"',
-        'Asks for a decomposition the company has NOT volunteered (e.g. occasional vs. loyal customer behavior, frequency vs. cohort attrition, what happens if ticket can\'t go higher)',
-        'Connects the answer to a specific investment consequence — what would change in your view depending on which way they answer',
+        'Names the actual transactions-vs-ticket split in the question rather than asking generically about "weakness"',
+        'Asks for a decomposition management didn\'t volunteer (e.g., occasional vs. loyal customer behavior, frequency vs. cohort attrition, room left in the price lever)',
+        'Connects the possible answers to a specific investment consequence (what would change in your view depending on which way they answer)',
       ],
     },
   ],
   takeaways: [
-    'Comp sales is a product, not a measurement: comp ≈ transactions × ticket. The headline tells you the result; the split tells you which lever moved.',
-    'Traffic is a demand signal. Ticket is a pricing/mix signal. They are not interchangeable — a comp held up by price hikes is a different business than the same comp delivered by more customer visits.',
-    'When ticket is up and comp is still down, traffic is doing all the damage. The "real" decline is bigger than the headline suggests.',
-    'On any earnings print, the lever management leads with is usually the better one. The question you should ask is about the lever they didn\'t mention.',
+    'Comp sales is the product of transactions per store and average ticket. The headline tells you the result; the split tells you which lever actually moved.',
+    'Traffic measures whether people are choosing to come in. Ticket measures what they spend once they do. The two are not interchangeable, even when they add up to the same comp.',
+    'When ticket is up and comp is still down, the comp is understating what\'s happening on the demand side. Without the price lever the print would have been worse.',
+    'On most earnings calls, the lever management talks about most is usually the better one. The useful question is about the lever they spent the least time on.',
   ],
   completionMessages: {
     perfect:
-      'Sharp work. You can read past a comp number to the actual lever moving underneath — and ask the question that forces management to reveal what they led around.',
+      'Good run. You can read past a comp number to the lever underneath, and ask the question that gets you the part management didn\'t volunteer.',
     great:
-      'Strong run. You can see that two identical headline numbers can mean opposite things depending on the traffic-vs-ticket split.',
+      'Solid work. You can see that two identical comp prints can describe very different businesses depending on the traffic-vs-ticket split.',
     good:
-      'Solid grounding. Hold onto the through-line: comp ≈ traffic + ticket. The headline is the output; the drivers are inside.',
+      'Decent foundation. The piece worth keeping: comp ≈ traffic + ticket, so before forming a view on a comp print, ask for the split.',
     low:
-      'Worth re-running. The point of this lesson isn\'t Starbucks — it\'s the habit of decomposing every comp number into the two levers before forming a view.',
+      'Worth another run. The lesson isn\'t Starbucks specifically. It\'s the habit of breaking every comp number into its two levers before deciding what the quarter actually said.',
   },
 };
