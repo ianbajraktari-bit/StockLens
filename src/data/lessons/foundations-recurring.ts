@@ -1,312 +1,240 @@
 import {
   Repeat,
-  ShieldCheck,
-  Wallet,
+  TrendingDown,
   Search,
-  Crosshair,
-  HelpCircle,
+  TrendingUp,
+  Lightbulb,
 } from 'lucide-react';
 import type { Lesson } from './types';
 
 /**
- * Scenario lesson — through-line: your sister wants the most "predictable"
- * stock to hold. Three real candidates: Adobe, Netflix, Microsoft. Each step
- * builds on the last: calibrate Adobe's pivot → predictability test → the
- * cancel-anytime paradox → 3-years-later ambiguous re-pick → red flags in a
- * Peloton bull pitch → synthesis.
+ * Time-series lesson — through-line: one company, walked across five years
+ * of a major business-model transition. Adobe 2012-2017. The shape is
+ * deliberately not "compare three companies" — recurring revenue is a
+ * concept about transition, not comparison, so the lesson follows one
+ * business through it.
+ *
+ * Steps walk forward in time: 2012 baseline → May 2013 announcement →
+ * FY2013 trough → FY2014/15 crossover → FY2017 result → synthesis.
  */
 export const foundationsRecurringLesson: Lesson = {
   id: 'foundations-recurring',
   emoji: '🔄',
   title: 'Money That Comes Back',
   subtitle:
-    'Your sister wants the most predictable stock she can find. Help her pick.',
+    'Watch Adobe tear up its own business model in real time — and become more valuable for doing it.',
   description:
-    'A dollar of revenue isn\'t a dollar of revenue. The market pays radically different prices for the same $1 depending on whether it\'s likely to come back next year. This lesson hands you one decision and walks it through three real subscription businesses (Adobe, Netflix, Microsoft), and asks you to actually pick.',
+    'In May 2013, Adobe stopped selling Photoshop in a box and forced every customer onto a $50/month subscription. Revenue dropped. Earnings cratered. Wall Street thought the company had lost its mind. Five years later, Adobe was the best-performing large-cap software stock of the decade. Walk the transition forward in time and find the signals investors saw — and the comfortable phrases that meant nothing.',
   estimatedMinutes: 4,
   dataAsOf: '',
   tier: 'foundations-1',
   skills: ['recurring_revenue'],
   keyFacts: [],
   topics: [
-    { label: 'Why predictability commands a premium', icon: Repeat },
-    { label: 'Switching costs as the durability test', icon: ShieldCheck },
-    { label: 'When a "subscription" is actually a treadmill', icon: Wallet },
-    { label: 'Holding a thesis when retention shifts', icon: Crosshair },
+    { label: 'The lumpy 2012 license-only Adobe', icon: Repeat },
+    { label: 'Why FY2013 revenue dropped 8%', icon: TrendingDown },
+    { label: 'Reading earnings commentary in a pivot', icon: Search },
+    { label: 'Why subscription wins amplify, not create, durability', icon: Lightbulb },
   ],
   steps: [
     // ─────────────────────────────────────────────────────────────────────
-    // STEP 1 — Calibrate. Adobe's 2013 subscription pivot anchors the user.
+    // STEP 1 — 2012. The baseline. Calibrate why the old model was lumpy.
     // ─────────────────────────────────────────────────────────────────────
     {
       kind: 'estimate',
-      topic: 'Setting the Stage',
+      topic: '2012 — The Old Adobe',
       topicIcon: Repeat,
       context:
-        'Your sister has $50,000 and one rule: it has to go into the most "predictable" business she can find. The candidates: Adobe (ADBE), Netflix (NFLX), Microsoft (MSFT). All three earn most of their money from subscriptions.\n\nBefore you compare them, calibrate one number. In 2013, Adobe stopped selling Photoshop as a $2,500 box you owned forever and switched it to a $50/month subscription. Wall Street panicked — the headline revenue dropped because subscriptions trickle in instead of landing all at once. Then something happened to the stock.',
-      question: 'Roughly how much did Adobe stock return in the 10 years AFTER the 2013 subscription pivot?',
-      answer: 900,
-      tolerance: 300,
+        'It\'s 2012. Adobe sells Photoshop as a $700 box of software you own forever. The full Creative Suite goes for ~$2,500. Customers buy a version, use it for a few years, and maybe upgrade when a new release comes out — or maybe not. Revenue that year: ~$4.4 billion, growing maybe 5% a year. A respectable, somewhat boring software business.\n\nThe headline problem with the box model wasn\'t piracy or competition. It was simpler: every dollar of revenue had to be RE-EARNED from scratch every release cycle. Calibrate that for yourself before we start.',
+      question:
+        'Roughly what % of existing Creative Suite customers actually upgraded to each new version Adobe shipped?',
+      answer: 25,
+      tolerance: 12,
       unit: '%',
-      hint: 'A boring software company became one of the best-performing stocks of the 2010s. Investors realized something the headline missed.',
+      hint: 'When the new version felt incremental, most customers stayed on the old one.',
       reveal:
-        'About 900%. Adobe went from ~$45 in 2013 to ~$450 by 2023. Why? Because subscription revenue is worth more than one-time revenue — even when the subscription dollars are smaller. The market figured out that a $50/month subscription that lasts 5 years ($3,000) is worth FAR more than a $2,500 one-time sale, because the future is now visible.',
+        'Around a quarter. Three out of four customers were running an older Creative Suite and not paying Adobe a cent for it that year — even though they were still using the product daily. Worse, the upgrade rate swung wildly version to version: when CS5 felt like a big leap, more upgraded; when CS6 felt incremental, fewer did. Revenue was a guessing game tied to whether the next release felt like enough of a reason to pay again.',
       takeaway:
-        'Investors don\'t just pay for revenue — they pay for PREDICTABLE revenue. Adobe\'s 2013 pivot is the textbook case: same product, smaller individual checks, much higher stock price.',
+        'License revenue forces every dollar to be re-earned. Adobe\'s old model meant most of its install base wasn\'t paying it any given year — they\'d already paid once and were waiting for the next version to feel worth the upgrade.',
     },
 
     // ─────────────────────────────────────────────────────────────────────
-    // STEP 2 — Compare (decisive). The predictability test side-by-side.
-    // ─────────────────────────────────────────────────────────────────────
-    {
-      kind: 'compare',
-      topic: 'The Predictability Test',
-      topicIcon: ShieldCheck,
-      context:
-        'Now look at all three side-by-side. Imagine each loses 5% of its revenue to a tough year — recession, competition, whatever. The question is what happens NEXT year. Does the lost revenue come back automatically because customers are locked in, or does it have to be re-earned from scratch?\n\nAll three are "subscription" businesses. They are not equally sticky.',
-      candidates: [
-        {
-          name: 'Microsoft',
-          ticker: 'MSFT',
-          tag: 'Office 365 + Azure',
-          metrics: [
-            { label: 'Annual churn', value: '<5%', note: 'enterprise contracts' },
-            { label: 'Switching cost', value: '12-18 months', note: 'rebuild workflows' },
-            { label: 'Avg customer life', value: '20+ years' },
-            { label: 'Price increases', value: 'Accepted', note: '+$3/seat passes through' },
-          ],
-        },
-        {
-          name: 'Adobe',
-          ticker: 'ADBE',
-          tag: 'Creative Cloud',
-          metrics: [
-            { label: 'Annual churn', value: '~10%', note: 'mostly individuals' },
-            { label: 'Switching cost', value: 'Months', note: 'learn new tools, redo files' },
-            { label: 'Avg customer life', value: '~10 years' },
-            { label: 'Price increases', value: 'Mostly accepted', note: 'some user pushback' },
-          ],
-        },
-        {
-          name: 'Netflix',
-          ticker: 'NFLX',
-          tag: 'Consumer streaming',
-          metrics: [
-            { label: 'Annual churn', value: '~25%', note: 'one-click cancel' },
-            { label: 'Switching cost', value: '0 minutes', note: 'open Disney+ instead' },
-            { label: 'Avg customer life', value: '~4 years' },
-            { label: 'Price increases', value: 'Resisted', note: 'subs leave on hikes' },
-          ],
-        },
-      ],
-      question: 'Whose revenue is most likely to STILL be there a year from now?',
-      options: [
-        'Microsoft — switching off Office and Azure means rebuilding how the company works',
-        'Adobe — Creative Cloud is sticky once you\'ve learned the keyboard shortcuts',
-        'Netflix — 280M subscribers is the biggest base, so the most revenue carries forward',
-      ],
-      bestIndex: 0,
-      analyses: [
-        'Right read. Microsoft\'s revenue isn\'t sticky because customers love it — it\'s sticky because LEAVING is brutal. Office files, Teams meetings, Azure infrastructure, Active Directory identities. A 12-18 month migration project is a project a CFO almost never approves. That\'s why Microsoft can raise prices and barely lose anyone.',
-        'Half right. Adobe IS stickier than Netflix — designers don\'t casually switch tools mid-project. But Adobe\'s lock-in is months, not years, and a non-trivial slice of its base is individual creators who churn when budgets tighten. Sticky-ish, not bulletproof.',
-        'Subscriber count is a trap. Netflix has the most subscribers but the loosest lock-in — you can cancel during the credits of the show you\'re watching. ~25% annual churn means Netflix has to RE-EARN about a quarter of its base every year. Big number, fragile number.',
-      ],
-      punchline:
-        'Predictability comes from switching costs, not subscription buttons. Microsoft\'s revenue carries forward because leaving is months of pain. Netflix\'s revenue is a constant re-earning of attention.',
-      takeaway:
-        'When you see "recurring revenue," ask one question: how painful is it to leave? Three months of pain → predictable. Three minutes → not really.',
-    },
-
-    // ─────────────────────────────────────────────────────────────────────
-    // STEP 3 — Decide. The Netflix paradox. So Microsoft is obviously best...
+    // STEP 2 — May 2013. The announcement. What's the right read?
     // ─────────────────────────────────────────────────────────────────────
     {
       kind: 'decide',
-      topic: 'The Cancel-Anytime Paradox',
-      topicIcon: Wallet,
+      topic: 'May 2013 — The Announcement',
+      topicIcon: TrendingDown,
       context:
-        'So Microsoft is the obvious winner, right? Lowest churn, biggest switching cost, longest customer life.\n\nExcept Netflix at ~25% churn returned ~6,000% over the last 15 years — better than Microsoft and most "high quality" enterprise stocks. They\'ve raised prices repeatedly, customers leave for a month and come back when the next show drops, and the revenue line keeps going up.\n\nNetflix didn\'t accidentally end up with cancel-anytime billing. They picked it on purpose. What does the high-churn headline miss?',
-      question: 'Why is Netflix\'s "easy to cancel" model not the weakness it looks like?',
+        'On May 6, 2013, Adobe announced that CS6 — the version of Creative Suite that had just shipped — would be the LAST boxed product. Going forward, every Adobe creative tool would be available only through Creative Cloud at $50/month for the full suite or $20/month for Photoshop alone. No more $2,500 perpetual licenses. Ever.\n\nIf you\'re an investor reading the announcement live in May 2013, what\'s the most thoughtful read?',
+      question: 'What\'s the right reaction to the May 2013 announcement?',
       options: [
-        'It\'s not — Microsoft really is just better, and Netflix\'s returns are luck',
-        'Netflix subscribers don\'t really stay — they cycle in and out around hit shows. Each individual is high-churn, but the overall base keeps rising because new content pulls cancellers back. The library is the moat, not the contract.',
-        'Netflix will eventually move to annual contracts once it hits scale',
-        'Churn doesn\'t matter once the subscriber base is large enough',
+        'Panic. Recurring $50/month is a fraction of $2,500 upfront — revenue is going to fall off a cliff.',
+        'Cheer. Subscription revenue is always worth more than license revenue — this is an obvious upgrade.',
+        'Sit in the question. Revenue WILL drop in the short term as license sales dry up faster than subscription revenue can backfill it. The interesting question isn\'t the trough — it\'s what shows up underneath it.',
+        'Ignore the announcement. Software accounting is too complex to read from a press release; wait for next earnings.',
       ],
-      correctIndex: 1,
+      correctIndex: 2,
       punchline:
-        'Netflix runs a content flywheel, not a contract flywheel. Cancel-anytime keeps the funnel low-friction; the $17B/year content budget keeps pulling people back in. The "moat" isn\'t the subscription — it\'s the library of shows that doesn\'t exist anywhere else.',
+        'Both panic and cheer were everywhere in May 2013 — and both were wrong. The honest read was: this trade WILL look bad on the income statement for a year or two as license revenue collapses faster than subscriptions can fill it. The real question is what happens AFTER the trough, and whether the metrics underneath it (subscriber count, retention, unit margin) are headed in the right direction while the headline is in the wrong one.',
       wrongNudges: [
-        'Netflix has compounded for 15+ years through every major subscriber drop and "Netflix is dying" cycle. That\'s not luck. The cancel-anytime billing is a deliberate feature: low friction in means high friction in absolute subscribers, even if individuals churn.',
+        'Half right — revenue WAS going to drop near-term, mathematically. But "panic" treats the trough as the destination. The investing question is what happens AFTER the trough, and panic prevents you from looking.',
+        'Too easy. Subscription revenue is more durable, but only if customers actually subscribe and stay. In May 2013 Adobe had a few hundred thousand CC subscribers. They needed millions for the math to work. Cheering before that was confirmed is hindsight bias dressed up as conviction.',
         '',
-        'Netflix has had years of leverage and kept the cancel-anytime model. Reed Hastings was explicit: lock-in destroys customer trust and inflates the headline number while hiding actual product quality. They\'d rather lose subs to a bad month than fake retention with annual prepay.',
-        'Sub count without retention can mask a leaky bucket. Quibi had hundreds of millions in subs and disappeared in 6 months. The question is what KIND of dollar — Netflix\'s dollars are renewable because the next hit show is coming.',
+        'Punting on the most-watched software transition of the decade isn\'t analysis; it\'s avoidance. The data WAS already there: install base, ARPU, churn signals from the early CC cohort. The point of being an investor is doing the work the press release doesn\'t do for you.',
       ],
       takeaway:
-        'High churn can be a strategy if the engine that brings customers back is stronger than the door that lets them leave. Netflix\'s churn is a feature; Peloton\'s is a death spiral. Same number, completely different stories.',
+        'The honest reaction to a major business-model change isn\'t "this is good" or "this is bad" — it\'s "here\'s what would make this work, here\'s what would prove it didn\'t, and which numbers tell me which." Stay in the question.',
     },
 
     // ─────────────────────────────────────────────────────────────────────
-    // STEP 4 — Compare (OPEN call). 3 years later, real ambiguity.
-    // ─────────────────────────────────────────────────────────────────────
-    {
-      kind: 'compare',
-      topic: 'Three Years Later',
-      topicIcon: HelpCircle,
-      context:
-        'Skip ahead three years. Your sister held one of the three. The world shifted. Same companies, fresh data — the picture isn\'t obvious anymore.\n\nThis one is genuinely hard. Smart investors disagree. Pick the one you\'d hold for the NEXT five years and we\'ll walk through the trade-offs.',
-      candidates: [
-        {
-          name: 'Microsoft',
-          ticker: 'MSFT',
-          tag: 'AI bundling',
-          metrics: [
-            { label: 'Annual churn', value: '<5%' },
-            { label: 'Copilot attach', value: '~40%', note: 'AI bundled into Office' },
-            { label: 'Revenue growth', value: '+14%' },
-            { label: 'Valuation', value: '~32x earnings', note: 'priced for perfection' },
-          ],
-        },
-        {
-          name: 'Adobe',
-          ticker: 'ADBE',
-          tag: 'AI threat',
-          metrics: [
-            { label: 'Annual churn', value: '~12%', note: 'up from ~10%' },
-            { label: 'Revenue growth', value: '+9%', note: 'down from +13%' },
-            { label: 'AI competition', value: 'Heavy', note: 'Midjourney, Canva AI' },
-            { label: 'Valuation', value: '~22x earnings', note: 'compressed on fears' },
-          ],
-        },
-        {
-          name: 'Netflix',
-          ticker: 'NFLX',
-          tag: 'Ad tier hitting',
-          metrics: [
-            { label: 'Annual churn', value: '~22%', note: 'down slightly' },
-            { label: 'Subscribers', value: '290M', note: 'still growing' },
-            { label: 'Ad-tier ARPU', value: '+30% YoY', note: 'new revenue stream' },
-            { label: 'Valuation', value: '~38x earnings', note: 'priced like a winner' },
-          ],
-        },
-      ],
-      question: 'Which would YOU hold for the next 5 years?',
-      options: [
-        'Microsoft — pay up for the AI bundle and the lowest churn on the board',
-        'Adobe — bet the AI fear is overdone and the switching cost holds',
-        'Netflix — bet the ad tier and content flywheel keep compounding',
-      ],
-      // No bestIndex — this is open. Each path gets its own targeted analysis.
-      analyses: [
-        'Defensible — and the consensus pick. Sub-5% churn is still the industry benchmark, Copilot is bundling AI revenue at 40% attach without losing customers, and the enterprise lock-in barely flinched through the 2023 cost-cutting cycle. The risk is the price: at ~32x earnings, the market already assumes Copilot delivers. If AI revenue underperforms or the ROI numbers come out lukewarm, the stock can fall 20%+ even if the business is fine. You\'re paying for certainty — make sure you actually have it.',
-        'Contrarian, but not crazy. The headline (churn drifting from 10% to 12%, growth slowing) is real, and AI image tools are a genuine threat for the long tail of casual creators. But Adobe is still the standard for professional design, switching costs hold for the agency and enterprise base, and at 22x earnings the market is already pricing in disappointment. Bull case: this is a fear-driven re-rating in a still-great business. Bear case: AI is the start of "Adobe is the next Kodak." Both are defensible.',
-        'The bet on continued reinvention. The ad tier is real — 30% ARPU growth on a new product is not luck, and the cancel-anytime model just absorbed a price hike with subs still growing. The bear case is brutal though: at 38x earnings, Netflix is priced like the winner already. Disney+ + HBO + Amazon + YouTube are all spending tens of billions on content. If the content flywheel slows, the price cut can be sharp. You\'re betting management\'s next decade is as good as the last.',
-      ],
-      punchline:
-        'Three subscription businesses, three completely different bets. None is wrong — they just price different risks. The job isn\'t finding the "right" stock. It\'s holding a thesis you can defend when retention or growth shifts under you.',
-      takeaway:
-        'When a question has no clean answer, don\'t reach for one. Pick the trade-off you\'re willing to live with — and write down what would prove you wrong.',
-    },
-
-    // ─────────────────────────────────────────────────────────────────────
-    // STEP 5 — Tap. Peloton bull pitch with red flags. Real-company stakes.
+    // STEP 3 — FY2013 close. Read management commentary in the trough.
     // ─────────────────────────────────────────────────────────────────────
     {
       kind: 'tap',
-      topic: 'Reading the Pitch',
+      topic: 'Late 2013 — Reading the Trough',
       topicIcon: Search,
       intro:
-        'Pretend it\'s 2021. A friend forwards you a Peloton bull-case pitch. The framing leans hard on "subscription business." Tap the lines that should make you MORE worried, not less. (Three of them, hidden among real strengths.)',
+        'FY2013 closes (Adobe\'s fiscal year ends late November). The numbers are ugly. Total revenue: ~$4.05B — DOWN ~8% from $4.4B the year before. Net income: ~$290M — DOWN ~65% from $833M. License revenue is in free fall. But subscribers reached ~1.4M, up from a few hundred thousand 18 months earlier.\n\nThis is the kind of report that triggers panic if you only read the top of the income statement. Adobe\'s management gave a long earnings commentary explaining the dip. Some of what they said was real signal. Some was the kind of confident-sounding language management uses when the headline is bad. Tap the THREE statements that are real evidence the transition is working — not the lines that are reassurance.',
       passage: [
         {
           type: 'text',
-          value: 'Peloton is the next great recurring-revenue compounder. ',
+          value: 'From Adobe\'s FY2013 management commentary, paraphrased: ',
         },
         {
           type: 'chip',
-          value: '2.3M Connected Fitness subscribers paying $39/month',
+          value: 'Revenue declined 8% year-over-year as expected during the transition',
           signal: false,
           feedback:
-            'Real strength — at the time. A 2M+ paying base is genuinely meaningful, and the $39/month price is real cash. The problem isn\'t the size of the base. It\'s what\'s under it.',
+            'This just acknowledges the headline. It\'s not evidence the transition is working — it\'s evidence the transition happened. Don\'t confuse "we told you it would be bad" with "and here\'s why it\'ll be fine."',
         },
-        { type: 'text', value: '. ' },
+        { type: 'text', value: ' ' },
         {
           type: 'chip',
-          value: '$2,500 hardware purchase locks customers in',
+          value: 'Creative Cloud paid subscriptions reached 1.4 million, more than tripling year-over-year',
           signal: true,
           feedback:
-            'They\'re framing the hardware cost as a moat. It isn\'t. Once a customer owns the bike, the hardware is sunk cost — it doesn\'t make them stay, it just makes leaving feel wasteful. Real switching costs make you LOSE something you still use; sunk costs are just regret. Peloton confused one for the other.',
+            'Real signal. The bear case for Adobe was "customers won\'t pay monthly for software they used to own." 1.4M subscribers, more than tripling, is direct evidence customers WILL pay. The number is what matters; the trajectory matters more.',
         },
-        { type: 'text', value: '. ' },
+        { type: 'text', value: ' ' },
         {
           type: 'chip',
-          value: 'Live and on-demand classes from elite instructors',
+          value: 'We remain confident in the long-term strategy and committed to the model',
           signal: false,
           feedback:
-            'Real strength. The content library and instructor brand are genuine product differentiation — Peloton out-executed the entire fitness industry on this for years. The product worked. That\'s not the question.',
+            'Pure reassurance. Every CEO of a struggling company says this. It\'s not evidence either way — it\'s the verbal equivalent of "no comment." Throw it out and find the falsifiable claims around it.',
         },
-        { type: 'text', value: '. ' },
+        { type: 'text', value: ' ' },
         {
           type: 'chip',
-          value: 'Net subscriber growth +130% year-over-year',
+          value: 'Annualized recurring revenue from Digital Media reached $1.07 billion exiting the year',
           signal: true,
           feedback:
-            'Headline growth during a pandemic is the easiest growth in the world. The right question isn\'t "how fast did they add subs in 2020" — it\'s "what happens when gyms reopen?" Pulling forward demand from 5 years of normal sales does not equal recurring revenue.',
+            'Real signal — and the most important one. "Annualized recurring revenue" (ARR) means: at current run-rate, here\'s a year of forward-visible revenue. ~$1B in visible, recurring revenue is worth FAR more than ~$1B of lumpy license revenue. The income statement is showing the trough; ARR is showing the new floor.',
         },
-        { type: 'text', value: '. ' },
+        { type: 'text', value: ' ' },
         {
           type: 'chip',
-          value: 'Bull case: revenue grows 5x as the bike count compounds and subscription revenue dominates',
-          signal: true,
-          feedback:
-            'The 5x assumes the same churn and the same household demand. Both broke. Peloton\'s monthly churn nearly tripled post-2021, and the addressable market for $2,500 home bikes was much smaller than the pandemic-distorted curve suggested. "Recurring revenue dominates" only works if the recurring part actually recurs.',
-        },
-        { type: 'text', value: '. ' },
-        {
-          type: 'chip',
-          value: 'Trades at a premium to legacy fitness because the model is structurally better',
+          value: 'Operating margin declined as we reinvested in the platform',
           signal: false,
           feedback:
-            'Defensible at the time — the unit economics on paper looked far better than gym chains. The error wasn\'t the framework. The error was assuming the inputs (churn, household demand, pricing power) would hold when the world reopened.',
+            'Could be true. Could also be a euphemism for "our costs went up faster than revenue." Without specific reinvestment numbers, this is unfalsifiable. Smart investors flag this kind of phrase and look for the actual cost detail before counting it as evidence.',
+        },
+        { type: 'text', value: ' ' },
+        {
+          type: 'chip',
+          value: 'Subscription gross margin is structurally higher than license gross margin once at scale',
+          signal: true,
+          feedback:
+            'Real signal AND testable. Subscription gross margin really is higher because there\'s no manufacturing, no boxes, no retail markup, no piracy. Adobe was telling investors: yes, the income statement looks bad now, but the unit economics underneath are better than what you\'re losing.',
         },
       ],
       requiredSignals: 3,
       reveal:
-        'Three red flags spun as strengths: the $2,500 hardware "lock-in" (sunk cost, not switching cost), the +130% pandemic growth (pulled-forward demand, not durable demand), and the "5x revenue" extrapolation (assumes churn stays low). Real strengths existed too — the subscriber base, the content library — but the pitch papered over the things that broke. Peloton stock fell ~95% from its 2021 peak.',
+        'Three real signals: 1.4M paying subscribers (the demand exists), $1.07B in ARR (the new floor is visible), structurally better subscription unit margins (the math works at scale). The reassurance phrases — "confident in the strategy," "reinvested in the platform," "as expected" — sound like substance but contain none. Read every earnings commentary this way: separate the falsifiable claims from the comfortable language.',
       takeaway:
-        'When a pitch leans on "recurring revenue," your job is to pressure-test the recurring part. Sunk costs aren\'t switching costs. Pandemic growth isn\'t structural growth. And projections that extrapolate the best year forever are how investors get hurt.',
+        'Earnings commentary during a transition is a mix of evidence and reassurance. Your job is to find the testable claims — subscriber count, ARR, unit margin — and ignore the rest. Confidence isn\'t a number.',
     },
 
     // ─────────────────────────────────────────────────────────────────────
-    // STEP 6 — Synthesis. Free response.
+    // STEP 4 — FY2014-2015. The crossover. Calibrate the recovery.
+    // ─────────────────────────────────────────────────────────────────────
+    {
+      kind: 'estimate',
+      topic: '2014-2015 — The Crossover',
+      topicIcon: TrendingUp,
+      context:
+        'FY2014 closes. The trough is ending. Revenue: ~$4.15B, modestly above 2013. Subscribers: from 1.4M at end of FY2013 to ~3.5M at end of FY2014 — more than doubled.\n\nSomewhere during this fiscal year, something quietly important happened. Subscription revenue (collecting $50/month per subscriber, in a steady stream) crossed past license revenue (collecting $2,500 per box, but only when someone bought a box). The crossover is the moment the bear case dies: license revenue is going to keep declining toward zero — that\'s the deal Adobe made — and subscription revenue is going to keep growing as long as new subscribers come in faster than existing ones leave.\n\nCalibrate one more number. By the end of FY2015 — about 30 months after CS6 stopped shipping — what percentage of Adobe\'s TOTAL revenue came from subscriptions?',
+      question: 'By end of FY2015, what % of Adobe\'s total revenue was subscription-based?',
+      answer: 70,
+      tolerance: 12,
+      unit: '%',
+      hint: 'Subscribers roughly doubled again from end of FY2014 (~3.5M) through FY2015.',
+      reveal:
+        'Around 70%. By end of FY2015 — just 30 months after CS6 stopped shipping — Adobe was a fundamentally different company. License revenue had become a small tail; subscription revenue was the engine. Total revenue: ~$4.8B, up 16% year-over-year and accelerating. Net income: ~$630M, more than double the FY2013 trough. The bear case was over.',
+      takeaway:
+        'The trough lasted about 18 months. The recovery wasn\'t cyclical — it was structural. Every new subscriber added durable revenue that didn\'t need to be re-earned the next year, while the lumpy license revenue Adobe had given up was never coming back.',
+    },
+
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 5 — FY2017. The result. The trap of the wrong lesson.
+    // ─────────────────────────────────────────────────────────────────────
+    {
+      kind: 'decide',
+      topic: '2017 — The Wrong Lesson',
+      topicIcon: Lightbulb,
+      context:
+        'FY2017 closes. Adobe\'s revenue: ~$7.3 billion — up from ~$4.4B at the start of the journey. Net income: ~$1.7B, up roughly 6x from the FY2014 trough. Stock price: roughly 5x where it was in May 2013, making Adobe one of the best-performing large-cap software stocks of the entire 2010s.\n\nNow your friend pulls a clean conclusion from the chart: "subscription business model = better." So they tell you they\'re going to apply this pattern: any company switching from licenses to subscriptions is automatically a buy.\n\nWhat\'s wrong with that take?',
+      question: 'Why is "subscription model = better" the wrong lesson from Adobe\'s pivot?',
+      options: [
+        'It\'s not — subscriptions really are structurally better, and any license-to-subscription transition is a buy.',
+        'Adobe was already the de facto standard for working creative pros — its customers had nowhere realistic to go. The pivot didn\'t create durability; it monetized durability that was already there. A weaker company doing the same thing would just lose customers and never recover.',
+        'Adobe got lucky with timing — Creative Cloud launched right as cloud computing took off.',
+        'Subscriptions only worked because Adobe could afford to take a 2-year revenue hit; most companies can\'t.',
+      ],
+      correctIndex: 1,
+      punchline:
+        'The lesson isn\'t "subscriptions are better." It\'s "subscriptions amplify whatever you already are." Adobe was the standard for working creatives — they had to subscribe because there was no real alternative. Hand the same playbook to a company without that lock-in and the trough never ends. The pivot didn\'t create durability; it monetized durability that was already there.',
+      wrongNudges: [
+        'This is the take that kills portfolios. Smaller software companies tried the same transition and shrank or disappeared — Quark, Corel, and a long tail of others lost share they never got back. Subscription billing was a feature; the customer lock-in was the prerequisite.',
+        '',
+        'Cloud computing helped a little, but Creative Cloud isn\'t really a cloud-computing story — Photoshop still runs locally on your machine. The cloud part was mostly delivery and licensing. Adobe\'s edge was the customer base, not the infrastructure.',
+        'True but secondary. Many companies have cash reserves; few have a customer base they can bring with them through a price-and-billing change. The financial cushion enables the bet; the moat decides whether the bet pays off.',
+      ],
+      takeaway:
+        'When a transition story works for a great business, the obvious lesson is "the transition worked." The actual lesson is usually "this business was already great in a way that survived the transition." Don\'t generalize from winners without isolating what made them survive.',
+    },
+
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 6 — Thinking. Synthesis: write the pushback.
     // ─────────────────────────────────────────────────────────────────────
     {
       kind: 'thinking',
       prompt:
-        'Your sister reads this lesson, looks at all three companies, and says: "I\'m just buying Microsoft. Lowest churn. Done." In 2-3 sentences, give her your strongest pushback — using what you saw across these steps.',
+        'Your friend reads this lesson and says: "Got it — Adobe pivoted to subscriptions, revenue dropped, then it 5x\'d. So I\'m going to scan for any company switching from licenses to subscriptions and buy it." In 2-3 sentences, give them your strongest pushback — using what you saw across this lesson\'s timeline.',
       placeholder:
-        'Think about: what does <5% churn protect against AND not protect against? What did Netflix\'s 25% churn reveal? What was the role of the price tag in step 4?',
+        'Think about: what made Adobe\'s trough survivable? What did the FY2013 commentary tell you to look for? What would have happened if Adobe had been a weaker company?',
       modelAnswer:
-        'A <5% churn rate is real protection — Microsoft survives competitive pressure that would crush Netflix or Adobe — but low churn doesn\'t protect against the price you pay. At 32x earnings, Microsoft is priced like Copilot is going to deliver; if AI ROI disappoints, you can lose 20%+ on a great business. And the "low churn = better" rule misled you on Netflix — its 25% headline hid a content flywheel that pulled customers back faster than the door let them out. The right question isn\'t "which company has the lowest churn?" — it\'s "what risk am I underwriting at this price, and what would prove me wrong?"',
+        'Adobe\'s pivot worked because Adobe was already the de facto standard for creative pros — when the boxed product disappeared, customers didn\'t have a realistic alternative, so they subscribed. Apply the same template to a company without that prior lock-in and the trough is permanent: Quark, Corel, and others tried subscription transitions and never came back. Before buying any "transition story," look at what FY2013 Adobe did: paying subscribers tripling, ARR rising while headline revenue fell, and unit margins structurally better. Without those three signals showing up underneath the trough, the transition isn\'t a setup for a comeback — it\'s a managed liquidation.',
       strongReasoningIncludes: [
-        'Acknowledges that low churn is real protection (don\'t pretend Microsoft\'s <5% churn is meaningless)',
-        'Identifies that price/valuation matters separately from business quality',
-        'References at least one nuance from earlier in the lesson — the Netflix flywheel paradox, the Peloton sunk-cost trap, or the Step 4 trade-off',
+        'Identifies that Adobe\'s pre-existing customer lock-in was the precondition, not the subscription model itself',
+        'Names a concrete signal investors should look for during a transition (subscriber growth, ARR, or unit margin)',
+        'Acknowledges that other companies tried the same playbook and failed (Quark, Corel, or a general "most software companies can\'t pull this off")',
       ],
     },
   ],
   takeaways: [
-    'Investors don\'t pay for revenue — they pay for predictable revenue. Adobe\'s 2013 pivot to subscriptions: same product, same customers, ~10x stock.',
-    'Predictability comes from switching costs, not the word "subscription." Microsoft\'s lock-in is months of pain. Netflix\'s is one click.',
-    'High churn can be a strategy. Netflix loses customers to the door but pulls them back through the library. The question is which engine — the door or the content — is stronger.',
-    'Sunk costs aren\'t switching costs. Peloton\'s $2,500 bike made leaving feel wasteful; it didn\'t make staying valuable. The distinction is the entire investment thesis.',
+    'License revenue forces every dollar to be re-earned. Subscription revenue carries forward — but only if customers actually stay.',
+    'Major business-model transitions create a trough that looks like failure on the income statement. The real signals live underneath: subscriber count, ARR, and unit margin.',
+    'Earnings commentary during a transition is a mix of evidence and reassurance. Confidence is not a number; subscriber count, ARR, and unit margin are.',
+    'Subscription transitions amplify the pre-existing moat — they don\'t create one. Adobe could pull it off because customers had nowhere else to go. Most companies trying the same thing don\'t.',
   ],
   completionMessages: {
     perfect:
-      'Sharp work. You moved past "subscription = good" into the actual decision: how sticky is the lock-in, what does the headline hide, and what trade-off are you underwriting at this price.',
+      'Sharp work. You can read a transition through its trough — separating the signals that matter from the comforting language that doesn\'t.',
     great:
-      'Strong run. You can see recurring revenue as a multi-layered signal — switching cost, retention quality, and warning — instead of a single number.',
-    good: 'Solid grounding. Hold onto the through-line: same three subscription businesses, three different views depending on which lens you applied.',
-    low: 'Worth re-running. The point isn\'t the three companies — it\'s the habit of asking "what makes this revenue come back, and what could break that engine?"',
+      'Strong run. You can see why Adobe\'s pivot worked, and why most pivots don\'t.',
+    good: 'Solid grounding. Hold the timeline: trough → crossover → compounding, with subscriber count and ARR as the lights along the way.',
+    low: 'Worth re-running. The point isn\'t "Adobe was great" — it\'s how to read a business through a major transition without panicking at the income statement.',
   },
 };
