@@ -21,8 +21,10 @@ import {
   entryTypeLabel,
   getAllEntries,
   getJournalStats,
+  userVerdictLabel,
   type JournalEntry,
   type JournalEntryType,
+  type UserVerdict,
 } from '../lib/journal';
 
 type Filter = 'all' | JournalEntryType;
@@ -339,6 +341,13 @@ function EntryCard({
             <span className="text-[10px] text-text-muted">
               {formatAbsolute(entry.createdAt)}
             </span>
+            {entry.userVerdict && (
+              <span
+                className={`text-[9px] font-bold uppercase tracking-[0.16em] px-1.5 py-0.5 rounded-md border ${verdictChipTone(entry.userVerdict)}`}
+              >
+                {userVerdictLabel(entry.userVerdict)}
+              </span>
+            )}
           </div>
           <p className="text-sm font-semibold text-text-primary leading-snug truncate">
             {entry.title}
@@ -368,9 +377,30 @@ function EntryCard({
             className="overflow-hidden"
           >
             <div className="px-4 pb-4 space-y-3 border-t border-white/[0.04]">
-              <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-wrap pt-3">
-                {entry.content}
-              </p>
+              {entry.bearCaseContent ? (
+                <div className="space-y-3 pt-3">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent-light">
+                      Your case
+                    </p>
+                    <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-wrap">
+                      {entry.content}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-warm">
+                      The opposing case
+                    </p>
+                    <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-wrap">
+                      {entry.bearCaseContent}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-wrap pt-3">
+                  {entry.content}
+                </p>
+              )}
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <div className="flex items-center gap-2 flex-wrap">
                   {entry.companyId && (
@@ -495,6 +525,17 @@ function formatAbsolute(iso: string): string {
     });
   } catch {
     return '';
+  }
+}
+
+function verdictChipTone(v: UserVerdict): string {
+  switch (v) {
+    case 'held_up':
+      return 'border-green/30 bg-green/[0.08] text-green';
+    case 'mixed':
+      return 'border-warm/30 bg-warm/[0.08] text-warm';
+    case 'off_base':
+      return 'border-red/30 bg-red/[0.08] text-red';
   }
 }
 
