@@ -591,6 +591,7 @@ type JournalEntryType =
   | 'note'               // free-form, append-only
   | 'trade_rationale'    // Phase 2 simulator — append-only, one per trade
   | 'earnings_note'      // Phase 2 simulator — append-only, one per (company, week) drill-down
+  | 'thesis_checkin'     // Phase 2 simulator — append-only, mid-stream re-read between buy and sell
   | 'thesis';            // FUTURE — buy/sell/hold thesis being tracked
 ```
 
@@ -598,10 +599,13 @@ type JournalEntryType =
 
 ### Floor-specific fields on `JournalEntry`
 
-Two optional fields on `JournalEntry` carry Floor-specific state. They live on the base type rather than a separate payload because every consumer (the journal feed, the track-record panel, future thesis-tracking) wants to render them when present:
+Three optional fields on `JournalEntry` carry Floor-specific state. They live on the base type rather than a separate payload because every consumer (the journal feed, the track-record panel, future thesis-tracking) wants to render them when present:
 
 - `bearCaseContent?: string` — the user's steel-manned counter-argument, captured at trade time on directional (buy/sell) trades. Stored as a separate field rather than inline markdown in `content` so the dashboard renderer can keep the two cases visually distinct without parsing. Hold trades omit this field.
-- `userVerdict?: 'held_up' | 'mixed' | 'off_base'` — the user's after-the-fact self-assessment, set from the Floor track-record surface. Deliberately *self-judged*, not derived from price moves: a position down 20% can still be `held_up` if the original thesis hasn't actually been falsified. Set via `setUserVerdict(id, verdict | null)`.
+- `userVerdict?: 'held_up' | 'mixed' | 'off_base'` — the user's after-the-fact self-assessment of a `trade_rationale`, set from the Floor track-record surface. Deliberately *self-judged*, not derived from price moves: a position down 20% can still be `held_up` if the original thesis hasn't actually been falsified. Set via `setUserVerdict(id, verdict | null)`.
+- `checkinStatus?: 'still_holds' | 'fraying' | 'breaking'` — the user's self-marked health of the original thesis at check-in time, set on `thesis_checkin` entries from the inline check-in card. Same self-judged contract as `userVerdict`. Set via `setCheckinStatus(id, status | null)`.
+
+> **Refactor still deferred.** With three flat optionals on `JournalEntry` now (`bearCaseContent`, `userVerdict`, `checkinStatus`), the discriminated-union refactor — moving these into a per-type `payload` — has crossed from "would be cleaner" into "is the right answer next time we add per-type state." Deferred again to keep this session focused on shipping the runway + check-in features; the next type-specific field should not land as a fourth flat optional.
 
 ### Storage
 
@@ -621,8 +625,12 @@ Writes:
 - `createNote({ text, title?, tags?, companyId?, lessonId? })` — append-only
 - `createTradeRationale({ ... bearCase? })` — append-only Floor trade memo; `bearCase` is persisted to `bearCaseContent`
 - `createEarningsNote({ companyId, ticker, week, headline, guide, market })` — append-only Floor earnings drill-down; the three fields are packed into `content` as `## Headline surprise / ## Guide vs. last quarter / ## What the market is missing` markdown sections, and `tags` includes `floor-week-{N}` so the watchlist row can find the matching note via `getEarningsNoteForWeek(companyId, week)`
-- `getLatestBuyRationale(companyId)` — returns the most recent `trade_rationale` entry tagged `'buy'` for a company; used by the exit-reflection card on sells
+- `getLatestBuyRationale(companyId)` — returns the most recent `trade_rationale` entry tagged `'buy'` for a company; used by the exit-reflection card on sells and the check-in banner trigger
 - `setUserVerdict(id, verdict | null)` — set/clear the self-judged outcome on a `trade_rationale` entry
+- `createThesisCheckin({ companyId, ticker, week, text, status, buyEntryId })` — append-only mid-stream check-in; back-points to the originating buy via a `checkin-of:{buyEntryId}` tag
+- `setCheckinStatus(id, status | null)` — set/clear the self-marked status on a `thesis_checkin` entry
+- `getCheckinsForBuy(buyEntryId)` — chronological (oldest first) list of check-ins for a given buy thesis
+- `getThesisCheckinPrompt(companyId, currentWeek)` — banner-trigger query: returns `{ buyEntry, weeksSinceBuy, latestCheckin }` when the prompt should fire, else `null` (see The Floor → Thesis check-in)
 - `updateEntry(id, patch)`, `deleteEntry(id)` — for notes; UI hides delete on anchored entries
 
 ### Reflection prompt — design intent
@@ -639,7 +647,9 @@ The card uses a *structured* prompt, not a blank "what did you take away?" texta
 
 ## The Floor — Simulator MVP
 
-The Floor is the Phase 2 surface where the apprenticeship loop tightens: a $100K starting cash watchlist (Adobe, Disney, Chipotle), seven hand-designed weeks per company, manual week advancement, and a trade flow that forces a written rationale before any trade executes. Live at `/floor`. localStorage only — no real prices, no backend.
+The Floor is the Phase 2 surface where the apprenticeship loop tightens: a $100K starting cash watchlist (Adobe, Disney, Chipotle), sixteen hand-designed weeks per company with three earnings cycles each, manual week advancement, and a trade flow that forces a written rationale before any trade executes. Live at `/floor`. localStorage only — no real prices, no backend.
+
+The runway is sized so a thesis can actually age: a user can buy in W2, hold through Q1 earnings (W3-ish), survive a soft Q2 (W9-10), write one or more mid-stream check-ins along the way, and reach Q3 (W14) with a trade that has acquired a real history. Three companies × 16 weeks × 3 earnings prints each = 48 designed beats, of which 9 are earnings. The other 39 are macro / competitive / product / management / regulatory / quiet beats, paced so the news flow feels like real holding rather than a breathless arc.
 
 ### Files
 
@@ -649,6 +659,7 @@ The Floor is the Phase 2 surface where the apprenticeship loop tightens: a $100K
 - `src/components/floor/TradeForm.tsx` — the trade entry surface (action + shares + adversarial-paired rationale, plus the exit-reflection re-read card on sells with a prior thesis)
 - `src/components/floor/TrackRecordPanel.tsx` — the predictions-vs-reality dashboard
 - `src/components/floor/EarningsDrillDown.tsx` — the three-field earnings interpretation gate that sits between an earnings-week event and a trade decision
+- `src/components/floor/ThesisCheckin.tsx` — the mid-stream check-in card: re-read your buy thesis at top, single 40+ char field, three-status selector (`still_holds` / `fraying` / `breaking`)
 
 ### Adversarial pairing
 
@@ -684,3 +695,26 @@ The lookup uses `getLatestBuyRationale(companyId)`, which scans `trade_rationale
 ### Post-sell verdict auto-prompt
 
 After a sell submits — and only when there was a prior buy thesis AND the user hadn't already marked it — `FloorPage` raises an inline modal with the three verdict buttons (`Held up` / `Mixed` / `Off-base`) and a "Skip" option. The prompt copy is `Now that you've exited — how do you read what your original thesis actually said?` The point is **name the outcome while context is hot**, not "grade yourself" — held up means the thesis itself wasn't falsified, not that the price went your way. The original buy thesis is snapshotted **before** the new sell rationale is written so the verdict marks the right entry. Dismissing is non-blocking: the user can still mark the verdict from the track-record dashboard later.
+
+### Thesis check-in
+
+Between buy and sell, weeks of news flow past and the user is never asked: "your ADBE thesis is 5 weeks old — has anything moved it?" The check-in is the missing third write artifact (buy thesis → check-ins → exit reflection). It surfaces as a non-blocking electric-cyan banner on the watchlist row of any held position whose buy thesis has aged past the threshold.
+
+**Trigger rule** (in `getThesisCheckinPrompt`):
+
+1. The user holds an open position for the company (`shares > 0`).
+2. There's a most-recent `trade_rationale` tagged `'buy'` for the company.
+3. That buy is at least `CHECKIN_MIN_WEEKS = 4` sim weeks old.
+4. Either no `thesis_checkin` exists for it, OR the most-recent check-in marked the thesis as `'breaking'` — in which case the banner stays visible until the user either sells or writes a new check-in upgrading the status. The app remembers what they said.
+
+`FloorPage` adds a per-row UX suppression on top of the storage trigger: on earnings weeks where an `earnings_note` already exists, the banner is hidden — that note IS the check-in for the week, and asking for two structured writes on the same beat doubles up. The trigger itself stays pure-storage; the suppression is a UI concern.
+
+**Banner copy:** `Your {TICKER} thesis is {N} weeks old. Re-read it?` — or, if the most-recent check-in was `breaking`, `Your {TICKER} thesis is {N} weeks old — you said it was breaking. Re-read it?`
+
+**The card** (`ThesisCheckin`) leads with the original buy thesis (title, both `content` and `bearCaseContent`) — the re-read is the centerpiece, not a footnote. Below that: a price-since-buy delta, this week's `WeekEvent` blurb, an optional chain of prior check-ins (when there are several on the same buy), one required 40+ char field, and a three-button status selector. The field prompt is `What's changed since you wrote this? Is your thesis still intact, fraying, or breaking? Be concrete about which part.` The three statuses are self-marked, mirroring `userVerdict` — no auto-grading from price moves.
+
+**Storage:** a single `thesis_checkin` `JournalEntry` per check-in, append-only. The text lives in `content`; the status lives in `checkinStatus` (the third flat optional on `JournalEntry`); a `checkin-of:{buyEntryId}` tag back-points to the originating buy. `tags` also includes `floor` and `floor-week-{N}` so the check-in is locatable in the same way an earnings note is. `trade_rationale` entries also gained a `floor-week-{N}` tag this session so the trigger can recover a buy's sim-week without parsing the title; entries from prior sessions fall back to a title-regex (`(W{n})$`).
+
+**Chain rendering on the track-record panel:** every expanded `TrackRecordRow` now resolves its chain anchor — the buy thesis the row is part of — and renders `Buy thesis → Check-in(s) → Exit reflection` underneath the verdict marker, in chronological order. On a buy row the anchor is the buy itself; on a sell row the anchor is the most recent buy on the company at-or-before the sell's `executedAt`. Hold rows don't anchor a thesis, so no chain is shown.
+
+**View kind:** the check-in card lives as an inline `view: 'checkin'` in `FloorPage`, mirroring `'trade'` and `'earnings'`. Inline (not modal) keeps the floor context intact and matches the existing UX.
