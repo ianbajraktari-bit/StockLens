@@ -589,11 +589,18 @@ type JournalEntryType =
   | 'analyst_memo'       // anchored to (companyId, stepKind), upsert
   | 'lesson_reflection'  // anchored to lessonId, upsert
   | 'note'               // free-form, append-only
-  | 'trade_rationale'    // FUTURE — Phase 2 simulator
+  | 'trade_rationale'    // Phase 2 simulator — append-only, one per trade
   | 'thesis';            // FUTURE — buy/sell/hold thesis being tracked
 ```
 
-**Anchored entries** (memos, reflections) use deterministic ids (`analyst:{companyId}:{stepKind}`, `reflection:{lessonId}`) and upsert — one entry per context, latest text wins, original `createdAt` preserved across edits. **Append-only entries** (notes) get fresh ids each time so the user keeps a chronological record of evolving thinking.
+**Anchored entries** (memos, reflections) use deterministic ids (`analyst:{companyId}:{stepKind}`, `reflection:{lessonId}`) and upsert — one entry per context, latest text wins, original `createdAt` preserved across edits. **Append-only entries** (notes, trade rationales) get fresh ids each time so the user keeps a chronological record of evolving thinking.
+
+### Floor-specific fields on `JournalEntry`
+
+Two optional fields on `JournalEntry` carry Floor-specific state. They live on the base type rather than a separate payload because every consumer (the journal feed, the track-record panel, future thesis-tracking) wants to render them when present:
+
+- `bearCaseContent?: string` — the user's steel-manned counter-argument, captured at trade time on directional (buy/sell) trades. Stored as a separate field rather than inline markdown in `content` so the dashboard renderer can keep the two cases visually distinct without parsing. Hold trades omit this field.
+- `userVerdict?: 'held_up' | 'mixed' | 'off_base'` — the user's after-the-fact self-assessment, set from the Floor track-record surface. Deliberately *self-judged*, not derived from price moves: a position down 20% can still be `held_up` if the original thesis hasn't actually been falsified. Set via `setUserVerdict(id, verdict | null)`.
 
 ### Storage
 
@@ -623,5 +630,26 @@ The card uses a *structured* prompt, not a blank "what did you take away?" texta
 - Tags + saved searches
 - Surfacing "you wrote this 60 days ago — anything changed?" prompts (past-self accountability)
 - Export a single company's full journal as a shareable analysis card
-- Phase 2: `trade_rationale` entries created automatically when the user makes a simulator trade
 - Phase 3: LLM "manager" reads the user's recent journal entries to provide personalized pushback
+
+## The Floor — Simulator MVP
+
+The Floor is the Phase 2 surface where the apprenticeship loop tightens: a $100K starting cash watchlist (Adobe, Disney, Chipotle), seven hand-designed weeks per company, manual week advancement, and a trade flow that forces a written rationale before any trade executes. Live at `/floor`. localStorage only — no real prices, no backend.
+
+### Files
+
+- `src/data/floor/{types.ts, adobe.ts, disney.ts, chipotle.ts, index.ts}` — the watchlist + per-company `WeekEvent[]` (price + blurb + tag per sim-week)
+- `src/lib/floor.ts` — sim state, portfolio, weighted-average cost basis, `executeTrade`, `advanceWeek`, `resetFloor`
+- `src/pages/FloorPage.tsx` — the page: portfolio summary, positions, watchlist, the inline track-record panel
+- `src/components/floor/TradeForm.tsx` — the trade entry surface (action + shares + adversarial-paired rationale)
+- `src/components/floor/TrackRecordPanel.tsx` — the predictions-vs-reality dashboard
+
+### Adversarial pairing
+
+On directional trades (buy or sell) the rationale is two fields, both 40-character minimum: **your case** (`What do you think will happen, by when, and what would prove you wrong?`) and **the opposing case** (`Now write the strongest argument against this trade. What would someone smart who disagrees with you say?`). Both must clear before Submit unlocks; the locked-Submit microcopy names the blocker by side. Hold trades skip the opposing case — a hold is already a "considered both sides" decision and a forced bear case on top would degrade into noise.
+
+The two cases are persisted on a single `trade_rationale` entry: bull/sell case in `content`, opposing case in `bearCaseContent`. The journal feed renders them as separate sections when both are present.
+
+### Track-record surface
+
+An inline panel on `/floor`, below the watchlist. For every completed trade (newest first) it shows the action / shares / price / week and a one-line excerpt of the rationale; expanded, the row shows the full bull and bear cases, "what happened next" (price now + the next non-quiet `WeekEvent` after the trade week, or "still developing" if nothing has fired yet), and a verdict marker — `Held up` / `Mixed` / `Off-base`. The verdict is the user's call, not the app's; price moves do not auto-grade. Selecting (or de-selecting) a verdict writes through `setUserVerdict` to the originating `JournalEntry`, so the same chip surfaces on the entry in `/journal`.
