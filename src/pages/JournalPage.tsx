@@ -9,6 +9,7 @@ import {
   ChevronDown,
   FileText,
   Lightbulb,
+  Newspaper,
   NotebookPen,
   Plus,
   Search,
@@ -33,6 +34,8 @@ const FILTERS: { id: Filter; label: string }[] = [
   { id: 'all', label: 'All' },
   { id: 'analyst_memo', label: 'Memos' },
   { id: 'lesson_reflection', label: 'Reflections' },
+  { id: 'trade_rationale', label: 'Trades' },
+  { id: 'earnings_note', label: 'Earnings' },
   { id: 'note', label: 'Notes' },
 ];
 
@@ -491,6 +494,12 @@ function toneFor(type: JournalEntryType): {
         iconColor: 'text-text-secondary',
         chip: 'bg-dark-700/80 text-text-secondary border border-white/[0.06]',
       };
+    case 'earnings_note':
+      return {
+        iconWrap: 'bg-warm/10 border-warm/25',
+        iconColor: 'text-warm',
+        chip: 'bg-warm/12 text-warm border border-warm/20',
+      };
     case 'trade_rationale':
     case 'thesis':
       return {
@@ -509,6 +518,8 @@ function iconFor(type: JournalEntryType) {
       return BookOpen;
     case 'note':
       return NotebookPen;
+    case 'earnings_note':
+      return Newspaper;
     case 'trade_rationale':
     case 'thesis':
       return FileText;
