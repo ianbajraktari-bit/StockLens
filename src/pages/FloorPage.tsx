@@ -96,6 +96,7 @@ export default function FloorPage() {
     action: TradeAction;
     shares: number;
     rationale: string;
+    bearCase: string;
   }) {
     if (view.kind !== 'trade') return;
     const row = watchlist.find((r) => r.companyId === view.companyId);
@@ -110,6 +111,7 @@ export default function FloorPage() {
       price: row.currentPrice,
       week: sim.currentWeek,
       text: input.rationale,
+      bearCase: input.bearCase || undefined,
     });
 
     const result = executeTrade({

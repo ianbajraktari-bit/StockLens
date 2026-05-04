@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, ClipboardList, Lock } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ClipboardList, Lock, Swords } from 'lucide-react';
 import type { CompanyProfile } from '../../data/companies';
 import type { WeekEvent } from '../../data/floor';
 import type { Position, TradeAction } from '../../lib/floor';
 
 const RATIONALE_MIN = 40;
+const BEAR_CASE_MIN = 40;
 
 /**
  * Structured prompt for trade rationales. The structure is the point —
@@ -13,6 +14,18 @@ const RATIONALE_MIN = 40;
  */
 export const TRADE_RATIONALE_PROMPT =
   'What do you think will happen, by when, and what would prove you wrong?';
+
+/**
+ * Adversarial-pairing prompt shown alongside the bull/sell case on
+ * directional trades. The user is forced to steel-man the disagreement
+ * BEFORE they can submit — one-sided thinking is the failure mode the
+ * whole rationale flow is designed to break.
+ */
+export const OPPOSING_CASE_PROMPT =
+  'Now write the strongest argument against this trade. What would someone smart who disagrees with you say?';
+
+const OPPOSING_CASE_PLACEHOLDER =
+  "e.g., 'A smart short seller would say margins compressed faster than guide implied, and the new product cycle won't bail them out…'";
 
 interface Props {
   company: CompanyProfile;
@@ -25,6 +38,8 @@ interface Props {
     action: TradeAction;
     shares: number;
     rationale: string;
+    /** Empty string for hold (no opposing case required). */
+    bearCase: string;
   }) => void;
 }
 
@@ -48,6 +63,7 @@ export default function TradeForm({
   const [action, setAction] = useState<TradeAction>('buy');
   const [sharesText, setSharesText] = useState('');
   const [rationale, setRationale] = useState('');
+  const [bearCase, setBearCase] = useState('');
 
   const sharesNum = useMemo(() => {
     const n = Number.parseInt(sharesText, 10);
@@ -72,7 +88,30 @@ export default function TradeForm({
 
   const rationaleLen = rationale.trim().length;
   const rationaleOk = rationaleLen >= RATIONALE_MIN;
-  const canSubmit = !actionError && rationaleOk;
+
+  // Hold trades skip the opposing case — choosing not to act is
+  // already a "considered both sides" decision; forcing a bear case
+  // on top would just degrade into noise.
+  const requiresBearCase = action !== 'hold';
+  const bearLen = bearCase.trim().length;
+  const bearOk = !requiresBearCase || bearLen >= BEAR_CASE_MIN;
+  const canSubmit = !actionError && rationaleOk && bearOk;
+
+  // Microcopy on the locked Submit button — name the blocker so the
+  // user knows what to do, not just that something is missing.
+  let lockReason: string;
+  if (!rationaleOk && (!requiresBearCase || !bearOk)) {
+    const remaining = Math.max(0, RATIONALE_MIN - rationaleLen);
+    lockReason = `Write ${remaining} more chars in your case to submit`;
+  } else if (!rationaleOk) {
+    const remaining = Math.max(0, RATIONALE_MIN - rationaleLen);
+    lockReason = `Write ${remaining} more chars in your case to submit`;
+  } else if (requiresBearCase && !bearOk) {
+    const remaining = Math.max(0, BEAR_CASE_MIN - bearLen);
+    lockReason = `Write ${remaining} more chars in the opposing case to submit`;
+  } else {
+    lockReason = 'Resolve the trade error above to submit';
+  }
 
   function handleSubmit() {
     if (!canSubmit) return;
@@ -80,6 +119,7 @@ export default function TradeForm({
       action,
       shares: action === 'hold' ? 0 : sharesNum,
       rationale: rationale.trim(),
+      bearCase: requiresBearCase ? bearCase.trim() : '',
     });
   }
 
@@ -226,13 +266,13 @@ export default function TradeForm({
         </div>
       )}
 
-      {/* Rationale — the centerpiece */}
+      {/* Your case — the bull/sell rationale */}
       <div className="space-y-2">
         <div className="rounded-xl border border-accent/25 bg-gradient-to-br from-accent/[0.06] via-dark-800/50 to-dark-800/30 p-4 space-y-2">
           <div className="flex items-center gap-1.5">
             <ClipboardList className="w-3.5 h-3.5 text-accent-light" />
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-accent-light">
-              Required: trade rationale
+              {requiresBearCase ? 'Required: your case' : 'Required: hold rationale'}
             </p>
           </div>
           <p className="text-sm text-text-primary leading-relaxed">
@@ -262,6 +302,41 @@ export default function TradeForm({
         </div>
       </div>
 
+      {/* Opposing case — adversarial pairing for directional trades only */}
+      {requiresBearCase && (
+        <div className="space-y-2">
+          <div className="rounded-xl border border-warm/30 bg-gradient-to-br from-warm/[0.06] via-dark-800/50 to-dark-800/30 p-4 space-y-2">
+            <div className="flex items-center gap-1.5">
+              <Swords className="w-3.5 h-3.5 text-warm" />
+              <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-warm">
+                Required: the opposing case
+              </p>
+            </div>
+            <p className="text-sm text-text-primary leading-relaxed">
+              {OPPOSING_CASE_PROMPT}
+            </p>
+            <p className="text-[11px] text-text-muted leading-relaxed">
+              Steel-man it. The point isn&apos;t to talk yourself out of the trade — it&apos;s to know exactly what you&apos;re betting against, so you recognize it if it happens.
+            </p>
+          </div>
+          <textarea
+            value={bearCase}
+            onChange={(e) => setBearCase(e.target.value)}
+            rows={5}
+            placeholder={OPPOSING_CASE_PLACEHOLDER}
+            className="w-full px-4 py-3 rounded-xl bg-dark-800/60 border border-white/[0.08] text-text-primary text-sm leading-relaxed focus:outline-none focus:border-warm/40 placeholder:text-text-faint resize-y"
+          />
+          <div className="px-1">
+            <p
+              className={`text-[11px] ${bearOk ? 'text-green' : 'text-text-muted'}`}
+            >
+              {bearLen} / {BEAR_CASE_MIN} chars
+              {bearOk ? ' — ready' : ' minimum'}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Submit */}
       <motion.button
         onClick={handleSubmit}
@@ -282,7 +357,7 @@ export default function TradeForm({
         ) : (
           <>
             <Lock className="w-3.5 h-3.5" />
-            Write {Math.max(0, RATIONALE_MIN - rationaleLen)} more chars to submit
+            {lockReason}
           </>
         )}
       </motion.button>
