@@ -324,6 +324,56 @@ export function upsertLessonReflection(input: {
 }
 
 /**
+ * Append a trade rationale entry. Always creates a new entry — every trade
+ * is its own immutable memo, so the user can re-read why they did what
+ * they did even after the position has changed N times. The Floor's
+ * portfolio holds the trade record; the journal holds the writing.
+ */
+export function createTradeRationale(input: {
+  companyId: string;
+  /** Ticker for the title — pre-resolved by the caller. */
+  ticker: string;
+  /** Buy / sell / hold — drives the title prefix. */
+  action: 'buy' | 'sell' | 'hold';
+  /** Share count for buy/sell (omit for hold). */
+  shares?: number;
+  /** Per-share price at the time of the trade. */
+  price: number;
+  /** Sim week index, 0-based — appears in the title for chronology. */
+  week: number;
+  /** The user's rationale text. */
+  text: string;
+  /** Optional id of the originating trade record in the portfolio. */
+  tradeId?: string;
+}): JournalEntry {
+  ensureImported();
+  const all = readAll();
+  const now = new Date().toISOString();
+  const verb =
+    input.action === 'buy' ? 'Buy' : input.action === 'sell' ? 'Sell' : 'Hold';
+  const sharesPart =
+    input.action !== 'hold' && input.shares
+      ? ` ${input.shares} sh`
+      : '';
+  const title = `${verb}${sharesPart} ${input.ticker} @ $${input.price.toFixed(2)} (W${input.week})`;
+  const tags = ['floor', input.action];
+  if (input.tradeId) tags.push(input.tradeId);
+  const entry: JournalEntry = {
+    id: genId(),
+    type: 'trade_rationale',
+    createdAt: now,
+    updatedAt: now,
+    title,
+    content: input.text,
+    companyId: input.companyId,
+    tags,
+  };
+  all.push(entry);
+  writeAll(all);
+  return entry;
+}
+
+/**
  * Append a free-form note. Always creates a new entry with a fresh id —
  * notes are append-only (the user keeps a chronological record).
  */
