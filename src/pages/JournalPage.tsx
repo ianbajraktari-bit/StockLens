@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
+  Activity,
   ArrowLeft,
   ArrowRight,
   BookOpen,
@@ -17,12 +18,14 @@ import {
   Trash2,
 } from 'lucide-react';
 import {
+  checkinStatusLabel,
   createNote,
   deleteEntry,
   entryTypeLabel,
   getAllEntries,
   getJournalStats,
   userVerdictLabel,
+  type CheckinStatus,
   type JournalEntry,
   type JournalEntryType,
   type UserVerdict,
@@ -35,6 +38,7 @@ const FILTERS: { id: Filter; label: string }[] = [
   { id: 'analyst_memo', label: 'Memos' },
   { id: 'lesson_reflection', label: 'Reflections' },
   { id: 'trade_rationale', label: 'Trades' },
+  { id: 'thesis_checkin', label: 'Check-ins' },
   { id: 'earnings_note', label: 'Earnings' },
   { id: 'note', label: 'Notes' },
 ];
@@ -351,6 +355,13 @@ function EntryCard({
                 {userVerdictLabel(entry.userVerdict)}
               </span>
             )}
+            {entry.checkinStatus && (
+              <span
+                className={`text-[9px] font-bold uppercase tracking-[0.16em] px-1.5 py-0.5 rounded-md border ${checkinStatusChipTone(entry.checkinStatus)}`}
+              >
+                {checkinStatusLabel(entry.checkinStatus)}
+              </span>
+            )}
           </div>
           <p className="text-sm font-semibold text-text-primary leading-snug truncate">
             {entry.title}
@@ -500,6 +511,12 @@ function toneFor(type: JournalEntryType): {
         iconColor: 'text-warm',
         chip: 'bg-warm/12 text-warm border border-warm/20',
       };
+    case 'thesis_checkin':
+      return {
+        iconWrap: 'bg-electric/10 border-electric/25',
+        iconColor: 'text-electric',
+        chip: 'bg-electric/12 text-electric border border-electric/20',
+      };
     case 'trade_rationale':
     case 'thesis':
       return {
@@ -520,9 +537,22 @@ function iconFor(type: JournalEntryType) {
       return NotebookPen;
     case 'earnings_note':
       return Newspaper;
+    case 'thesis_checkin':
+      return Activity;
     case 'trade_rationale':
     case 'thesis':
       return FileText;
+  }
+}
+
+function checkinStatusChipTone(s: CheckinStatus): string {
+  switch (s) {
+    case 'still_holds':
+      return 'border-green/30 bg-green/[0.08] text-green';
+    case 'fraying':
+      return 'border-warm/30 bg-warm/[0.08] text-warm';
+    case 'breaking':
+      return 'border-red/30 bg-red/[0.08] text-red';
   }
 }
 

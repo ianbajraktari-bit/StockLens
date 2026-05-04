@@ -1,18 +1,25 @@
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
+  Activity,
   ChevronDown,
   ClipboardList,
   History,
+  LogOut,
   Sparkles,
   Swords,
+  Target,
 } from 'lucide-react';
 import { getCompanyById } from '../../data/companies';
 import { getFloorCompany } from '../../data/floor';
 import {
+  checkinStatusLabel,
+  getCheckinsForBuy,
+  getEntriesForCompany,
   getEntryById,
   setUserVerdict,
   userVerdictLabel,
+  type CheckinStatus,
   type JournalEntry,
   type UserVerdict,
 } from '../../lib/journal';
@@ -148,6 +155,49 @@ function TrackRecordRow({
     // For a sell, the user benefits if the price fell after they sold.
     plPct = ((trade.price - priceNow) / trade.price) * 100;
   }
+
+  // Chain: every artifact tied to the same buy thesis. For buy rows the
+  // anchor is `entry` itself; for sell rows we walk back to find the
+  // most recent buy_rationale for this company at or before the sell.
+  // Hold rows don't anchor a thesis, so no chain is shown.
+  const chain = useMemo(() => {
+    if (!entry) return null;
+    if (trade.action === 'hold') return null;
+    let buyAnchor: JournalEntry | null = null;
+    if (trade.action === 'buy') {
+      buyAnchor = entry;
+    } else {
+      const companyBuys = getEntriesForCompany(trade.companyId).filter(
+        (e) =>
+          e.type === 'trade_rationale' &&
+          (e.tags ?? []).includes('buy') &&
+          e.createdAt <= trade.executedAt,
+      );
+      // getEntriesForCompany is newest-first, so [0] is the most recent buy.
+      buyAnchor = companyBuys[0] ?? null;
+    }
+    if (!buyAnchor) return null;
+    const checkins = getCheckinsForBuy(buyAnchor.id);
+    // Find the closing sell for this buy thesis: the next sell on this
+    // company after the buy. For sell rows we already know it's `entry`.
+    let closingSell: JournalEntry | null = null;
+    if (trade.action === 'sell') {
+      closingSell = entry;
+    } else {
+      const companyEntries = getEntriesForCompany(trade.companyId);
+      const sellAfterBuy = companyEntries
+        .filter(
+          (e) =>
+            e.type === 'trade_rationale' &&
+            (e.tags ?? []).includes('sell') &&
+            e.createdAt > buyAnchor!.createdAt,
+        )
+        // newest-first; we want the earliest sell after the buy, so reverse.
+        .reverse()[0];
+      closingSell = sellAfterBuy ?? null;
+    }
+    return { buyAnchor, checkins, closingSell };
+  }, [entry, trade]);
 
   const verdict = entry?.userVerdict;
   const actionTone =
@@ -341,12 +391,127 @@ function TrackRecordRow({
                   &ldquo;held up&rdquo; if your thesis hasn&apos;t actually been falsified.
                 </p>
               </div>
+
+              {/* Chain — buy thesis → check-ins → exit reflection */}
+              {chain &&
+                (chain.checkins.length > 0 ||
+                  trade.action === 'sell' ||
+                  chain.closingSell) && (
+                  <div className="space-y-2 pt-1">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-text-muted">
+                      Chain
+                    </p>
+                    <div className="space-y-1.5">
+                      <ChainItem
+                        icon={Target}
+                        label="Buy thesis"
+                        title={chain.buyAnchor.title}
+                        excerpt={chain.buyAnchor.content}
+                        tone="border-accent/25 bg-accent/[0.05] text-accent-light"
+                        active={
+                          trade.action === 'buy' &&
+                          chain.buyAnchor.id === entry?.id
+                        }
+                      />
+                      {chain.checkins.map((c) => (
+                        <ChainItem
+                          key={c.id}
+                          icon={Activity}
+                          label={`Check-in · W${weekFromTitle(c.title)}`}
+                          title={c.title}
+                          excerpt={c.content}
+                          tone="border-electric/25 bg-electric/[0.05] text-electric"
+                          status={c.checkinStatus ?? null}
+                        />
+                      ))}
+                      {chain.closingSell && (
+                        <ChainItem
+                          icon={LogOut}
+                          label="Exit reflection"
+                          title={chain.closingSell.title}
+                          excerpt={chain.closingSell.content}
+                          tone="border-red/25 bg-red/[0.05] text-red"
+                          active={
+                            trade.action === 'sell' &&
+                            chain.closingSell.id === entry?.id
+                          }
+                        />
+                      )}
+                    </div>
+                  </div>
+                )}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
     </motion.div>
   );
+}
+
+function ChainItem({
+  icon: Icon,
+  label,
+  title,
+  excerpt,
+  tone,
+  status,
+  active,
+}: {
+  icon: typeof Activity;
+  label: string;
+  title: string;
+  excerpt: string;
+  tone: string;
+  status?: CheckinStatus | null;
+  active?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-lg border ${tone.split(' ')[0]} ${tone.split(' ')[1]} px-2.5 py-2 ${
+        active ? 'ring-1 ring-white/[0.06]' : ''
+      }`}
+    >
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <Icon className={`w-3 h-3 shrink-0 ${tone.split(' ')[2] ?? ''}`} />
+        <p
+          className={`text-[10px] font-bold uppercase tracking-[0.14em] ${
+            tone.split(' ')[2] ?? ''
+          }`}
+        >
+          {label}
+        </p>
+        <span className="text-[10px] text-text-faint truncate ml-1">{title}</span>
+        {status && (
+          <span
+            className={`ml-auto text-[9px] font-bold uppercase tracking-[0.14em] px-1.5 py-0.5 rounded border ${chainStatusTone(
+              status,
+            )}`}
+          >
+            {checkinStatusLabel(status)}
+          </span>
+        )}
+      </div>
+      <p className="text-[11px] text-text-secondary leading-snug line-clamp-2 mt-1 whitespace-pre-wrap">
+        {excerpt}
+      </p>
+    </div>
+  );
+}
+
+function chainStatusTone(s: CheckinStatus): string {
+  switch (s) {
+    case 'still_holds':
+      return 'border-green/30 bg-green/[0.08] text-green';
+    case 'fraying':
+      return 'border-warm/30 bg-warm/[0.08] text-warm';
+    case 'breaking':
+      return 'border-red/30 bg-red/[0.08] text-red';
+  }
+}
+
+function weekFromTitle(title: string): string {
+  const m = /\(W(\d+)\)\s*$/.exec(title);
+  return m ? m[1] : '?';
 }
 
 function verdictChipTone(v: UserVerdict): string {

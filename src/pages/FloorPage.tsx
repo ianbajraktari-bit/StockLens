@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
+  Activity,
   ArrowLeft,
   ArrowRight,
   CalendarClock,
@@ -32,24 +33,31 @@ import {
 } from '../lib/floor';
 import {
   createEarningsNote,
+  createThesisCheckin,
   createTradeRationale,
+  getCheckinsForBuy,
   getEarningsNoteForWeek,
   getLatestBuyRationale,
+  getThesisCheckinPrompt,
   setUserVerdict,
   userVerdictLabel,
+  type CheckinStatus,
   type JournalEntry,
+  type ThesisCheckinPrompt,
   type UserVerdict,
 } from '../lib/journal';
 import TradeForm from '../components/floor/TradeForm';
 import TrackRecordPanel from '../components/floor/TrackRecordPanel';
 import EarningsDrillDown from '../components/floor/EarningsDrillDown';
+import ThesisCheckin from '../components/floor/ThesisCheckin';
 
 const EASE_CINEMATIC: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 type View =
   | { kind: 'floor' }
   | { kind: 'trade'; companyId: string }
-  | { kind: 'earnings'; companyId: string };
+  | { kind: 'earnings'; companyId: string }
+  | { kind: 'checkin'; companyId: string };
 
 /**
  * One-shot prompt shown after a sell that closed (or trimmed) a position
@@ -72,6 +80,13 @@ interface ResolvedWatchlistRow {
   isEarningsWeek: boolean;
   /** Saved earnings note for (this company, current week), if any. */
   earningsNote: JournalEntry | null;
+  /**
+   * If the user holds an open position with a stale buy thesis, this is
+   * the banner-trigger payload. Suppressed on earnings weeks where an
+   * earnings_note already exists for the row — that note IS the
+   * check-in for the week. Null when no banner should show.
+   */
+  checkinPrompt: ThesisCheckinPrompt | null;
 }
 
 /**
@@ -100,6 +115,21 @@ export default function FloorPage() {
         const earningsNote = isEarningsWeek
           ? getEarningsNoteForWeek(row.companyId, sim.currentWeek)
           : null;
+        // Banner only fires on positions the user actually holds. Closing
+        // a position via sell unwinds the prompt; the chain still surfaces
+        // in the track-record panel.
+        const heldShares =
+          portfolio.positions[row.companyId]?.shares ?? 0;
+        const rawPrompt =
+          heldShares > 0
+            ? getThesisCheckinPrompt(row.companyId, sim.currentWeek)
+            : null;
+        // Suppress on earnings weeks where the user has already written
+        // an earnings_note — that note IS this week's check-in; nagging
+        // the user for a second write doubles up on the same beat.
+        const suppressForEarnings =
+          rawPrompt && isEarningsWeek && earningsNote !== null;
+        const checkinPrompt = suppressForEarnings ? null : rawPrompt;
         return {
           companyId: row.companyId,
           company,
@@ -108,10 +138,11 @@ export default function FloorPage() {
           currentPrice: row.currentPrice,
           isEarningsWeek,
           earningsNote,
+          checkinPrompt,
         };
       })
       .filter((r): r is ResolvedWatchlistRow => r !== null);
-  }, [tick, sim.currentWeek]);
+  }, [tick, sim.currentWeek, portfolio.positions]);
 
   const totalReturnPct = ((portfolioValue - STARTING_CASH) / STARTING_CASH) * 100;
   const atLastWeek = !canAdvanceWeek();
@@ -208,6 +239,22 @@ export default function FloorPage() {
     setView({ kind: 'floor' });
   }
 
+  function handleCheckinSubmit(input: { text: string; status: CheckinStatus }) {
+    if (view.kind !== 'checkin') return;
+    const row = watchlist.find((r) => r.companyId === view.companyId);
+    if (!row || !row.checkinPrompt) return;
+    createThesisCheckin({
+      companyId: row.companyId,
+      ticker: row.company.ticker,
+      week: sim.currentWeek,
+      text: input.text,
+      status: input.status,
+      buyEntryId: row.checkinPrompt.buyEntry.id,
+    });
+    setTick((t) => t + 1);
+    setView({ kind: 'floor' });
+  }
+
   // ---------------------------- Trade view ----------------------------
   if (view.kind === 'trade') {
     const row = watchlist.find((r) => r.companyId === view.companyId);
@@ -259,6 +306,41 @@ export default function FloorPage() {
     );
   }
 
+  // -------------------------- Check-in view ---------------------------
+  if (view.kind === 'checkin') {
+    const row = watchlist.find((r) => r.companyId === view.companyId);
+    if (!row || !row.checkinPrompt) {
+      // Either the row is gone, or the trigger no longer fires (e.g.
+      // user advanced or wrote one in another tab). Bail back cleanly.
+      setView({ kind: 'floor' });
+      return null;
+    }
+    const buyEntry = row.checkinPrompt.buyEntry;
+    const buyWeek = sim.currentWeek - row.checkinPrompt.weeksSinceBuy;
+    const priorCheckins = getCheckinsForBuy(buyEntry.id);
+    return (
+      <div className="min-h-screen bg-dark-950 relative overflow-hidden">
+        <div className="scene-mesh" />
+        <div className="relative z-10 max-w-2xl mx-auto px-4 py-6">
+          <ThesisCheckin
+            company={row.company}
+            event={row.currentEvent}
+            week={sim.currentWeek}
+            buyEntry={buyEntry}
+            buyWeek={buyWeek}
+            buyPrice={
+              portfolio.positions[row.companyId]?.avgCost ?? row.currentPrice
+            }
+            priceNow={row.currentPrice}
+            priorCheckins={priorCheckins}
+            onCancel={() => setView({ kind: 'floor' })}
+            onSubmit={handleCheckinSubmit}
+          />
+        </div>
+      </div>
+    );
+  }
+
   // ---------------------------- Floor view ----------------------------
   return (
     <div className="min-h-screen bg-dark-950 relative overflow-hidden">
@@ -299,7 +381,7 @@ export default function FloorPage() {
                 </span>
               </div>
               <p className="text-xs text-text-secondary mt-1 leading-snug">
-                Three companies. Six weeks. Every move requires writing.
+                Three companies. Sixteen weeks. Every move requires writing.
               </p>
             </div>
           </div>
@@ -471,6 +553,28 @@ export default function FloorPage() {
                       Write another take
                     </button>
                   </div>
+                )}
+
+                {row.checkinPrompt && (
+                  <button
+                    onClick={() =>
+                      setView({ kind: 'checkin', companyId: row.companyId })
+                    }
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg border border-electric/30 bg-gradient-to-r from-electric/[0.08] to-electric/[0.04] hover:from-electric/[0.14] hover:to-electric/[0.06] text-left transition-all cursor-pointer"
+                  >
+                    <Activity className="w-3.5 h-3.5 text-electric shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[11px] text-electric font-bold leading-snug">
+                        Your {row.company.ticker} thesis is{' '}
+                        {row.checkinPrompt.weeksSinceBuy}{' '}
+                        {row.checkinPrompt.weeksSinceBuy === 1 ? 'week' : 'weeks'} old
+                        {row.checkinPrompt.latestCheckin?.checkinStatus === 'breaking'
+                          ? ' — you said it was breaking. Re-read it?'
+                          : '. Re-read it?'}
+                      </p>
+                    </div>
+                    <ArrowRight className="w-3 h-3 text-electric shrink-0" />
+                  </button>
                 )}
 
                 <div className="flex items-center justify-between gap-2 pt-1">

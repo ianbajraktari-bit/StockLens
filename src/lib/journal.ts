@@ -30,6 +30,7 @@ export type JournalEntryType =
   | 'note' // free-form, append-only
   | 'trade_rationale' // simulator trade memo (bull/sell case in `content`, opposing case in `bearCaseContent`)
   | 'earnings_note' // simulator earnings drill-down (3 structured fields packed into `content`)
+  | 'thesis_checkin' // simulator mid-stream thesis re-read between buy and sell
   | 'thesis'; // future: a buy/sell/hold thesis the user is tracking
 
 /**
@@ -39,6 +40,14 @@ export type JournalEntryType =
  * original thesis hasn't actually been falsified.
  */
 export type UserVerdict = 'held_up' | 'mixed' | 'off_base';
+
+/**
+ * The user's self-marked status when writing a thesis check-in mid-stream.
+ * Three coarse buckets, deliberately binary-ish: a thesis is either holding,
+ * starting to fray (some part is wobbling), or actively breaking (a load-
+ * bearing assumption has been falsified). Self-judged, like UserVerdict.
+ */
+export type CheckinStatus = 'still_holds' | 'fraying' | 'breaking';
 
 export interface JournalEntry {
   id: string;
@@ -67,6 +76,13 @@ export interface JournalEntry {
   bearCaseContent?: string;
   /** User's self-assessment of how the rationale played out. Set later via the track-record surface. */
   userVerdict?: UserVerdict;
+  /**
+   * For `thesis_checkin` entries: the user's self-marked health of the
+   * original thesis at check-in time. Stored as a flat optional, mirroring
+   * `userVerdict` — both will fold into a discriminated-union payload when
+   * the deferred refactor lands.
+   */
+  checkinStatus?: CheckinStatus;
 }
 
 // =====================================================================
@@ -235,6 +251,7 @@ export function getJournalStats(): {
     note: 0,
     trade_rationale: 0,
     earnings_note: 0,
+    thesis_checkin: 0,
     thesis: 0,
   };
   const companies = new Set<string>();
@@ -381,7 +398,7 @@ export function createTradeRationale(input: {
       ? ` ${input.shares} sh`
       : '';
   const title = `${verb}${sharesPart} ${input.ticker} @ $${input.price.toFixed(2)} (W${input.week})`;
-  const tags = ['floor', input.action];
+  const tags = ['floor', input.action, earningsWeekTag(input.week)];
   if (input.tradeId) tags.push(input.tradeId);
   const entry: JournalEntry = {
     id: genId(),
@@ -514,6 +531,184 @@ export function userVerdictLabel(v: UserVerdict): string {
   }
 }
 
+// =====================================================================
+// Thesis check-in: the mid-stream re-read between buy and sell
+// =====================================================================
+
+/**
+ * Tag fragment used to back-point a thesis_checkin entry to the buy
+ * rationale it's re-reading. Storing as a tag (rather than adding a
+ * new field) matches the floor-week-N encoding pattern and avoids
+ * widening JournalEntry while the discriminated-union refactor is
+ * still deferred.
+ */
+export function checkinOfTag(buyEntryId: string): string {
+  return `checkin-of:${buyEntryId}`;
+}
+
+/**
+ * Append a thesis check-in entry. Always creates a new entry — every
+ * check-in for the same buy is preserved (the chain is the artifact,
+ * not the latest take).
+ */
+export function createThesisCheckin(input: {
+  companyId: string;
+  ticker: string;
+  /** Sim week index, 0-based — appears in the title for chronology. */
+  week: number;
+  /** The user's reflection text — the single required field. */
+  text: string;
+  /** Self-marked status of the thesis at check-in time. */
+  status: CheckinStatus;
+  /** Id of the buy_rationale entry this check-in is checking on. */
+  buyEntryId: string;
+}): JournalEntry {
+  ensureImported();
+  const all = readAll();
+  const now = new Date().toISOString();
+  const title = `Check-in — ${input.ticker} (W${input.week + 1})`;
+  const entry: JournalEntry = {
+    id: genId(),
+    type: 'thesis_checkin',
+    createdAt: now,
+    updatedAt: now,
+    title,
+    content: input.text,
+    companyId: input.companyId,
+    tags: [
+      'floor',
+      'checkin',
+      earningsWeekTag(input.week),
+      checkinOfTag(input.buyEntryId),
+    ],
+    checkinStatus: input.status,
+  };
+  all.push(entry);
+  writeAll(all);
+  return entry;
+}
+
+/**
+ * Update the self-marked status on a thesis_checkin entry. Pass null to
+ * clear. Returns the updated entry, or null if the id wasn't found.
+ */
+export function setCheckinStatus(
+  id: string,
+  status: CheckinStatus | null,
+): JournalEntry | null {
+  ensureImported();
+  const all = readAll();
+  const idx = all.findIndex((e) => e.id === id);
+  if (idx < 0) return null;
+  const next: JournalEntry = { ...all[idx], updatedAt: new Date().toISOString() };
+  if (status === null) {
+    delete next.checkinStatus;
+  } else {
+    next.checkinStatus = status;
+  }
+  all[idx] = next;
+  writeAll(all);
+  return next;
+}
+
+/**
+ * All thesis_checkin entries for a given buy_rationale entry, in
+ * chronological order (oldest first) — the order the chain reads.
+ */
+export function getCheckinsForBuy(buyEntryId: string): JournalEntry[] {
+  const tag = checkinOfTag(buyEntryId);
+  return getAllEntries()
+    .filter(
+      (e) => e.type === 'thesis_checkin' && (e.tags ?? []).includes(tag),
+    )
+    .sort((a, b) =>
+      a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0,
+    );
+}
+
+/** Human-readable label for a check-in status — used in chips. */
+export function checkinStatusLabel(s: CheckinStatus): string {
+  switch (s) {
+    case 'still_holds':
+      return 'Still holds';
+    case 'fraying':
+      return 'Fraying';
+    case 'breaking':
+      return 'Breaking';
+  }
+}
+
+/**
+ * Recover the sim-week a trade_rationale entry was written in. New
+ * entries carry a `floor-week-{N}` tag; older entries (pre this
+ * session) only encode it in the title — fall back to that.
+ */
+function tradeEntryWeek(entry: JournalEntry): number | null {
+  const tag = (entry.tags ?? []).find((t) => t.startsWith('floor-week-'));
+  if (tag) {
+    const n = Number.parseInt(tag.slice('floor-week-'.length), 10);
+    if (Number.isFinite(n)) return n;
+  }
+  const m = /\(W(\d+)\)\s*$/.exec(entry.title);
+  if (m) {
+    const n = Number.parseInt(m[1], 10);
+    if (Number.isFinite(n)) return n;
+  }
+  return null;
+}
+
+/**
+ * The shape of a "thesis is overdue for a check-in" banner. Returned by
+ * `getThesisCheckinPrompt` when the trigger fires; null otherwise. The
+ * caller (FloorPage) decides whether to suppress for UX reasons (e.g.
+ * skip on earnings weeks where an earnings_note already exists).
+ */
+export interface ThesisCheckinPrompt {
+  buyEntry: JournalEntry;
+  /** Sim weeks elapsed since the buy. */
+  weeksSinceBuy: number;
+  /** The most recent check-in for this buy, if any. */
+  latestCheckin: JournalEntry | null;
+}
+
+/**
+ * Minimum sim-week age before the banner can fire. ≥ 4 is the recommended
+ * threshold from the session prompt: > 7 is too quiet on a 16-week runway,
+ * < 2 is noise on every advance.
+ */
+export const CHECKIN_MIN_WEEKS = 4;
+
+/**
+ * Banner-trigger query. Fires when:
+ *  - there's a most-recent buy_rationale for the company, AND
+ *  - that buy is ≥ CHECKIN_MIN_WEEKS sim weeks old, AND
+ *  - either no check-in has been written for it yet, OR the most recent
+ *    check-in marked the thesis as 'breaking' (in which case the banner
+ *    persists until the user either sells or writes a new check-in
+ *    upgrading the status — the app remembers what they said).
+ *
+ * The trigger is pure-storage; the FloorPage suppresses the banner on
+ * earnings weeks when an earnings_note already exists for the row, so
+ * the user isn't asked to do the same write twice in one beat.
+ */
+export function getThesisCheckinPrompt(
+  companyId: string,
+  currentWeek: number,
+): ThesisCheckinPrompt | null {
+  const buyEntry = getLatestBuyRationale(companyId);
+  if (!buyEntry) return null;
+  const buyWeek = tradeEntryWeek(buyEntry);
+  if (buyWeek === null) return null;
+  const weeksSinceBuy = currentWeek - buyWeek;
+  if (weeksSinceBuy < CHECKIN_MIN_WEEKS) return null;
+  const checkins = getCheckinsForBuy(buyEntry.id);
+  const latestCheckin = checkins.length ? checkins[checkins.length - 1] : null;
+  if (latestCheckin && latestCheckin.checkinStatus !== 'breaking') {
+    return null;
+  }
+  return { buyEntry, weeksSinceBuy, latestCheckin };
+}
+
 /**
  * Append a free-form note. Always creates a new entry with a fresh id —
  * notes are append-only (the user keeps a chronological record).
@@ -598,6 +793,8 @@ export function entryTypeLabel(type: JournalEntryType): string {
       return 'Trade';
     case 'earnings_note':
       return 'Earnings';
+    case 'thesis_checkin':
+      return 'Check-in';
     case 'thesis':
       return 'Thesis';
   }
