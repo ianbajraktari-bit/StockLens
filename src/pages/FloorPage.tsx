@@ -30,6 +30,7 @@ import {
 } from '../lib/floor';
 import { createTradeRationale } from '../lib/journal';
 import TradeForm from '../components/floor/TradeForm';
+import TrackRecordPanel from '../components/floor/TrackRecordPanel';
 
 const EASE_CINEMATIC: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -96,6 +97,7 @@ export default function FloorPage() {
     action: TradeAction;
     shares: number;
     rationale: string;
+    bearCase: string;
   }) {
     if (view.kind !== 'trade') return;
     const row = watchlist.find((r) => r.companyId === view.companyId);
@@ -110,6 +112,7 @@ export default function FloorPage() {
       price: row.currentPrice,
       week: sim.currentWeek,
       text: input.rationale,
+      bearCase: input.bearCase || undefined,
     });
 
     const result = executeTrade({
@@ -372,6 +375,13 @@ export default function FloorPage() {
             ))}
           </AnimatePresence>
         </div>
+
+        {/* Track record — predictions vs. reality */}
+        <TrackRecordPanel
+          portfolio={portfolio}
+          currentWeek={sim.currentWeek}
+          onChange={() => setTick((t) => t + 1)}
+        />
 
         {/* Journal nudge */}
         <button

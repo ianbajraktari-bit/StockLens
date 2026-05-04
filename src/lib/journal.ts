@@ -28,8 +28,16 @@ export type JournalEntryType =
   | 'analyst_memo' // a single Analyst Mode step response, anchored to (companyId, stepKind)
   | 'lesson_reflection' // post-lesson takeaway, anchored to lessonId
   | 'note' // free-form, append-only
-  | 'trade_rationale' // future: simulator trade memo, anchored to a trade id
+  | 'trade_rationale' // simulator trade memo (bull/sell case in `content`, opposing case in `bearCaseContent`)
   | 'thesis'; // future: a buy/sell/hold thesis the user is tracking
+
+/**
+ * The user's after-the-fact self-assessment of a trade rationale. Set from
+ * the Floor track-record dashboard. Deliberately self-judged, not auto-graded
+ * from price moves — a position down 20% might still be 'held_up' if the
+ * original thesis hasn't actually been falsified.
+ */
+export type UserVerdict = 'held_up' | 'mixed' | 'off_base';
 
 export interface JournalEntry {
   id: string;
@@ -49,6 +57,15 @@ export interface JournalEntry {
   analystStepKind?: AnalystStepKind;
   /** Free-form user tags. */
   tags?: string[];
+  /**
+   * For trade_rationale entries on directional (buy/sell) trades:
+   * the user's steel-manned counter-argument, captured at trade time.
+   * Hold trades skip this. Storing it as a separate field (rather than
+   * inline markdown in `content`) keeps the dashboard renderer simple.
+   */
+  bearCaseContent?: string;
+  /** User's self-assessment of how the rationale played out. Set later via the track-record surface. */
+  userVerdict?: UserVerdict;
 }
 
 // =====================================================================
@@ -341,8 +358,14 @@ export function createTradeRationale(input: {
   price: number;
   /** Sim week index, 0-based — appears in the title for chronology. */
   week: number;
-  /** The user's rationale text. */
+  /** The user's rationale text — their case for the trade. */
   text: string;
+  /**
+   * The user's steel-manned counter-argument. Required for buy/sell at the
+   * UI layer; persisted alongside the bull/sell case so both sides are
+   * re-readable later in the journal and the track-record dashboard.
+   */
+  bearCase?: string;
   /** Optional id of the originating trade record in the portfolio. */
   tradeId?: string;
 }): JournalEntry {
@@ -367,10 +390,48 @@ export function createTradeRationale(input: {
     content: input.text,
     companyId: input.companyId,
     tags,
+    ...(input.bearCase ? { bearCaseContent: input.bearCase } : {}),
   };
   all.push(entry);
   writeAll(all);
   return entry;
+}
+
+/**
+ * Set (or clear) the user's self-assessment verdict on a journal entry —
+ * primarily used on `trade_rationale` entries from the Floor track-record
+ * surface. Pass `null` to clear. Returns the updated entry, or `null` if
+ * the id was not found.
+ */
+export function setUserVerdict(
+  id: string,
+  verdict: UserVerdict | null,
+): JournalEntry | null {
+  ensureImported();
+  const all = readAll();
+  const idx = all.findIndex((e) => e.id === id);
+  if (idx < 0) return null;
+  const next: JournalEntry = { ...all[idx], updatedAt: new Date().toISOString() };
+  if (verdict === null) {
+    delete next.userVerdict;
+  } else {
+    next.userVerdict = verdict;
+  }
+  all[idx] = next;
+  writeAll(all);
+  return next;
+}
+
+/** Human-readable label for a user verdict — used in chips. */
+export function userVerdictLabel(v: UserVerdict): string {
+  switch (v) {
+    case 'held_up':
+      return 'Held up';
+    case 'mixed':
+      return 'Mixed';
+    case 'off_base':
+      return 'Off-base';
+  }
 }
 
 /**
