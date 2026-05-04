@@ -98,12 +98,11 @@ export default function TradeForm({
   const canSubmit = !actionError && rationaleOk && bearOk;
 
   // Microcopy on the locked Submit button — name the blocker so the
-  // user knows what to do, not just that something is missing.
+  // user knows what to do, not just that something is missing. The
+  // bull/sell case is the more conceptually-primary input, so when both
+  // sides are short we point at it first.
   let lockReason: string;
-  if (!rationaleOk && (!requiresBearCase || !bearOk)) {
-    const remaining = Math.max(0, RATIONALE_MIN - rationaleLen);
-    lockReason = `Write ${remaining} more chars in your case to submit`;
-  } else if (!rationaleOk) {
+  if (!rationaleOk) {
     const remaining = Math.max(0, RATIONALE_MIN - rationaleLen);
     lockReason = `Write ${remaining} more chars in your case to submit`;
   } else if (requiresBearCase && !bearOk) {
