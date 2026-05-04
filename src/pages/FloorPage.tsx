@@ -6,8 +6,10 @@ import {
   ArrowRight,
   CalendarClock,
   ChartLine,
+  CheckCircle2,
   CircleDollarSign,
   ClipboardList,
+  FileSearch,
   RotateCcw,
   Wallet,
 } from 'lucide-react';
@@ -28,15 +30,37 @@ import {
   type Position,
   type TradeAction,
 } from '../lib/floor';
-import { createTradeRationale } from '../lib/journal';
+import {
+  createEarningsNote,
+  createTradeRationale,
+  getEarningsNoteForWeek,
+  getLatestBuyRationale,
+  setUserVerdict,
+  userVerdictLabel,
+  type JournalEntry,
+  type UserVerdict,
+} from '../lib/journal';
 import TradeForm from '../components/floor/TradeForm';
 import TrackRecordPanel from '../components/floor/TrackRecordPanel';
+import EarningsDrillDown from '../components/floor/EarningsDrillDown';
 
 const EASE_CINEMATIC: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 type View =
   | { kind: 'floor' }
-  | { kind: 'trade'; companyId: string };
+  | { kind: 'trade'; companyId: string }
+  | { kind: 'earnings'; companyId: string };
+
+/**
+ * One-shot prompt shown after a sell that closed (or trimmed) a position
+ * the user had previously written a buy thesis for. The user gets the
+ * three verdict buttons right when context is hottest.
+ */
+interface VerdictPromptState {
+  rationaleEntryId: string;
+  ticker: string;
+  buyTitle: string;
+}
 
 interface ResolvedWatchlistRow {
   companyId: string;
@@ -44,6 +68,10 @@ interface ResolvedWatchlistRow {
   watchlistThesis: string;
   currentEvent: WeekEvent;
   currentPrice: number;
+  /** True if the current week is an earnings week. */
+  isEarningsWeek: boolean;
+  /** Saved earnings note for (this company, current week), if any. */
+  earningsNote: JournalEntry | null;
 }
 
 /**
@@ -56,6 +84,9 @@ export default function FloorPage() {
   // Tick increments after every state mutation (advance week, trade, reset)
   // so the view re-reads from localStorage. Cheap and correct for this MVP.
   const [tick, setTick] = useState(0);
+  const [verdictPrompt, setVerdictPrompt] = useState<VerdictPromptState | null>(
+    null,
+  );
 
   const sim = useMemo(() => getSimState(), [tick]);
   const portfolio: FloorPortfolio = useMemo(() => getPortfolio(), [tick]);
@@ -65,16 +96,22 @@ export default function FloorPage() {
       .map((row) => {
         const company = getCompanyById(row.companyId);
         if (!company || !row.currentEvent) return null;
+        const isEarningsWeek = row.currentEvent.tag === 'earnings';
+        const earningsNote = isEarningsWeek
+          ? getEarningsNoteForWeek(row.companyId, sim.currentWeek)
+          : null;
         return {
           companyId: row.companyId,
           company,
           watchlistThesis: row.watchlistThesis,
           currentEvent: row.currentEvent,
           currentPrice: row.currentPrice,
+          isEarningsWeek,
+          earningsNote,
         };
       })
       .filter((r): r is ResolvedWatchlistRow => r !== null);
-  }, [tick]);
+  }, [tick, sim.currentWeek]);
 
   const totalReturnPct = ((portfolioValue - STARTING_CASH) / STARTING_CASH) * 100;
   const atLastWeek = !canAdvanceWeek();
@@ -102,6 +139,12 @@ export default function FloorPage() {
     if (view.kind !== 'trade') return;
     const row = watchlist.find((r) => r.companyId === view.companyId);
     if (!row) return;
+
+    // For sells, snapshot the prior buy rationale BEFORE we write the new
+    // sell entry — getLatestBuyRationale walks all entries and we want the
+    // pre-existing one, not the one we're about to create.
+    const priorBuy =
+      input.action === 'sell' ? getLatestBuyRationale(row.companyId) : null;
 
     // Write the rationale FIRST so the trade record can reference it.
     const entry = createTradeRationale({
@@ -133,6 +176,36 @@ export default function FloorPage() {
 
     setTick((t) => t + 1);
     setView({ kind: 'floor' });
+
+    // Post-sell verdict auto-prompt: only fire if the sell actually had a
+    // prior buy thesis to grade and the user hasn't already marked it.
+    if (priorBuy && !priorBuy.userVerdict) {
+      setVerdictPrompt({
+        rationaleEntryId: priorBuy.id,
+        ticker: row.company.ticker,
+        buyTitle: priorBuy.title,
+      });
+    }
+  }
+
+  function handleEarningsSubmit(input: {
+    headline: string;
+    guide: string;
+    market: string;
+  }) {
+    if (view.kind !== 'earnings') return;
+    const row = watchlist.find((r) => r.companyId === view.companyId);
+    if (!row) return;
+    createEarningsNote({
+      companyId: row.companyId,
+      ticker: row.company.ticker,
+      week: sim.currentWeek,
+      headline: input.headline,
+      guide: input.guide,
+      market: input.market,
+    });
+    setTick((t) => t + 1);
+    setView({ kind: 'floor' });
   }
 
   // ---------------------------- Trade view ----------------------------
@@ -143,6 +216,7 @@ export default function FloorPage() {
       setView({ kind: 'floor' });
       return null;
     }
+    const priorBuy = getLatestBuyRationale(row.companyId);
     return (
       <div className="min-h-screen bg-dark-950 relative overflow-hidden">
         <div className="scene-mesh" />
@@ -153,8 +227,32 @@ export default function FloorPage() {
             week={sim.currentWeek}
             cash={portfolio.cash}
             position={portfolio.positions[row.companyId]}
+            priorBuyRationale={priorBuy}
             onCancel={() => setView({ kind: 'floor' })}
             onSubmit={handleTradeSubmit}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // -------------------------- Earnings view ---------------------------
+  if (view.kind === 'earnings') {
+    const row = watchlist.find((r) => r.companyId === view.companyId);
+    if (!row) {
+      setView({ kind: 'floor' });
+      return null;
+    }
+    return (
+      <div className="min-h-screen bg-dark-950 relative overflow-hidden">
+        <div className="scene-mesh" />
+        <div className="relative z-10 max-w-2xl mx-auto px-4 py-6">
+          <EarningsDrillDown
+            company={row.company}
+            event={row.currentEvent}
+            week={sim.currentWeek}
+            onCancel={() => setView({ kind: 'floor' })}
+            onSubmit={handleEarningsSubmit}
           />
         </div>
       </div>
@@ -358,18 +456,55 @@ export default function FloorPage() {
                   {row.currentEvent.blurb}
                 </p>
 
+                {row.isEarningsWeek && row.earningsNote && (
+                  <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-green/25 bg-green/[0.06] text-[11px]">
+                    <CheckCircle2 className="w-3 h-3 text-green shrink-0" />
+                    <p className="text-green font-semibold">
+                      Earnings note saved · W{sim.currentWeek + 1}
+                    </p>
+                    <button
+                      onClick={() =>
+                        setView({ kind: 'earnings', companyId: row.companyId })
+                      }
+                      className="ml-auto text-[10px] text-text-muted hover:text-text-secondary underline cursor-pointer"
+                    >
+                      Write another take
+                    </button>
+                  </div>
+                )}
+
                 <div className="flex items-center justify-between gap-2 pt-1">
                   <p className="text-[10px] text-text-faint italic leading-snug pr-2">
                     {row.watchlistThesis}
                   </p>
-                  <button
-                    onClick={() => setView({ kind: 'trade', companyId: row.companyId })}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-accent/30 bg-accent/[0.08] hover:bg-accent/[0.14] text-accent-light text-xs font-bold cursor-pointer transition-all shrink-0"
-                  >
-                    <ClipboardList className="w-3 h-3" />
-                    Trade
-                    <ArrowRight className="w-3 h-3" />
-                  </button>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {row.isEarningsWeek && !row.earningsNote && (
+                      <button
+                        onClick={() =>
+                          setView({ kind: 'earnings', companyId: row.companyId })
+                        }
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-warm/40 bg-gradient-to-r from-warm/[0.16] to-warm/[0.06] hover:from-warm/[0.22] text-warm text-xs font-bold cursor-pointer transition-all shadow-[0_0_16px_-6px_rgba(245,158,11,0.5)]"
+                      >
+                        <FileSearch className="w-3 h-3" />
+                        Read the print
+                        <ArrowRight className="w-3 h-3" />
+                      </button>
+                    )}
+                    <button
+                      onClick={() =>
+                        setView({ kind: 'trade', companyId: row.companyId })
+                      }
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold cursor-pointer transition-all ${
+                        row.isEarningsWeek && !row.earningsNote
+                          ? 'border-white/[0.08] bg-dark-900/40 hover:bg-dark-900/70 text-text-secondary'
+                          : 'border-accent/30 bg-accent/[0.08] hover:bg-accent/[0.14] text-accent-light'
+                      }`}
+                    >
+                      <ClipboardList className="w-3 h-3" />
+                      Trade
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -392,7 +527,110 @@ export default function FloorPage() {
           <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>
+
+      <PostSellVerdictPrompt
+        prompt={verdictPrompt}
+        onPick={(verdict) => {
+          if (!verdictPrompt) return;
+          setUserVerdict(verdictPrompt.rationaleEntryId, verdict);
+          setVerdictPrompt(null);
+          setTick((t) => t + 1);
+        }}
+        onDismiss={() => setVerdictPrompt(null)}
+      />
     </div>
+  );
+}
+
+/**
+ * One-shot modal that fires after a sell on a position the user had
+ * previously written a buy thesis for. The point isn't "grade yourself"
+ * — it's "name the outcome while context is hot." The user can dismiss
+ * without marking; the dashboard surface lets them mark it later anyway.
+ */
+function PostSellVerdictPrompt({
+  prompt,
+  onPick,
+  onDismiss,
+}: {
+  prompt: VerdictPromptState | null;
+  onPick: (verdict: UserVerdict) => void;
+  onDismiss: () => void;
+}) {
+  const verdictOptions: { id: UserVerdict; tone: string }[] = [
+    {
+      id: 'held_up',
+      tone: 'border-green/40 bg-green/[0.10] text-green hover:bg-green/[0.16]',
+    },
+    {
+      id: 'mixed',
+      tone: 'border-warm/40 bg-warm/[0.08] text-warm hover:bg-warm/[0.14]',
+    },
+    {
+      id: 'off_base',
+      tone: 'border-red/40 bg-red/[0.08] text-red hover:bg-red/[0.14]',
+    },
+  ];
+
+  return (
+    <AnimatePresence>
+      {prompt && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-dark-950/70 backdrop-blur-sm px-4 py-6"
+          onClick={onDismiss}
+        >
+          <motion.div
+            initial={{ y: 24, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 24, opacity: 0 }}
+            transition={{ duration: 0.22, ease: EASE_CINEMATIC }}
+            className="w-full max-w-md rounded-2xl border border-white/[0.08] bg-gradient-to-br from-dark-800 via-dark-800 to-dark-900 p-5 space-y-4 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.8)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="space-y-1.5">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-warm">
+                You just exited {prompt.ticker}
+              </p>
+              <h3 className="text-base font-bold text-text-primary leading-snug">
+                Now that you&apos;ve exited — how do you read what your original thesis actually said?
+              </h3>
+              <p className="text-[11px] text-text-muted leading-relaxed">
+                Marking it now, while the trade is fresh, is the discipline. Your call, not the app&apos;s — held up means the thesis itself wasn&apos;t falsified, not that the price went your way.
+              </p>
+            </div>
+            <div className="rounded-lg border border-white/[0.05] bg-dark-900/50 p-2.5">
+              <p className="text-[10px] uppercase tracking-wide text-text-muted font-bold mb-0.5">
+                Original thesis
+              </p>
+              <p className="text-[11px] text-text-secondary truncate">
+                {prompt.buyTitle}
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {verdictOptions.map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => onPick(opt.id)}
+                  className={`px-2 py-2 rounded-lg border text-xs font-bold transition-all cursor-pointer ${opt.tone}`}
+                >
+                  {userVerdictLabel(opt.id)}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={onDismiss}
+              className="w-full text-[11px] text-text-muted hover:text-text-secondary transition-colors cursor-pointer pt-1"
+            >
+              Skip — I&apos;ll mark it from the track record later
+            </button>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 

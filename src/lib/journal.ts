@@ -29,6 +29,7 @@ export type JournalEntryType =
   | 'lesson_reflection' // post-lesson takeaway, anchored to lessonId
   | 'note' // free-form, append-only
   | 'trade_rationale' // simulator trade memo (bull/sell case in `content`, opposing case in `bearCaseContent`)
+  | 'earnings_note' // simulator earnings drill-down (3 structured fields packed into `content`)
   | 'thesis'; // future: a buy/sell/hold thesis the user is tracking
 
 /**
@@ -233,6 +234,7 @@ export function getJournalStats(): {
     lesson_reflection: 0,
     note: 0,
     trade_rationale: 0,
+    earnings_note: 0,
     thesis: 0,
   };
   const companies = new Set<string>();
@@ -398,6 +400,84 @@ export function createTradeRationale(input: {
 }
 
 /**
+ * Tag fragment used to anchor an earnings note to a specific (company, sim
+ * week). Lets the Floor row find the matching note without adding a new
+ * column to JournalEntry.
+ */
+export function earningsWeekTag(week: number): string {
+  return `floor-week-${week}`;
+}
+
+/**
+ * Append an earnings drill-down entry. Always creates a new entry — the
+ * user might revisit a print and write a fresh interpretation, and we
+ * preserve every take. The three fields are packed into `content` as
+ * markdown-style sections; the journal renderer shows them as-is via
+ * `whitespace-pre-wrap`.
+ */
+export function createEarningsNote(input: {
+  companyId: string;
+  ticker: string;
+  /** Sim week index, 0-based — appears in the title for chronology. */
+  week: number;
+  headline: string;
+  guide: string;
+  market: string;
+}): JournalEntry {
+  ensureImported();
+  const all = readAll();
+  const now = new Date().toISOString();
+  const title = `Earnings note — ${input.ticker} (W${input.week + 1})`;
+  const content =
+    `## Headline surprise\n${input.headline.trim()}\n\n` +
+    `## Guide vs. last quarter\n${input.guide.trim()}\n\n` +
+    `## What the market is missing\n${input.market.trim()}`;
+  const entry: JournalEntry = {
+    id: genId(),
+    type: 'earnings_note',
+    createdAt: now,
+    updatedAt: now,
+    title,
+    content,
+    companyId: input.companyId,
+    tags: ['floor', 'earnings', earningsWeekTag(input.week)],
+  };
+  all.push(entry);
+  writeAll(all);
+  return entry;
+}
+
+/** Most recent earnings_note for a (company, sim week), or null. */
+export function getEarningsNoteForWeek(
+  companyId: string,
+  week: number,
+): JournalEntry | null {
+  const tag = earningsWeekTag(week);
+  const matches = getAllEntries().filter(
+    (e) =>
+      e.type === 'earnings_note' &&
+      e.companyId === companyId &&
+      (e.tags ?? []).includes(tag),
+  );
+  return matches[0] ?? null; // getAllEntries is newest-first
+}
+
+/**
+ * Most recent buy-side trade_rationale entry for a company. Used by the
+ * exit-reflection card on sells: re-read the last buy thesis right when
+ * you're about to undo it.
+ */
+export function getLatestBuyRationale(companyId: string): JournalEntry | null {
+  const matches = getAllEntries().filter(
+    (e) =>
+      e.type === 'trade_rationale' &&
+      e.companyId === companyId &&
+      (e.tags ?? []).includes('buy'),
+  );
+  return matches[0] ?? null;
+}
+
+/**
  * Set (or clear) the user's self-assessment verdict on a journal entry —
  * primarily used on `trade_rationale` entries from the Floor track-record
  * surface. Pass `null` to clear. Returns the updated entry, or `null` if
@@ -516,6 +596,8 @@ export function entryTypeLabel(type: JournalEntryType): string {
       return 'Note';
     case 'trade_rationale':
       return 'Trade';
+    case 'earnings_note':
+      return 'Earnings';
     case 'thesis':
       return 'Thesis';
   }

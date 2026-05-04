@@ -590,6 +590,7 @@ type JournalEntryType =
   | 'lesson_reflection'  // anchored to lessonId, upsert
   | 'note'               // free-form, append-only
   | 'trade_rationale'    // Phase 2 simulator — append-only, one per trade
+  | 'earnings_note'      // Phase 2 simulator — append-only, one per (company, week) drill-down
   | 'thesis';            // FUTURE — buy/sell/hold thesis being tracked
 ```
 
@@ -618,6 +619,10 @@ Writes:
 - `upsertAnalystMemo({ companyId, stepKind, text, submittedAt? })` — called from `saveAnalystResponse`
 - `upsertLessonReflection({ lessonId, text })` — called from the reflection card
 - `createNote({ text, title?, tags?, companyId?, lessonId? })` — append-only
+- `createTradeRationale({ ... bearCase? })` — append-only Floor trade memo; `bearCase` is persisted to `bearCaseContent`
+- `createEarningsNote({ companyId, ticker, week, headline, guide, market })` — append-only Floor earnings drill-down; the three fields are packed into `content` as `## Headline surprise / ## Guide vs. last quarter / ## What the market is missing` markdown sections, and `tags` includes `floor-week-{N}` so the watchlist row can find the matching note via `getEarningsNoteForWeek(companyId, week)`
+- `getLatestBuyRationale(companyId)` — returns the most recent `trade_rationale` entry tagged `'buy'` for a company; used by the exit-reflection card on sells
+- `setUserVerdict(id, verdict | null)` — set/clear the self-judged outcome on a `trade_rationale` entry
 - `updateEntry(id, patch)`, `deleteEntry(id)` — for notes; UI hides delete on anchored entries
 
 ### Reflection prompt — design intent
@@ -641,8 +646,9 @@ The Floor is the Phase 2 surface where the apprenticeship loop tightens: a $100K
 - `src/data/floor/{types.ts, adobe.ts, disney.ts, chipotle.ts, index.ts}` — the watchlist + per-company `WeekEvent[]` (price + blurb + tag per sim-week)
 - `src/lib/floor.ts` — sim state, portfolio, weighted-average cost basis, `executeTrade`, `advanceWeek`, `resetFloor`
 - `src/pages/FloorPage.tsx` — the page: portfolio summary, positions, watchlist, the inline track-record panel
-- `src/components/floor/TradeForm.tsx` — the trade entry surface (action + shares + adversarial-paired rationale)
+- `src/components/floor/TradeForm.tsx` — the trade entry surface (action + shares + adversarial-paired rationale, plus the exit-reflection re-read card on sells with a prior thesis)
 - `src/components/floor/TrackRecordPanel.tsx` — the predictions-vs-reality dashboard
+- `src/components/floor/EarningsDrillDown.tsx` — the three-field earnings interpretation gate that sits between an earnings-week event and a trade decision
 
 ### Adversarial pairing
 
@@ -653,3 +659,28 @@ The two cases are persisted on a single `trade_rationale` entry: bull/sell case 
 ### Track-record surface
 
 An inline panel on `/floor`, below the watchlist. For every completed trade (newest first) it shows the action / shares / price / week and a one-line excerpt of the rationale; expanded, the row shows the full bull and bear cases, "what happened next" (price now + the next non-quiet `WeekEvent` after the trade week, or "still developing" if nothing has fired yet), and a verdict marker — `Held up` / `Mixed` / `Off-base`. The verdict is the user's call, not the app's; price moves do not auto-grade. Selecting (or de-selecting) a verdict writes through `setUserVerdict` to the originating `JournalEntry`, so the same chip surfaces on the entry in `/journal`.
+
+### Earnings drill-down
+
+Earnings weeks are the high-stakes moment in real investing — passing through them with the same blurb-and-trade-button surface as a normal week trains the wrong reflex. When the current `WeekEvent` for a company has `tag === 'earnings'`, the watchlist row gets a primary "Read the print" CTA alongside the now-secondary Trade button. Tapping it opens `EarningsDrillDown`, a three-field card with required structured prompts:
+
+1. **Headline surprise** (30 chars) — `What's the headline surprise — revenue, EPS, or guide? Be specific about magnitude and direction.`
+2. **Guide change** (30 chars) — `What changed about the forward guide vs. last quarter, and how should it move your model?`
+3. **Market mispricing** (30 chars) — `What's the market over- or underweighting in this print? Where's the consensus wrong?`
+
+Each field targets a different cognitive operation (read, compare, identify mispricing). Submitting writes a single `earnings_note` `JournalEntry` (new type, see Research Journal section) with the three fields packed into `content` as `## Headline surprise / ## Guide vs. last quarter / ## What the market is missing` markdown sections — no new flat fields on `JournalEntry`. The floor-week is encoded in `tags` as `floor-week-{N}` so the row can find the matching note via `getEarningsNoteForWeek(companyId, week)` without growing the entry shape. Entries are append-only — every revisit creates a new note, never an upsert.
+
+After submission, the row shows a green "Earnings note saved · W{n}" chip with a small "Write another take" link, and the Trade CTA returns to primary. The user can still trade an earnings week without writing the note; the discipline is structural nudge, not a hard gate.
+
+### Exit reflection on sells
+
+Selling a position you wrote a thesis for is a confrontation with your past self. Two changes fire when the user opens `TradeForm` for a company they have a prior `trade_rationale` entry for and switches to **Sell**:
+
+1. **Re-read the original thesis** — a card above the rationale inputs surfaces the most recent buy-side `trade_rationale` (title, both `content` and `bearCaseContent` from the original buy). Expanded by default, collapsible. Quiet, not loud — the only moment in the app where the user is forced to look at their own past writing while making a new decision.
+2. **Reworded bull/sell case prompt** — `EXIT_RATIONALE_PROMPT` replaces `TRADE_RATIONALE_PROMPT`: `Why are you exiting now? Did your original thesis play out, get falsified, or did something else happen?` The opposing-case requirement on sells is unchanged — a sell is still a directional bet.
+
+The lookup uses `getLatestBuyRationale(companyId)`, which scans `trade_rationale` entries filtered by `companyId` and the `'buy'` tag (the trade-record's `action` is encoded in `entry.tags`). If no prior buy thesis exists, the form falls back to the unchanged sell flow.
+
+### Post-sell verdict auto-prompt
+
+After a sell submits — and only when there was a prior buy thesis AND the user hadn't already marked it — `FloorPage` raises an inline modal with the three verdict buttons (`Held up` / `Mixed` / `Off-base`) and a "Skip" option. The prompt copy is `Now that you've exited — how do you read what your original thesis actually said?` The point is **name the outcome while context is hot**, not "grade yourself" — held up means the thesis itself wasn't falsified, not that the price went your way. The original buy thesis is snapshotted **before** the new sell rationale is written so the verdict marks the right entry. Dismissing is non-blocking: the user can still mark the verdict from the track-record dashboard later.

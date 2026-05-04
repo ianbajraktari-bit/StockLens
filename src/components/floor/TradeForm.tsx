@@ -1,9 +1,18 @@
 import { useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, ClipboardList, Lock, Swords } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  ArrowLeft,
+  ArrowRight,
+  BookOpenCheck,
+  ChevronDown,
+  ClipboardList,
+  Lock,
+  Swords,
+} from 'lucide-react';
 import type { CompanyProfile } from '../../data/companies';
 import type { WeekEvent } from '../../data/floor';
 import type { Position, TradeAction } from '../../lib/floor';
+import type { JournalEntry } from '../../lib/journal';
 
 const RATIONALE_MIN = 40;
 const BEAR_CASE_MIN = 40;
@@ -14,6 +23,15 @@ const BEAR_CASE_MIN = 40;
  */
 export const TRADE_RATIONALE_PROMPT =
   'What do you think will happen, by when, and what would prove you wrong?';
+
+/**
+ * Reworded prompt shown on sells when there's a prior buy thesis to
+ * re-read. The whole point of the sell flow with a prior thesis is
+ * naming the outcome — "did the original case actually play out?" —
+ * not re-running the buy-case prompt from scratch.
+ */
+export const EXIT_RATIONALE_PROMPT =
+  'Why are you exiting now? Did your original thesis play out, get falsified, or did something else happen?';
 
 /**
  * Adversarial-pairing prompt shown alongside the bull/sell case on
@@ -33,6 +51,13 @@ interface Props {
   week: number;
   cash: number;
   position?: Position;
+  /**
+   * Most recent buy-side trade_rationale entry for this company, if any.
+   * When present and the user switches to "Sell", we surface it as the
+   * re-read card — the only moment in the app where the user is forced
+   * to look at their own past writing while making a new decision.
+   */
+  priorBuyRationale?: JournalEntry | null;
   onCancel: () => void;
   onSubmit: (input: {
     action: TradeAction;
@@ -57,6 +82,7 @@ export default function TradeForm({
   week,
   cash,
   position,
+  priorBuyRationale,
   onCancel,
   onSubmit,
 }: Props) {
@@ -64,6 +90,10 @@ export default function TradeForm({
   const [sharesText, setSharesText] = useState('');
   const [rationale, setRationale] = useState('');
   const [bearCase, setBearCase] = useState('');
+  // Re-read card defaults to expanded — the whole point is that the user
+  // sees their past writing. They can collapse it if it's long, but we
+  // don't ask them to opt in.
+  const [reReadOpen, setReReadOpen] = useState(true);
 
   const sharesNum = useMemo(() => {
     const n = Number.parseInt(sharesText, 10);
@@ -96,6 +126,22 @@ export default function TradeForm({
   const bearLen = bearCase.trim().length;
   const bearOk = !requiresBearCase || bearLen >= BEAR_CASE_MIN;
   const canSubmit = !actionError && rationaleOk && bearOk;
+
+  // On sells with a prior buy thesis, the bull/sell case prompt becomes
+  // an exit prompt — the user is comparing now-vs-then, not pitching
+  // the trade fresh.
+  const isExitWithThesis = action === 'sell' && !!priorBuyRationale;
+  const caseHeading = isExitWithThesis
+    ? 'Required: your exit case'
+    : requiresBearCase
+      ? 'Required: your case'
+      : 'Required: hold rationale';
+  const casePrompt = isExitWithThesis
+    ? EXIT_RATIONALE_PROMPT
+    : TRADE_RATIONALE_PROMPT;
+  const casePlaceholder = isExitWithThesis
+    ? "Did the original case actually play out? Was it falsified by something specific? Or did the price move for reasons outside your thesis?"
+    : 'What do you think will happen, by when, and what would prove you wrong?';
 
   // Microcopy on the locked Submit button — name the blocker so the
   // user knows what to do, not just that something is missing. The
@@ -265,27 +311,44 @@ export default function TradeForm({
         </div>
       )}
 
+      {/* Re-read your original thesis — sells only, when one exists */}
+      {isExitWithThesis && priorBuyRationale && (
+        <ReReadOriginalThesis
+          entry={priorBuyRationale}
+          open={reReadOpen}
+          onToggle={() => setReReadOpen((v) => !v)}
+        />
+      )}
+
       {/* Your case — the bull/sell rationale */}
       <div className="space-y-2">
         <div className="rounded-xl border border-accent/25 bg-gradient-to-br from-accent/[0.06] via-dark-800/50 to-dark-800/30 p-4 space-y-2">
           <div className="flex items-center gap-1.5">
             <ClipboardList className="w-3.5 h-3.5 text-accent-light" />
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-accent-light">
-              {requiresBearCase ? 'Required: your case' : 'Required: hold rationale'}
+              {caseHeading}
             </p>
           </div>
           <p className="text-sm text-text-primary leading-relaxed">
-            {TRADE_RATIONALE_PROMPT}
+            {casePrompt}
           </p>
           <p className="text-[11px] text-text-muted leading-relaxed">
-            This memo is saved to your Journal as a <span className="text-text-secondary font-semibold">trade_rationale</span> entry. You can re-read it after the position plays out — that comparison is how the discipline gets built.
+            {isExitWithThesis ? (
+              <>
+                Selling a position you wrote a thesis for is a confrontation with your past self. Read what you wrote up there — then say which version turned out to be true.
+              </>
+            ) : (
+              <>
+                This memo is saved to your Journal as a <span className="text-text-secondary font-semibold">trade_rationale</span> entry. You can re-read it after the position plays out — that comparison is how the discipline gets built.
+              </>
+            )}
           </p>
         </div>
         <textarea
           value={rationale}
           onChange={(e) => setRationale(e.target.value)}
           rows={6}
-          placeholder="What do you think will happen, by when, and what would prove you wrong?"
+          placeholder={casePlaceholder}
           className="w-full px-4 py-3 rounded-xl bg-dark-800/60 border border-white/[0.08] text-text-primary text-sm leading-relaxed focus:outline-none focus:border-accent/40 placeholder:text-text-faint resize-y"
         />
         <div className="flex items-center justify-between px-1">
@@ -361,5 +424,83 @@ export default function TradeForm({
         )}
       </motion.button>
     </div>
+  );
+}
+
+/**
+ * Surfaces the user's most recent buy-side thesis when they're about to
+ * sell. Quiet, not loud — collapsible if it runs long. The point is that
+ * the user actually re-reads it before naming why they're exiting.
+ */
+function ReReadOriginalThesis({
+  entry,
+  open,
+  onToggle,
+}: {
+  entry: JournalEntry;
+  open: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 4 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.22 }}
+      className="rounded-xl border border-warm/30 bg-gradient-to-br from-warm/[0.05] via-dark-800/50 to-dark-800/30 overflow-hidden"
+    >
+      <button
+        onClick={onToggle}
+        className="w-full text-left px-4 py-3 flex items-start gap-2.5 hover:bg-dark-800/40 transition-colors cursor-pointer"
+      >
+        <BookOpenCheck className="w-4 h-4 text-warm shrink-0 mt-0.5" />
+        <div className="flex-1 min-w-0">
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-warm">
+            Re-read your original thesis
+          </p>
+          <p className="text-xs text-text-secondary mt-0.5 leading-snug">
+            {entry.title}
+          </p>
+        </div>
+        <motion.div
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+          className="shrink-0 text-text-muted mt-1"
+        >
+          <ChevronDown className="w-4 h-4" />
+        </motion.div>
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 pb-4 space-y-3 border-t border-warm/15 pt-3">
+              <div className="space-y-1">
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent-light">
+                  Your case (then)
+                </p>
+                <p className="text-xs text-text-secondary leading-relaxed whitespace-pre-wrap">
+                  {entry.content}
+                </p>
+              </div>
+              {entry.bearCaseContent && (
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-warm">
+                    The opposing case (then)
+                  </p>
+                  <p className="text-xs text-text-secondary leading-relaxed whitespace-pre-wrap">
+                    {entry.bearCaseContent}
+                  </p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
