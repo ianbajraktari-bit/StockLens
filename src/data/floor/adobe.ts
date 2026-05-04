@@ -1,9 +1,11 @@
 import type { FloorCompany } from './types';
 
 // Adobe's real-life price has bounced between ~$340-$520 over the last
-// year. Starting price is in that zip code; the path is hand-designed
-// to give the user a clean "AI threat narrative pressures the SaaS
-// compounder" arc with one earnings beat in the middle.
+// year. Starting price is in that zip code. Sixteen weeks of designed
+// state walk the user through three full earnings cycles plus the
+// quiet stretches between them — long enough that a buy in W2 can
+// hold through Q1 (W3), survive a soft Q2 (W9), and reach Q3 (W14)
+// with a thesis that's been re-read or re-justified along the way.
 
 export const adobeFloor: FloorCompany = {
   companyId: 'adobe',
@@ -58,6 +60,69 @@ export const adobeFloor: FloorCompany = {
       blurb:
         'Tech selloff: 10-year yields jump 25bps on a hot CPI print. High-multiple software gets hit. Adobe drops 5.6% in sympathy with no company-specific news.',
       tag: 'macro',
+    },
+    {
+      week: 7,
+      price: 458.4,
+      blurb:
+        'Sentiment cools into Q2. Two sell-side notes flag "FY2 guide credibility" — the fear is that Q1\'s walk-up implies a back-half hockey stick that depends on Firefly Enterprise contracts that have not been disclosed.',
+      tag: 'quiet',
+    },
+    {
+      week: 8,
+      price: 445.2,
+      blurb:
+        'Figma signs Salesforce as a multi-year enterprise design account — replacing Adobe XD across the org. The figure is reportedly in the eight digits annually. The narrative dent is bigger than the dollars.',
+      tag: 'competitive',
+    },
+    {
+      week: 9,
+      price: 471.9,
+      blurb:
+        'Q2 print: revenue in line at $5.83B, Digital Media ARR growth slows to 11.4% (decel from 12.8%), full-year guide narrowed but maintained. Firefly enterprise pipeline qualitatively strong; no monetization disclosure. Mixed reaction; stock recovers most of the pre-print fade.',
+      tag: 'earnings',
+    },
+    {
+      week: 10,
+      price: 462.8,
+      blurb:
+        'Adobe announces Firefly Premium for enterprise — $30/seat/mo, governance and IP-indemnity pitch. The first concrete monetization vehicle. Initial reaction is muted: pricing is fine, but the seat-count math is the question.',
+      tag: 'product',
+    },
+    {
+      week: 11,
+      price: 456.9,
+      blurb:
+        'Tech tape softens on a Fed officials\' speech raising "higher for longer" again. Software underperforms. Adobe drops 1.3% on no specific news.',
+      tag: 'macro',
+    },
+    {
+      week: 12,
+      price: 478.2,
+      blurb:
+        'A buy-side conference channel-check piece leaks: early Firefly Premium adoption is reportedly running ahead of internal targets across financial-services and pharma verticals. Stock rallies 4.7% as the bull case finds a number.',
+      tag: 'product',
+    },
+    {
+      week: 13,
+      price: 470.8,
+      blurb:
+        'Canva acquires Affinity (the Mac creative suite) for ~$700M. The threat narrative re-tightens at the SMB / pro-creator end of the funnel. Stock fades 1.5% as analysts split on whether this matters.',
+      tag: 'competitive',
+    },
+    {
+      week: 14,
+      price: 498.4,
+      blurb:
+        'Q3 print: revenue $5.96B (beat 0.7%), Digital Media ARR growth re-accelerates to 13.1%, Firefly enterprise contributes ~$80M in the quarter (first time disclosed), full-year guide raised. Stock pops 5.9%.',
+      tag: 'earnings',
+    },
+    {
+      week: 15,
+      price: 510.1,
+      blurb:
+        'Quiet drift up. Two sell-side firms upgrade on the Firefly disclosure; the buy-side narrative starts pricing in a "Microsoft of creative" multiple expansion case. Whether the trade played out either way is now legible.',
+      tag: 'quiet',
     },
   ],
 };
