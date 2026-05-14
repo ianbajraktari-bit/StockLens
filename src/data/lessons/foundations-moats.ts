@@ -1,165 +1,211 @@
-import { Castle, Eye, TrendingUp, Zap, Search, Shield } from 'lucide-react';
+import { Castle, Mail, Search, Scissors } from 'lucide-react';
 import type { Lesson } from './types';
 
+/**
+ * Scenario lesson — through-line: you held Blockbuster in 1999. The next
+ * eleven years play out as a slow-motion moat collapse, with every signal
+ * available to anyone who looked. Each step asks the call you would have
+ * made in that moment. The final step is retrospective: what would have
+ * actually made you sell?
+ */
 export const foundationsMoatsLesson: Lesson = {
   id: 'foundations-moats',
   emoji: '🏰',
-  title: 'What Keeps Winners Winning',
-  subtitle: 'Why Google has had 90% search share for 20 years — and Uber might lose theirs overnight',
+  title: 'Watch a Moat Break',
+  subtitle:
+    'Blockbuster, 1999-2010. The signals were all there. You\'re holding the stock. When do you sell?',
   description:
-    'Some companies dominate their market for decades. Others have 80% market share and lose it in 3 years. The difference is the moat — a structural advantage that competitors can\'t copy. This lesson teaches you to tell real moats from fake ones, and why some moats strengthen while others erode.',
-  estimatedMinutes: 3,
+    'Moats are easier to spot AFTER they break than before. This lesson hands you Blockbuster the year it peaked and walks you through eleven years of real, contemporaneous data — the Netflix offer, the late-fee revenue, the store openings. At each beat you make the call you would have made then. At the end you look back and decide what would have actually made you act.',
+  estimatedMinutes: 4,
   dataAsOf: '',
   tier: 'foundations-2',
   skills: ['moats'],
   keyFacts: [],
   topics: [
-    { label: 'The four types of real moats', icon: Castle },
-    { label: 'Real vs fake competitive advantages', icon: Eye },
-    { label: 'Why some moats strengthen and others erode', icon: TrendingUp },
-    { label: 'How moats affect what you should pay', icon: Shield },
+    { label: 'Where the moat actually came from', icon: Castle },
+    { label: 'The Netflix offer no one took seriously', icon: Mail },
+    { label: 'Reading signals in real time vs. with hindsight', icon: Search },
+    { label: 'Knowing when "fixing it" is already too late', icon: Scissors },
   ],
   steps: [
-    // Hook with a counterintuitive estimation
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 1 — Estimate. Anchor on where the cash actually came from.
+    // The thing Netflix is about to attack is the most profitable line.
+    // ─────────────────────────────────────────────────────────────────────
     {
       kind: 'estimate',
-      topic: 'The Moat Premium',
+      topic: '1999 — Where the Cash Came From',
       topicIcon: Castle,
       context:
-        'Two companies each earn $5 billion in annual profit.\n\nCompany A: a trendy fashion brand — no switching costs, customers follow trends, competitors copy designs within weeks. Margins are under constant pressure.\n\nCompany B: an enterprise software company — customers sign 3-year contracts, migrating to a competitor takes 18 months of engineering work, and 95% of customers renew.\n\nInvestors value each dollar of profit differently based on how DURABLE it is.',
-      question: 'If Company A (no moat) trades at 12x earnings ($60B), roughly what multiple do you think investors pay for Company B (strong moat)?',
-      answer: 30,
-      tolerance: 10,
-      unit: 'x',
-      hint: 'How much more would you pay for profit that\'s nearly guaranteed to still be there in 10 years?',
+        'It\'s 1999. You own shares in Blockbuster (BBI). The company runs ~7,000 video-rental stores, brings in around $4.5B in revenue, and is the obvious king of home entertainment.\n\nThe story everyone tells about the moat is the store count. The income statement tells a different story. Guess one number: the share of Blockbuster\'s revenue that comes from late fees.',
+      question: 'Roughly what % of Blockbuster\'s revenue came from late fees?',
+      answer: 15,
+      tolerance: 5,
+      unit: '%',
+      hint: 'Around $800M a year out of ~$5B in revenue.',
       reveal:
-        'About 25-35x earnings ($125-175B). That\'s a 2-3x premium for the SAME profit — because Company B\'s profit is durable. With 95% renewal rates and 18-month switching costs, next year\'s revenue is almost guaranteed. Company A could lose half its customers to the next fashion trend. The moat doesn\'t change what the company earns — it changes how LONG investors believe it will keep earning.',
-      takeaway: 'A moat doesn\'t make a company more profitable today — it makes today\'s profits more likely to LAST. Investors pay 2-3x more for durable profits than fragile ones.',
+        'About 15% — roughly $800M a year. The fact most discussions of Blockbuster skip past: one of its biggest profit centers was the penalty it charged customers for being late. Worth holding in your head as you read the next step.',
+      takeaway:
+        'A company\'s moat is usually less interesting than its most profitable line. The 7,000 stores were the moat people talked about. The late fees were what funded them.',
     },
 
-    // Decide with genuine ambiguity
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 2 — Decide. September 2000. The Netflix offer.
+    // The hardest call in the lesson, and the one that aged worst.
+    // ─────────────────────────────────────────────────────────────────────
     {
       kind: 'decide',
-      topic: 'Is This a Real Moat?',
-      topicIcon: Eye,
+      topic: 'September 2000 — The Offer',
+      topicIcon: Mail,
       context:
-        'Uber has ~70% of the US ride-sharing market. Sounds dominant. But consider:\n\n- Drivers can (and do) drive for both Uber and Lyft simultaneously\n- Riders switch between apps in seconds based on price\n- There are no long-term contracts — every ride is a new decision\n- Uber\'s market share in most international markets is lower and declining\n\nCompare to Google Search with 90%+ market share:\n- Every search you do makes Google\'s results slightly better (data advantage)\n- Advertisers go where the users are → users go where the results are (network effect)\n- The Chrome browser, Android phones, and default search deals keep users in Google\'s ecosystem',
-      question: 'Uber has 70% market share but Google has 90%. Which has the stronger moat?',
+        'Reed Hastings flies to Dallas to meet Blockbuster\'s CEO, John Antioco. Netflix has roughly 300,000 subscribers, mails DVDs in red envelopes, charges no late fees, and is losing money. Hastings offers to sell the whole company to Blockbuster for $50M.\n\nAntioco declines. (The story Hastings tells is that he was "laughed out of the room.")\n\nYou hold BBI. The press picks the meeting up briefly. You have to form a view. What do you want?',
+      question: 'As a Blockbuster shareholder in fall 2000, what call do you want management to have made?',
       options: [
-        'Uber — 70% market share in a fast-growing market means they\'re winning',
-        'Google — its advantages (data, network effects, defaults) get stronger as it gets bigger',
-        'Both have strong moats since they both dominate their markets',
-        'Neither — market share can change quickly for both companies',
+        'Decline — Netflix loses money on a niche product, $50M is a distraction',
+        'Buy — $50M is cheap insurance against a model aimed at your most profitable revenue line',
+        'Decline, but quietly start an in-house DVD-by-mail unit to keep the option open',
       ],
       correctIndex: 1,
       punchline:
-        'Google\'s moat strengthens over time — more users → better data → better results → more users. This is a virtuous cycle. Uber\'s "moat" is really just subsidized market share — there\'s nothing stopping a rider from switching apps in 10 seconds. Market share without structural lock-in is a temporary lead, not a moat.',
+        '$50M to own the company that was building a no-late-fee subscription product, when 15% of your revenue is late fees. The right read in 2000 wasn\'t "Netflix will win." It was: this is aimed straight at the line we make the most money on, and the option to control it is cheap.',
       wrongNudges: [
-        'Market share is not a moat — it\'s the RESULT of a moat (or just marketing spend). Uber\'s 70% share is maintained by low prices, not by anything that prevents customers from leaving.',
+        'This was the consensus call at the time, and it\'s defensible. Netflix in 2000 was small, unprofitable, and the DVD-by-mail thesis was unproven. What aged badly isn\'t the dismissal of Hastings — it\'s that nobody at Blockbuster mapped Netflix\'s pitch onto Blockbuster\'s P&L and noticed which line it was aimed at.',
         '',
-        'They dominate their markets for completely different reasons. Google dominates because switching is actually worse for users (inferior search results elsewhere). Uber dominates because they spend more on subsidies. Only one of those survives a price increase.',
-        'Google\'s advantages are structural and self-reinforcing. They\'ve maintained 90%+ for 20 years. Uber\'s share fluctuates and is under constant competitive pressure. These are not the same.',
+        'A reasonable answer, and Blockbuster eventually attempted a version of it five years later, when Netflix had 4M subscribers. The catch: optional in-house projects that aren\'t funded and prioritized rarely catch a competitor that\'s already compounding.',
       ],
-      takeaway: 'Market share is not a moat. A moat is what PREVENTS competitors from taking your customers. Uber\'s riders can switch in 10 seconds. Google\'s users literally get worse results if they leave. That structural difference is everything.',
+      takeaway:
+        'A competitor that\'s built specifically to attack one of your revenue lines is a different kind of threat than a generic competitor. The hedge against the first kind tends to look like a waste of money right up until you wish you had it.',
     },
 
-    // Drill: identify the moat type, escalating difficulty
-    {
-      kind: 'drill',
-      topic: 'Name the Moat',
-      topicIcon: Zap,
-      intro: 'Match each company to its primary moat type. The four real moats: switching costs, network effects, brand, and scale. But some of these are trickier than they look.',
-      prompts: [
-        {
-          setup: 'Visa processes 65% of US credit card transactions. More cardholders → more merchants accept Visa → more people want Visa cards.',
-          left: { label: 'Network effects', sublabel: 'more users = more value' },
-          right: { label: 'Scale', sublabel: 'size advantage' },
-          correct: 'left',
-          flash: 'Classic network effect. Every new Visa user makes the network more valuable for merchants, and every new merchant makes it more valuable for users. This is nearly impossible to replicate — you can\'t build a payment network without both sides.',
-        },
-        {
-          setup: 'Costco negotiates prices 15-20% below competitors because it buys in such enormous volume that suppliers can\'t say no.',
-          left: { label: 'Brand', sublabel: 'consumer loyalty' },
-          right: { label: 'Scale', sublabel: 'buying power' },
-          correct: 'right',
-          flash: 'Costco\'s moat is scale — buying $250B in goods gives negotiating leverage no smaller competitor can match. A startup can\'t walk into Procter & Gamble and demand the same prices. This advantage widens as Costco grows.',
-        },
-        {
-          setup: 'Salesforce CRM stores 10 years of a company\'s customer data, customized workflows, and integrations with 50 other tools. Switching takes 12-18 months.',
-          left: { label: 'Switching costs', sublabel: 'painful to leave' },
-          right: { label: 'Network effects', sublabel: 'more users = more value' },
-          correct: 'left',
-          flash: 'Switching costs. It\'s not that Salesforce is the best CRM — it\'s that leaving is so painful that companies stay for decades. 10 years of data, custom workflows, trained employees, and integrations all have to be rebuilt from scratch.',
-        },
-        {
-          setup: 'Coca-Cola spends $4B/year on marketing. When people think "cola," they think Coke — even in countries where they\'ve never tried it. But health trends are driving declining soda consumption worldwide.',
-          left: { label: 'Strong moat', sublabel: '130-year brand' },
-          right: { label: 'Eroding moat', sublabel: 'brand losing relevance' },
-          correct: 'right',
-          flash: 'Tricky one. Coca-Cola has one of the strongest brands in history — but brand moats CAN erode. Health consciousness is slowly reducing soda demand in developed markets. The brand still matters in emerging markets, but in the US and Europe, the moat is narrowing. Not all moats are permanent.',
-        },
-        {
-          setup: 'A hot new restaurant chain has 200 locations, celebrity chef endorsement, and lines around the block. They have no proprietary recipes, no long-term leases in premium locations, and no technology advantage.',
-          left: { label: 'Real moat', sublabel: 'proven demand and growth' },
-          right: { label: 'No moat', sublabel: 'popularity ≠ defensibility' },
-          correct: 'right',
-          flash: 'No moat. Popularity, celebrity endorsements, and long lines are DEMAND signals, not moats. A moat is what prevents competitors from replicating your success. Without proprietary recipes, exclusive locations, or technology, any well-funded competitor can open a similar restaurant next door.',
-        },
-      ],
-      takeaway: 'Four real moats: switching costs (painful to leave), network effects (more users = more value), brand (trust built over decades), and scale (cost advantages from size). But even real moats can erode — brand relevance fades, technology disrupts scale advantages.',
-    },
-
-    // Tap: analyze a company's claimed moats
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 3 — Tap. Late 2003. Mix of erosion signals and comfortable noise.
+    // The user has to find the lines that actually move the moat thesis.
+    // ─────────────────────────────────────────────────────────────────────
     {
       kind: 'tap',
-      topic: 'Real vs. Aspirational',
+      topic: 'Late 2003 — What\'s a Signal, What\'s Noise',
       topicIcon: Search,
-      intro: 'A startup is pitching investors on their "unbreakable competitive advantages." Read the pitch and tap the moats that are REAL (structural and hard to replicate) vs. those that are fake or aspirational.',
+      intro:
+        'Skip ahead three years. You\'re reading an analyst snapshot of Blockbuster as of late 2003. Tap the facts that should move your view of the moat — and skip the ones that look reassuring but don\'t actually answer the moat question.',
       passage: [
-        { type: 'text', value: '"Our competitive advantages: ' },
-        { type: 'chip', value: 'We were first to market — launched 2 years before any competitor', signal: false, feedback: 'First-mover advantage is one of the most overrated "moats." MySpace was first. Friendster was first. BlackBerry was first. Being first only matters if you build switching costs or network effects while you have the lead. Otherwise, a better-funded competitor catches up.' },
+        { type: 'text', value: 'Blockbuster posted record annual revenue near $5.9B and ' },
+        {
+          type: 'chip',
+          value: 'opened roughly 200 net new stores worldwide',
+          signal: true,
+          feedback:
+            'New stores cost real money: leases, fit-outs, staff. Three years into Netflix existing, capital is still flowing into more of the same asset class Netflix\'s product is built to bypass. The headline reads as growth, but the substance is doubling down on the wrong inventory.',
+        },
         { type: 'text', value: '. ' },
-        { type: 'chip', value: 'Our platform hosts 50,000 merchants and 2 million buyers who transact with each other', signal: true, feedback: 'THIS is a real network effect. 50,000 merchants attract buyers, and 2 million buyers attract more merchants. A new competitor would need to build BOTH sides simultaneously, which is extremely difficult. This is the same moat that makes eBay, Airbnb, and Uber hard to displace.' },
+        {
+          type: 'chip',
+          value: 'Late fees still produced roughly $800M annually — about 15% of revenue',
+          signal: true,
+          feedback:
+            'Three years after Hastings\' offer, late fees are still Blockbuster\'s biggest profit lever, and Blockbuster has done nothing to reduce its exposure to them. The competitor whose marketing literally says "no late fees" now has 1.5M subscribers.',
+        },
         { type: 'text', value: '. ' },
-        { type: 'chip', value: 'Our team includes 3 Stanford PhDs and a former Google VP', signal: false, feedback: 'Impressive resumes are not a moat. People leave, get poached, or start competing companies. A moat must exist independent of specific individuals. Google\'s moat isn\'t its employees — it\'s its data and network effects.' },
-        { type: 'text', value: '. ' },
-        { type: 'chip', value: 'Average merchant has 18 months of transaction data and custom integrations on our platform', signal: true, feedback: 'Real switching costs. 18 months of data + custom integrations means leaving requires rebuilding everything. This is the same moat Salesforce and AWS use — make leaving so painful that customers stay by default.' },
-        { type: 'text', value: '. ' },
-        { type: 'chip', value: 'We have the best user interface in the industry — everyone says so', signal: false, feedback: 'A better UI is not a moat — it\'s a competitive advantage that lasts until someone makes a better one. UIs are copied in months. A moat must be STRUCTURAL, not just a feature that can be replicated.' },
-        { type: 'text', value: '. ' },
-        { type: 'chip', value: 'Our proprietary algorithm improves with every transaction — 500 million data points and growing', signal: true, feedback: 'Data that improves the product creates a compounding advantage. Each transaction makes the algorithm better, which attracts more users, which generates more data. A new competitor starts with zero data points. This is Google\'s search moat applied to a marketplace.' },
-        { type: 'text', value: '."' },
+        {
+          type: 'chip',
+          value: 'Brand awareness in the US remained near-universal',
+          signal: false,
+          feedback:
+            'True, but it doesn\'t answer the moat question. Blockbuster\'s moat was the store count, not the brand. A customer who recognizes the Blockbuster name can still pick the red envelope on a Friday night — recognition doesn\'t prevent that choice.',
+        },
+        { type: 'text', value: '. Meanwhile, ' },
+        {
+          type: 'chip',
+          value: 'Netflix subscribers grew from under 1M to over 1.5M during the year',
+          signal: true,
+          feedback:
+            'Subscribers roughly doubled in two years (600K to 1.5M). At this rate Netflix passes 5M inside 2-3 years, which is when Blockbuster\'s same-store rental numbers start to feel it. The slope of the curve is the news, not the absolute number.',
+        },
+        { type: 'text', value: '. Industry observers noted that ' },
+        {
+          type: 'chip',
+          value: 'physical video stores still accounted for the vast majority of rental revenue',
+          signal: false,
+          feedback:
+            'True today, and probably true next year. The question moat analysis is supposed to answer is what the market looks like in five years. "Currently dominates" doesn\'t answer that question.',
+        },
+        { type: 'text', value: '. The company also reported ' },
+        {
+          type: 'chip',
+          value: 'same-store rental revenue declined for the second straight year',
+          signal: true,
+          feedback:
+            'Same-store revenue strips out new openings, so it isolates whether the existing footprint is healthier or weaker than it was a year ago. Two straight down years means the customer base Blockbuster already had is rolling over. The headline revenue still grew, but only because the company kept opening stores.',
+        },
+        { type: 'text', value: '.' },
       ],
       requiredSignals: 3,
       reveal:
-        'Three real moats: a two-sided network effect (merchants + buyers), switching costs (18 months of data and integrations), and a compounding data advantage (500M data points improving the algorithm). Three fake moats: first-mover advantage (easily lost), team pedigree (people leave), and better UI (easily copied). Real moats are structural and self-reinforcing. Fake moats are temporary advantages that competitors can replicate.',
-      takeaway: 'Test every claimed moat with one question: "If a competitor with unlimited money tried to copy this in 2 years, could they?" If yes, it\'s not a moat. Networks, switching costs, and compounding data advantages can\'t be copied with money. UIs, teams, and first-mover timing can.',
+        'Four signals worth tapping: capital still flowing into new stores, $800M in late fees still unhedged, Netflix compounding from 600K toward 5M, and same-store revenue rolling over for two straight years. Two reassuring facts that don\'t actually answer the moat question: brand awareness (never the moat) and "physical still dominates" (a snapshot, not a forecast). The data was all in the public filings. The hard part was acting on it while the headline number was still a record.',
+      takeaway:
+        'The headline revenue line is a lagging indicator of moat health. Same-store metrics, the new-vs-existing mix, and the revenue line exposed to a specific competitor\'s pitch all weaken earlier. By the time the headline rolls over, you\'re reacting to something that started 18 months ago.',
     },
 
-    // Thinking step
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 4 — Decide. Jan 2005. The "no more late fees" announcement.
+    // Genuinely contested in real time. Right idea or terminal copy?
+    // ─────────────────────────────────────────────────────────────────────
+    {
+      kind: 'decide',
+      topic: 'January 2005 — The End of Late Fees',
+      topicIcon: Scissors,
+      context:
+        'Antioco announces "The End of Late Fees." The change strips out roughly $400M of high-margin revenue overnight, on the bet that removing the customer pain point keeps people coming to stores instead of switching to Netflix. Carl Icahn takes a board seat that year and is openly furious about the lost cash. Within two years, Antioco is out.\n\nNetflix now has ~4M subscribers. Same-store revenue is still declining. You still hold BBI.\n\nWhat\'s the right read on this move?',
+      question: 'Was killing late fees the right move?',
+      options: [
+        'Right move — late fees were the pain Netflix exploited, and removing it was overdue',
+        'Wrong move — they gave up $400M of high-margin revenue to copy a model they couldn\'t win at',
+        'Right idea, executed three years too late — by 2005 the customer who was going to switch had already switched',
+      ],
+      correctIndex: 2,
+      punchline:
+        'All three options have a real defender, which is part of the point. Option 3 ages the best: the diagnosis was correct (late fees were a competitive wound), but by 2005 Netflix had passed 4M subscribers and the customer who was going to switch had largely already switched. Option 1 was Antioco\'s view and he lost his job over it. Option 2 was Icahn\'s and earned him a board seat. Both can be reasonable and still leave you holding a stock that goes to zero.',
+      wrongNudges: [
+        'The diagnosis is right. Late fees were a real competitive wound. The same move in 2001 would have been a serious moat defense; in 2005 Netflix had 4M subscribers and same-store revenue had already been declining for years, so the move arrived after most of the damage was done.',
+        'This was Icahn\'s read, and the market mostly agreed in the short term. The catch is that the cash being defended was leaking specifically because of the no-late-fees competitor. You can hold the cash for a year or two and still lose to the structural problem.',
+        '',
+      ],
+      takeaway:
+        'A CEO finally taking the obviously-correct action three years after the signal was visible tells you more about the moat than about the CEO. By the time it shows up as a press release, most of what you needed to act on already happened.',
+    },
+
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 5 — Thinking. Retrospective sell question.
+    // The whole lesson lands here.
+    // ─────────────────────────────────────────────────────────────────────
     {
       kind: 'thinking',
-      prompt: 'Pick a company you use every day (Google, Apple, Amazon, Netflix, Spotify, Uber, etc.). What is its moat? Is that moat getting STRONGER or WEAKER over time? What would need to happen for a competitor to take significant market share from them?',
-      placeholder: 'Name the company, identify its specific moat type (switching costs, network effects, brand, or scale), and explain whether it\'s strengthening or eroding...',
+      prompt:
+        'You held BBI from 1999 through bankruptcy in 2010 and lost roughly your entire investment. Pick the year you would have actually sold — 2000 (the offer), 2003 (the data was clear), 2005 (the late-fee reversal), or 2008 (Icahn\'s board fights and CEO turnover). In 3-4 sentences, defend that timing: what specific signal would have made YOU act then, when most holders didn\'t?',
+      placeholder:
+        'Pick a year. Name the specific signal — the late fees line, Netflix\'s sub curve, same-store revenue, Antioco\'s firing. Be honest: would you really have acted on that, or are you picking the year hindsight makes obvious?',
       modelAnswer:
-        'Apple\'s moat is ecosystem switching costs — and it\'s getting STRONGER. Your iPhone connects to your Apple Watch, AirPods, MacBook, iPad, and HomePod. Your photos, messages, and purchases are stored in iCloud. Your apps, subscriptions, and payment methods are tied to your Apple ID. Switching to Android means losing all of these connections. Every new Apple device you buy makes leaving MORE painful, not less. A competitor would need to simultaneously build: a phone OS, an app store with millions of apps, a smartwatch platform, wireless earbuds, a laptop OS, cloud storage, and a payment system — and convince hundreds of millions of people to switch all of them at once. Samsung makes great phones, but they can\'t replicate the ecosystem. The moat IS the ecosystem, and it strengthens with every product Apple adds. The only real threat is regulatory — governments forcing Apple to open up its ecosystem, reduce App Store fees, or allow sideloading. Technology won\'t break this moat. Regulation might.',
+        'I would have sold in 2003. By then same-store rental revenue had been declining for two years and Netflix subscribers had gone from 600K to over 1.5M. Each of those signals alone is noise; together they describe a footprint that\'s rolling over at the same time a competitor is passing the inflection from niche to scaled. To be honest about hindsight: 2000 is the year that looks obvious now, but Hastings showing up with 300K subs would have read as a punt to me in real time. 2005 is too late, since the late-fee reversal was already management admitting the model had lost. So 2003 is where the data crossed the line from "concerning" to "the thesis I bought has changed."',
       strongReasoningIncludes: [
-        'Identifies a specific moat type, not just "they\'re a good company"',
-        'Explains whether the moat is strengthening or weakening with evidence',
-        'Identifies what would need to happen for a competitor to break through',
+        'Picks a specific year and names the actual signal that would have triggered the sell, rather than "I would have seen Netflix coming"',
+        'Acknowledges what was knowable at the moment vs. what only looks obvious now',
+        'Distinguishes between leading signals (same-store, Netflix sub curve, late-fee exposure) and lagging ones (the late-fee reversal, CEO turnover, bankruptcy)',
       ],
     },
   ],
   takeaways: [
-    'A moat is a structural advantage that prevents competitors from taking your customers. Market share without a moat is temporary.',
-    'Four real moats: switching costs (painful to leave), network effects (more users = more value), brand (trust over decades), scale (cost advantages from size).',
-    'Some moats strengthen over time (network effects, data advantages) and some erode (brand relevance). Not all moats are permanent.',
-    'The moat test: "If a competitor with unlimited money tried to replicate this in 2 years, could they?" If yes, it\'s not a real moat.',
+    'Blockbuster\'s moat was the 7,000 stores. The cash that funded those stores came from late fees, and Netflix\'s product was specifically built to bypass that line.',
+    'A $50M offer to acquire the company aimed at your most profitable revenue line is unusually cheap optionality. Whether you take it depends on whether anyone at the firm has mapped the competitor\'s pitch onto your P&L.',
+    'Headline revenue is a lagging indicator. Same-store metrics, the new-vs-existing store mix, and the share of revenue exposed to one competitor\'s specific product all roll over earlier.',
+    'When a CEO finally takes the obviously-correct action years after the signal was visible, the move itself is usually a confirmation that the moat broke, not a fresh reason to buy.',
   ],
   completionMessages: {
-    perfect: 'Perfect. You can now distinguish real competitive advantages from marketing claims — one of the most valuable skills in investing.',
-    great: 'Strong work. Understanding moats is what separates long-term investors from people who chase hot stocks.',
-    good: 'Good foundation. Remember: the moat isn\'t what a company DOES well — it\'s what prevents competitors from doing the same thing.',
-    low: 'Worth revisiting. Moats are the single biggest determinant of whether a company\'s profits will last or evaporate.',
+    perfect:
+      'Sharp work. You can read moat erosion through the line items that move first, instead of waiting for the headline revenue to break.',
+    great:
+      'Good run. You can see how moat erosion is readable in real time, and how the obvious management responses tend to arrive after the customer has already made up their mind.',
+    good:
+      'Decent foundation. The point worth keeping: the moat people described was the store count, but the cash came from a different line, and it was the cash line that got attacked.',
+    low:
+      'Worth re-running. The lesson isn\'t Blockbuster specifically. It\'s the habit of asking which of your revenue lines a competitor\'s product was actually built to bypass.',
   },
 };
