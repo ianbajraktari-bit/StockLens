@@ -8,6 +8,7 @@ import AnalystSession from './pages/AnalystSession';
 import ReviewSession from './pages/ReviewSession';
 import JournalPage from './pages/JournalPage';
 import LibraryPage from './pages/LibraryPage';
+import LessonsLibraryPage from './pages/LessonsLibraryPage';
 import FloorPage from './pages/FloorPage';
 import { getLessonById } from './data/lessons';
 import { markCompleted, updateStreak } from './lib/progression';
@@ -66,6 +67,7 @@ export default function App() {
         <Route path="/review/daily" element={<ReviewSession />} />
         <Route path="/journal" element={<JournalPage />} />
         <Route path="/library" element={<LibraryPage />} />
+        <Route path="/library/lessons" element={<LessonsLibraryPage />} />
         <Route path="/floor" element={<FloorPage />} />
       </Routes>
     </ErrorBoundary>

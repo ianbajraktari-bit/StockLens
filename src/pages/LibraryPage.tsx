@@ -107,7 +107,7 @@ export default function LibraryPage() {
             subtitle={`${lessonStats.foundationsCount} foundations · ${lessonStats.companyLessonsCount} company deep dives`}
             statValue={`${lessonStats.completed}/${lessonStats.total}`}
             statLabel="completed"
-            onClick={() => navigate('/?tab=learn')}
+            onClick={() => navigate('/library/lessons')}
           />
 
           <Shelf

@@ -372,7 +372,37 @@ Current shape (Q1 2026):
 - **Foundations Phase 2** (~21 lessons) — concepts + practical literacy: moats, valuation, expectations, cashflow, risk, debt, growth-value, returns, dividends, portfolio, earnings, selling, index-funds, ten-k, macro, history, sectors, statements, options, bonds, taxes
 - **Company Deep Dives** (~10 lessons) — Apple, NVIDIA, Costco, Amazon, Microsoft, Tesla, Google, Netflix, Meta, Berkshire
 
-Margins (`foundations-margins`) is the **reference implementation of the new scenario-driven format** — connected through-line, real companies, `compare` step in both decisive and open-call modes, structured ambiguity. Future lesson rewrites should match its shape.
+## Lesson Shape: Designed, Not Templated
+
+Every lesson is designed for what it's teaching. The 6 step kinds (`drill`, `estimate`, `tap`, `decide`, `thinking`, `compare`) are the **grammar**. The narrative shape sitting on top of that grammar is whatever the concept naturally wants — there is no "lesson template" to stamp from.
+
+The per-step-kind design rules in [Step Design Patterns](#step-design-patterns) above are still the right rules. They govern how each step should be constructed regardless of the lesson's overall shape.
+
+### Fixed rules (apply to every lesson)
+
+- Real companies, real numbers (verifiable on Google or in a real filing — no toy bakeries)
+- Structured prompts beat blank textboxes
+- Open ambiguity is the centerpiece — multiple-choice with obvious right answers trains people to look for the trick. Use `compare`/open-call where ambiguity is real
+- Feedback teaches, not grades — wrong-answer explanations are mini-lessons
+- Final step is `thinking` (writing → journal entry)
+
+### What is NOT fixed: the narrative arc
+
+Different concepts want different shapes. Some want a side-by-side comparison; some want a story over time; some want to read a real transcript and pull signals out of it. Forcing every lesson into "pick one of three companies" trains the user to look for the comparison rather than the concept.
+
+### Example shapes (reference + aspirational)
+
+1. **Side-by-side comparison** — multiple companies, multiple lenses on the same data. Fits concepts that are fundamentally about *picking*: recession resilience, capital allocation, valuation trade-offs. **Reference: `foundations-margins`** (Microsoft / Costco / Kroger).
+
+2. **One company over time** — a single business, walked quarter by quarter through a major change. Fits concepts about *transition*: subscription pivots, deleveraging, reinventions. **Reference: `foundations-recurring`** (Adobe 2012-2017 subscription pivot).
+
+3. **Watch a moat break** *(aspirational)* — slow-motion failure of a once-dominant business. The failure mode IS the lesson. Candidates: Blockbuster, Kodak, Nokia.
+
+4. **Real transcript walkthrough** *(aspirational)* — a real CFO earnings call read line by line. `tap` the hedge language; `decide`-step the question you'd ask next. Candidates: any high-stakes earnings call where management said one thing and the numbers said another.
+
+5. **Build the model** *(aspirational)* — assemble a small piece of analysis the user constructs themselves: a yield curve, a cohort retention table, a unit-economics estimate. The construction is the insight.
+
+Shapes 3-5 are *examples*, not a menu the writer must pick from. When the right shape for a concept isn't on this list, design a new one. The 6 step kinds are the full vocabulary; the narrative is yours.
 
 ## Analyst Mode — The Capstone Feature
 
